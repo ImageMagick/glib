@@ -42,7 +42,7 @@
 
 #include <string.h>
 #include <locale.h>
-#include <libintl.h>
+//#include <libintl.h>
 
 #ifdef G_OS_WIN32
 

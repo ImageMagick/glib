@@ -4323,6 +4323,7 @@ gobject_init_ctor (void)
   TypeNode *node;
   GType type;
 
+  g_thread_win32_init();
   G_WRITE_LOCK (&type_rw_lock);
 
   /* setup GObject library wide debugging flags */

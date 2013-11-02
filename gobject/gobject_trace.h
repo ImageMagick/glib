@@ -24,7 +24,7 @@
 #define __GOBJECTTRACE_H__
 
 #ifndef SIZEOF_CHAR
-#error "config.h must be included prior to gobject_trace.h"
+//#error "config.h must be included prior to gobject_trace.h"
 #endif
 
 #ifdef HAVE_DTRACE

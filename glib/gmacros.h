@@ -344,7 +344,7 @@
 #endif
 
 #ifndef _GLIB_EXTERN
-#define _GLIB_EXTERN extern
+#define _GLIB_EXTERN __declspec (dllexport) extern
 #endif
 
 /* These macros are used to mark deprecated functions in GLib headers,

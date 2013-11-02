@@ -41,6 +41,9 @@
 #include <sys/cygwin.h>
 #endif
 
+#include <glib/gfileutils.h>
+#include <glib/gtypes.h>
+
 static void
 set_error (const gchar *format,
 	   ...)

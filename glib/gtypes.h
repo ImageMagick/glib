@@ -463,7 +463,7 @@ G_END_DECLS
  */
 #ifndef GLIB_VAR
 #  ifdef G_PLATFORM_WIN32
-#    ifdef GLIB_STATIC_COMPILATION
+#    if defined(GLIB_STATIC_COMPILATION) || defined(_LIB)
 #      define GLIB_VAR extern
 #    else /* !GLIB_STATIC_COMPILATION */
 #      ifdef GLIB_COMPILATION

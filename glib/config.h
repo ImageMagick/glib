@@ -915,7 +915,11 @@
 
 /* defines how to decorate public symbols while building */
 #ifdef _MSC_VER
-#define _GLIB_EXTERN __declspec (dllexport) extern
+  #if defined(_LIB)
+    #define _GLIB_EXTERN extern
+  #else
+    #define _GLIB_EXTERN __declspec (dllexport) extern
+  #endif
 #else
 #define _GLIB_EXTERN __attribute__((visibility("default"))) __declspec (dllexport) extern
 #endif

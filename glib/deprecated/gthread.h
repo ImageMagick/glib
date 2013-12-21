@@ -264,7 +264,7 @@ void    g_thread_init_with_errorcheck_mutexes (gpointer vtable);
 GLIB_DEPRECATED_IN_2_32
 gboolean g_thread_get_initialized        (void);
 
-GLIB_VAR gboolean g_threads_got_initialized;
+//GLIB_VAR gboolean g_threads_got_initialized;
 
 #define g_thread_supported()     (1)
 

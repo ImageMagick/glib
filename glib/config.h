@@ -963,3 +963,8 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 /* #undef size_t */
+#pragma comment(lib, "dnsapi.lib")
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "ws2_32.lib")

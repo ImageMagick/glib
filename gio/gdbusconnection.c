@@ -4661,7 +4661,7 @@ handle_get_all_properties (GDBusConnection *connection,
 static const gchar introspect_header[] =
   "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
   "                      \"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
-  "<!-- GDBus " PACKAGE_VERSION " -->\n"
+  "<!-- GDBus some version -->\n"
   "<node>\n";
 
 static const gchar introspect_tail[] =

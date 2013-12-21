@@ -288,7 +288,7 @@ gboolean do_lookup (GResource             *resource,
   if (value == NULL)
     {
       g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                   _("The resource at '%s' does not exist"),
+                   ("The resource at '%s' does not exist"),
                    path);
     }
   else
@@ -453,7 +453,7 @@ g_resource_lookup_data (GResource             *resource,
               g_object_unref (decompressor);
 
               g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_INTERNAL,
-                           _("The resource at '%s' failed to decompress"),
+                           ("The resource at '%s' failed to decompress"),
                            path);
               return NULL;
 
@@ -536,7 +536,7 @@ g_resource_enumerate_children (GResource             *resource,
   if (*path == 0)
     {
       g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                   _("The resource at '%s' does not exist"),
+                   ("The resource at '%s' does not exist"),
                    path);
       return NULL;
     }
@@ -553,7 +553,7 @@ g_resource_enumerate_children (GResource             *resource,
   if (children == NULL)
     {
       g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                   _("The resource at '%s' does not exist"),
+                   ("The resource at '%s' does not exist"),
                    path);
       return NULL;
     }
@@ -674,7 +674,7 @@ g_resources_open_stream (const gchar           *path,
 
   if (l == NULL)
     g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                 _("The resource at '%s' does not exist"),
+                 ("The resource at '%s' does not exist"),
                  path);
 
   g_rw_lock_reader_unlock (&resources_lock);
@@ -743,7 +743,7 @@ g_resources_lookup_data (const gchar           *path,
 
   if (l == NULL)
     g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                 _("The resource at '%s' does not exist"),
+                 ("The resource at '%s' does not exist"),
                  path);
 
   g_rw_lock_reader_unlock (&resources_lock);
@@ -804,7 +804,7 @@ g_resources_enumerate_children (const gchar           *path,
   if (hash == NULL)
     {
       g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                   _("The resource at '%s' does not exist"),
+                   ("The resource at '%s' does not exist"),
                    path);
       return NULL;
     }
@@ -884,7 +884,7 @@ g_resources_get_info (const gchar           *path,
 
   if (l == NULL)
     g_set_error (error, G_RESOURCE_ERROR, G_RESOURCE_ERROR_NOT_FOUND,
-                 _("The resource at '%s' does not exist"),
+                 ("The resource at '%s' does not exist"),
                  path);
 
   g_rw_lock_reader_unlock (&resources_lock);

@@ -35,6 +35,10 @@
 
 #include "strinfo.c"
 
+#if (_MSC_VER < 1600)
+#pragma optimize("",off)
+#endif
+
 /**
  * SECTION:gsettings
  * @short_description: High-level API for application settings
@@ -3123,3 +3127,6 @@ g_settings_create_action (GSettings   *settings,
 /* Epilogue {{{1 */
 
 /* vim:set foldmethod=marker: */
+#if (_MSC_VER < 1600)
+#pragma optimize("",on)
+#endif

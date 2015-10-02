@@ -28,6 +28,10 @@
 #include <locale.h>
 #include <string.h>
 
+#if (_MSC_VER < 1600)
+#pragma optimize("",off)
+#endif
+
 /**
  * SECTION:gsettingsschema
  * @short_description: Introspecting and controlling the loading
@@ -1814,3 +1818,7 @@ g_settings_schema_key_range_check (GSettingsSchemaKey *key,
   return strinfo_is_string_valid (key->strinfo, key->strinfo_length,
                                   g_variant_get_string (value, NULL));
 }
+
+#if (_MSC_VER < 1600)
+#pragma optimize("",on)
+#endif

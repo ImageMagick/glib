@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -40,7 +38,9 @@ enum
 {
   PROP_0,
 
-  PROP_NETWORK_AVAILABLE
+  PROP_NETWORK_AVAILABLE,
+  PROP_NETWORK_METERED,
+  PROP_CONNECTIVITY
 };
 
 struct _GNetworkMonitorBasePrivate
@@ -116,12 +116,25 @@ g_network_monitor_base_get_property (GObject    *object,
 
   switch (prop_id)
     {
-      case PROP_NETWORK_AVAILABLE:
-        g_value_set_boolean (value, monitor->priv->is_available);
-        break;
+    case PROP_NETWORK_AVAILABLE:
+      g_value_set_boolean (value, monitor->priv->is_available);
+      break;
 
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+    case PROP_NETWORK_METERED:
+      /* Default to FALSE in the unknown case. */
+      g_value_set_boolean (value, FALSE);
+      break;
+
+    case PROP_CONNECTIVITY:
+      g_value_set_enum (value,
+                        monitor->priv->is_available ?
+                        G_NETWORK_CONNECTIVITY_FULL :
+                        G_NETWORK_CONNECTIVITY_LOCAL);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
     }
 
 }
@@ -153,6 +166,8 @@ g_network_monitor_base_class_init (GNetworkMonitorBaseClass *monitor_class)
   gobject_class->finalize     = g_network_monitor_base_finalize;
 
   g_object_class_override_property (gobject_class, PROP_NETWORK_AVAILABLE, "network-available");
+  g_object_class_override_property (gobject_class, PROP_NETWORK_METERED, "network-metered");
+  g_object_class_override_property (gobject_class, PROP_CONNECTIVITY, "connectivity");
 }
 
 static gboolean
@@ -381,6 +396,7 @@ queue_network_changed (GNetworkMonitorBase *monitor)
        */
       g_source_set_priority (source, G_PRIORITY_HIGH_IDLE);
       g_source_set_callback (source, emit_network_changed, monitor, NULL);
+      g_source_set_name (source, "[gio] emit_network_changed");
       g_source_attach (source, monitor->priv->context);
       monitor->priv->network_changed_source = source;
     }

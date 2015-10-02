@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -32,6 +30,8 @@
 #include "gdbusmethodinvocation.h"
 #include "gdbuserror.h"
 
+#include "gioerror.h"
+
 #include "glibintl.h"
 
 /**
@@ -40,8 +40,8 @@
  * @include: gio/gio.h
  *
  * #GDBusObjectManagerServer is used to export #GDBusObject instances using
- * the standardized <ulink
- * url="http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager">org.freedesktop.DBus.ObjectManager</ulink>
+ * the standardized
+ * [org.freedesktop.DBus.ObjectManager](http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager)
  * interface. For example, remote D-Bus clients can get all objects
  * and properties in a single call. Additionally, any change in the
  * object hierarchy is broadcast using signals. This means that D-Bus
@@ -543,10 +543,9 @@ g_dbus_object_manager_server_export (GDBusObjectManagerServer  *manager,
  * @object: An object.
  *
  * Like g_dbus_object_manager_server_export() but appends a string of
- * the form <literal>_N</literal> (with N being a natural number) to
- * @object<!-- -->'s object path if an object with the given path
- * already exists. As such, the #GDBusObjectProxy:g-object-path property
- * of @object may be modified.
+ * the form _N (with N being a natural number) to @object's object path
+ * if an object with the given path already exists. As such, the
+ * #GDBusObjectProxy:g-object-path property of @object may be modified.
  *
  * Since: 2.30
  */
@@ -930,7 +929,12 @@ g_dbus_object_manager_server_emit_interfaces_added (GDBusObjectManagerServer *ma
                                                 object_path,
                                                 &array_builder),
                                  &error);
-  g_assert_no_error (error);
+  if (error)
+    {
+      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CLOSED))
+        g_warning ("Couldn't emit InterfacesAdded signal: %s", error->message);
+      g_error_free (error);
+    }
  out:
   ;
 }
@@ -963,7 +967,12 @@ g_dbus_object_manager_server_emit_interfaces_removed (GDBusObjectManagerServer *
                                                 object_path,
                                                 &array_builder),
                                  &error);
-  g_assert_no_error (error);
+  if (error)
+    {
+      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CLOSED))
+        g_warning ("Couldn't emit InterfacesRemoved signal: %s", error->message);
+      g_error_free (error);
+    }
  out:
   ;
 }

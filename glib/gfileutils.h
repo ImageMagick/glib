@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with GLib; see the file COPYING.LIB.  If not,
- * write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *   Boston, MA 02111-1307, USA.
+ * see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __G_FILEUTILS_H__
@@ -178,6 +177,7 @@ gchar *g_path_get_basename (const gchar *file_name) G_GNUC_MALLOC;
 GLIB_AVAILABLE_IN_ALL
 gchar *g_path_get_dirname  (const gchar *file_name) G_GNUC_MALLOC;
 
+#ifndef __GTK_DOC_IGNORE__
 #ifdef G_OS_WIN32
 #define g_file_test         g_file_test_utf8
 #define g_file_get_contents g_file_get_contents_utf8
@@ -202,6 +202,7 @@ gint     g_file_open_tmp_utf8     (const gchar  *tmpl,
 GLIB_AVAILABLE_IN_ALL
 gchar   *g_get_current_dir_utf8   (void);
 #endif /* G_OS_WIN32 */
+#endif /* __GTK_DOC_IGNORE__ */
 
 G_END_DECLS
 

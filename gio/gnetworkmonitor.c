@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -46,6 +44,22 @@
  *
  * #GNetworkMonitor monitors the status of network connections and
  * indicates when a possibly-user-visible change has occurred.
+ *
+ * Since: 2.32
+ */
+
+/**
+ * GNetworkMonitorInterface:
+ * @g_iface: The parent interface.
+ * @network_changed: the virtual function pointer for the
+ *  GNetworkMonitor::network-changed signal.
+ * @can_reach: the virtual function pointer for g_network_monitor_can_reach()
+ * @can_reach_async: the virtual function pointer for
+ *  g_network_monitor_can_reach_async()
+ * @can_reach_finish: the virtual function pointer for
+ *  g_network_monitor_can_reach_finish()
+ *
+ * The virtual function table for #GNetworkMonitor.
  *
  * Since: 2.32
  */
@@ -87,7 +101,7 @@ g_network_monitor_get_default (void)
  * IPv6. It does not necessarily imply that the public Internet is
  * reachable. See #GNetworkMonitor:network-available for more details.
  *
- * Return value: whether the network is available
+ * Returns: whether the network is available
  *
  * Since: 2.32
  */
@@ -98,6 +112,64 @@ g_network_monitor_get_network_available (GNetworkMonitor *monitor)
 
   g_object_get (G_OBJECT (monitor), "network-available", &available, NULL);
   return available;
+}
+
+/**
+ * g_network_monitor_get_network_metered:
+ * @monitor: the #GNetworkMonitor
+ *
+ * Checks if the network is metered.
+ * See #GNetworkMonitor:network-metered for more details.
+ *
+ * Returns: whether the connection is metered
+ *
+ * Since: 2.46
+ */
+gboolean
+g_network_monitor_get_network_metered (GNetworkMonitor *monitor)
+{
+  gboolean metered = FALSE;
+
+  g_object_get (G_OBJECT (monitor), "network-metered", &metered, NULL);
+  return metered;
+}
+
+/**
+ * g_network_monitor_get_connectivity:
+ * @monitor: the #GNetworkMonitor
+ *
+ * Gets a more detailed networking state than
+ * g_network_monitor_get_network_available().
+ *
+ * If #GNetworkMonitor:network-available is %FALSE, then the
+ * connectivity state will be %G_NETWORK_CONNECTIVITY_LOCAL.
+ *
+ * If #GNetworkMonitor:network-available is %TRUE, then the
+ * connectivity state will be %G_NETWORK_CONNECTIVITY_FULL (if there
+ * is full Internet connectivity), %G_NETWORK_CONNECTIVITY_LIMITED (if
+ * the host has a default route, but appears to be unable to actually
+ * reach the full Internet), or %G_NETWORK_CONNECTIVITY_PORTAL (if the
+ * host is trapped behind a "captive portal" that requires some sort
+ * of login or acknowledgement before allowing full Internet access).
+ *
+ * Note that in the case of %G_NETWORK_CONNECTIVITY_LIMITED and
+ * %G_NETWORK_CONNECTIVITY_PORTAL, it is possible that some sites are
+ * reachable but others are not. In this case, applications can
+ * attempt to connect to remote servers, but should gracefully fall
+ * back to their "offline" behavior if the connection attempt fails.
+ *
+ * Return value: the network connectivity state
+ *
+ * Since: 2.44
+ */
+GNetworkConnectivity
+g_network_monitor_get_connectivity (GNetworkMonitor *monitor)
+{
+  GNetworkConnectivity connectivity;
+
+  g_object_get (G_OBJECT (monitor), "connectivity", &connectivity, NULL);
+
+  return connectivity;
 }
 
 /**
@@ -125,7 +197,7 @@ g_network_monitor_get_network_available (GNetworkMonitor *monitor)
  * trying to do multicast DNS on the local network), so if you do not
  * want to block, you should use g_network_monitor_can_reach_async().
  *
- * Return value: %TRUE if @connectable is reachable, %FALSE if not.
+ * Returns: %TRUE if @connectable is reachable, %FALSE if not.
  *
  * Since: 2.32
  */
@@ -210,7 +282,7 @@ g_network_monitor_real_can_reach_finish (GNetworkMonitor  *monitor,
  * Finishes an async network connectivity test.
  * See g_network_monitor_can_reach_async().
  *
- * Return value: %TRUE if network is reachable, %FALSE if not.
+ * Returns: %TRUE if network is reachable, %FALSE if not.
  */
 gboolean
 g_network_monitor_can_reach_finish (GNetworkMonitor     *monitor,
@@ -264,10 +336,9 @@ g_network_monitor_default_init (GNetworkMonitorInterface *iface)
    * connected to a functioning router that has lost its own upstream
    * connectivity. Some hosts might only be accessible when a VPN is
    * active. Other hosts might only be accessible when the VPN is
-   * <emphasis>not</emphasis> active. Thus, it is best to use
-   * g_network_monitor_can_reach() or
-   * g_network_monitor_can_reach_async() to test for reachability on a
-   * host-by-host basis. (On the other hand, when the property is
+   * not active. Thus, it is best to use g_network_monitor_can_reach()
+   * or g_network_monitor_can_reach_async() to test for reachability
+   * on a host-by-host basis. (On the other hand, when the property is
    * %FALSE, the application can reasonably expect that no remote
    * hosts at all are reachable, and should indicate this to the user
    * in its UI.)
@@ -283,4 +354,53 @@ g_network_monitor_default_init (GNetworkMonitorInterface *iface)
                                                              FALSE,
                                                              G_PARAM_READABLE |
                                                              G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GNetworkMonitor:network-metered:
+   *
+   * Whether the network is considered metered. That is, whether the
+   * system has traffic flowing through the default connection that is
+   * subject to limitations set by service providers. For example, traffic
+   * might be billed by the amount of data transmitted, or there might be a
+   * quota on the amount of traffic per month. This is typical with tethered
+   * connections (3G and 4G) and in such situations, bandwidth intensive
+   * applications may wish to avoid network activity where possible if it will
+   * cost the user money or use up their limited quota.
+   *
+   * If more information is required about specific devices then the
+   * system network management API should be used instead (for example,
+   * NetworkManager or ConnMan).
+   *
+   * If this information is not available then no networks will be
+   * marked as metered.
+   *
+   * See also #GNetworkMonitor:network-available.
+   *
+   * Since: 2.46
+   */
+  g_object_interface_install_property (iface,
+                                       g_param_spec_boolean ("network-metered",
+                                                             P_("Network metered"),
+                                                             P_("Whether the network is metered"),
+                                                             FALSE,
+                                                             G_PARAM_READABLE |
+                                                             G_PARAM_STATIC_STRINGS));
+
+  /**
+   * GNetworkMonitor:connectivity:
+   *
+   * More detailed information about the host's network connectivity.
+   * See g_network_monitor_get_connectivity() and
+   * #GNetworkConnectivity for more details.
+   *
+   * Since: 2.44
+   */
+  g_object_interface_install_property (iface,
+                                       g_param_spec_enum ("connectivity",
+                                                          P_("Network connectivity"),
+                                                          P_("Level of network connectivity"),
+                                                          G_TYPE_NETWORK_CONNECTIVITY,
+                                                          G_NETWORK_CONNECTIVITY_FULL,
+                                                          G_PARAM_READABLE |
+                                                          G_PARAM_STATIC_STRINGS));
 }

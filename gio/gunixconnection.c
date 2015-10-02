@@ -39,12 +39,19 @@
  * It contains functions to do some of the UNIX socket specific
  * functionality like passing file descriptors.
  *
- * Note that <filename>&lt;gio/gunixconnection.h&gt;</filename> belongs to
- * the UNIX-specific GIO interfaces, thus you have to use the
- * <filename>gio-unix-2.0.pc</filename> pkg-config file when using it.
+ * Note that `<gio/gunixconnection.h>` belongs to the UNIX-specific
+ * GIO interfaces, thus you have to use the `gio-unix-2.0.pc`
+ * pkg-config file when using it.
  *
  * Since: 2.22
  */
+
+/**
+ * GUnixConnection:
+ *
+ * #GUnixConnection is an opaque data structure and can only be accessed
+ * using the following functions.
+ **/
 
 G_DEFINE_TYPE_WITH_CODE (GUnixConnection, g_unix_connection,
 			 G_TYPE_SOCKET_CONNECTION,

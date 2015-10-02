@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __G_SETTINGS_SCHEMA_INTERNAL_H__
@@ -22,7 +20,7 @@
 
 #include "gsettingsschema.h"
 
-typedef struct
+struct _GSettingsSchemaKey
 {
   GSettingsSchema *schema;
   const gchar *name;
@@ -39,12 +37,12 @@ typedef struct
   const GVariantType *type;
   GVariant *minimum, *maximum;
   GVariant *default_value;
-} GSettingsSchemaKey;
+
+  gint ref_count;
+};
 
 const gchar *           g_settings_schema_get_gettext_domain            (GSettingsSchema  *schema);
 GVariantIter *          g_settings_schema_get_value                     (GSettingsSchema  *schema,
-                                                                         const gchar      *key);
-gboolean                g_settings_schema_has_key                       (GSettingsSchema  *schema,
                                                                          const gchar      *key);
 const GQuark *          g_settings_schema_list                          (GSettingsSchema  *schema,
                                                                          gint             *n_items);
@@ -56,8 +54,6 @@ void                    g_settings_schema_key_init                      (GSettin
                                                                          const gchar        *name);
 void                    g_settings_schema_key_clear                     (GSettingsSchemaKey *key);
 gboolean                g_settings_schema_key_type_check                (GSettingsSchemaKey *key,
-                                                                         GVariant           *value);
-gboolean                g_settings_schema_key_range_check               (GSettingsSchemaKey *key,
                                                                          GVariant           *value);
 GVariant *              g_settings_schema_key_range_fixup               (GSettingsSchemaKey *key,
                                                                          GVariant           *value);

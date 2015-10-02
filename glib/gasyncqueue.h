@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -98,6 +96,19 @@ GLIB_AVAILABLE_IN_ALL
 void         g_async_queue_sort_unlocked        (GAsyncQueue      *queue,
                                                  GCompareDataFunc  func,
                                                  gpointer          user_data);
+
+GLIB_AVAILABLE_IN_2_46
+gboolean     g_async_queue_remove               (GAsyncQueue      *queue,
+                                                 gpointer          item);
+GLIB_AVAILABLE_IN_2_46
+gboolean     g_async_queue_remove_unlocked      (GAsyncQueue      *queue,
+                                                 gpointer          item);
+GLIB_AVAILABLE_IN_2_46
+void         g_async_queue_push_front           (GAsyncQueue      *queue,
+                                                 gpointer          item);
+GLIB_AVAILABLE_IN_2_46
+void         g_async_queue_push_front_unlocked  (GAsyncQueue      *queue,
+                                                 gpointer          item);
 
 GLIB_DEPRECATED_FOR(g_async_queue_timeout_pop)
 gpointer     g_async_queue_timed_pop            (GAsyncQueue      *queue,

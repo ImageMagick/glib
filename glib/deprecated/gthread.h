@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -35,6 +33,8 @@
 
 G_BEGIN_DECLS
 
+#ifndef G_DISABLE_DEPRECATED
+
 typedef enum
 {
   G_THREAD_PRIORITY_LOW,
@@ -42,6 +42,8 @@ typedef enum
   G_THREAD_PRIORITY_HIGH,
   G_THREAD_PRIORITY_URGENT
 } GThreadPriority;
+
+#endif
 
 struct  _GThread
 {
@@ -51,6 +53,8 @@ struct  _GThread
   gboolean joinable;
   GThreadPriority priority;
 };
+
+#ifndef G_DISABLE_DEPRECATED
 
 typedef struct _GThreadFunctions GThreadFunctions;
 struct _GThreadFunctions
@@ -120,6 +124,7 @@ void     g_thread_foreach      (GFunc             thread_func,
                                 gpointer          user_data);
 
 #ifndef G_OS_WIN32
+#include <sys/types.h>
 #include <pthread.h>
 #endif
 
@@ -264,7 +269,7 @@ void    g_thread_init_with_errorcheck_mutexes (gpointer vtable);
 GLIB_DEPRECATED_IN_2_32
 gboolean g_thread_get_initialized        (void);
 
-//GLIB_VAR gboolean g_threads_got_initialized;
+GLIB_VAR gboolean g_threads_got_initialized;
 
 #define g_thread_supported()     (1)
 
@@ -280,6 +285,8 @@ GLIB_DEPRECATED_IN_2_32
 gboolean        g_cond_timed_wait       (GCond          *cond,
                                          GMutex         *mutex,
                                          GTimeVal       *timeval);
+
+#endif
 
 G_END_DECLS
 

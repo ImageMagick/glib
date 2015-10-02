@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -88,6 +86,12 @@ guint           g_log_set_handler       (const gchar    *log_domain,
                                          GLogLevelFlags  log_levels,
                                          GLogFunc        log_func,
                                          gpointer        user_data);
+GLIB_AVAILABLE_IN_2_46
+guint           g_log_set_handler_full  (const gchar    *log_domain,
+                                         GLogLevelFlags  log_levels,
+                                         GLogFunc        log_func,
+                                         gpointer        user_data,
+                                         GDestroyNotify  destroy);
 GLIB_AVAILABLE_IN_ALL
 void            g_log_remove_handler    (const gchar    *log_domain,
                                          guint           handler_id);
@@ -164,6 +168,9 @@ void g_assert_warning         (const char *log_domain,
 #define g_warning(...)  g_log (G_LOG_DOMAIN,         \
                                G_LOG_LEVEL_WARNING,  \
                                __VA_ARGS__)
+#define g_info(...)     g_log (G_LOG_DOMAIN,         \
+                               G_LOG_LEVEL_INFO,     \
+                               __VA_ARGS__)
 #define g_debug(...)    g_log (G_LOG_DOMAIN,         \
                                G_LOG_LEVEL_DEBUG,    \
                                __VA_ARGS__)
@@ -184,13 +191,19 @@ void g_assert_warning         (const char *log_domain,
 #define g_warning(format...)    g_log (G_LOG_DOMAIN,         \
                                        G_LOG_LEVEL_WARNING,  \
                                        format)
+#define g_info(format...)       g_log (G_LOG_DOMAIN,         \
+                                       G_LOG_LEVEL_INFO,     \
+                                       format)
 #define g_debug(format...)      g_log (G_LOG_DOMAIN,         \
                                        G_LOG_LEVEL_DEBUG,    \
                                        format)
 #else   /* no varargs macros */
+static void g_error (const gchar *format, ...) G_GNUC_NORETURN G_ANALYZER_NORETURN;
+static void g_critical (const gchar *format, ...) G_ANALYZER_NORETURN;
+
 static void
 g_error (const gchar *format,
-         ...) G_ANALYZER_NORETURN
+         ...)
 {
   va_list args;
   va_start (args, format);
@@ -210,7 +223,7 @@ g_message (const gchar *format,
 }
 static void
 g_critical (const gchar *format,
-            ...) G_ANALYZER_NORETURN
+            ...)
 {
   va_list args;
   va_start (args, format);
@@ -224,6 +237,15 @@ g_warning (const gchar *format,
   va_list args;
   va_start (args, format);
   g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, format, args);
+  va_end (args);
+}
+static void
+g_info (const gchar *format,
+        ...)
+{
+  va_list args;
+  va_start (args, format);
+  g_logv (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, format, args);
   va_end (args);
 }
 static void
@@ -288,10 +310,18 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
  * g_return_if_fail:
  * @expr: the expression to check
  *
- * Verifies that the expression evaluates to %TRUE.  If the expression
- * evaluates to %FALSE, a critical message is logged and the current
- * function returns.  This can only be used in functions which do not
- * return a value.
+ * Verifies that the expression @expr, usually representing a precondition,
+ * evaluates to %TRUE. If the function returns a value, use
+ * g_return_val_if_fail() instead.
+ *
+ * If @expr evaluates to %FALSE, the current function should be considered to
+ * have undefined behaviour (a programmer error). The only correct solution
+ * to such an error is to change the module that is calling the current
+ * function, so that it avoids this incorrect call.
+ *
+ * To make this undefined behaviour visible, if @expr evaluates to %FALSE,
+ * the result is usually that a critical message is logged and the current
+ * function returns.
  *
  * If G_DISABLE_CHECKS is defined then the check is not performed.  You
  * should therefore not depend on any side effects of @expr.
@@ -304,8 +334,17 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
  * @val: the value to return from the current function
  *       if the expression is not true
  *
- * Verifies that the expression evaluates to %TRUE.  If the expression
- * evaluates to %FALSE, a critical message is logged and @val is
+ * Verifies that the expression @expr, usually representing a precondition,
+ * evaluates to %TRUE. If the function does not return a value, use
+ * g_return_if_fail() instead.
+ *
+ * If @expr evaluates to %FALSE, the current function should be considered to
+ * have undefined behaviour (a programmer error). The only correct solution
+ * to such an error is to change the module that is calling the current
+ * function, so that it avoids this incorrect call.
+ *
+ * To make this undefined behaviour visible, if @expr evaluates to %FALSE,
+ * the result is usually that a critical message is logged and @val is
  * returned from the current function.
  *
  * If G_DISABLE_CHECKS is defined then the check is not performed.  You
@@ -331,13 +370,11 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
 
 #else /* !G_DISABLE_CHECKS */
 
-#ifdef __GNUC__
-
 #define g_return_if_fail(expr)		G_STMT_START{			\
      if G_LIKELY(expr) { } else       					\
        {								\
 	 g_return_if_fail_warning (G_LOG_DOMAIN,			\
-		                   __PRETTY_FUNCTION__,		        \
+		                   G_STRFUNC,				\
 		                   #expr);				\
 	 return;							\
        };				}G_STMT_END
@@ -346,7 +383,7 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
      if G_LIKELY(expr) { } else						\
        {								\
 	 g_return_if_fail_warning (G_LOG_DOMAIN,			\
-		                   __PRETTY_FUNCTION__,		        \
+		                   G_STRFUNC,				\
 		                   #expr);				\
 	 return (val);							\
        };				}G_STMT_END
@@ -357,7 +394,7 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
 	    "file %s: line %d (%s): should not be reached",		\
 	    __FILE__,							\
 	    __LINE__,							\
-	    __PRETTY_FUNCTION__);					\
+	    G_STRFUNC);							\
      return;				}G_STMT_END
 
 #define g_return_val_if_reached(val)	G_STMT_START{			\
@@ -366,52 +403,8 @@ GPrintFunc      g_set_printerr_handler  (GPrintFunc      func);
 	    "file %s: line %d (%s): should not be reached",		\
 	    __FILE__,							\
 	    __LINE__,							\
-	    __PRETTY_FUNCTION__);					\
+	    G_STRFUNC);							\
      return (val);			}G_STMT_END
-
-#else /* !__GNUC__ */
-
-#define g_return_if_fail(expr)		G_STMT_START{		\
-     if (expr) { } else						\
-       {							\
-	 g_log (G_LOG_DOMAIN,					\
-		G_LOG_LEVEL_CRITICAL,				\
-		"file %s: line %d: assertion '%s' failed",	\
-		__FILE__,					\
-		__LINE__,					\
-		#expr);						\
-	 return;						\
-       };				}G_STMT_END
-
-#define g_return_val_if_fail(expr, val)	G_STMT_START{		\
-     if (expr) { } else						\
-       {							\
-	 g_log (G_LOG_DOMAIN,					\
-		G_LOG_LEVEL_CRITICAL,				\
-		"file %s: line %d: assertion '%s' failed",	\
-		__FILE__,					\
-		__LINE__,					\
-		#expr);						\
-	 return (val);						\
-       };				}G_STMT_END
-
-#define g_return_if_reached()		G_STMT_START{		\
-     g_log (G_LOG_DOMAIN,					\
-	    G_LOG_LEVEL_CRITICAL,				\
-	    "file %s: line %d: should not be reached",		\
-	    __FILE__,						\
-	    __LINE__);						\
-     return;				}G_STMT_END
-
-#define g_return_val_if_reached(val)	G_STMT_START{		\
-     g_log (G_LOG_DOMAIN,					\
-	    G_LOG_LEVEL_CRITICAL,				\
-	    "file %s: line %d: should not be reached",		\
-	    __FILE__,						\
-	    __LINE__);						\
-     return (val);			}G_STMT_END
-
-#endif /* !__GNUC__ */
 
 #endif /* !G_DISABLE_CHECKS */
 

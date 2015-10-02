@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Stef Walter <stefw@collabora.co.uk>
  */
@@ -207,7 +205,7 @@ g_tls_password_class_init (GTlsPasswordClass *klass)
 				   g_param_spec_string ("description",
 							P_("Description"),
 							P_("Description of what the password is for"),
-							"",
+							NULL,
 							G_PARAM_READWRITE |
 							G_PARAM_STATIC_STRINGS));
 
@@ -215,7 +213,7 @@ g_tls_password_class_init (GTlsPasswordClass *klass)
 				   g_param_spec_string ("warning",
 							P_("Warning"),
 							P_("Warning about the password"),
-							"",
+							NULL,
 							G_PARAM_READWRITE |
 							G_PARAM_STATIC_STRINGS));
 
@@ -329,7 +327,7 @@ g_tls_password_set_value_full (GTlsPassword   *password,
  *
  * Get flags about the password.
  *
- * Return value: The flags about the password.
+ * Returns: The flags about the password.
  *
  * Since: 2.30
  */
@@ -366,7 +364,7 @@ g_tls_password_set_flags (GTlsPassword      *password,
  *
  * Get a description string about what the password will be used for.
  *
- * Return value: The description of the password.
+ * Returns: The description of the password.
  *
  * Since: 2.30
  */
@@ -409,7 +407,7 @@ g_tls_password_set_description (GTlsPassword      *password,
  * representation of the password flags returned from
  * g_tls_password_get_flags().
  *
- * Return value: The warning.
+ * Returns: The warning.
  *
  * Since: 2.30
  */

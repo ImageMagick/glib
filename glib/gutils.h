@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -43,7 +41,7 @@ G_BEGIN_DECLS
 #  if defined (__GNUC__) && defined (__PPC__) && (defined (_CALL_SYSV) || defined (_WIN32))
 #    define G_VA_COPY(ap1, ap2)	  (*(ap1) = *(ap2))
 #  elif defined (G_VA_COPY_AS_ARRAY)
-#    define G_VA_COPY(ap1, ap2)	  g_memmove ((ap1), (ap2), sizeof (va_list))
+#    define G_VA_COPY(ap1, ap2)	  memmove ((ap1), (ap2), sizeof (va_list))
 #  else /* va_list is a pointer */
 #    define G_VA_COPY(ap1, ap2)	  ((ap1) = (ap2))
 #  endif /* va_list is a pointer */
@@ -239,16 +237,7 @@ gchar *g_format_size_for_display (goffset size);
  * function passed to g_atexit().
  */
 typedef void (*GVoidFunc) (void);
-#ifndef ATEXIT
-# define ATEXIT(proc) g_ATEXIT(proc)
-#else
-# define G_NATIVE_ATEXIT
-#endif /* ATEXIT */
-/* we use a GLib function as a replacement for ATEXIT, so
- * the programmer is not required to check the return value
- * (if there is any in the implementation) and doesn't encounter
- * missing include files.
- */
+#define ATEXIT(proc) g_ATEXIT(proc)
 GLIB_DEPRECATED
 void	g_atexit		(GVoidFunc    func);
 
@@ -265,7 +254,7 @@ int atexit (void (*)(void));
 #define g_atexit(func) atexit(func)
 #endif
 
-#endif  /* G_DISABLE_DEPRECATED */
+#endif
 
 
 /* Look for an executable in PATH, following execvp() rules */
@@ -318,7 +307,7 @@ g_bit_storage (gulong number)
   return G_LIKELY (number) ?
 	   ((GLIB_SIZEOF_LONG * 8U - 1) ^ (guint) __builtin_clzl(number)) + 1 : 1;
 #else
-  register guint n_bits = 0;
+  guint n_bits = 0;
   
   do
     {

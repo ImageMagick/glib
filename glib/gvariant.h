@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Ryan Lortie <desrt@desrt.ca>
  */
@@ -323,10 +321,13 @@ typedef enum
   G_VARIANT_PARSE_ERROR_UNTERMINATED_STRING_CONSTANT,
   G_VARIANT_PARSE_ERROR_VALUE_EXPECTED
 } GVariantParseError;
-#define G_VARIANT_PARSE_ERROR (g_variant_parser_get_error_quark ())
+#define G_VARIANT_PARSE_ERROR (g_variant_parse_error_quark ())
+
+GLIB_DEPRECATED_IN_2_38_FOR(g_variant_parse_error_quark)
+GQuark                          g_variant_parser_get_error_quark        (void);
 
 GLIB_AVAILABLE_IN_ALL
-GQuark                          g_variant_parser_get_error_quark        (void);
+GQuark                          g_variant_parse_error_quark             (void);
 
 GLIB_AVAILABLE_IN_ALL
 GVariantBuilder *               g_variant_builder_new                   (const GVariantType   *type);
@@ -392,9 +393,60 @@ GLIB_AVAILABLE_IN_ALL
 GVariant *                      g_variant_new_parsed_va                 (const gchar          *format,
                                                                          va_list              *app);
 
+GLIB_AVAILABLE_IN_2_40
+gchar *                         g_variant_parse_error_print_context     (GError               *error,
+                                                                         const gchar          *source_str);
+
 GLIB_AVAILABLE_IN_ALL
 gint                            g_variant_compare                       (gconstpointer one,
                                                                          gconstpointer two);
+
+typedef struct _GVariantDict GVariantDict;
+struct _GVariantDict {
+  /*< private >*/
+  gsize x[16];
+};
+
+GLIB_AVAILABLE_IN_2_40
+GVariantDict *                  g_variant_dict_new                      (GVariant             *from_asv);
+
+GLIB_AVAILABLE_IN_2_40
+void                            g_variant_dict_init                     (GVariantDict         *dict,
+                                                                         GVariant             *from_asv);
+
+GLIB_AVAILABLE_IN_2_40
+gboolean                        g_variant_dict_lookup                   (GVariantDict         *dict,
+                                                                         const gchar          *key,
+                                                                         const gchar          *format_string,
+                                                                         ...);
+GLIB_AVAILABLE_IN_2_40
+GVariant *                      g_variant_dict_lookup_value             (GVariantDict         *dict,
+                                                                         const gchar          *key,
+                                                                         const GVariantType   *expected_type);
+GLIB_AVAILABLE_IN_2_40
+gboolean                        g_variant_dict_contains                 (GVariantDict         *dict,
+                                                                         const gchar          *key);
+GLIB_AVAILABLE_IN_2_40
+void                            g_variant_dict_insert                   (GVariantDict         *dict,
+                                                                         const gchar          *key,
+                                                                         const gchar          *format_string,
+                                                                         ...);
+GLIB_AVAILABLE_IN_2_40
+void                            g_variant_dict_insert_value             (GVariantDict         *dict,
+                                                                         const gchar          *key,
+                                                                         GVariant             *value);
+GLIB_AVAILABLE_IN_2_40
+gboolean                        g_variant_dict_remove                   (GVariantDict         *dict,
+                                                                         const gchar          *key);
+GLIB_AVAILABLE_IN_2_40
+void                            g_variant_dict_clear                    (GVariantDict         *dict);
+GLIB_AVAILABLE_IN_2_40
+GVariant *                      g_variant_dict_end                      (GVariantDict         *dict);
+GLIB_AVAILABLE_IN_2_40
+GVariantDict *                  g_variant_dict_ref                      (GVariantDict         *dict);
+GLIB_AVAILABLE_IN_2_40
+void                            g_variant_dict_unref                    (GVariantDict         *dict);
+
 G_END_DECLS
 
 #endif /* __G_VARIANT_H__ */

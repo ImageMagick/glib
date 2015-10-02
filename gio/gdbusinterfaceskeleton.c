@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -210,11 +208,11 @@ g_dbus_interface_skeleton_class_init (GDBusInterfaceSkeletonClass *klass)
    *
    * Note that this signal is emitted in a thread dedicated to
    * handling the method call so handlers are allowed to perform
-   * blocking IO. This means that it is appropriate to call
-   * e.g. <ulink
-   * url="http://hal.freedesktop.org/docs/polkit/PolkitAuthority.html#polkit-authority-check-authorization-sync">polkit_authority_check_authorization_sync()</ulink>
-   * with the <ulink
-   * url="http://hal.freedesktop.org/docs/polkit/PolkitAuthority.html#POLKIT-CHECK-AUTHORIZATION-FLAGS-ALLOW-USER-INTERACTION:CAPS">POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION</ulink> flag set.
+   * blocking IO. This means that it is appropriate to call e.g.
+   * [polkit_authority_check_authorization_sync()](http://hal.freedesktop.org/docs/polkit/PolkitAuthority.html#polkit-authority-check-authorization-sync)
+   * with the
+   * [POLKIT_CHECK_AUTHORIZATION_FLAGS_ALLOW_USER_INTERACTION](http://hal.freedesktop.org/docs/polkit/PolkitAuthority.html#POLKIT-CHECK-AUTHORIZATION-FLAGS-ALLOW-USER-INTERACTION:CAPS)
+   * flag set.
    *
    * If %FALSE is returned then no further handlers are run and the
    * signal handler must take a reference to @invocation and finish
@@ -244,7 +242,7 @@ g_dbus_interface_skeleton_class_init (GDBusInterfaceSkeletonClass *klass)
    * Since: 2.30
    */
   signals[G_AUTHORIZE_METHOD_SIGNAL] =
-    g_signal_new ("g-authorize-method",
+    g_signal_new (I_("g-authorize-method"),
                   G_TYPE_DBUS_INTERFACE_SKELETON,
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GDBusInterfaceSkeletonClass, g_authorize_method),
@@ -359,7 +357,9 @@ g_dbus_interface_skeleton_get_vtable (GDBusInterfaceSkeleton *interface_)
  *
  * Gets all D-Bus properties for @interface_.
  *
- * Returns: (transfer full): A #GVariant of type <link linkend="G-VARIANT-TYPE-VARDICT:CAPS">'a{sv}'</link>. Free with g_variant_unref().
+ * Returns: (transfer full): A #GVariant of type
+ * ['a{sv}'][G-VARIANT-TYPE-VARDICT:CAPS].
+ * Free with g_variant_unref().
  *
  * Since: 2.30
  */
@@ -381,7 +381,7 @@ g_dbus_interface_skeleton_get_properties (GDBusInterfaceSkeleton *interface_)
  *
  * For example, an exported D-Bus interface may queue up property
  * changes and emit the
- * <literal>org.freedesktop.DBus.Properties::PropertiesChanged</literal>
+ * `org.freedesktop.DBus.Properties::Propert``
  * signal later (e.g. in an idle handler). This technique is useful
  * for collapsing multiple property changes into one.
  *

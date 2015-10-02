@@ -71,8 +71,6 @@ print_help (GOptionContext *options, gchar **argv)
   gint    argc = 3;
   GError *error = NULL;
 
-  g_setenv ("LANG", "C", TRUE);
-
   g_option_context_parse (options, &argc, &argv, &error);
   g_option_context_free (options);
   exit(0);
@@ -624,7 +622,7 @@ arg_test5 (void)
   gchar **argv_copy;
   int argc;
   char *old_locale, *current_locale;
-  const char *locale = "de_DE";
+  const char *locale = "de_DE.UTF-8";
   GOptionEntry entries [] =
     { { "test", 0, 0, G_OPTION_ARG_DOUBLE, &arg_test5_double, NULL, NULL },
       { NULL } };
@@ -1965,6 +1963,65 @@ test_basic (void)
   g_option_context_free (context);
 }
 
+typedef struct {
+  gboolean parameter_seen;
+  gboolean summary_seen;
+  gboolean description_seen;
+  gboolean destroyed;
+} TranslateData;
+
+static const gchar *
+translate_func (const gchar *str,
+                gpointer     data)
+{
+  TranslateData *d = data;
+
+  if (strcmp (str, "parameter") == 0)
+    d->parameter_seen = TRUE;
+  else if (strcmp (str, "summary") == 0)
+    d->summary_seen = TRUE;
+  else if (strcmp (str, "description") == 0)
+    d->description_seen = TRUE;
+  
+  return str;
+}
+
+static void
+destroy_notify (gpointer data)
+{
+  TranslateData *d = data;
+
+  d->destroyed = TRUE;
+}
+
+static void
+test_translate (void)
+{
+  GOptionContext *context;
+  gchar *arg = NULL;
+  GOptionEntry entries [] =
+    { { "test", 't', 0, G_OPTION_ARG_STRING, &arg, NULL, NULL },
+      { NULL } };
+  TranslateData data = { 0, };
+  gchar *str;
+
+  context = g_option_context_new ("parameter");
+  g_option_context_add_main_entries (context, entries, NULL);
+  g_option_context_set_summary (context, "summary");
+  g_option_context_set_description (context, "description");
+
+  g_option_context_set_translate_func (context, translate_func, &data, destroy_notify);
+  
+  str = g_option_context_get_help (context, FALSE, NULL);
+  g_free (str);
+  g_option_context_free (context);
+
+  g_assert (data.parameter_seen);
+  g_assert (data.summary_seen);
+  g_assert (data.description_seen);
+  g_assert (data.destroyed);
+}
+
 static void
 test_help (void)
 {
@@ -2241,6 +2298,71 @@ test_group_parse (void)
   g_option_context_free (context);
 }
 
+static gint
+option_context_parse_command_line (GOptionContext *context,
+                                   const gchar    *command_line)
+{
+  gchar **argv;
+  guint argv_len, argv_new_len;
+  gboolean success;
+
+  argv = split_string (command_line, NULL);
+  argv_len = g_strv_length (argv);
+
+  success = g_option_context_parse_strv (context, &argv, NULL);
+  argv_new_len = g_strv_length (argv);
+
+  g_strfreev (argv);
+  return success ? argv_len - argv_new_len : -1;
+}
+
+static void
+test_strict_posix (void)
+{
+  GOptionContext *context;
+  gboolean foo;
+  gboolean bar;
+  GOptionEntry entries[] = {
+    { "foo", 'f', 0, G_OPTION_ARG_NONE, &foo, NULL, NULL },
+    { "bar", 'b', 0, G_OPTION_ARG_NONE, &bar, NULL, NULL },
+    { NULL }
+  };
+  gint n_parsed;
+
+  context = g_option_context_new (NULL);
+  g_option_context_add_main_entries (context, entries, NULL);
+
+  foo = bar = FALSE;
+  g_option_context_set_strict_posix (context, FALSE);
+  n_parsed = option_context_parse_command_line (context, "program --foo command --bar");
+  g_assert_cmpint (n_parsed, ==, 2);
+  g_assert (foo == TRUE);
+  g_assert (bar == TRUE);
+
+  foo = bar = FALSE;
+  g_option_context_set_strict_posix (context, TRUE);
+  n_parsed = option_context_parse_command_line (context, "program --foo command --bar");
+  g_assert_cmpint (n_parsed, ==, 1);
+  g_assert (foo == TRUE);
+  g_assert (bar == FALSE);
+
+  foo = bar = FALSE;
+  g_option_context_set_strict_posix (context, TRUE);
+  n_parsed = option_context_parse_command_line (context, "program --foo --bar command");
+  g_assert_cmpint (n_parsed, ==, 2);
+  g_assert (foo == TRUE);
+  g_assert (bar == TRUE);
+
+  foo = bar = FALSE;
+  g_option_context_set_strict_posix (context, TRUE);
+  n_parsed = option_context_parse_command_line (context, "program command --foo --bar");
+  g_assert_cmpint (n_parsed, ==, 0);
+  g_assert (foo == FALSE);
+  g_assert (bar == FALSE);
+
+  g_option_context_free (context);
+}
+
 static void
 flag_reverse_string (void)
 {
@@ -2266,11 +2388,12 @@ flag_reverse_string (void)
 
   argv = split_string ("program --test bla", &argc);
 
-  retval = g_option_context_parse (context, &argc, &argv, &error);
+  retval = g_option_context_parse_strv (context, &argv, &error);
   g_assert (retval == TRUE);
   g_assert_no_error (error);
   g_strfreev (argv);
   g_option_context_free (context);
+  g_free (arg);
 }
 
 static void
@@ -2298,10 +2421,60 @@ flag_optional_int (void)
 
   argv = split_string ("program --test 5", &argc);
 
-  retval = g_option_context_parse (context, &argc, &argv, &error);
+  retval = g_option_context_parse_strv (context, &argv, &error);
   g_assert (retval == TRUE);
   g_assert_no_error (error);
   g_strfreev (argv);
+  g_option_context_free (context);
+}
+
+static void
+short_remaining (void)
+{
+  gboolean ignore = FALSE;
+  gboolean remaining = FALSE;
+  gint number = 0;
+  gchar* text = NULL;
+  gchar** files = NULL;
+  GError* error = NULL;
+  GOptionEntry entries[] =
+  {
+    { "ignore", 'i', 0, G_OPTION_ARG_NONE, &ignore, NULL, NULL },
+    { "remaining", 'r', 0, G_OPTION_ARG_NONE, &remaining, NULL, NULL },
+    { "number", 'n', 0, G_OPTION_ARG_INT, &number, NULL, NULL },
+    { "text", 't', 0, G_OPTION_ARG_STRING, &text, NULL, NULL },
+    { G_OPTION_REMAINING, 0, 0, G_OPTION_ARG_FILENAME_ARRAY, &files, NULL, NULL },
+    { NULL }
+  };
+  GOptionContext* context;
+  gchar **argv, **argv_copy;
+  gint argc;
+
+  g_test_bug ("729563");
+
+  argv = split_string ("program -ri -n 4 -t hello file1 file2", &argc);
+  argv_copy = copy_stringv (argv, argc);
+
+  context = g_option_context_new (NULL);
+
+  g_option_context_add_main_entries (context, entries, NULL);
+  g_option_context_set_ignore_unknown_options (context, TRUE);
+
+  g_option_context_parse (context, &argc, &argv, &error);
+  g_assert_no_error (error);
+
+  g_assert (ignore);
+  g_assert (remaining);
+  g_assert_cmpint (number, ==, 4);
+  g_assert_cmpstr (text, ==, "hello");
+  g_assert_cmpstr (files[0], ==, "file1"); 
+  g_assert_cmpstr (files[1], ==, "file2"); 
+  g_assert (files[2] == NULL); 
+
+  g_free (text);
+  g_strfreev (files);
+  g_strfreev (argv_copy);
+  g_free (argv);
   g_option_context_free (context);
 }
 
@@ -2312,14 +2485,17 @@ main (int   argc,
   int i;
   gchar *test_name;
 
+  g_setenv ("LC_ALL", "C", TRUE);
   g_test_init (&argc, &argv, NULL);
 
   g_test_bug_base ("http://bugzilla.gnome.org/");
+
   g_test_add_func ("/option/help/options", test_help);
   g_test_add_func ("/option/help/no-options", test_help_no_options);
   g_test_add_func ("/option/help/no-help-options", test_help_no_help_options);
 
   g_test_add_func ("/option/basic", test_basic);
+  g_test_add_func ("/option/translate", test_translate);
 
   g_test_add_func ("/option/group/captions", test_group_captions);
   for (i = 0; i < 4; i++)
@@ -2342,6 +2518,7 @@ main (int   argc,
   g_test_add_func ("/option/group/main", test_main_group);
   g_test_add_func ("/option/group/error-hook", test_error_hook);
   g_test_add_func ("/option/group/parse", test_group_parse);
+  g_test_add_func ("/option/strict-posix", test_strict_posix);
 
   /* Test that restoration on failure works */
   g_test_add_func ("/option/restoration/int", error_test1);
@@ -2412,6 +2589,7 @@ main (int   argc,
   g_test_add_func ("/option/bug/lonely-dash", lonely_dash_test);
   g_test_add_func ("/option/bug/missing-arg", missing_arg_test);
   g_test_add_func ("/option/bug/dash-arg", dash_arg_test);
+  g_test_add_func ("/option/bug/short-remaining", short_remaining); 
 
   return g_test_run();
 }

@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -29,8 +27,6 @@
 #include <fcntl.h>
 #if G_OS_UNIX
 #include <dirent.h>
-#endif
-#ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
@@ -60,7 +56,6 @@
 #include "glocalfileinputstream.h"
 #include "glocalfileoutputstream.h"
 #include "glocalfileiostream.h"
-#include "glocaldirectorymonitor.h"
 #include "glocalfilemonitor.h"
 #include "gmountprivate.h"
 #include "gunixmounts.h"
@@ -70,6 +65,8 @@
 #ifdef G_OS_UNIX
 #include "glib-unix.h"
 #endif
+#include "glib-private.h"
+
 #include "glib-private.h"
 
 #ifdef G_OS_WIN32
@@ -141,7 +138,7 @@ g_local_file_class_init (GLocalFileClass *klass)
 				  G_FILE_ATTRIBUTE_INFO_COPY_WITH_FILE |
 				  G_FILE_ATTRIBUTE_INFO_COPY_WHEN_MOVED);
   
-#ifdef HAVE_CHOWN
+#ifdef G_OS_UNIX
   g_file_attribute_info_list_add (list,
 				  G_FILE_ATTRIBUTE_UNIX_UID,
 				  G_FILE_ATTRIBUTE_TYPE_UINT32,
@@ -304,6 +301,38 @@ _g_local_file_new (const char *filename)
   local = g_object_new (G_TYPE_LOCAL_FILE, NULL);
   local->filename = canonicalize_filename (filename);
   
+  return G_FILE (local);
+}
+
+/*< internal >
+ * g_local_file_new_from_dirname_and_basename:
+ * @dirname: an absolute, canonical directory name
+ * @basename: the name of a child inside @dirname
+ *
+ * Creates a #GFile from @dirname and @basename.
+ *
+ * This is more efficient than pasting the fields together for yourself
+ * and creating a #GFile from the result, and also more efficient than
+ * creating a #GFile for the dirname and using g_file_get_child().
+ *
+ * @dirname must be canonical, as per GLocalFile's opinion of what
+ * canonical means.  This means that you should only pass strings that
+ * were returned by _g_local_file_get_filename().
+ *
+ * Returns: a #GFile
+ */
+GFile *
+g_local_file_new_from_dirname_and_basename (const gchar *dirname,
+                                            const gchar *basename)
+{
+  GLocalFile *local;
+
+  g_return_val_if_fail (dirname != NULL, NULL);
+  g_return_val_if_fail (basename && basename[0] && !strchr (basename, '/'), NULL);
+
+  local = g_object_new (G_TYPE_LOCAL_FILE, NULL);
+  local->filename = g_build_filename (dirname, basename, NULL);
+
   return G_FILE (local);
 }
 
@@ -2081,6 +2110,8 @@ g_local_file_trash (GFile         *file,
     {
       int errsv = errno;
 
+      g_unlink (infofile);
+
       g_free (topdir);
       g_free (trashname);
       g_free (infofile);
@@ -2419,8 +2450,8 @@ g_local_file_move (GFile                  *source,
 
 #ifdef G_OS_WIN32
 
-static gboolean
-is_remote (const gchar *filename)
+gboolean
+g_local_file_is_remote (const gchar *filename)
 {
   return FALSE;
 }
@@ -2476,8 +2507,8 @@ is_remote_fs (const gchar *filename)
   return FALSE;
 }
 
-static gboolean
-is_remote (const gchar *filename)
+gboolean
+g_local_file_is_remote (const gchar *filename)
 {
   static gboolean remote_home;
   static gsize initialized;
@@ -2504,8 +2535,9 @@ g_local_file_monitor_dir (GFile             *file,
 			  GCancellable      *cancellable,
 			  GError           **error)
 {
-  GLocalFile* local_file = G_LOCAL_FILE(file);
-  return _g_local_directory_monitor_new (local_file->filename, flags, is_remote (local_file->filename), error);
+  GLocalFile *local_file = G_LOCAL_FILE (file);
+
+  return g_local_file_monitor_new_for_path (local_file->filename, TRUE, flags, error);
 }
 
 static GFileMonitor*
@@ -2514,10 +2546,10 @@ g_local_file_monitor_file (GFile             *file,
 			   GCancellable      *cancellable,
 			   GError           **error)
 {
-  GLocalFile* local_file = G_LOCAL_FILE(file);
-  return _g_local_file_monitor_new (local_file->filename, flags, is_remote (local_file->filename), error);
-}
+  GLocalFile *local_file = G_LOCAL_FILE (file);
 
+  return g_local_file_monitor_new_for_path (local_file->filename, FALSE, flags, error);
+}
 
 /* Here is the GLocalFile implementation of g_file_measure_disk_usage().
  *
@@ -2621,17 +2653,45 @@ g_local_file_measure_size_of_file (gint           parent_fd,
                                    MeasureState  *state,
                                    GError       **error)
 {
-  struct stat buf;
+  GLocalFileStat buf;
 
   if (g_cancellable_set_error_if_cancelled (state->cancellable, error))
     return FALSE;
 
 #if defined (AT_FDCWD)
   if (fstatat (parent_fd, name->data, &buf, AT_SYMLINK_NOFOLLOW) != 0)
-#else
-  if (g_lstat (name->data, &buf) != 0)
-#endif
     return g_local_file_measure_size_error (state->flags, errno, name, error);
+#elif defined (HAVE_LSTAT) || !defined (G_OS_WIN32)
+  if (g_lstat (name->data, &buf) != 0)
+    return g_local_file_measure_size_error (state->flags, errno, name, error);
+#else
+  {
+    const char *filename = (const gchar *) name->data;
+    wchar_t *wfilename = g_utf8_to_utf16 (filename, -1, NULL, NULL, NULL);
+    int retval;
+    int save_errno;
+    int len;
+
+    if (wfilename == NULL)
+      return g_local_file_measure_size_error (state->flags, errno, name, error);
+
+    len = wcslen (wfilename);
+    while (len > 0 && G_IS_DIR_SEPARATOR (wfilename[len-1]))
+      len--;
+    if (len > 0 &&
+        (!g_path_is_absolute (filename) || len > g_path_skip_root (filename) - filename))
+      wfilename[len] = '\0';
+
+    retval = _wstat32i64 (wfilename, &buf);
+    save_errno = errno;
+
+    g_free (wfilename);
+
+    errno = save_errno;
+    if (retval != 0)
+      return g_local_file_measure_size_error (state->flags, errno, name, error);
+  }
+#endif
 
   if (name->next)
     {
@@ -2699,7 +2759,11 @@ g_local_file_measure_size_of_file (gint           parent_fd,
         return FALSE;
 
 #ifdef AT_FDCWD
-      dir_fd = openat (parent_fd, name->data, O_RDONLY | O_DIRECTORY);
+#ifdef HAVE_OPEN_O_DIRECTORY
+      dir_fd = openat (parent_fd, name->data, O_RDONLY|O_DIRECTORY);
+#else
+      dir_fd = openat (parent_fd, name->data, O_RDONLY);
+#endif
       if (dir_fd < 0)
         return g_local_file_measure_size_error (state->flags, errno, name, error);
 #endif

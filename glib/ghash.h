@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -66,15 +64,15 @@ GHashTable* g_hash_table_new_full          (GHashFunc       hash_func,
 GLIB_AVAILABLE_IN_ALL
 void        g_hash_table_destroy           (GHashTable     *hash_table);
 GLIB_AVAILABLE_IN_ALL
-void        g_hash_table_insert            (GHashTable     *hash_table,
+gboolean    g_hash_table_insert            (GHashTable     *hash_table,
                                             gpointer        key,
                                             gpointer        value);
 GLIB_AVAILABLE_IN_ALL
-void        g_hash_table_replace           (GHashTable     *hash_table,
+gboolean    g_hash_table_replace           (GHashTable     *hash_table,
                                             gpointer        key,
                                             gpointer        value);
 GLIB_AVAILABLE_IN_ALL
-void        g_hash_table_add               (GHashTable     *hash_table,
+gboolean    g_hash_table_add               (GHashTable     *hash_table,
                                             gpointer        key);
 GLIB_AVAILABLE_IN_ALL
 gboolean    g_hash_table_remove            (GHashTable     *hash_table,
@@ -119,6 +117,9 @@ GLIB_AVAILABLE_IN_ALL
 GList *     g_hash_table_get_keys          (GHashTable     *hash_table);
 GLIB_AVAILABLE_IN_ALL
 GList *     g_hash_table_get_values        (GHashTable     *hash_table);
+GLIB_AVAILABLE_IN_2_40
+gpointer *  g_hash_table_get_keys_as_array (GHashTable     *hash_table,
+                                            guint          *length);
 
 GLIB_AVAILABLE_IN_ALL
 void        g_hash_table_iter_init         (GHashTableIter *iter,

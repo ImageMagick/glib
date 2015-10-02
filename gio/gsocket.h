@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Christian Kellner <gicmo@gnome.org>
  *          Samuel Cormier-Iijima <sciyoshi@gmail.com>
@@ -238,6 +236,15 @@ gssize                 g_socket_send_message            (GSocket                
 							 gint                     flags,
 							 GCancellable            *cancellable,
 							 GError                 **error);
+
+GLIB_AVAILABLE_IN_2_44
+gint                   g_socket_send_messages           (GSocket                 *socket,
+							 GOutputMessage          *messages,
+							 guint                    num_messages,
+							 gint                     flags,
+							 GCancellable            *cancellable,
+							 GError                 **error);
+
 GLIB_AVAILABLE_IN_ALL
 gboolean               g_socket_close                   (GSocket                 *socket,
 							 GError                 **error);

@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -30,6 +28,7 @@
 #include <gfileattribute-priv.h>
 #include <gfileinfo-priv.h>
 #include "gfile.h"
+#include "gfilemonitor.h"
 #include "gseekable.h"
 #include "gfileinputstream.h"
 #include "gfileinfo.h"
@@ -519,6 +518,28 @@ g_resource_file_query_info (GFile                *file,
   return info;
 }
 
+static GFileInfo *
+g_resource_file_query_filesystem_info (GFile         *file,
+                                       const char    *attributes,
+                                       GCancellable  *cancellable,
+                                       GError       **error)
+{
+  GFileInfo *info;
+  GFileAttributeMatcher *matcher;
+
+  info = g_file_info_new ();
+
+  matcher = g_file_attribute_matcher_new (attributes);
+  if (g_file_attribute_matcher_matches (matcher, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE))
+    g_file_info_set_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE, "resource");
+
+  if (g_file_attribute_matcher_matches (matcher, G_FILE_ATTRIBUTE_FILESYSTEM_READONLY))    g_file_info_set_attribute_boolean (info, G_FILE_ATTRIBUTE_FILESYSTEM_READONLY, TRUE);
+
+  g_file_attribute_matcher_unref (matcher);
+
+  return info;
+}
+
 static GFileAttributeInfoList *
 g_resource_file_query_settable_attributes (GFile         *file,
 					   GCancellable  *cancellable,
@@ -567,6 +588,32 @@ g_resource_file_read (GFile         *file,
   return res;
 }
 
+typedef GFileMonitor GResourceFileMonitor;
+typedef GFileMonitorClass GResourceFileMonitorClass;
+
+GType g_resource_file_monitor_get_type (void);
+
+G_DEFINE_TYPE (GResourceFileMonitor, g_resource_file_monitor, G_TYPE_FILE_MONITOR)
+
+static void
+g_resource_file_monitor_init (GResourceFileMonitor *monitor)
+{
+}
+
+static void
+g_resource_file_monitor_class_init (GResourceFileMonitorClass *class)
+{
+}
+
+static GFileMonitor *
+g_resource_file_monitor_file (GFile              *file,
+                              GFileMonitorFlags   flags,
+                              GCancellable       *cancellable,
+                              GError            **error)
+{
+  return g_object_new (g_resource_file_monitor_get_type (), NULL);
+}
+
 static void
 g_resource_file_file_iface_init (GFileIface *iface)
 {
@@ -587,9 +634,11 @@ g_resource_file_file_iface_init (GFileIface *iface)
   iface->get_child_for_display_name = g_resource_file_get_child_for_display_name;
   iface->enumerate_children = g_resource_file_enumerate_children;
   iface->query_info = g_resource_file_query_info;
+  iface->query_filesystem_info = g_resource_file_query_filesystem_info;
   iface->query_settable_attributes = g_resource_file_query_settable_attributes;
   iface->query_writable_namespaces = g_resource_file_query_writable_namespaces;
   iface->read_fn = g_resource_file_read;
+  iface->monitor_file = g_resource_file_monitor_file;
 
   iface->supports_thread_contexts = TRUE;
 }

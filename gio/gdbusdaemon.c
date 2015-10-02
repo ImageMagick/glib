@@ -7,6 +7,7 @@
 #include <gio/gio.h>
 #include <gio/gunixsocketaddress.h>
 #include "gdbusdaemon.h"
+#include "glibintl.h"
 
 #include "gdbus-daemon-generated.h"
 
@@ -596,9 +597,18 @@ match_matches (GDBusDaemon *daemon,
 	  break;
 	case CHECK_TYPE_PATH_PREFIX:
 	  len = strlen (element->value);
-	  if (!(g_str_has_prefix (value, element->value) &&
-		(value[len] == 0 || value[len] == '/')))
+
+	  /* Make sure to handle the case of element->value == '/'. */
+	  if (len == 1)
+	    break;
+
+	  /* Fail if there's no prefix match, or if the prefix match doesn't
+	   * finish at the end of or at a separator in the @value. */
+	  if (!g_str_has_prefix (value, element->value))
 	    return FALSE;
+	  if (value[len] != 0 && value[len] != '/')
+	    return FALSE;
+
 	  break;
 	case CHECK_TYPE_PATH_RELATED:
 	  len = strlen (element->value);
@@ -1686,7 +1696,7 @@ g_dbus_daemon_class_init (GDBusDaemonClass *klass)
   gobject_class->get_property = g_dbus_daemon_get_property;
 
   g_dbus_daemon_signals[SIGNAL_IDLE_TIMEOUT] =
-    g_signal_new ("idle-timeout",
+    g_signal_new (I_("idle-timeout"),
 		  G_TYPE_DBUS_DAEMON,
 		  G_SIGNAL_RUN_LAST,
 		  0,

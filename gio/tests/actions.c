@@ -103,6 +103,17 @@ test_basic (void)
   g_assert (!a.did_run);
 }
 
+static void
+test_name (void)
+{
+  g_assert (!g_action_name_is_valid (""));
+  g_assert (!g_action_name_is_valid ("("));
+  g_assert (!g_action_name_is_valid ("%abc"));
+  g_assert (!g_action_name_is_valid ("$x1"));
+  g_assert (g_action_name_is_valid ("abc.def"));
+  g_assert (g_action_name_is_valid ("ABC-DEF"));
+}
+
 static gboolean
 strv_has_string (gchar       **haystack,
                  const gchar  *needle)
@@ -167,6 +178,8 @@ strv_set_equal (gchar **strv, ...)
 
   return res;
 }
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
 static void
 test_simple_group (void)
@@ -233,10 +246,16 @@ test_simple_group (void)
   action = g_simple_action_group_lookup (group, "bar");
   g_assert (action == NULL);
 
+  simple = g_simple_action_new ("foo", NULL);
+  g_simple_action_group_insert (group, G_ACTION (simple));
+  g_object_unref (simple);
+
   a.did_run = FALSE;
   g_object_unref (group);
   g_assert (!a.did_run);
 }
+
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 static void
 test_stateful (void)
@@ -282,6 +301,34 @@ test_stateful (void)
   g_object_unref (action);
 }
 
+static void
+test_default_activate (void)
+{
+  GSimpleAction *action;
+  GVariant *state;
+
+  /* Test changing state via activation with parameter */
+  action = g_simple_action_new_stateful ("foo", G_VARIANT_TYPE_STRING, g_variant_new_string ("hihi"));
+  g_action_activate (G_ACTION (action), g_variant_new_string ("bye"));
+  state = g_action_get_state (G_ACTION (action));
+  g_assert_cmpstr (g_variant_get_string (state, NULL), ==, "bye");
+  g_variant_unref (state);
+  g_object_unref (action);
+
+  /* Test toggling a boolean action via activation with no parameter */
+  action = g_simple_action_new_stateful ("foo", NULL, g_variant_new_boolean (FALSE));
+  g_action_activate (G_ACTION (action), NULL);
+  state = g_action_get_state (G_ACTION (action));
+  g_assert (g_variant_get_boolean (state));
+  g_variant_unref (state);
+  /* and back again */
+  g_action_activate (G_ACTION (action), NULL);
+  state = g_action_get_state (G_ACTION (action));
+  g_assert (!g_variant_get_boolean (state));
+  g_variant_unref (state);
+  g_object_unref (action);
+}
+
 static gboolean foo_activated = FALSE;
 static gboolean bar_activated = FALSE;
 
@@ -318,6 +365,8 @@ change_volume_state (GSimpleAction *action,
   if (0 <= requested && requested <= 10)
     g_simple_action_set_state (action, value);
 }
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 
 static void
 test_entries (void)
@@ -388,6 +437,8 @@ test_entries (void)
   g_object_unref (actions);
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS
+
 static void
 test_parse_detailed (void)
 {
@@ -396,25 +447,26 @@ test_parse_detailed (void)
     const gchar *expected_name;
     const gchar *expected_target;
     const gchar *expected_error;
+    const gchar *detailed_roundtrip;
   } testcases[] = {
-    { "abc",              "abc",    NULL,       NULL },
-    { " abc",             NULL,     NULL,       "invalid format" },
-    { " abc",             NULL,     NULL,       "invalid format" },
-    { "abc:",             NULL,     NULL,       "invalid format" },
-    { ":abc",             NULL,     NULL,       "invalid format" },
-    { "abc(",             NULL,     NULL,       "invalid format" },
-    { "abc)",             NULL,     NULL,       "invalid format" },
-    { "(abc",             NULL,     NULL,       "invalid format" },
-    { ")abc",             NULL,     NULL,       "invalid format" },
-    { "abc::xyz",         "abc",    "'xyz'",    NULL },
-    { "abc('xyz')",       "abc",    "'xyz'",    NULL },
-    { "abc(42)",          "abc",    "42",       NULL },
-    { "abc(int32 42)",    "abc",    "42",       NULL },
-    { "abc(@i 42)",       "abc",    "42",       NULL },
-    { "abc (42)",         NULL,     NULL,       "invalid format" },
-    { "abc(42abc)",       NULL,     NULL,       "invalid character in number" },
-    { "abc(42, 4)",       "abc",    "(42, 4)",  "expected end of input" },
-    { "abc(42,)",         "abc",    "(42,)",    "expected end of input" }
+    { "abc",              "abc",    NULL,       NULL,             "abc" },
+    { " abc",             NULL,     NULL,       "invalid format", NULL },
+    { " abc",             NULL,     NULL,       "invalid format", NULL },
+    { "abc:",             NULL,     NULL,       "invalid format", NULL },
+    { ":abc",             NULL,     NULL,       "invalid format", NULL },
+    { "abc(",             NULL,     NULL,       "invalid format", NULL },
+    { "abc)",             NULL,     NULL,       "invalid format", NULL },
+    { "(abc",             NULL,     NULL,       "invalid format", NULL },
+    { ")abc",             NULL,     NULL,       "invalid format", NULL },
+    { "abc::xyz",         "abc",    "'xyz'",    NULL,             "abc::xyz" },
+    { "abc('xyz')",       "abc",    "'xyz'",    NULL,             "abc::xyz" },
+    { "abc(42)",          "abc",    "42",       NULL,             "abc(42)" },
+    { "abc(int32 42)",    "abc",    "42",       NULL,             "abc(42)" },
+    { "abc(@i 42)",       "abc",    "42",       NULL,             "abc(42)" },
+    { "abc (42)",         NULL,     NULL,       "invalid format", NULL },
+    { "abc(42abc)",       NULL,     NULL,       "invalid character in number", NULL },
+    { "abc(42, 4)",       "abc",    "(42, 4)",  "expected end of input", NULL },
+    { "abc(42,)",         "abc",    "(42,)",    "expected end of input", NULL }
   };
   gint i;
 
@@ -446,6 +498,16 @@ test_parse_detailed (void)
 
       g_assert_cmpstr (name, ==, testcases[i].expected_name);
       g_assert ((target == NULL) == (testcases[i].expected_target == NULL));
+
+      if (success)
+        {
+          gchar *detailed;
+
+          detailed = g_action_print_detailed_name (name, target);
+          g_assert_cmpstr (detailed, ==, testcases[i].detailed_roundtrip);
+          g_free (detailed);
+        }
+
       if (target)
         {
           GVariant *expected;
@@ -678,6 +740,8 @@ call_describe (gpointer user_data)
   return G_SOURCE_REMOVE;
 }
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
 static void
 test_dbus_export (void)
 {
@@ -879,6 +943,8 @@ test_dbus_threaded (void)
   session_bus_down ();
 }
 
+G_GNUC_END_IGNORE_DEPRECATIONS
+
 static void
 test_bug679509 (void)
 {
@@ -952,6 +1018,10 @@ test_property_actions (void)
   GPropertyAction *action;
   GSocketClient *client;
   GApplication *app;
+  gchar *name;
+  GVariantType *ptype, *stype;
+  gboolean enabled;
+  GVariant *state;
 
   group = g_simple_action_group_new ();
   g_signal_connect (group, "action-state-changed", G_CALLBACK (state_changed), NULL);
@@ -966,11 +1036,27 @@ test_property_actions (void)
 
   /* uint... */
   action = g_property_action_new ("keepalive", app, "inactivity-timeout");
+  g_object_get (action, "name", &name, "parameter-type", &ptype, "enabled", &enabled, "state-type", &stype, "state", &state, NULL);
+  g_assert_cmpstr (name, ==, "keepalive");
+  g_assert (enabled);
+  g_free (name);
+  g_variant_unref (state);
+
   g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
   g_object_unref (action);
 
   /* bool... */
   action = g_property_action_new ("tls", client, "tls");
+  g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
+  g_object_unref (action);
+
+  /* inverted */
+  action = g_object_new (G_TYPE_PROPERTY_ACTION,
+                         "name", "disable-proxy",
+                         "object", client,
+                         "property-name", "enable-proxy",
+                         "invert-boolean", TRUE,
+                         NULL);
   g_action_map_add_action (G_ACTION_MAP (group), G_ACTION (action));
   g_object_unref (action);
 
@@ -986,6 +1072,7 @@ test_property_actions (void)
   ensure_state (group, "app-id", "'org.gtk.test'");
   ensure_state (group, "keepalive", "uint32 0");
   ensure_state (group, "tls", "false");
+  ensure_state (group, "disable-proxy", "false");
   ensure_state (group, "type", "'stream'");
 
   verify_changed (NULL);
@@ -1026,6 +1113,11 @@ test_property_actions (void)
   g_assert (g_socket_client_get_tls (client));
   ensure_state (group, "tls", "true");
 
+  g_action_group_change_action_state (G_ACTION_GROUP (group), "disable-proxy", g_variant_new ("b", TRUE));
+  verify_changed ("disable-proxy:true");
+  ensure_state (group, "disable-proxy", "true");
+  g_assert (!g_socket_client_get_enable_proxy (client));
+
   /* test toggle true->false */
   g_action_group_activate_action (G_ACTION_GROUP (group), "tls", NULL);
   verify_changed ("tls:false");
@@ -1041,6 +1133,21 @@ test_property_actions (void)
   g_socket_client_set_tls (client, FALSE);
   verify_changed ("tls:false");
   ensure_state (group, "tls", "false");
+
+  /* now do the same for the inverted action */
+  g_action_group_activate_action (G_ACTION_GROUP (group), "disable-proxy", NULL);
+  verify_changed ("disable-proxy:false");
+  g_assert (g_socket_client_get_enable_proxy (client));
+  ensure_state (group, "disable-proxy", "false");
+
+  g_action_group_activate_action (G_ACTION_GROUP (group), "disable-proxy", NULL);
+  verify_changed ("disable-proxy:true");
+  g_assert (!g_socket_client_get_enable_proxy (client));
+  ensure_state (group, "disable-proxy", "true");
+
+  g_socket_client_set_enable_proxy (client, TRUE);
+  verify_changed ("disable-proxy:false");
+  ensure_state (group, "disable-proxy", "false");
 
   /* enum tests */
   g_action_group_change_action_state (G_ACTION_GROUP (group), "type", g_variant_new ("s", "datagram"));
@@ -1082,12 +1189,15 @@ main (int argc, char **argv)
   g_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/actions/basic", test_basic);
+  g_test_add_func ("/actions/name", test_name);
   g_test_add_func ("/actions/simplegroup", test_simple_group);
   g_test_add_func ("/actions/stateful", test_stateful);
+  g_test_add_func ("/actions/default-activate", test_default_activate);
   g_test_add_func ("/actions/entries", test_entries);
   g_test_add_func ("/actions/parse-detailed", test_parse_detailed);
   g_test_add_func ("/actions/dbus/export", test_dbus_export);
   g_test_add_func ("/actions/dbus/threaded", test_dbus_threaded);
+  g_test_add_func ("/actions/dbus/bug679509", test_bug679509);
   g_test_add_func ("/actions/property", test_property_actions);
 
   return g_test_run ();

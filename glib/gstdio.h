@@ -14,8 +14,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with GLib; see the file COPYING.LIB.  If not,
- * write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __G_STDIO_H__
@@ -27,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-#if defined (_MSC_VER) && !defined(_WIN64)
+#if (defined (__MINGW64_VERSION_MAJOR) || defined (_MSC_VER)) && !defined(_WIN64)
 
 /* Make it clear that we mean the struct with 32-bit st_size and
  * 32-bit st_*time fields as that is how the 32-bit GLib DLL normally

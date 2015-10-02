@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Christian Kellner <gicmo@gnome.org>
  *          Samuel Cormier-Iijima <sciyoshi@gmail.com>
@@ -54,6 +52,8 @@ typedef struct _GSocketListenerClass                        GSocketListenerClass
 /**
  * GSocketListenerClass:
  * @changed: virtual method called when the set of socket listened to changes
+ *
+ * Class structure for #GSocketListener.
  **/
 struct _GSocketListenerClass
 {
@@ -61,8 +61,11 @@ struct _GSocketListenerClass
 
   void (* changed) (GSocketListener *listener);
 
+  void (* event) (GSocketListener      *listener,
+                  GSocketListenerEvent *event,
+                  GSocket              *socket);
+
   /* Padding for future expansion */
-  void (*_g_reserved1) (void);
   void (*_g_reserved2) (void);
   void (*_g_reserved3) (void);
   void (*_g_reserved4) (void);

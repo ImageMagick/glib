@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Christian Kellner <gicmo@gnome.org> 
  */
@@ -212,7 +210,7 @@ g_filter_output_stream_get_base_stream (GFilterOutputStream *stream)
  * Returns whether the base stream will be closed when @stream is
  * closed.
  *
- * Return value: %TRUE if the base stream will be closed.
+ * Returns: %TRUE if the base stream will be closed.
  **/
 gboolean
 g_filter_output_stream_get_close_base_stream (GFilterOutputStream *stream)

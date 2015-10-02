@@ -22,9 +22,10 @@
 
 #include <errno.h>  /* errno */
 #include <glib.h>
-#ifndef _WIN32
+#ifdef G_OS_UNIX
 #include <unistd.h> /* pipe() */
-#else
+#endif
+#ifdef G_OS_WIN32
 #include <io.h>
 #include <fcntl.h>
 #define pipe(fds) _pipe(fds, 4096, _O_BINARY)
@@ -42,11 +43,8 @@ debug (void)
 static void
 info (void)
 {
-#ifdef g_info
-#error "rewrite this to use g_info()"
-#endif
   if (g_test_subprocess ())
-    g_log (G_LOG_DOMAIN, G_LOG_LEVEL_INFO, "this is a regular g_log(..., G_LOG_LEVEL_INFO, ...) from the test suite");
+    g_info ("this is a regular g_info from the test suite");
 }
 
 static void
@@ -174,6 +172,10 @@ test_message (void)
   g_assert_cmpint (*line_term, ==, '\n');
   g_assert_cmpint (line_term_len, ==, 1);
 
+  g_assert (g_io_channel_get_close_on_unref (channel));
+  g_assert (g_io_channel_get_encoding (channel) == NULL);
+  g_assert (!g_io_channel_get_buffered (channel));
+
   io_source = g_io_add_watch (channel, G_IO_IN, test_message_cb1, tlb);
   child_source = g_child_watch_add (pid, test_message_cb2, loop);
 
@@ -181,7 +183,9 @@ test_message (void)
 
   test_message_cb1 (channel, G_IO_IN, tlb);
 
+  g_test_expect_message ("GLib", G_LOG_LEVEL_CRITICAL, "Source ID*");
   g_assert (!g_source_remove (child_source));
+  g_test_assert_expected_messages ();
   g_assert (g_source_remove (io_source));
   g_io_channel_unref (channel);
 
@@ -292,7 +296,9 @@ test_error (void)
 
       test_message_cb1 (channel, G_IO_IN, tlb);
 
+      g_test_expect_message ("GLib", G_LOG_LEVEL_CRITICAL, "Source ID*");
       g_assert (!g_source_remove (child_source));
+      g_test_assert_expected_messages ();
       g_assert (g_source_remove (io_source));
       g_io_channel_unref (channel);
 

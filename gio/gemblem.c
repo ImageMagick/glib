@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <config.h>
@@ -122,7 +120,8 @@ g_emblem_finalize (GObject *object)
 {
   GEmblem *emblem = G_EMBLEM (object);
 
-  g_object_unref (emblem->icon);
+  if (emblem->icon)
+    g_object_unref (emblem->icon);
 
   (*G_OBJECT_CLASS (g_emblem_parent_class)->finalize) (object);
 }

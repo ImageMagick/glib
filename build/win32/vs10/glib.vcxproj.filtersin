@@ -24,7 +24,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-#include "libglib.vs10.sourcefiles.filters"
+#include "glib.vs10.sourcefiles.filters"
     <ClCompile Include="..\..\..\glib\giowin32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -106,6 +106,10 @@
     <ClCompile Include="..\..\..\glib\pcre\pcre_xclass.c">
       <Filter>Source Files\pcre</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\config.h.win32"><Filter>Resource Files</Filter></CustomBuild>
+    <CustomBuild Include="..\..\..\glib\glibconfig.h.win32"><Filter>Resource Files</Filter></CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\glib\glib.rc">

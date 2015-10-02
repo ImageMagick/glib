@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -67,120 +65,99 @@
  * @title: Character Set Conversion
  * @short_description: convert strings between different character sets
  *
- * The g_convert() family of function wraps the functionality of iconv(). In
- * addition to pure character set conversions, GLib has functions to deal
- * with the extra complications of encodings for file names.
+ * The g_convert() family of function wraps the functionality of iconv().
+ * In addition to pure character set conversions, GLib has functions to
+ * deal with the extra complications of encodings for file names.
  *
- * <refsect2 id="file-name-encodings">
- * <title>File Name Encodings</title>
- * <para>
- * Historically, Unix has not had a defined encoding for file
- * names:  a file name is valid as long as it does not have path
- * separators in it ("/").  However, displaying file names may
- * require conversion:  from the character set in which they were
- * created, to the character set in which the application
- * operates.  Consider the Spanish file name
- * "<filename>Presentaci&oacute;n.sxi</filename>".  If the
- * application which created it uses ISO-8859-1 for its encoding,
- * </para>
- * <programlisting id="filename-iso8859-1">
+ * ## File Name Encodings
+ *
+ * Historically, UNIX has not had a defined encoding for file names:
+ * a file name is valid as long as it does not have path separators
+ * in it ("/"). However, displaying file names may require conversion:
+ * from the character set in which they were created, to the character
+ * set in which the application operates. Consider the Spanish file name
+ * "Presentaci&oacute;n.sxi". If the application which created it uses
+ * ISO-8859-1 for its encoding,
+ * |[
  * Character:  P  r  e  s  e  n  t  a  c  i  &oacute;  n  .  s  x  i
  * Hex code:   50 72 65 73 65 6e 74 61 63 69 f3 6e 2e 73 78 69
- * </programlisting>
- * <para>
+ * ]|
  * However, if the application use UTF-8, the actual file name on
  * disk would look like this:
- * </para>
- * <programlisting id="filename-utf-8">
+ * |[
  * Character:  P  r  e  s  e  n  t  a  c  i  &oacute;     n  .  s  x  i
  * Hex code:   50 72 65 73 65 6e 74 61 63 69 c3 b3 6e 2e 73 78 69
- * </programlisting>
- * <para>
- * Glib uses UTF-8 for its strings, and GUI toolkits like GTK+
- * that use Glib do the same thing.  If you get a file name from
- * the file system, for example, from readdir(3) or from g_dir_read_name(),
- * and you wish to display the file name to the user, you
- * <emphasis>will</emphasis> need to convert it into UTF-8.  The
- * opposite case is when the user types the name of a file he
- * wishes to save:  the toolkit will give you that string in
- * UTF-8 encoding, and you will need to convert it to the
- * character set used for file names before you can create the
- * file with open(2) or fopen(3).
- * </para>
- * <para>
+ * ]|
+ * Glib uses UTF-8 for its strings, and GUI toolkits like GTK+ that use
+ * Glib do the same thing. If you get a file name from the file system,
+ * for example, from readdir() or from g_dir_read_name(), and you wish
+ * to display the file name to the user, you  will need to convert it
+ * into UTF-8. The opposite case is when the user types the name of a
+ * file he wishes to save: the toolkit will give you that string in
+ * UTF-8 encoding, and you will need to convert it to the character
+ * set used for file names before you can create the file with open()
+ * or fopen().
+ *
  * By default, Glib assumes that file names on disk are in UTF-8
- * encoding.  This is a valid assumption for file systems which
- * were created relatively recently:  most applications use UTF-8
+ * encoding. This is a valid assumption for file systems which
+ * were created relatively recently: most applications use UTF-8
  * encoding for their strings, and that is also what they use for
- * the file names they create.  However, older file systems may
+ * the file names they create. However, older file systems may
  * still contain file names created in "older" encodings, such as
- * ISO-8859-1. In this case, for compatibility reasons, you may
- * want to instruct Glib to use that particular encoding for file
- * names rather than UTF-8.  You can do this by specifying the
- * encoding for file names in the <link
- * linkend="G_FILENAME_ENCODING"><envar>G_FILENAME_ENCODING</envar></link>
- * environment variable.  For example, if your installation uses
- * ISO-8859-1 for file names, you can put this in your
- * <filename>~/.profile</filename>:
- * </para>
- * <programlisting>
+ * ISO-8859-1. In this case, for compatibility reasons, you may want
+ * to instruct Glib to use that particular encoding for file names
+ * rather than UTF-8. You can do this by specifying the encoding for
+ * file names in the [`G_FILENAME_ENCODING`][G_FILENAME_ENCODING]
+ * environment variable. For example, if your installation uses
+ * ISO-8859-1 for file names, you can put this in your `~/.profile`
+ * |[
  * export G_FILENAME_ENCODING=ISO-8859-1
- * </programlisting>
- * <para>
+ * ]|
  * Glib provides the functions g_filename_to_utf8() and
- * g_filename_from_utf8() to perform the necessary conversions. These
- * functions convert file names from the encoding specified in
- * <envar>G_FILENAME_ENCODING</envar> to UTF-8 and vice-versa.
- * <xref linkend="file-name-encodings-diagram"/> illustrates how
+ * g_filename_from_utf8() to perform the necessary conversions.
+ * These functions convert file names from the encoding specified
+ * in `G_FILENAME_ENCODING` to UTF-8 and vice-versa. This
+ * [diagram][file-name-encodings-diagram] illustrates how
  * these functions are used to convert between UTF-8 and the
  * encoding for file names in the file system.
- * </para>
- * <figure id="file-name-encodings-diagram">
- * <title>Conversion between File Name Encodings</title>
- * <graphic fileref="file-name-encodings.png" format="PNG"/>
- * </figure>
- * <refsect3 id="file-name-encodings-checklist">
- * <title>Checklist for Application Writers</title>
- * <para>
+ *
+ * ## Conversion between file name encodings # {#file-name-encodings-diagram)
+ *
+ * ![](file-name-encodings.png)
+ *
+ * ## Checklist for Application Writers
+ *
  * This section is a practical summary of the detailed
- * description above.  You can use this as a checklist of
+ 
  * things to do to make sure your applications process file
  * name encodings correctly.
- * </para>
- * <orderedlist>
- * <listitem><para>
- * If you get a file name from the file system from a function
- * such as readdir(3) or gtk_file_chooser_get_filename(),
- * you do not need to do any conversion to pass that
- * file name to functions like open(2), rename(2), or
- * fopen(3) &mdash; those are "raw" file names which the file
- * system understands.
- * </para></listitem>
- * <listitem><para>
- * If you need to display a file name, convert it to UTF-8 first by
- * using g_filename_to_utf8(). If conversion fails, display a string like
- * "<literal>Unknown file name</literal>". <emphasis>Do not</emphasis>
- * convert this string back into the encoding used for file names if you
- * wish to pass it to the file system; use the original file name instead.
- * For example, the document window of a word processor could display
- * "Unknown file name" in its title bar but still let the user save the
- * file, as it would keep the raw file name internally. This can happen
- * if the user has not set the <envar>G_FILENAME_ENCODING</envar>
- * environment variable even though he has files whose names are not
- * encoded in UTF-8.
- * </para></listitem>
- * <listitem><para>
- * If your user interface lets the user type a file name for saving or
- * renaming, convert it to the encoding used for file names in the file
- * system by using g_filename_from_utf8(). Pass the converted file name
- * to functions like fopen(3). If conversion fails, ask the user to enter
- * a different file name. This can happen if the user types Japanese
- * characters when <envar>G_FILENAME_ENCODING</envar> is set to
- * <literal>ISO-8859-1</literal>, for example.
- * </para></listitem>
- * </orderedlist>
- * </refsect3>
- * </refsect2>
+ * 
+ * 1. If you get a file name from the file system from a function
+ *    such as readdir() or gtk_file_chooser_get_filename(), you do
+ *    not need to do any conversion to pass that file name to
+ *    functions like open(), rename(), or fopen() -- those are "raw"
+ *    file names which the file system understands.
+ *
+ * 2. If you need to display a file name, convert it to UTF-8 first
+ *    by using g_filename_to_utf8(). If conversion fails, display a
+ *    string like "Unknown file name". Do not convert this string back
+ *    into the encoding used for file names if you wish to pass it to
+ *    the file system; use the original file name instead.
+ *
+ *    For example, the document window of a word processor could display
+ *    "Unknown file name" in its title bar but still let the user save
+ *    the file, as it would keep the raw file name internally. This
+ *    can happen if the user has not set the `G_FILENAME_ENCODING`
+ *    environment variable even though he has files whose names are
+ *    not encoded in UTF-8.
+ *
+ * 3. If your user interface lets the user type a file name for saving
+ *    or renaming, convert it to the encoding used for file names in
+ *    the file system by using g_filename_from_utf8(). Pass the converted
+ *    file name to functions like fopen(). If conversion fails, ask the
+ *    user to enter a different file name. This can happen if the user
+ *    types Japanese characters when `G_FILENAME_ENCODING` is set to
+ *    `ISO-8859-1`, for example.
  */
 
 /* We try to terminate strings in unknown charsets with this many zero bytes
@@ -224,9 +201,6 @@ try_to_aliases (const char **to_aliases,
   return FALSE;
 }
 
-extern const char **
-_g_charset_get_aliases (const char *canonical_name);
-
 /**
  * g_iconv_open:
  * @to_codeset: destination codeset
@@ -239,7 +213,7 @@ _g_charset_get_aliases (const char *canonical_name);
  * GLib provides g_convert() and g_locale_to_utf8() which are likely
  * more convenient than the raw iconv wrappers.
  * 
- * Return value: a "conversion descriptor", or (GIConv)-1 if
+ * Returns: a "conversion descriptor", or (GIConv)-1 if
  *  opening the converter failed.
  **/
 GIConv
@@ -291,7 +265,7 @@ g_iconv_open (const gchar  *to_codeset,
  * GLib provides g_convert() and g_locale_to_utf8() which are likely
  * more convenient than the raw iconv wrappers.
  * 
- * Return value: count of non-reversible conversions, or -1 on error
+ * Returns: count of non-reversible conversions, or -1 on error
  **/
 gsize 
 g_iconv (GIConv   converter,
@@ -318,7 +292,7 @@ g_iconv (GIConv   converter,
  * GLib provides g_convert() and g_locale_to_utf8() which are likely
  * more convenient than the raw iconv wrappers.
  * 
- * Return value: -1 on error, 0 on success
+ * Returns: -1 on error, 0 on success
  **/
 gint
 g_iconv_close (GIConv converter)
@@ -368,8 +342,10 @@ close_converter (GIConv cd)
 /**
  * g_convert_with_iconv:
  * @str:           the string to convert
- * @len:           the length of the string, or -1 if the string is 
- *                 nul-terminated<footnoteref linkend="nul-unsafe"/>. 
+ * @len:           the length of the string in bytes, or -1 if the string is
+ *                 nul-terminated (Note that some encodings may allow nul
+ *                 bytes to occur inside strings. In that case, using -1
+ *                 for the @len parameter is unsafe)
  * @converter:     conversion descriptor from g_iconv_open()
  * @bytes_read:    location to store the number of bytes in the
  *                 input string that were successfully converted, or %NULL.
@@ -386,22 +362,17 @@ close_converter (GIConv cd)
  *
  * Converts a string from one character set to another. 
  * 
- * Note that you should use g_iconv() for streaming 
- * conversions<footnote id="streaming-state">
- *  <para>
+ * Note that you should use g_iconv() for streaming conversions. 
  * Despite the fact that @byes_read can return information about partial 
- * characters, the <literal>g_convert_...</literal> functions
- * are not generally suitable for streaming. If the underlying converter 
- * being used maintains internal state, then this won't be preserved 
- * across successive calls to g_convert(), g_convert_with_iconv() or 
- * g_convert_with_fallback(). (An example of this is the GNU C converter 
- * for CP1255 which does not emit a base character until it knows that 
- * the next character is not a mark that could combine with the base 
- * character.)
- *  </para>
- * </footnote>. 
+ * characters, the g_convert_... functions are not generally suitable
+ * for streaming. If the underlying converter maintains internal state,
+ * then this won't be preserved across successive calls to g_convert(),
+ * g_convert_with_iconv() or g_convert_with_fallback(). (An example of
+ * this is the GNU C converter for CP1255 which does not emit a base
+ * character until it knows that the next character is not a mark that
+ * could combine with the base character.)
  *
- * Return value: If the conversion was successful, a newly allocated
+ * Returns: If the conversion was successful, a newly allocated
  *               nul-terminated string, which must be freed with
  *               g_free(). Otherwise %NULL and @error will be set.
  **/
@@ -524,14 +495,10 @@ g_convert_with_iconv (const gchar *str,
 /**
  * g_convert:
  * @str:           the string to convert
- * @len:           the length of the string, or -1 if the string is 
- *                 nul-terminated<footnote id="nul-unsafe">
-                     <para>
-                       Note that some encodings may allow nul bytes to 
-                       occur inside strings. In that case, using -1 for 
-                       the @len parameter is unsafe.
-                     </para>
-                   </footnote>. 
+ * @len:           the length of the string in bytes, or -1 if the string is
+ *                 nul-terminated (Note that some encodings may allow nul
+ *                 bytes to occur inside strings. In that case, using -1
+ *                 for the @len parameter is unsafe)
  * @to_codeset:    name of character set into which to convert @str
  * @from_codeset:  character set of @str.
  * @bytes_read: (out):   location to store the number of bytes in the
@@ -549,10 +516,20 @@ g_convert_with_iconv (const gchar *str,
  *
  * Converts a string from one character set to another.
  *
- * Note that you should use g_iconv() for streaming 
- * conversions<footnoteref linkend="streaming-state"/>.
+ * Note that you should use g_iconv() for streaming conversions. 
+ * Despite the fact that @byes_read can return information about partial 
+ * characters, the g_convert_... functions are not generally suitable
+ * for streaming. If the underlying converter maintains internal state,
+ * then this won't be preserved across successive calls to g_convert(),
+ * g_convert_with_iconv() or g_convert_with_fallback(). (An example of
+ * this is the GNU C converter for CP1255 which does not emit a base
+ * character until it knows that the next character is not a mark that
+ * could combine with the base character.)
  *
- * Return value: If the conversion was successful, a newly allocated
+ * Using extensions such as "//TRANSLIT" may not work (or may not work
+ * well) on many platforms.  Consider using g_str_to_ascii() instead.
+ *
+ * Returns: If the conversion was successful, a newly allocated
  *               nul-terminated string, which must be freed with
  *               g_free(). Otherwise %NULL and @error will be set.
  **/
@@ -597,8 +574,10 @@ g_convert (const gchar *str,
 /**
  * g_convert_with_fallback:
  * @str:          the string to convert
- * @len:          the length of the string, or -1 if the string is 
- *                nul-terminated<footnoteref linkend="nul-unsafe"/>. 
+ * @len:          the length of the string in bytes, or -1 if the string is
+ *                 nul-terminated (Note that some encodings may allow nul
+ *                 bytes to occur inside strings. In that case, using -1
+ *                 for the @len parameter is unsafe)
  * @to_codeset:   name of character set into which to convert @str
  * @from_codeset: character set of @str.
  * @fallback:     UTF-8 string to use in place of character not
@@ -624,10 +603,17 @@ g_convert (const gchar *str,
  * to @to_codeset in their iconv() functions, 
  * in which case GLib will simply return that approximate conversion.
  *
- * Note that you should use g_iconv() for streaming 
- * conversions<footnoteref linkend="streaming-state"/>.
+ * Note that you should use g_iconv() for streaming conversions. 
+ * Despite the fact that @byes_read can return information about partial 
+ * characters, the g_convert_... functions are not generally suitable
+ * for streaming. If the underlying converter maintains internal state,
+ * then this won't be preserved across successive calls to g_convert(),
+ * g_convert_with_iconv() or g_convert_with_fallback(). (An example of
+ * this is the GNU C converter for CP1255 which does not emit a base
+ * character until it knows that the next character is not a mark that
+ * could combine with the base character.)
  *
- * Return value: If the conversion was successful, a newly allocated
+ * Returns: If the conversion was successful, a newly allocated
  *               nul-terminated string, which must be freed with
  *               g_free(). Otherwise %NULL and @error will be set.
  **/
@@ -883,7 +869,9 @@ strdup_len (const gchar *string,
  * @opsysstring:   a string in the encoding of the current locale. On Windows
  *                 this means the system codepage.
  * @len:           the length of the string, or -1 if the string is
- *                 nul-terminated<footnoteref linkend="nul-unsafe"/>. 
+ *                 nul-terminated (Note that some encodings may allow nul
+ *                 bytes to occur inside strings. In that case, using -1
+ *                 for the @len parameter is unsafe)
  * @bytes_read:    location to store the number of bytes in the
  *                 input string that were successfully converted, or %NULL.
  *                 Even if the conversion was successful, this may be 
@@ -899,10 +887,10 @@ strdup_len (const gchar *string,
  * 
  * Converts a string which is in the encoding used for strings by
  * the C runtime (usually the same as that used by the operating
- * system) in the <link linkend="setlocale">current locale</link> into a
- * UTF-8 string.
+ * system) in the [current locale][setlocale] into a UTF-8 string.
  * 
- * Return value: The converted string, or %NULL on an error.
+ * Returns: A newly-allocated buffer containing the converted string,
+ *               or %NULL on an error, and error will be set.
  **/
 gchar *
 g_locale_to_utf8 (const gchar  *opsysstring,
@@ -924,7 +912,9 @@ g_locale_to_utf8 (const gchar  *opsysstring,
  * g_locale_from_utf8:
  * @utf8string:    a UTF-8 encoded string 
  * @len:           the length of the string, or -1 if the string is
- *                 nul-terminated<footnoteref linkend="nul-unsafe"/>. 
+ *                 nul-terminated (Note that some encodings may allow nul
+ *                 bytes to occur inside strings. In that case, using -1
+ *                 for the @len parameter is unsafe)
  * @bytes_read:    location to store the number of bytes in the
  *                 input string that were successfully converted, or %NULL.
  *                 Even if the conversion was successful, this may be 
@@ -940,10 +930,11 @@ g_locale_to_utf8 (const gchar  *opsysstring,
  * 
  * Converts a string from UTF-8 to the encoding used for strings by
  * the C runtime (usually the same as that used by the operating
- * system) in the <link linkend="setlocale">current locale</link>. On
- * Windows this means the system codepage.
+ * system) in the [current locale][setlocale]. On Windows this means
+ * the system codepage.
  * 
- * Return value: The converted string, or %NULL on an error.
+ * Returns: A newly-allocated buffer containing the converted string,
+ *               or %NULL on an error, and error will be set.
  **/
 gchar *
 g_locale_from_utf8 (const gchar *utf8string,
@@ -990,27 +981,26 @@ filename_charset_cache_free (gpointer data)
  * representation of a filename, see g_filename_display_name().
  *
  * On Unix, the character sets are determined by consulting the
- * environment variables <envar>G_FILENAME_ENCODING</envar> and
- * <envar>G_BROKEN_FILENAMES</envar>. On Windows, the character set
- * used in the GLib API is always UTF-8 and said environment variables
- * have no effect.
+ * environment variables `G_FILENAME_ENCODING` and `G_BROKEN_FILENAMES`.
+ * On Windows, the character set used in the GLib API is always UTF-8
+ * and said environment variables have no effect.
  *
- * <envar>G_FILENAME_ENCODING</envar> may be set to a comma-separated list 
- * of character set names. The special token "&commat;locale" is taken to 
- * mean the character set for the <link linkend="setlocale">current 
- * locale</link>. If <envar>G_FILENAME_ENCODING</envar> is not set, but 
- * <envar>G_BROKEN_FILENAMES</envar> is, the character set of the current 
- * locale is taken as the filename encoding. If neither environment variable 
- * is set, UTF-8 is taken as the filename encoding, but the character
- * set of the current locale is also put in the list of encodings.
+ * `G_FILENAME_ENCODING` may be set to a comma-separated list of
+ * character set names. The special token "&commat;locale" is taken
+ * to  mean the character set for the [current locale][setlocale].
+ * If `G_FILENAME_ENCODING` is not set, but `G_BROKEN_FILENAMES` is,
+ * the character set of the current locale is taken as the filename
+ * encoding. If neither environment variable  is set, UTF-8 is taken
+ * as the filename encoding, but the character set of the current locale
+ * is also put in the list of encodings.
  *
  * The returned @charsets belong to GLib and must not be freed.
  *
  * Note that on Unix, regardless of the locale character set or
- * <envar>G_FILENAME_ENCODING</envar> value, the actual file names present 
+ * `G_FILENAME_ENCODING` value, the actual file names present 
  * on a system might be in any random encoding or just gibberish.
  *
- * Return value: %TRUE if the filename encoding is UTF-8.
+ * Returns: %TRUE if the filename encoding is UTF-8.
  * 
  * Since: 2.6
  */
@@ -1126,7 +1116,9 @@ get_filename_charset (const gchar **filename_charset)
  * g_filename_to_utf8:
  * @opsysstring:   a string in the encoding for filenames
  * @len:           the length of the string, or -1 if the string is
- *                 nul-terminated<footnoteref linkend="nul-unsafe"/>. 
+ *                 nul-terminated (Note that some encodings may allow nul
+ *                 bytes to occur inside strings. In that case, using -1
+ *                 for the @len parameter is unsafe)
  * @bytes_read:    location to store the number of bytes in the
  *                 input string that were successfully converted, or %NULL.
  *                 Even if the conversion was successful, this may be 
@@ -1143,9 +1135,9 @@ get_filename_charset (const gchar **filename_charset)
  * Converts a string which is in the encoding used by GLib for
  * filenames into a UTF-8 string. Note that on Windows GLib uses UTF-8
  * for filenames; on other platforms, this function indirectly depends on 
- * the <link linkend="setlocale">current locale</link>.
+ * the [current locale][setlocale].
  * 
- * Return value: The converted string, or %NULL on an error.
+ * Returns: The converted string, or %NULL on an error.
  **/
 gchar*
 g_filename_to_utf8 (const gchar *opsysstring, 
@@ -1215,9 +1207,9 @@ g_filename_to_utf8 (const gchar *opsysstring,
  * Converts a string from UTF-8 to the encoding GLib uses for
  * filenames. Note that on Windows GLib uses UTF-8 for filenames;
  * on other platforms, this function indirectly depends on the 
- * <link linkend="setlocale">current locale</link>.
+ * [current locale][setlocale].
  * 
- * Return value: (array length=bytes_written) (element-type guint8) (transfer full):
+ * Returns: (array length=bytes_written) (element-type guint8) (transfer full):
  *               The converted string, or %NULL on an error.
  **/
 gchar*
@@ -1547,7 +1539,7 @@ hostname_validate (const char *hostname)
  * Converts an escaped ASCII-encoded URI to a local filename in the
  * encoding used for filenames. 
  * 
- * Return value: (type filename): a newly-allocated string holding
+ * Returns: (type filename): a newly-allocated string holding
  *               the resulting filename, or %NULL on an error.
  **/
 gchar *
@@ -1706,7 +1698,7 @@ g_filename_from_uri (const gchar *uri,
  * Converts an absolute filename to an escaped ASCII-encoded URI, with the path
  * component following Section 3.3. of RFC 2396.
  * 
- * Return value: a newly-allocated string holding the resulting
+ * Returns: a newly-allocated string holding the resulting
  *               URI, or %NULL on an error.
  **/
 gchar *
@@ -1865,7 +1857,7 @@ g_uri_list_extract_uris (const gchar *uri_list)
  * This function is preferred over g_filename_display_name() if you know the
  * whole path, as it allows translation.
  *
- * Return value: a newly allocated string containing
+ * Returns: a newly allocated string containing
  *   a rendition of the basename of the filename in valid UTF-8
  *
  * Since: 2.6
@@ -1904,7 +1896,7 @@ g_filename_display_basename (const gchar *filename)
  * g_filename_display_basename(), since that allows location-based
  * translation of filenames.
  *
- * Return value: a newly allocated string containing
+ * Returns: a newly allocated string containing
  *   a rendition of the filename in valid UTF-8
  *
  * Since: 2.6

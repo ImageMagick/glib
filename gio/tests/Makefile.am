@@ -3,13 +3,15 @@ include $(top_srcdir)/glib-tap.mk
 dist_uninstalled_test_data =
 test_ltlibraries =
 
-SUBDIRS = gdbus-object-manager-example services
+SUBDIRS = gdbus-object-manager-example services modules
 
 LDADD = \
-	$(top_builddir)/glib/libglib-2.0.la		\
+	$(top_builddir)/gio/libgio-2.0.la		\
 	$(top_builddir)/gobject/libgobject-2.0.la	\
 	$(top_builddir)/gmodule/libgmodule-2.0.la	\
-	$(top_builddir)/gio/libgio-2.0.la
+	$(top_builddir)/glib/libglib-2.0.la		\
+	$(NULL)
+
 AM_CPPFLAGS = $(gio_INCLUDES) $(GLIB_DEBUG_FLAGS) -I$(top_builddir)/gio -I$(top_srcdir)/gio
 DEFS = -DG_LOG_DOMAIN=\"GLib-GIO\" -DTEST_SERVICES=\""$(abs_top_builddir)/gio/tests/services"\"
 AM_CFLAGS = $(GLIB_WARN_CFLAGS)
@@ -18,7 +20,9 @@ AM_CFLAGS = $(GLIB_WARN_CFLAGS)
 #  Test programs buildable on all platforms
 
 test_programs = \
+	appmonitor				\
 	async-close-output-stream		\
+	async-splice-output-stream		\
 	buffered-input-stream			\
 	buffered-output-stream			\
 	cancellable				\
@@ -27,8 +31,11 @@ test_programs = \
 	credentials				\
 	data-input-stream			\
 	data-output-stream			\
+	defaultvalue				\
 	fileattributematcher			\
 	filter-streams				\
+	giomodule				\
+	gsubprocess				\
 	g-file					\
 	g-file-info				\
 	g-icon					\
@@ -49,11 +56,15 @@ test_programs = \
 	simple-proxy				\
 	sleepy-stream				\
 	socket					\
+	socket-listener				\
+	socket-service				\
 	srvtarget				\
 	task					\
 	tls-interaction				\
 	vfs					\
 	volumemonitor				\
+	glistmodel				\
+	testfilemonitor				\
 	$(NULL)
 
 uninstalled_test_programs = \
@@ -86,6 +97,7 @@ uninstalled_test_extra_programs = \
 	gdbus-example-subtree			\
 	gdbus-example-watch-name		\
 	gdbus-example-watch-proxy		\
+	gsubprocess-testprog			\
 	httpd					\
 	proxy					\
 	resolver				\
@@ -120,6 +132,7 @@ schema_tests = \
 	default-in-aliases.gschema.xml			\
 	default-not-in-choices.gschema.xml		\
 	default-out-of-range.gschema.xml		\
+	description-xmllang.gschema.xml			\
 	empty-key.gschema.xml				\
 	enum-with-aliases.gschema.xml			\
 	enum-with-bad-default.gschema.xml		\
@@ -170,7 +183,26 @@ schema_tests = \
 	range-parse-error.gschema.xml			\
 	range-wrong-type.gschema.xml			\
 	range.gschema.xml				\
+	summary-xmllang.gschema.xml			\
+	summary-xmllang-and-attrs.gschema.xml		\
 	wrong-category.gschema.xml			\
+	$(NULL)
+
+test_programs += thumbnail-verification
+dist_test_data += $(thumbnail_data_files)
+thumbnail_data_files = $(addprefix thumbnails/,$(thumbnail_tests))
+thumbnail_tests = \
+	bad-header.png \
+	empty-key.png \
+	header-and-chunk-size.png \
+	header-only.png \
+	huge-chunk-size.png \
+	mtime-zero.png \
+	no-text-data.png \
+	overlong-value.png \
+	uri-mismatch.png \
+	valid.png \
+	valid-no-size.png \
 	$(NULL)
 
 test_programs += tls-certificate
@@ -211,14 +243,20 @@ gdbus_daemon_SOURCES = \
 
 if OS_UNIX
 test_programs += \
-	basic-application			\
 	contenttype				\
 	file					\
 	gdbus-peer-object-manager		\
+	gdbus-unix-addresses			\
 	live-g-file				\
 	socket-address				\
+	stream-rw_all				\
 	unix-fd					\
 	unix-streams				\
+	$(NULL)
+
+test_extra_programs += \
+	basic-application			\
+	dbus-launch				\
 	$(NULL)
 
 # Uninstalled because of the check-for-executable logic in DesktopAppInfo unable to find the installed executable
@@ -226,6 +264,44 @@ uninstalled_test_programs += \
 	appinfo					\
 	desktop-app-info			\
 	$(NULL)
+
+home_desktop_files = \
+	epiphany-weather-for-toronto-island-9c6a4e022b17686306243dada811d550d25eb1fb.desktop	\
+	eog.desktop
+
+usr_desktop_files = \
+	baobab.desktop				\
+	cheese.desktop				\
+	dconf-editor.desktop			\
+	eog.desktop				\
+	evince-previewer.desktop		\
+	evince.desktop				\
+	file-roller.desktop			\
+	gcr-prompter.desktop			\
+	gcr-viewer.desktop			\
+	gedit.desktop				\
+	glade.desktop				\
+	gnome-clocks.desktop			\
+	gnome-contacts.desktop			\
+	gnome-font-viewer.desktop		\
+	gnome-music.desktop			\
+	gnome-terminal.desktop			\
+	gucharmap.desktop			\
+	kde4/dolphin.desktop			\
+	kde4/kate.desktop			\
+	kde4/konqbrowser.desktop		\
+	kde4/okular.desktop			\
+	mimeinfo.cache				\
+	nautilus-autorun-software.desktop	\
+	nautilus-classic.desktop		\
+	nautilus-connect-server.desktop		\
+	nautilus.desktop			\
+	totem.desktop				\
+	yelp.desktop
+
+dist_test_data += \
+	$(addprefix desktop-files/usr/applications/,$(usr_desktop_files))	\
+	$(addprefix desktop-files/home/applications/,$(home_desktop_files))
 
 dist_test_data += \
 	appinfo-test-actions.desktop		\
@@ -235,10 +311,15 @@ dist_test_data += \
 	appinfo-test2.desktop			\
 	file.c					\
 	org.gtk.test.dbusappinfo.desktop	\
+	x-content/image-dcf/DCIM/Camera/20130831_203925.jpg \
+	x-content/image-dcf/DCIM/Camera/20130831_203928.jpg \
+	x-content/unix-software/autorun.sh 	\
+	x-content/win32-software/autorun.exe	\
 	$(NULL)
 
 test_extra_programs += \
 	appinfo-test				\
+	apps					\
 	$(NULL)
 
 uninstalled_test_extra_programs += \
@@ -248,11 +329,11 @@ uninstalled_test_extra_programs += \
 test_programs += mimeapps
 clean-local: clean-mimeapps
 clean-mimeapps:
-	rm -rf xdgdatadir xdgdatahome
+	rm -rf xdgdatadir xdgdatahome xdgconfighome
 
 uninstalled_test_programs += gsettings gschema-compile
 gsettings_DEPENDENCIES = test.mo
-CLEANFILES += test.mo de/LC_MESSAGES/test.mo
+CLEANFILES += test.mo de/LC_MESSAGES/test.mo keyfile/gsettings.store
 gsettings_CFLAGS = $(AM_CFLAGS) -DSRCDIR=\"$(abs_srcdir)\"
 test.mo: de.po
 	$(AM_V_GEN) $(MSGFMT) -o test.mo $(srcdir)/de.po; \
@@ -260,12 +341,13 @@ test.mo: de.po
 	cp -f test.mo de/LC_MESSAGES
 EXTRA_DIST += de.po
 dist_uninstalled_test_data += \
-	org.gtk.test.gschema.xml		\
+	org.gtk.test.gschema.xml.orig		\
 	org.gtk.schemasourcecheck.gschema.xml	\
 	testenum.h				\
 	enums.xml.template
 # Generated while running the testcase itself...
 CLEANFILES += \
+	org.gtk.test.gschema.xml	\
 	org.gtk.test.enums.xml		\
 	gsettings.store			\
 	gschemas.compiled		\
@@ -293,8 +375,7 @@ gdbus_non_socket_SOURCES = \
 uninstalled_test_extra_programs += gdbus-example-objectmanager-client
 gdbus_example_objectmanager_client_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
 
-uninstalled_test_extra_programs += gdbus-example-objectmanager-server
-gdbus_example_objectmanager_server_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
+test_extra_programs += gsubprocess-testprog
 
 uninstalled_test_extra_programs += gdbus-test-fixture
 gdbus_test_fixture_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
@@ -331,8 +412,10 @@ test_programs += \
 	gdbus-proxy-threads			\
 	gdbus-proxy-well-known-name		\
 	gdbus-test-codegen			\
+	gdbus-test-codegen-old			\
 	gdbus-threading				\
 	gmenumodel				\
+	gnotification				\
 	$(NULL)
 
 gdbus_proxy_threads_CFLAGS = $(AM_CFLAGS) $(DBUS1_CFLAGS)
@@ -354,12 +437,17 @@ gdbus_proxy_SOURCES                      = $(gdbus_sessionbus_sources) gdbus-pro
 gdbus_proxy_threads_SOURCES              = $(gdbus_sessionbus_sources) gdbus-proxy-threads.c
 gdbus_proxy_well_known_name_SOURCES      = $(gdbus_sessionbus_sources) gdbus-proxy-well-known-name.c
 gdbus_test_codegen_SOURCES               = $(gdbus_sessionbus_sources) gdbus-test-codegen.c
+nodist_gdbus_test_codegen_SOURCES        = gdbus-test-codegen-generated.c gdbus-test-codegen-generated.h
+gdbus_test_codegen_old_SOURCES           = $(gdbus_sessionbus_sources) gdbus-test-codegen.c
+nodist_gdbus_test_codegen_old_SOURCES    = gdbus-test-codegen-generated.c gdbus-test-codegen-generated.h
+gdbus_test_codegen_old_CPPFLAGS          = $(AM_CPPFLAGS) -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_36 -DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_2_36
 gdbus_threading_SOURCES                  = $(gdbus_sessionbus_sources) gdbus-threading.c
 gmenumodel_SOURCES                       = $(gdbus_sessionbus_sources) gmenumodel.c
-nodist_gdbus_test_codegen_SOURCES        = gdbus-test-codegen-generated.c gdbus-test-codegen-generated.h
+gnotification_SOURCES                    = $(gdbus_sessionbus_sources) gnotification.c gnotification-server.h gnotification-server.c
 
+BUILT_SOURCES += gdbus-test-codegen-generated.c gdbus-test-codegen-generated.h
 gdbus-test-codegen.o: gdbus-test-codegen-generated.h
-gdbus-test-codegen-generated.h gdbus-test-codegen-generated.c: test-codegen.xml Makefile $(top_builddir)/gio/gdbus-2.0/codegen/gdbus-codegen
+gdbus-test-codegen-generated.h: test-codegen.xml Makefile $(top_builddir)/gio/gdbus-2.0/codegen/gdbus-codegen
 	$(AM_V_GEN) UNINSTALLED_GLIB_SRCDIR=$(top_srcdir) \
 		UNINSTALLED_GLIB_BUILDDIR=$(top_builddir) \
 		$(PYTHON) $(top_builddir)/gio/gdbus-2.0/codegen/gdbus-codegen \
@@ -378,11 +466,15 @@ gdbus-test-codegen-generated.h gdbus-test-codegen-generated.c: test-codegen.xml 
 		--annotate "org.project.Bar::TestSignal[array_of_strings]" Key8 Value8 \
 		$(srcdir)/test-codegen.xml \
 		$(NULL)
+gdbus-test-codegen-generated.c: gdbus-test-codegen-generated.h
+	@: # Generated as side-effect of .h
 
 EXTRA_DIST += test-codegen.xml
 CLEANFILES += gdbus-test-codegen-generated.[ch] gdbus-test-codegen-generated-doc-*.xml
 endif # OS_UNIX
 endif # HAVE_DBUS_DAEMON
+
+tls_interaction_SOURCES = tls-interaction.c gtesttlsbackend.c gtesttlsbackend.h
 
 # -----------------------------------------------------------------------------
 
@@ -404,9 +496,17 @@ gdbus_serialization_SOURCES = \
 	gdbus-tests.c
 endif
 
-# -----------------------------------------------------------------------------
-#  The resources test is a bit more complicated...
+if HAVE_GCC
+test_programs += \
+	autoptr				\
+	$(NULL)
+endif
 
+# -----------------------------------------------------------------------------
+#  The resources test is a bit more complicated, and we cannot build it when
+#  cross-compiling GIO because it requires running a binary...
+
+if !CROSS_COMPILING
 test_programs += resources
 resources_SOURCES = resources.c
 nodist_resources_SOURCES = test_resources.c test_resources2.c test_resources2.h
@@ -428,11 +528,7 @@ if !ENABLE_INSTALLED_TESTS
 libresourceplugin_la_LDFLAGS += -rpath /
 endif
 
-if CROSS_COMPILING
-  glib_compile_resources=$(GLIB_COMPILE_RESOURCES)
-else
-  glib_compile_resources=$(top_builddir)/gio/glib-compile-resources
-endif
+glib_compile_resources=$(top_builddir)/gio/glib-compile-resources
 
 resources.o: test_resources2.h
 test_resources.c: test2.gresource.xml Makefile $(shell $(glib_compile_resources) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/test2.gresource.xml)
@@ -448,5 +544,26 @@ test.gresource: test.gresource.xml Makefile $(shell $(glib_compile_resources) --
 	$(AM_V_GEN) $(glib_compile_resources) --target=$@ --sourcedir=$(srcdir) $<
 
 EXTRA_DIST += test.gresource.xml test1.txt test2.gresource.xml test2.txt test3.gresource.xml test3.txt test4.gresource.xml
-
 CLEANFILES += test_resources.c test_resources2.[ch] plugin_resources.c test.gresource
+endif # !CROSS_COMPILING
+
+BUILT_SOURCES += giotypefuncs.c
+
+giotypefuncs.c: Makefile
+	$(AM_V_GEN) echo '#include <gio/gio.h>' > xgen-giosrc.c && \
+	  echo "G_GNUC_BEGIN_IGNORE_DEPRECATIONS" > xgen-gio && \
+	  ${CPP} $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) xgen-giosrc.c | \
+	  $(GREP) -o '\bg_[A-Za-z0-9_]*_get_type\b' | \
+	  $(GREP) -v 'g_io_extension_get_type\|g_variant_get_type' | \
+	  sort | uniq | \
+	  $(SED) -e 's/^/*tp++ = /' -e 's/$$/ ();/' >> xgen-gio && \
+	  cp xgen-gio $@ # && rm -f xgen-gio xgen-giosrc.c
+
+CLEANFILES += xgen-giosrc.c xgen-gio giotypefuncs.c
+
+if ENABLE_INSTALLED_TESTS
+if OS_UNIX
+install-data-hook:
+	$(AM_V_at) chmod a+x $(DESTDIR)$(installed_testdir)/x-content/win32-software/autorun.exe
+endif
+endif

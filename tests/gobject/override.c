@@ -14,9 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #undef	G_LOG_DOMAIN
@@ -374,6 +372,8 @@ test (GType        type,
 
       if (strcmp (ret, expected_retval) != 0)
         failed = TRUE;
+
+      g_free (ret);
     }
 
 #ifndef VERBOSE
@@ -392,6 +392,7 @@ test (GType        type,
     }
 
   g_string_free (test_string, TRUE);
+  g_object_unref (self);
 }
      
 int

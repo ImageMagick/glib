@@ -21,7 +21,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			InheritedPropertySheets=".\glib-build-defines.vsprops"
+			InheritedPropertySheets=".\glib-gen-srcs.vsprops"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -45,13 +45,13 @@
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(TargetDir)$(ProjectName)-2.0.lib"
+				ImportLibrary="$(TargetDir)$(ProjectName)-$(ApiVersion).lib"
 				TargetMachine="1"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			InheritedPropertySheets=".\glib-build-defines.vsprops"
+			InheritedPropertySheets=".\glib-gen-srcs.vsprops"
 			ConfigurationType="2"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -77,13 +77,13 @@
 				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(TargetDir)$(ProjectName)-2.0.lib"
+				ImportLibrary="$(TargetDir)$(ProjectName)-$(ApiVersion).lib"
 				TargetMachine="1"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Debug|x64"
-			InheritedPropertySheets=".\glib-build-defines.vsprops"
+			InheritedPropertySheets=".\glib-gen-srcs.vsprops"
 			ConfigurationType="2"
 			CharacterSet="2"
 			>
@@ -107,13 +107,13 @@
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(TargetDir)$(ProjectName)-2.0.lib"
+				ImportLibrary="$(TargetDir)$(ProjectName)-$(ApiVersion).lib"
 				TargetMachine="17"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|x64"
-			InheritedPropertySheets=".\glib-build-defines.vsprops"
+			InheritedPropertySheets=".\glib-gen-srcs.vsprops"
 			ConfigurationType="2"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
@@ -139,7 +139,7 @@
 				LinkTimeCodeGeneration="0"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
-				ImportLibrary="$(TargetDir)$(ProjectName)-2.0.lib"
+				ImportLibrary="$(TargetDir)$(ProjectName)-$(ApiVersion).lib"
 				TargetMachine="17"
 			/>
 		</Configuration>
@@ -152,7 +152,7 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-#include "libgobject.sourcefiles"
+#include "gobject.sourcefiles"
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -165,6 +165,40 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File RelativePath="..\..\..\gobject\glib-mkenums.in">
+				<FileConfiguration Name="Debug|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating glib-mkenums..."
+						CommandLine="$(GenGLibMKEnums)"
+						Outputs="..\..\..\gobject\glib-mkenums"
+					/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release|Win32">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating glib-mkenums..."
+						CommandLine="$(GenGLibMKEnums)"
+						Outputs="..\..\..\gobject\glib-mkenums"
+					/>
+				</FileConfiguration>
+				<FileConfiguration Name="Debug|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating glib-mkenums..."
+						CommandLine="$(GenGLibMKEnums)"
+						Outputs="..\..\..\gobject\glib-mkenums"
+					/>
+				</FileConfiguration>
+				<FileConfiguration Name="Release|x64">
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Generating glib-mkenums..."
+						CommandLine="$(GenGLibMKEnums)"
+						Outputs="..\..\..\gobject\glib-mkenums"
+					/>
+				</FileConfiguration>
+			</File>
 			<File RelativePath="..\..\..\gobject\gobject.rc" />
 		</Filter>
 	</Files>

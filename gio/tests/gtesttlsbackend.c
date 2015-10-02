@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "gtesttlsbackend.h"
@@ -70,6 +68,7 @@ struct _GTestTlsCertificate {
   GTlsCertificate parent_instance;
   gchar *key_pem;
   gchar *cert_pem;
+  GTlsCertificate *issuer;
 };
 
 struct _GTestTlsCertificateClass {
@@ -94,6 +93,15 @@ G_DEFINE_TYPE_WITH_CODE (GTestTlsCertificate, g_test_tls_certificate, G_TYPE_TLS
 			 G_IMPLEMENT_INTERFACE (G_TYPE_INITABLE,
 						g_test_tls_certificate_initable_iface_init);)
 
+static GTlsCertificateFlags
+g_test_tls_certificate_verify (GTlsCertificate     *cert,
+                               GSocketConnectable  *identity,
+                               GTlsCertificate     *trusted_ca)
+{
+  /* For now, all of the tests expect the certificate to verify */
+  return 0;
+}
+
 static void
 g_test_tls_certificate_get_property (GObject    *object,
 				      guint       prop_id,
@@ -109,6 +117,9 @@ g_test_tls_certificate_get_property (GObject    *object,
       break;
     case PROP_CERT_PRIVATE_KEY_PEM:
       g_value_set_string (value, cert->key_pem);
+      break;
+    case PROP_CERT_ISSUER:
+      g_value_set_object (value, cert->issuer);
       break;
     default:
       g_assert_not_reached ();
@@ -132,9 +143,11 @@ g_test_tls_certificate_set_property (GObject      *object,
     case PROP_CERT_PRIVATE_KEY_PEM:
       cert->key_pem = g_value_dup_string (value);
       break;
+    case PROP_CERT_ISSUER:
+      cert->issuer = g_value_dup_object (value);
+      break;
     case PROP_CERT_CERTIFICATE:
     case PROP_CERT_PRIVATE_KEY:
-    case PROP_CERT_ISSUER:
       /* ignore */
       break;
     default:
@@ -150,16 +163,20 @@ g_test_tls_certificate_finalize (GObject *object)
 
   g_free (cert->cert_pem);
   g_free (cert->key_pem);
+  g_clear_object (&cert->issuer);
 }
 
 static void
-g_test_tls_certificate_class_init (GTestTlsCertificateClass *certificate_class)
+g_test_tls_certificate_class_init (GTestTlsCertificateClass *test_class)
 {
-  GObjectClass *gobject_class = G_OBJECT_CLASS (certificate_class);
+  GObjectClass *gobject_class = G_OBJECT_CLASS (test_class);
+  GTlsCertificateClass *certificate_class = G_TLS_CERTIFICATE_CLASS (test_class);
 
   gobject_class->get_property = g_test_tls_certificate_get_property;
   gobject_class->set_property = g_test_tls_certificate_set_property;
   gobject_class->finalize = g_test_tls_certificate_finalize;
+
+  certificate_class->verify = g_test_tls_certificate_verify;
 
   g_object_class_override_property (gobject_class, PROP_CERT_CERTIFICATE, "certificate");
   g_object_class_override_property (gobject_class, PROP_CERT_CERTIFICATE_PEM, "certificate-pem");

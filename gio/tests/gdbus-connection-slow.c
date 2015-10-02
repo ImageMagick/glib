@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -215,6 +213,8 @@ int
 main (int   argc,
       char *argv[])
 {
+  gint ret;
+
   g_test_init (&argc, &argv, NULL);
 
   /* all the tests rely on a shared main loop */
@@ -224,5 +224,8 @@ main (int   argc,
 
   g_test_add_func ("/gdbus/connection/flush", test_connection_flush);
   g_test_add_func ("/gdbus/connection/large_message", test_connection_large_message);
-  return g_test_run();
+
+  ret = g_test_run();
+  g_main_loop_unref (loop);
+  return ret;
 }

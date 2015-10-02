@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -31,6 +29,7 @@
 #include "gdbusintrospection.h"
 #include "gdbuserror.h"
 #include "gdbusprivate.h"
+#include "gioerror.h"
 
 #ifdef G_OS_UNIX
 #include "gunixfdlist.h"
@@ -274,9 +273,9 @@ g_dbus_method_invocation_get_connection (GDBusMethodInvocation *invocation)
  * descriptor passing, that cannot be properly expressed in the
  * #GVariant API.
  *
- * See <xref linkend="gdbus-server"/> and <xref
- * linkend="gdbus-unix-fd-client"/> for an example of how to use this
- * low-level API to send and receive UNIX file descriptors.
+ * See this [server][gdbus-server] and [client][gdbus-unix-fd-client]
+ * for an example of how to use this low-level API to send and receive
+ * UNIX file descriptors.
  *
  * Returns: (transfer none): #GDBusMessage. Do not free, it is owned by @invocation.
  *
@@ -507,7 +506,8 @@ g_dbus_method_invocation_return_value_internal (GDBusMethodInvocation *invocatio
   error = NULL;
   if (!g_dbus_connection_send_message (g_dbus_method_invocation_get_connection (invocation), reply, G_DBUS_SEND_MESSAGE_FLAGS_NONE, NULL, &error))
     {
-      g_warning ("Error sending message: %s", error->message);
+      if (!g_error_matches (error, G_IO_ERROR, G_IO_ERROR_CLOSED))
+        g_warning ("Error sending message: %s", error->message);
       g_error_free (error);
     }
   g_object_unref (reply);
@@ -577,12 +577,11 @@ g_dbus_method_invocation_return_value_with_unix_fd_list (GDBusMethodInvocation *
  * will be returned on the wire. In a nutshell, if the given error is
  * registered using g_dbus_error_register_error() the name given
  * during registration is used. Otherwise, a name of the form
- * <literal>org.gtk.GDBus.UnmappedGError.Quark...</literal> is
- * used. This provides transparent mapping of #GError between
- * applications using GDBus.
+ * `org.gtk.GDBus.UnmappedGError.Quark...` is used. This provides
+ * transparent mapping of #GError between applications using GDBus.
  *
  * If you are writing an application intended to be portable,
- * <emphasis>always</emphasis> register errors with g_dbus_error_register_error()
+ * always register errors with g_dbus_error_register_error()
  * or use g_dbus_method_invocation_return_dbus_error().
  *
  * This method will free @invocation, you cannot use it afterwards.

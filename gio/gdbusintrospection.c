@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -40,7 +38,7 @@
  * used when registering objects with g_dbus_connection_register_object().
  *
  * The format of D-Bus introspection XML is specified in the
- * <ulink url="http://dbus.freedesktop.org/doc/dbus-specification.html#introspection-format">D-Bus specification</ulink>.
+ * [D-Bus specification](http://dbus.freedesktop.org/doc/dbus-specification.html#introspection-format)
  */
 
 /* ---------------------------------------------------------------------------------------------------- */
@@ -583,12 +581,15 @@ g_dbus_annotation_info_generate_xml (GDBusAnnotationInfo *info,
                                      guint                indent,
                                      GString             *string_builder)
 {
+  gchar *tmp;
   guint n;
 
-  g_string_append_printf (string_builder, "%*s<annotation name=\"%s\" value=\"%s\"",
-                          indent, "",
-                          info->key,
-                          info->value);
+  tmp = g_markup_printf_escaped ("%*s<annotation name=\"%s\" value=\"%s\"",
+                                 indent, "",
+                                 info->key,
+                                 info->value);
+  g_string_append (string_builder, tmp);
+  g_free (tmp);
 
   if (info->annotations == NULL)
     {
@@ -779,7 +780,7 @@ g_dbus_property_info_generate_xml (GDBusPropertyInfo *info,
  *
  * This function is typically used for generating introspection XML
  * documents at run-time for handling the
- * <literal>org.freedesktop.DBus.Introspectable.Introspect</literal>
+ * `org.freedesktop.DBus.Introspectable.Introspect`
  * method.
  *
  * Since: 2.26
@@ -827,7 +828,7 @@ g_dbus_interface_info_generate_xml (GDBusInterfaceInfo *info,
  * Appends an XML representation of @info (and its children) to @string_builder.
  *
  * This function is typically used for generating introspection XML documents at run-time for
- * handling the <literal>org.freedesktop.DBus.Introspectable.Introspect</literal> method.
+ * handling the `org.freedesktop.DBus.Introspectable.Introspect`  method.
  *
  * Since: 2.26
  */
@@ -1756,10 +1757,10 @@ parser_error (GMarkupParseContext *context,
  * Parses @xml_data and returns a #GDBusNodeInfo representing the data.
  *
  * The introspection XML must contain exactly one top-level
- * <tag class="starttag">node</tag> element.
+ * <node> element.
  *
  * Note that this routine is using a
- * <link linkend="glib-Simple-XML-Subset-Parser.description">GMarkup</link>-based
+ * [GMarkup][glib-Simple-XML-Subset-Parser.description]-based
  * parser that only accepts a subset of valid XML documents.
  *
  * Returns: A #GDBusNodeInfo structure or %NULL if @error is set. Free
@@ -1789,7 +1790,7 @@ g_dbus_node_info_new_for_xml (const gchar  *xml_data,
 
   data = parse_data_new ();
   context = g_markup_parse_context_new (parser,
-                                        0,
+                                        G_MARKUP_IGNORE_QUALIFIED,
                                         data,
                                         (GDestroyNotify) parse_data_free);
 
@@ -1826,8 +1827,7 @@ g_dbus_node_info_new_for_xml (const gchar  *xml_data,
   g_free (ughret);
 
  out:
-  if (parser != NULL)
-    g_free (parser);
+  g_free (parser);
   if (context != NULL)
     g_markup_parse_context_free (context);
 

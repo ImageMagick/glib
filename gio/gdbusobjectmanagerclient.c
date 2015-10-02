@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -29,7 +27,6 @@
 #include "gioenumtypes.h"
 #include "ginitable.h"
 #include "gasyncresult.h"
-#include "gsimpleasyncresult.h"
 #include "gasyncinitable.h"
 #include "gdbusconnection.h"
 #include "gdbusutils.h"
@@ -47,8 +44,8 @@
  *
  * #GDBusObjectManagerClient is used to create, monitor and delete object
  * proxies for remote objects exported by a #GDBusObjectManagerServer (or any
- * code implementing the <ulink
- * url="http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager">org.freedesktop.DBus.ObjectManager</ulink>
+ * code implementing the
+ * [org.freedesktop.DBus.ObjectManager](http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager)
  * interface).
  *
  * Once an instance of this type has been created, you can connect to
@@ -88,18 +85,17 @@
  * is set to the new name owner (this includes emission of the
  * #GObject::notify signal).  Furthermore, you are guaranteed that
  * #GDBusObjectManagerClient:name-owner will alternate between a name owner
- * (e.g. <literal>:1.42</literal>) and %NULL even in the case where
+ * (e.g. `:1.42`) and %NULL even in the case where
  * the name of interest is atomically replaced
  *
  * Ultimately, #GDBusObjectManagerClient is used to obtain #GDBusProxy
  * instances. All signals (including the
- * <literal>org.freedesktop.DBus.Properties::PropertiesChanged</literal>
- * signal) delivered to #GDBusProxy instances are guaranteed to
- * originate from the name owner. This guarantee along with the
- * behavior described above, means that certain race conditions
- * including the <emphasis><quote>half the proxy is from the old owner
- * and the other half is from the new owner</quote></emphasis> problem
- * cannot happen.
+ * org.freedesktop.DBus.Properties::PropertiesChanged signal)
+ * delivered to #GDBusProxy instances are guaranteed to originate
+ * from the name owner. This guarantee along with the behavior
+ * described above, means that certain race conditions including the
+ * "half the proxy is from the old owner and the other half is from
+ * the new owner" problem cannot happen.
  *
  * To avoid having the application connect to signals on the returned
  * #GDBusObjectProxy and #GDBusProxy objects, the
@@ -115,7 +111,7 @@
  * #GDBusObjectManagerClient::interface-proxy-signal.
  *
  * Note that all callbacks and signals are emitted in the
- * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+ * [thread-default main context][g-main-context-push-thread-default]
  * that the #GDBusObjectManagerClient object was constructed
  * in. Additionally, the #GDBusObjectProxy and #GDBusProxy objects
  * originating from the #GDBusObjectManagerClient object will be created in
@@ -207,7 +203,8 @@ g_dbus_object_manager_client_finalize (GObject *object)
                                             manager);
       g_object_unref (manager->priv->control_proxy);
     }
-  g_object_unref (manager->priv->connection);
+  if (manager->priv->connection != NULL)
+    g_object_unref (manager->priv->connection);
   g_free (manager->priv->object_path);
   g_free (manager->priv->name);
   g_free (manager->priv->name_owner);
@@ -508,13 +505,13 @@ g_dbus_object_manager_client_class_init (GDBusObjectManagerClientClass *klass)
    * connect signals to all interface proxies managed by @manager.
    *
    * This signal is emitted in the
-   * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+   * [thread-default main context][g-main-context-push-thread-default]
    * that @manager was constructed in.
    *
    * Since: 2.30
    */
   signals[INTERFACE_PROXY_SIGNAL_SIGNAL] =
-    g_signal_new ("interface-proxy-signal",
+    g_signal_new (I_("interface-proxy-signal"),
                   G_TYPE_DBUS_OBJECT_MANAGER_CLIENT,
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GDBusObjectManagerClientClass, interface_proxy_signal),
@@ -546,13 +543,13 @@ g_dbus_object_manager_client_class_init (GDBusObjectManagerClientClass *klass)
    * connect signals to all interface proxies managed by @manager.
    *
    * This signal is emitted in the
-   * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+   * [thread-default main context][g-main-context-push-thread-default]
    * that @manager was constructed in.
    *
    * Since: 2.30
    */
   signals[INTERFACE_PROXY_PROPERTIES_CHANGED_SIGNAL] =
-    g_signal_new ("interface-proxy-properties-changed",
+    g_signal_new (I_("interface-proxy-properties-changed"),
                   G_TYPE_DBUS_OBJECT_MANAGER_CLIENT,
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GDBusObjectManagerClientClass, interface_proxy_properties_changed),
@@ -657,7 +654,7 @@ g_dbus_object_manager_client_new_sync (GDBusConnection               *connection
  *
  * This is an asynchronous failable constructor. When the result is
  * ready, @callback will be invoked in the
- * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+ * [thread-default main context][g-main-context-push-thread-default]
  * of the thread you are calling this method from. You can
  * then call g_dbus_object_manager_client_new_finish() to get the result. See
  * g_dbus_object_manager_client_new_sync() for the synchronous version.
@@ -810,7 +807,7 @@ g_dbus_object_manager_client_new_for_bus_sync (GBusType                       bu
  *
  * This is an asynchronous failable constructor. When the result is
  * ready, @callback will be invoked in the
- * <link linkend="g-main-context-push-thread-default">thread-default main loop</link>
+ * [thread-default main loop][g-main-context-push-thread-default]
  * of the thread you are calling this method from. You can
  * then call g_dbus_object_manager_client_new_for_bus_finish() to get the result. See
  * g_dbus_object_manager_client_new_for_bus_sync() for the synchronous version.
@@ -960,8 +957,8 @@ g_dbus_object_manager_client_get_flags (GDBusObjectManagerClient *manager)
  * #GObject::notify signal to track changes to the
  * #GDBusObjectManagerClient:name-owner property.
  *
- * Returns: The name owner or %NULL if no name owner exists. Free with
- * g_free().
+ * Returns: (nullable): The name owner or %NULL if no name owner
+ * exists. Free with g_free().
  *
  * Since: 2.30
  */
@@ -1006,6 +1003,7 @@ signal_cb (GDBusConnection *connection,
 
   //g_debug ("yay, signal_cb %s %s: %s\n", signal_name, object_path, g_variant_print (parameters, TRUE));
 
+  g_object_ref (manager);
   if (g_strcmp0 (interface_name, "org.freedesktop.DBus.Properties") == 0)
     {
       if (g_strcmp0 (signal_name, "PropertiesChanged") == 0)
@@ -1087,6 +1085,7 @@ signal_cb (GDBusConnection *connection,
           g_object_unref (interface);
         }
     }
+  g_object_unref (manager);
 
  out:
   g_clear_object (&object_proxy);
@@ -1105,15 +1104,27 @@ subscribe_signals (GDBusObjectManagerClient *manager,
 
   if (name_owner != NULL)
     {
-      /* the bus daemon may not implement path_prefix so gracefully
-       * handle this by using a fallback
-       */
-      manager->priv->match_rule = g_strdup_printf ("type='signal',sender='%s',path_namespace='%s'",
-                                                   name_owner, manager->priv->object_path);
+      /* Only add path_namespace if it's non-'/'. This removes a no-op key from
+       * the match rule, and also works around a D-Bus bug where
+       * path_namespace='/' matches nothing in D-Bus versions < 1.6.18.
+       *
+       * See: https://bugs.freedesktop.org/show_bug.cgi?id=70799 */
+      if (g_str_equal (manager->priv->object_path, "/"))
+        {
+          manager->priv->match_rule = g_strdup_printf ("type='signal',sender='%s'",
+                                                       name_owner);
+        }
+      else
+        {
+          manager->priv->match_rule = g_strdup_printf ("type='signal',sender='%s',path_namespace='%s'",
+                                                       name_owner, manager->priv->object_path);
+        }
 
+      /* The bus daemon may not implement path_namespace so gracefully
+       * handle this by using a fallback triggered if @error is set. */
       ret = g_dbus_connection_call_sync (manager->priv->connection,
                                          "org.freedesktop.DBus",
-                                         "/org/freedeskop/DBus",
+                                         "/org/freedesktop/DBus",
                                          "org.freedesktop.DBus",
                                          "AddMatch",
                                          g_variant_new ("(s)",
@@ -1198,7 +1209,7 @@ maybe_unsubscribe_signals (GDBusObjectManagerClient *manager)
        */
       g_dbus_connection_call (manager->priv->connection,
                               "org.freedesktop.DBus",
-                              "/org/freedeskop/DBus",
+                              "/org/freedesktop/DBus",
                               "org.freedesktop.DBus",
                               "RemoveMatch",
                               g_variant_new ("(s)",
@@ -1231,6 +1242,7 @@ on_notify_g_name_owner (GObject    *object,
   new_name_owner = g_dbus_proxy_get_name_owner (manager->priv->control_proxy);
   manager->priv->name_owner = NULL;
 
+  g_object_ref (manager);
   if (g_strcmp0 (old_name_owner, new_name_owner) != 0)
     {
       GList *l;
@@ -1307,6 +1319,7 @@ on_notify_g_name_owner (GObject    *object,
 
     }
   g_free (old_name_owner);
+  g_object_unref (manager);
 }
 
 static gboolean
@@ -1531,6 +1544,7 @@ add_interfaces (GDBusObjectManagerClient *manager,
   g_mutex_unlock (&manager->priv->lock);
 
   /* now that we don't hold the lock any more, emit signals */
+  g_object_ref (manager);
   for (l = interface_added_signals; l != NULL; l = l->next)
     {
       interface_proxy = G_DBUS_PROXY (l->data);
@@ -1546,8 +1560,8 @@ add_interfaces (GDBusObjectManagerClient *manager,
                            op);
       g_signal_emit_by_name (manager, "object-added", op);
     }
+  g_object_unref (manager);
   g_object_unref (op);
-
 }
 
 static void
@@ -1580,6 +1594,7 @@ remove_interfaces (GDBusObjectManagerClient   *manager,
   num_interfaces_to_remove = g_strv_length ((gchar **) interface_names);
 
   /* see if we are going to completety remove the object */
+  g_object_ref (manager);
   if (num_interfaces_to_remove == num_interfaces)
     {
       g_object_ref (op);
@@ -1605,6 +1620,7 @@ remove_interfaces (GDBusObjectManagerClient   *manager,
         }
       g_object_unref (op);
     }
+  g_object_unref (manager);
  out:
   ;
 }

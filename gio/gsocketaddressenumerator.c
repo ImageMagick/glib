@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -67,7 +65,7 @@ g_socket_address_enumerator_class_init (GSocketAddressEnumeratorClass *enumerato
  * internal errors (other than @cancellable being triggered) will be
  * ignored.
  *
- * Return value: (transfer full): a #GSocketAddress (owned by the caller), or %NULL on
+ * Returns: (transfer full): a #GSocketAddress (owned by the caller), or %NULL on
  *     error (in which case *@error will be set) or if there are no
  *     more addresses.
  */
@@ -158,7 +156,7 @@ g_socket_address_enumerator_real_next_finish (GSocketAddressEnumerator  *enumera
  * g_socket_address_enumerator_next() for more information about
  * error handling.
  *
- * Return value: (transfer full): a #GSocketAddress (owned by the caller), or %NULL on
+ * Returns: (transfer full): a #GSocketAddress (owned by the caller), or %NULL on
  *     error (in which case *@error will be set) or if there are no
  *     more addresses.
  */

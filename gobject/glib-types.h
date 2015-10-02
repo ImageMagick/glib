@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef __GLIB_TYPES_H__
 #define __GLIB_TYPES_H__
@@ -201,6 +199,15 @@ typedef gsize GType;
 #define G_TYPE_VARIANT_BUILDER (g_variant_builder_get_type ())
 
 /**
+ * G_TYPE_VARIANT_DICT:
+ *
+ * The #GType for a boxed type holding a #GVariantDict.
+ *
+ * Since: 2.40
+ */
+#define G_TYPE_VARIANT_DICT (g_variant_dict_get_type ())
+
+/**
  * G_TYPE_MAIN_LOOP:
  *
  * The #GType for a boxed type holding a #GMainLoop.
@@ -255,6 +262,15 @@ typedef gsize GType;
 #define G_TYPE_KEY_FILE (g_key_file_get_type ())
 
 /**
+ * G_TYPE_MAPPED_FILE:
+ *
+ * The #GType for a boxed type holding a #GMappedFile.
+ *
+ * Since: 2.40
+ */
+#define G_TYPE_MAPPED_FILE (g_mapped_file_get_type ())
+
+/**
  * G_TYPE_THREAD:
  *
  * The #GType for a boxed type holding a #GThread.
@@ -271,6 +287,15 @@ typedef gsize GType;
  * Since: 2.36
  */
 #define G_TYPE_CHECKSUM (g_checksum_get_type ())
+
+/**
+ * G_TYPE_OPTION_GROUP:
+ *
+ * The #GType for a boxed type holding a #GOptionGroup.
+ *
+ * Since: 2.44
+ */
+#define G_TYPE_OPTION_GROUP (g_option_group_get_type ())
 
 GLIB_AVAILABLE_IN_ALL
 GType   g_date_get_type            (void) G_GNUC_CONST;
@@ -306,6 +331,8 @@ GLIB_AVAILABLE_IN_ALL
 GType   g_io_condition_get_type    (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_ALL
 GType   g_variant_builder_get_type (void) G_GNUC_CONST;
+GLIB_AVAILABLE_IN_2_40
+GType   g_variant_dict_get_type    (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_ALL
 GType   g_key_file_get_type        (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_2_30
@@ -322,6 +349,10 @@ GLIB_AVAILABLE_IN_2_36
 GType   g_checksum_get_type        (void) G_GNUC_CONST;
 GLIB_AVAILABLE_IN_2_36
 GType   g_markup_parse_context_get_type (void) G_GNUC_CONST;
+GLIB_AVAILABLE_IN_2_40
+GType   g_mapped_file_get_type (void) G_GNUC_CONST;
+GLIB_AVAILABLE_IN_2_44
+GType   g_option_group_get_type    (void) G_GNUC_CONST;
 
 GLIB_DEPRECATED_FOR('G_TYPE_VARIANT')
 GType   g_variant_get_gtype        (void) G_GNUC_CONST;

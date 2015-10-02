@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -187,12 +185,15 @@ g_themed_icon_constructed (GObject *object)
 
       if (is_symbolic)
         {
-          themed->names = g_new (char *, dashes + 1 + 1);
+          themed->names = g_new (char *, 2 * dashes + 3);
           for (i = 0; names[i] != NULL; i++)
-            themed->names[i] = g_strconcat (names[i], "-symbolic", NULL);
+            {
+              themed->names[i] = g_strconcat (names[i], "-symbolic", NULL);
+              themed->names[dashes + 1 + i] = names[i];
+            }
 
-          themed->names[i] = NULL;
-          g_strfreev (names);
+          themed->names[dashes + 1 + i] = NULL;
+          g_free (names);
         }
       else
         {
@@ -256,7 +257,7 @@ g_themed_icon_class_init (GThemedIconClass *klass)
    *
    * For example, if the icon name was "gnome-dev-cdrom-audio", the array 
    * would become
-   * |[
+   * |[<!-- language="C" -->
    * {
    *   "gnome-dev-cdrom-audio",
    *   "gnome-dev-cdrom",
@@ -344,7 +345,7 @@ g_themed_icon_new_from_names (char **iconnames,
  * that can be created by shortening @iconname at '-' characters.
  * 
  * In the following example, @icon1 and @icon2 are equivalent:
- * |[
+ * |[<!-- language="C" -->
  * const char *names[] = { 
  *   "gnome-dev-cdrom-audio",
  *   "gnome-dev-cdrom",
@@ -389,10 +390,8 @@ g_themed_icon_get_names (GThemedIcon *icon)
  *
  * Append a name to the list of icons from within @icon.
  *
- * <note><para>
  * Note that doing so invalidates the hash computed by prior calls
  * to g_icon_hash().
- * </para></note>
  */
 void
 g_themed_icon_append_name (GThemedIcon *icon, 
@@ -418,10 +417,8 @@ g_themed_icon_append_name (GThemedIcon *icon,
  *
  * Prepend a name to the list of icons from within @icon.
  *
- * <note><para>
  * Note that doing so invalidates the hash computed by prior calls
  * to g_icon_hash().
- * </para></note>
  *
  * Since: 2.18
  */

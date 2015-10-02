@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -25,9 +23,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <errno.h>
 
 #include <glib.h>
@@ -39,6 +34,7 @@
 #include "glibintl.h"
 
 #ifdef G_OS_UNIX
+#include <unistd.h>
 #include "glib-unix.h"
 #include "gfiledescriptorbased.h"
 #endif
@@ -185,7 +181,7 @@ g_local_file_input_stream_skip (GInputStream  *stream,
 				GCancellable  *cancellable,
 				GError       **error)
 {
-  off_t res, start;
+  off_t start, end;
   GLocalFileInputStream *file;
 
   file = G_LOCAL_FILE_INPUT_STREAM (stream);
@@ -205,8 +201,8 @@ g_local_file_input_stream_skip (GInputStream  *stream,
       return -1;
     }
   
-  res = lseek (file->priv->fd, count, SEEK_CUR);
-  if (res == -1)
+  end = lseek (file->priv->fd, 0, SEEK_END);
+  if (end == -1)
     {
       int errsv = errno;
 
@@ -217,7 +213,22 @@ g_local_file_input_stream_skip (GInputStream  *stream,
       return -1;
     }
 
-  return res - start;
+  if (end - start > count)
+    {
+      end = lseek (file->priv->fd, count - (end - start), SEEK_CUR);
+      if (end == -1)
+	{
+	  int errsv = errno;
+
+	  g_set_error (error, G_IO_ERROR,
+		       g_io_error_from_errno (errsv),
+		       _("Error seeking in file: %s"),
+		       g_strerror (errsv));
+	  return -1;
+	}
+    }
+
+  return end - start;
 }
 
 static gboolean

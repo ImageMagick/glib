@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -243,7 +241,7 @@ g_network_service_get_property (GObject    *object,
  * @protocol, and @domain. This will initially be unresolved; use the
  * #GSocketConnectable interface to resolve it.
  *
- * Return value: (transfer full) (type GNetworkService): a new #GNetworkService
+ * Returns: (transfer full) (type GNetworkService): a new #GNetworkService
  *
  * Since: 2.22
  */
@@ -265,7 +263,7 @@ g_network_service_new (const gchar *service,
  *
  * Gets @srv's service name (eg, "ldap").
  *
- * Return value: @srv's service name
+ * Returns: @srv's service name
  *
  * Since: 2.22
  */
@@ -283,7 +281,7 @@ g_network_service_get_service (GNetworkService *srv)
  *
  * Gets @srv's protocol name (eg, "tcp").
  *
- * Return value: @srv's protocol name
+ * Returns: @srv's protocol name
  *
  * Since: 2.22
  */
@@ -302,7 +300,7 @@ g_network_service_get_protocol (GNetworkService *srv)
  * Gets the domain that @srv serves. This might be either UTF-8 or
  * ASCII-encoded, depending on what @srv was created with.
  *
- * Return value: @srv's domain name
+ * Returns: @srv's domain name
  *
  * Since: 2.22
  */
@@ -321,7 +319,7 @@ g_network_service_get_domain (GNetworkService *srv)
  * Get's the URI scheme used to resolve proxies. By default, the service name
  * is used as scheme.
  *
- * Return value: @srv's scheme name
+ * Returns: @srv's scheme name
  *
  * Since: 2.26
  */
@@ -352,8 +350,7 @@ g_network_service_set_scheme (GNetworkService *srv,
 {
   g_return_if_fail (G_IS_NETWORK_SERVICE (srv));
 
-  if (srv->priv->scheme)
-    g_free (srv->priv->scheme);
+  g_free (srv->priv->scheme);
   srv->priv->scheme = g_strdup (scheme);
 
   g_object_notify (G_OBJECT (srv), "scheme");

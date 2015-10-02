@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -120,7 +118,8 @@ g_file_icon_finalize (GObject *object)
 
   icon = G_FILE_ICON (object);
 
-  g_object_unref (icon->file);
+  if (icon->file)
+    g_object_unref (icon->file);
 
   G_OBJECT_CLASS (g_file_icon_parent_class)->finalize (object);
 }

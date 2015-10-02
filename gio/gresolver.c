@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -28,7 +26,6 @@
 #include "gnetworkingprivate.h"
 #include "gasyncresult.h"
 #include "ginetaddress.h"
-#include "gsimpleasyncresult.h"
 #include "gtask.h"
 #include "gsrvtarget.h"
 #include "gthreadedresolver.h"
@@ -194,7 +191,7 @@ static GResolver *default_resolver;
  * with it. #GResolver may use its reference count as a hint about how
  * many threads it should allocate for concurrent DNS resolutions.
  *
- * Return value: (transfer full): the default #GResolver.
+ * Returns: (transfer full): the default #GResolver.
  *
  * Since: 2.22
  */
@@ -285,6 +282,58 @@ remove_duplicates (GList *addrs)
     }
 }
 
+/* Note that this does not follow the "FALSE means @error is set"
+ * convention. The return value tells the caller whether it should
+ * return @addrs and @error to the caller right away, or if it should
+ * continue and trying to resolve the name as a hostname.
+ */
+static gboolean
+handle_ip_address (const char  *hostname,
+                   GList      **addrs,
+                   GError     **error)
+{
+  GInetAddress *addr;
+
+#ifndef G_OS_WIN32
+  struct in_addr ip4addr;
+#endif
+
+  addr = g_inet_address_new_from_string (hostname);
+  if (addr)
+    {
+      *addrs = g_list_append (NULL, addr);
+      return TRUE;
+    }
+
+  *addrs = NULL;
+
+#ifdef G_OS_WIN32
+
+  /* Reject IPv6 addresses that have brackets ('[' or ']') and/or port numbers,
+   * as no valid addresses should contain these at this point.
+   * Non-standard IPv4 addresses would be rejected during the call to
+   * getaddrinfo() later.
+   */
+  if (strrchr (hostname, '[') != NULL ||
+      strrchr (hostname, ']') != NULL)
+#else
+
+  /* Reject non-standard IPv4 numbers-and-dots addresses.
+   * g_inet_address_new_from_string() will have accepted any "real" IP
+   * address, so if inet_aton() succeeds, then it's an address we want
+   * to reject.
+   */
+  if (inet_aton (hostname, &ip4addr))
+#endif
+    {
+      g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_NOT_FOUND,
+                   _("Error resolving '%s': %s"),
+                   hostname, gai_strerror (EAI_NONAME));
+      return TRUE;
+    }
+
+  return FALSE;
+}
 
 /**
  * g_resolver_lookup_by_name:
@@ -298,7 +347,7 @@ remove_duplicates (GList *addrs)
  * the textual form of an IP address (in which case this just becomes
  * a wrapper around g_inet_address_new_from_string()).
  *
- * On success, g_resolver_lookup_by_name() will return a #GList of
+ * On success, g_resolver_lookup_by_name() will return a non-empty #GList of
  * #GInetAddress, sorted in order of preference and guaranteed to not
  * contain duplicates. That is, if using the result to connect to
  * @hostname, you should attempt to connect to the first address
@@ -307,7 +356,7 @@ remove_duplicates (GList *addrs)
  * result using e.g. g_socket_listener_add_address().
  *
  * If the DNS resolution fails, @error (if non-%NULL) will be set to a
- * value from #GResolverError.
+ * value from #GResolverError and %NULL will be returned.
  *
  * If @cancellable is non-%NULL, it can be used to cancel the
  * operation, in which case @error (if non-%NULL) will be set to
@@ -317,7 +366,7 @@ remove_duplicates (GList *addrs)
  * address, it may be easier to create a #GNetworkAddress and use its
  * #GSocketConnectable interface.
  *
- * Return value: (element-type GInetAddress) (transfer full): a #GList
+ * Returns: (element-type GInetAddress) (transfer full): a non-empty #GList
  * of #GInetAddress, or %NULL on error. You
  * must unref each of the addresses and free the list when you are
  * done with it. (You can use g_resolver_free_addresses() to do this.)
@@ -330,7 +379,6 @@ g_resolver_lookup_by_name (GResolver     *resolver,
                            GCancellable  *cancellable,
                            GError       **error)
 {
-  GInetAddress *addr;
   GList *addrs;
   gchar *ascii_hostname = NULL;
 
@@ -338,9 +386,8 @@ g_resolver_lookup_by_name (GResolver     *resolver,
   g_return_val_if_fail (hostname != NULL, NULL);
 
   /* Check if @hostname is just an IP address */
-  addr = g_inet_address_new_from_string (hostname);
-  if (addr)
-    return g_list_append (NULL, addr);
+  if (handle_ip_address (hostname, &addrs, error))
+    return addrs;
 
   if (g_hostname_is_non_ascii (hostname))
     hostname = ascii_hostname = g_hostname_to_ascii (hostname);
@@ -377,22 +424,24 @@ g_resolver_lookup_by_name_async (GResolver           *resolver,
                                  GAsyncReadyCallback  callback,
                                  gpointer             user_data)
 {
-  GInetAddress *addr;
   gchar *ascii_hostname = NULL;
+  GList *addrs;
+  GError *error = NULL;
 
   g_return_if_fail (G_IS_RESOLVER (resolver));
   g_return_if_fail (hostname != NULL);
 
   /* Check if @hostname is just an IP address */
-  addr = g_inet_address_new_from_string (hostname);
-  if (addr)
+  if (handle_ip_address (hostname, &addrs, &error))
     {
       GTask *task;
 
       task = g_task_new (resolver, cancellable, callback, user_data);
       g_task_set_source_tag (task, g_resolver_lookup_by_name_async);
-      g_task_return_pointer (task, g_list_append (NULL, addr),
-                             (GDestroyNotify) g_resolver_free_addresses);
+      if (addrs)
+        g_task_return_pointer (task, addrs, (GDestroyNotify) g_resolver_free_addresses);
+      else
+        g_task_return_error (task, error);
       g_object_unref (task);
       return;
     }
@@ -420,7 +469,7 @@ g_resolver_lookup_by_name_async (GResolver           *resolver,
  * a value from #GResolverError. If the operation was cancelled,
  * @error will be set to %G_IO_ERROR_CANCELLED.
  *
- * Return value: (element-type GInetAddress) (transfer full): a #GList
+ * Returns: (element-type GInetAddress) (transfer full): a #GList
  * of #GInetAddress, or %NULL on error. See g_resolver_lookup_by_name()
  * for more details.
  *
@@ -489,7 +538,7 @@ g_resolver_free_addresses (GList *addresses)
  * operation, in which case @error (if non-%NULL) will be set to
  * %G_IO_ERROR_CANCELLED.
  *
- * Return value: a hostname (either ASCII-only, or in ASCII-encoded
+ * Returns: a hostname (either ASCII-only, or in ASCII-encoded
  *     form), or %NULL on error.
  *
  * Since: 2.22
@@ -550,7 +599,7 @@ g_resolver_lookup_by_address_async (GResolver           *resolver,
  * a value from #GResolverError. If the operation was cancelled,
  * @error will be set to %G_IO_ERROR_CANCELLED.
  *
- * Return value: a hostname (either ASCII-only, or in ASCII-encoded
+ * Returns: a hostname (either ASCII-only, or in ASCII-encoded
  * form), or %NULL on error.
  *
  * Since: 2.22
@@ -597,17 +646,16 @@ g_resolver_get_service_rrname (const char *service,
  * Synchronously performs a DNS SRV lookup for the given @service and
  * @protocol in the given @domain and returns an array of #GSrvTarget.
  * @domain may be an ASCII-only or UTF-8 hostname. Note also that the
- * @service and @protocol arguments <emphasis>do not</emphasis>
- * include the leading underscore that appears in the actual DNS
- * entry.
+ * @service and @protocol arguments do not include the leading underscore
+ * that appears in the actual DNS entry.
  *
- * On success, g_resolver_lookup_service() will return a #GList of
+ * On success, g_resolver_lookup_service() will return a non-empty #GList of
  * #GSrvTarget, sorted in order of preference. (That is, you should
  * attempt to connect to the first target first, then the second if
  * the first fails, etc.)
  *
  * If the DNS resolution fails, @error (if non-%NULL) will be set to
- * a value from #GResolverError.
+ * a value from #GResolverError and %NULL will be returned.
  *
  * If @cancellable is non-%NULL, it can be used to cancel the
  * operation, in which case @error (if non-%NULL) will be set to
@@ -617,9 +665,10 @@ g_resolver_get_service_rrname (const char *service,
  * to create a #GNetworkService and use its #GSocketConnectable
  * interface.
  *
- * Return value: (element-type GSrvTarget) (transfer full): a #GList of #GSrvTarget,
- * or %NULL on error. You must free each of the targets and the list when you are
- * done with it. (You can use g_resolver_free_targets() to do this.)
+ * Returns: (element-type GSrvTarget) (transfer full): a non-empty #GList of
+ * #GSrvTarget, or %NULL on error. You must free each of the targets and the
+ * list when you are done with it. (You can use g_resolver_free_targets() to do
+ * this.)
  *
  * Since: 2.22
  */
@@ -705,8 +754,9 @@ g_resolver_lookup_service_async (GResolver           *resolver,
  * a value from #GResolverError. If the operation was cancelled,
  * @error will be set to %G_IO_ERROR_CANCELLED.
  *
- * Return value: (element-type GSrvTarget) (transfer full): a #GList of #GSrvTarget,
- * or %NULL on error. See g_resolver_lookup_service() for more details.
+ * Returns: (element-type GSrvTarget) (transfer full): a non-empty #GList of
+ * #GSrvTarget, or %NULL on error. See g_resolver_lookup_service() for more
+ * details.
  *
  * Since: 2.22
  */
@@ -758,15 +808,16 @@ g_resolver_free_targets (GList *targets)
  * information on what the records contain for each @record_type.
  *
  * If the DNS resolution fails, @error (if non-%NULL) will be set to
- * a value from #GResolverError.
+ * a value from #GResolverError and %NULL will be returned.
  *
  * If @cancellable is non-%NULL, it can be used to cancel the
  * operation, in which case @error (if non-%NULL) will be set to
  * %G_IO_ERROR_CANCELLED.
  *
- * Return value: (element-type GVariant) (transfer full): a #GList of #GVariant,
- * or %NULL on error. You must free each of the records and the list when you are
- * done with it. (You can use g_list_free_full() with g_variant_unref() to do this.)
+ * Returns: (element-type GVariant) (transfer full): a non-empty #GList of
+ * #GVariant, or %NULL on error. You must free each of the records and the list
+ * when you are done with it. (You can use g_list_free_full() with
+ * g_variant_unref() to do this.)
  *
  * Since: 2.34
  */
@@ -828,16 +879,18 @@ g_resolver_lookup_records_async (GResolver           *resolver,
  * @error: return location for a #GError, or %NULL
  *
  * Retrieves the result of a previous call to
- * g_resolver_lookup_records_async(). Returns a list of records as #GVariant
- * tuples. See #GResolverRecordType for information on what the records contain.
+ * g_resolver_lookup_records_async(). Returns a non-empty list of records as
+ * #GVariant tuples. See #GResolverRecordType for information on what the
+ * records contain.
  *
  * If the DNS resolution failed, @error (if non-%NULL) will be set to
  * a value from #GResolverError. If the operation was cancelled,
  * @error will be set to %G_IO_ERROR_CANCELLED.
  *
- * Return value: (element-type GVariant) (transfer full): a #GList of #GVariant,
- * or %NULL on error. You must free each of the records and the list when you are
- * done with it. (You can use g_list_free_full() with g_variant_unref() to do this.)
+ * Returns: (element-type GVariant) (transfer full): a non-empty #GList of
+ * #GVariant, or %NULL on error. You must free each of the records and the list
+ * when you are done with it. (You can use g_list_free_full() with
+ * g_variant_unref() to do this.)
  *
  * Since: 2.34
  */
@@ -870,7 +923,7 @@ g_resolver_get_serial (GResolver *resolver)
  *
  * Gets the #GResolver Error Quark.
  *
- * Return value: a #GQuark.
+ * Returns: a #GQuark.
  *
  * Since: 2.22
  */

@@ -10,7 +10,7 @@
 #define DEBUG_MSG(args)
 /* #define DEBUG_MSG(args) g_printerr args ; g_printerr ("\n");  */
 #define PRINT_MSG(args)
-/* #define PRINT_MSG(args) g_print args ; g_print ("\n"); */
+/* #define PRINT_MSG(args) g_printerr args ; g_printerr ("\n"); */
 
 #define MAX_THREADS            50
 #define MAX_SORTS              5    /* only applies if
@@ -236,6 +236,10 @@ main (int argc, char *argv[])
 
   main_loop = g_main_loop_new (NULL, FALSE);
   g_main_loop_run (main_loop);
+
+  g_main_loop_unref (main_loop);
+  g_thread_pool_free (thread_pool, TRUE, TRUE);
+  g_async_queue_unref (async_queue);
 
   return EXIT_SUCCESS;
 }

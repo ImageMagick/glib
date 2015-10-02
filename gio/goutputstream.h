@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -149,6 +147,20 @@ gboolean g_output_stream_write_all     (GOutputStream             *stream,
 					gsize                     *bytes_written,
 					GCancellable              *cancellable,
 					GError                   **error);
+GLIB_AVAILABLE_IN_2_40
+gboolean g_output_stream_printf        (GOutputStream             *stream,
+                                        gsize                     *bytes_written,
+                                        GCancellable              *cancellable,
+                                        GError                   **error,
+                                        const gchar               *format,
+                                        ...) G_GNUC_PRINTF (5, 6);
+GLIB_AVAILABLE_IN_2_40
+gboolean g_output_stream_vprintf       (GOutputStream             *stream,
+                                        gsize                     *bytes_written,
+                                        GCancellable              *cancellable,
+                                        GError                   **error,
+                                        const gchar               *format,
+                                        va_list                    args) G_GNUC_PRINTF (5, 0);
 GLIB_AVAILABLE_IN_2_34
 gssize   g_output_stream_write_bytes   (GOutputStream             *stream,
 					GBytes                    *bytes,
@@ -180,6 +192,22 @@ GLIB_AVAILABLE_IN_ALL
 gssize   g_output_stream_write_finish  (GOutputStream             *stream,
 					GAsyncResult              *result,
 					GError                   **error);
+
+GLIB_AVAILABLE_IN_2_44
+void     g_output_stream_write_all_async (GOutputStream           *stream,
+                                          const void              *buffer,
+                                          gsize                    count,
+                                          int                      io_priority,
+                                          GCancellable            *cancellable,
+                                          GAsyncReadyCallback      callback,
+                                          gpointer                 user_data);
+
+GLIB_AVAILABLE_IN_2_44
+gboolean g_output_stream_write_all_finish (GOutputStream          *stream,
+                                           GAsyncResult           *result,
+                                           gsize                  *bytes_written,
+                                           GError                **error);
+
 GLIB_AVAILABLE_IN_2_34
 void     g_output_stream_write_bytes_async  (GOutputStream             *stream,
 					     GBytes                    *bytes,

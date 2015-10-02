@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -24,7 +22,7 @@
 #define __GOBJECTTRACE_H__
 
 #ifndef SIZEOF_CHAR
-//#error "config.h must be included prior to gobject_trace.h"
+#error "config.h must be included prior to gobject_trace.h"
 #endif
 
 #ifdef HAVE_DTRACE

@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -36,6 +34,8 @@ G_BEGIN_DECLS
 
 typedef struct _GDesktopAppInfo        GDesktopAppInfo;
 typedef struct _GDesktopAppInfoClass   GDesktopAppInfoClass;
+
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GDesktopAppInfo, g_object_unref)
 
 struct _GDesktopAppInfoClass
 {
@@ -73,7 +73,7 @@ GDesktopAppInfo *g_desktop_app_info_new               (const char      *desktop_
 GLIB_AVAILABLE_IN_ALL
 gboolean         g_desktop_app_info_get_is_hidden     (GDesktopAppInfo *info);
 
-GLIB_AVAILABLE_IN_ALL
+GLIB_DEPRECATED_IN_2_42
 void             g_desktop_app_info_set_desktop_env   (const char      *desktop_env);
 
 GLIB_AVAILABLE_IN_2_36
@@ -109,14 +109,16 @@ gchar *                 g_desktop_app_info_get_action_name              (GDeskto
  * G_DESKTOP_APP_INFO_LOOKUP_EXTENSION_POINT_NAME:
  *
  * Extension point for default handler to URI association. See
- * <link linkend="extending-gio">Extending GIO</link>.
+ * [Extending GIO][extending-gio].
  */
 #define G_DESKTOP_APP_INFO_LOOKUP_EXTENSION_POINT_NAME "gio-desktop-app-info-lookup"
 
 #endif /* G_DISABLE_DEPRECATED */
 
 /**
- * GDesktopAppInfoLookup:
+ * GDesktopAppInfoLookupIface:
+ * @get_default_for_uri_scheme: Virtual method for
+ *  g_desktop_app_info_lookup_get_default_for_uri_scheme().
  *
  * Interface that is used by backends to associate default
  * handlers with URI schemes.
@@ -164,6 +166,11 @@ gboolean    g_desktop_app_info_launch_uris_as_manager (GDesktopAppInfo          
 						       gpointer                    pid_callback_data,
 						       GError                    **error);
 
+GLIB_AVAILABLE_IN_2_40
+gchar *** g_desktop_app_info_search (const gchar *search_string);
+
+GLIB_AVAILABLE_IN_2_42
+GList *g_desktop_app_info_get_implementations (const gchar *interface);
 
 G_END_DECLS
 

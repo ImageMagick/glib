@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -27,16 +25,19 @@
 #include "giomodule.h"
 #include "giomodule-priv.h"
 #include "glocalfilemonitor.h"
-#include "glocaldirectorymonitor.h"
 #include "gnativevolumemonitor.h"
 #include "gproxyresolver.h"
 #include "gproxy.h"
 #include "gsettingsbackendinternal.h"
+#include "ghttpproxy.h"
 #include "gsocks4proxy.h"
 #include "gsocks4aproxy.h"
 #include "gsocks5proxy.h"
 #include "gtlsbackend.h"
 #include "gvfs.h"
+#include "gnotificationbackend.h"
+#include "ginitable.h"
+#include "gnetworkmonitor.h"
 #ifdef G_OS_WIN32
 #include "gregistrysettingsbackend.h"
 #endif
@@ -61,14 +62,14 @@
  * SECTION:extensionpoints
  * @short_description: Extension Points
  * @include: gio.h
- * @see_also: <link linkend="extending-gio">Extending GIO</link>
+ * @see_also: [Extending GIO][extending-gio]
  *
  * #GIOExtensionPoint provides a mechanism for modules to extend the
  * functionality of the library or application that loaded it in an 
  * organized fashion.  
  *
  * An extension point is identified by a name, and it may optionally
- * require that any implementation must by of a certain type (or derived
+ * require that any implementation must be of a certain type (or derived
  * thereof). Use g_io_extension_point_register() to register an
  * extension point, and g_io_extension_point_set_required_type() to
  * set a required type.
@@ -78,16 +79,16 @@
  * of an extension point has a name, and a priority. Use
  * g_io_extension_point_implement() to implement an extension point.
  * 
- *  |[
+ *  |[<!-- language="C" -->
  *  GIOExtensionPoint *ep;
  *
- *  /&ast; Register an extension point &ast;/
+ *  // Register an extension point
  *  ep = g_io_extension_point_register ("my-extension-point");
  *  g_io_extension_point_set_required_type (ep, MY_TYPE_EXAMPLE);
  *  ]|
  *
- *  |[
- *  /&ast; Implement an extension point &ast;/
+ *  |[<!-- language="C" -->
+ *  // Implement an extension point
  *  G_DEFINE_TYPE (MyExampleImpl, my_example_impl, MY_TYPE_EXAMPLE);
  *  g_io_extension_point_implement ("my-extension-point",
  *                                  my_example_impl_get_type (),
@@ -103,14 +104,14 @@
  *
  *  To avoid opening all modules just to find out what extension
  *  points they implement, GIO makes use of a caching mechanism,
- *  see <link linkend="gio-querymodules">gio-querymodules</link>.
+ *  see [gio-querymodules][gio-querymodules].
  *  You are expected to run this command after installing a
  *  GIO module.
  *
- *  The <envar>GIO_EXTRA_MODULES</envar> environment variable can be
- *  used to specify additional directories to automatically load modules
+ *  The `GIO_EXTRA_MODULES` environment variable can be used to
+ *  specify additional directories to automatically load modules
  *  from. This environment variable has the same syntax as the
- *  <envar>PATH</envar>. If two modules have the same base name in different
+ *  `PATH`. If two modules have the same base name in different
  *  directories, then the latter one will be ignored. If additional
  *  directories are specified GIO will load modules from the built-in
  *  directory last.
@@ -225,12 +226,24 @@ static void      g_io_module_finalize      (GObject      *object);
 static gboolean  g_io_module_load_module   (GTypeModule  *gmodule);
 static void      g_io_module_unload_module (GTypeModule  *gmodule);
 
+/**
+ * GIOExtension:
+ *
+ * #GIOExtension is an opaque data structure and can only be accessed
+ * using the following functions.
+ */
 struct _GIOExtension {
   char *name;
   GType type;
   gint priority;
 };
 
+/**
+ * GIOExtensionPoint:
+ *
+ * #GIOExtensionPoint is an opaque data structure and can only be accessed
+ * using the following functions.
+ */
 struct _GIOExtensionPoint {
   GType required_type;
   char *name;
@@ -666,7 +679,7 @@ try_class (GIOExtension *extension,
  * The result is cached after it is generated the first time, and
  * the function is thread-safe.
  *
- * Return value: (transfer none): an object implementing
+ * Returns: (transfer none): an object implementing
  *     @extension_point, or %NULL if there are no usable
  *     implementations.
  */
@@ -789,7 +802,7 @@ try_implementation (GIOExtension         *extension,
  * The result is cached after it is generated the first time, and
  * the function is thread-safe.
  *
- * Return value: (transfer none): an object implementing
+ * Returns: (transfer none): an object implementing
  *     @extension_point, or %NULL if there are no usable
  *     implementations.
  */
@@ -874,17 +887,15 @@ _g_io_module_get_default (const gchar         *extension_point,
 G_LOCK_DEFINE_STATIC (registered_extensions);
 G_LOCK_DEFINE_STATIC (loaded_dirs);
 
-extern GType _g_fen_directory_monitor_get_type (void);
-extern GType _g_fen_file_monitor_get_type (void);
-extern GType _g_inotify_directory_monitor_get_type (void);
-extern GType _g_inotify_file_monitor_get_type (void);
-extern GType _g_kqueue_directory_monitor_get_type (void);
-extern GType _g_kqueue_file_monitor_get_type (void);
+extern GType g_fen_file_monitor_get_type (void);
+extern GType g_inotify_file_monitor_get_type (void);
+extern GType g_kqueue_file_monitor_get_type (void);
+extern GType g_win32_file_monitor_get_type (void);
+
 extern GType _g_unix_volume_monitor_get_type (void);
 extern GType _g_local_vfs_get_type (void);
 
 extern GType _g_win32_volume_monitor_get_type (void);
-extern GType g_win32_directory_monitor_get_type (void);
 extern GType _g_winhttp_vfs_get_type (void);
 
 extern GType _g_dummy_proxy_resolver_get_type (void);
@@ -892,6 +903,16 @@ extern GType _g_dummy_tls_backend_get_type (void);
 extern GType g_network_monitor_base_get_type (void);
 #ifdef HAVE_NETLINK
 extern GType _g_network_monitor_netlink_get_type (void);
+extern GType _g_network_monitor_nm_get_type (void);
+#endif
+
+#ifdef G_OS_UNIX
+extern GType g_fdo_notification_backend_get_type (void);
+extern GType g_gtk_notification_backend_get_type (void);
+#endif
+
+#ifdef HAVE_COCOA
+extern GType g_cocoa_notification_backend_get_type (void);
 #endif
 
 #ifdef G_PLATFORM_WIN32
@@ -961,15 +982,9 @@ _g_io_modules_ensure_extension_points_registered (void)
       G_GNUC_END_IGNORE_DEPRECATIONS
 #endif
 #endif
-      
-      ep = g_io_extension_point_register (G_LOCAL_DIRECTORY_MONITOR_EXTENSION_POINT_NAME);
-      g_io_extension_point_set_required_type (ep, G_TYPE_LOCAL_DIRECTORY_MONITOR);
-      
+
       ep = g_io_extension_point_register (G_LOCAL_FILE_MONITOR_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_LOCAL_FILE_MONITOR);
-      
-      ep = g_io_extension_point_register (G_NFS_DIRECTORY_MONITOR_EXTENSION_POINT_NAME);
-      g_io_extension_point_set_required_type (ep, G_TYPE_LOCAL_DIRECTORY_MONITOR);
 
       ep = g_io_extension_point_register (G_NFS_FILE_MONITOR_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_LOCAL_FILE_MONITOR);
@@ -997,6 +1012,9 @@ _g_io_modules_ensure_extension_points_registered (void)
 
       ep = g_io_extension_point_register (G_NETWORK_MONITOR_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_NETWORK_MONITOR);
+
+      ep = g_io_extension_point_register (G_NOTIFICATION_BACKEND_EXTENSION_POINT_NAME);
+      g_io_extension_point_set_required_type (ep, G_TYPE_NOTIFICATION_BACKEND);
     }
   
   G_UNLOCK (registered_extensions);
@@ -1008,6 +1026,7 @@ _g_io_modules_ensure_loaded (void)
   static gboolean loaded_dirs = FALSE;
   const char *module_path;
   GIOModuleScope *scope;
+  const gchar *module_dir;
 
   _g_io_modules_ensure_extension_points_registered ();
   
@@ -1036,41 +1055,49 @@ _g_io_modules_ensure_loaded (void)
 	}
 
       /* Then load the compiled in path */
-      g_io_modules_scan_all_in_directory_with_scope (GIO_MODULE_DIR, scope);
+      module_dir = g_getenv ("GIO_MODULE_DIR");
+      if (module_dir == NULL)
+        module_dir = GIO_MODULE_DIR;
+
+      g_io_modules_scan_all_in_directory_with_scope (module_dir, scope);
 
       g_io_module_scope_free (scope);
 
       /* Initialize types from built-in "modules" */
       g_type_ensure (g_null_settings_backend_get_type ());
       g_type_ensure (g_memory_settings_backend_get_type ());
-#if defined(HAVE_SYS_INOTIFY_H) || defined(HAVE_LINUX_INOTIFY_H)
-      g_type_ensure (_g_inotify_directory_monitor_get_type ());
-      g_type_ensure (_g_inotify_file_monitor_get_type ());
+#if defined(HAVE_INOTIFY_INIT1)
+      g_type_ensure (g_inotify_file_monitor_get_type ());
 #endif
 #if defined(HAVE_KQUEUE)
-      g_type_ensure (_g_kqueue_directory_monitor_get_type ());
-      g_type_ensure (_g_kqueue_file_monitor_get_type ());
+      g_type_ensure (g_kqueue_file_monitor_get_type ());
 #endif
 #if defined(HAVE_FEN)
-      g_type_ensure (_g_fen_directory_monitor_get_type ());
-      g_type_ensure (_g_fen_file_monitor_get_type ());
+      g_type_ensure (g_fen_file_monitor_get_type ());
 #endif
 #ifdef G_OS_WIN32
       g_type_ensure (_g_win32_volume_monitor_get_type ());
-      g_type_ensure (g_win32_directory_monitor_get_type ());
+      g_type_ensure (g_win32_file_monitor_get_type ());
       g_type_ensure (g_registry_backend_get_type ());
 #endif
-#ifdef HAVE_CARBON
+#ifdef HAVE_COCOA
       g_nextstep_settings_backend_get_type ();
 #endif
 #ifdef G_OS_UNIX
       g_type_ensure (_g_unix_volume_monitor_get_type ());
+      g_type_ensure (g_fdo_notification_backend_get_type ());
+      g_type_ensure (g_gtk_notification_backend_get_type ());
+#endif
+#ifdef HAVE_COCOA
+      g_type_ensure (g_cocoa_notification_backend_get_type ());
 #endif
 #ifdef G_OS_WIN32
       g_type_ensure (_g_winhttp_vfs_get_type ());
 #endif
       g_type_ensure (_g_local_vfs_get_type ());
       g_type_ensure (_g_dummy_proxy_resolver_get_type ());
+      g_type_ensure (_g_http_proxy_get_type ());
+      g_type_ensure (_g_https_proxy_get_type ());
       g_type_ensure (_g_socks4a_proxy_get_type ());
       g_type_ensure (_g_socks4_proxy_get_type ());
       g_type_ensure (_g_socks5_proxy_get_type ());
@@ -1078,6 +1105,7 @@ _g_io_modules_ensure_loaded (void)
       g_type_ensure (g_network_monitor_base_get_type ());
 #ifdef HAVE_NETLINK
       g_type_ensure (_g_network_monitor_netlink_get_type ());
+      g_type_ensure (_g_network_monitor_nm_get_type ());
 #endif
     }
 
@@ -1213,8 +1241,8 @@ lazy_load_modules (GIOExtensionPoint *extension_point)
  * The list is sorted by priority, beginning with the highest priority.
  *
  * Returns: (element-type GIOExtension) (transfer none): a #GList of
- * #GIOExtension<!-- -->s. The list is owned by GIO and should not be
- * modified.
+ *     #GIOExtensions. The list is owned by GIO and should not be
+ *     modified.
  */
 GList *
 g_io_extension_point_get_extensions (GIOExtensionPoint *extension_point)
@@ -1238,6 +1266,8 @@ g_io_extension_point_get_extension_by_name (GIOExtensionPoint *extension_point,
 					    const char        *name)
 {
   GList *l;
+
+  g_return_val_if_fail (name != NULL, NULL);
 
   lazy_load_modules (extension_point);
   for (l = extension_point->extensions; l != NULL; l = l->next)

@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -90,17 +88,35 @@ do_lookup_by_name (GTask         *task,
       for (ai = res; ai; ai = ai->ai_next)
         {
           sockaddr = g_socket_address_new_from_native (ai->ai_addr, ai->ai_addrlen);
-          if (!sockaddr || !G_IS_INET_SOCKET_ADDRESS (sockaddr))
+          if (!sockaddr)
             continue;
+          if (!G_IS_INET_SOCKET_ADDRESS (sockaddr))
+            {
+              g_clear_object (&sockaddr);
+              continue;
+            }
 
           addr = g_object_ref (g_inet_socket_address_get_address ((GInetSocketAddress *)sockaddr));
           addresses = g_list_prepend (addresses, addr);
           g_object_unref (sockaddr);
         }
 
-      addresses = g_list_reverse (addresses);
-      g_task_return_pointer (task, addresses,
-                             (GDestroyNotify)g_resolver_free_addresses);
+      if (addresses != NULL)
+        {
+          addresses = g_list_reverse (addresses);
+          g_task_return_pointer (task, addresses,
+                                 (GDestroyNotify)g_resolver_free_addresses);
+        }
+      else
+        {
+          /* All addresses failed to be converted to GSocketAddresses. */
+          g_task_return_new_error (task,
+                                   G_RESOLVER_ERROR,
+                                   G_RESOLVER_ERROR_NOT_FOUND,
+                                   _("Error resolving '%s': %s"),
+                                   hostname,
+                                   _("No valid addresses were found"));
+        }
     }
   else
     {
@@ -524,26 +540,22 @@ g_resolver_records_from_res_query (const gchar      *rrname,
 
   if (len <= 0)
     {
-      GResolverError errnum;
-      const gchar *format;
-
       if (len == 0 || herr == HOST_NOT_FOUND || herr == NO_DATA)
         {
-          errnum = G_RESOLVER_ERROR_NOT_FOUND;
-          format = _("No DNS record of the requested type for '%s'");
+          g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_NOT_FOUND,
+                       _("No DNS record of the requested type for '%s'"), rrname);
         }
       else if (herr == TRY_AGAIN)
         {
-          errnum = G_RESOLVER_ERROR_TEMPORARY_FAILURE;
-          format = _("Temporarily unable to resolve '%s'");
+          g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_TEMPORARY_FAILURE,
+                       _("Temporarily unable to resolve '%s'"), rrname);
         }
       else
         {
-          errnum = G_RESOLVER_ERROR_INTERNAL;
-          format = _("Error resolving '%s'");
+          g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_INTERNAL,
+                       _("Error resolving '%s'"), rrname);
         }
 
-      g_set_error (error, G_RESOLVER_ERROR, errnum, format, rrname);
       return NULL;
     }
 
@@ -706,26 +718,22 @@ g_resolver_records_from_DnsQuery (const gchar  *rrname,
 
   if (status != ERROR_SUCCESS)
     {
-      GResolverError errnum;
-      const gchar *format;
-
       if (status == DNS_ERROR_RCODE_NAME_ERROR)
         {
-          errnum = G_RESOLVER_ERROR_NOT_FOUND;
-          format = _("No DNS record of the requested type for '%s'");
+          g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_NOT_FOUND,
+                       _("No DNS record of the requested type for '%s'"), rrname);
         }
       else if (status == DNS_ERROR_RCODE_SERVER_FAILURE)
         {
-          errnum = G_RESOLVER_ERROR_TEMPORARY_FAILURE;
-          format = _("Temporarily unable to resolve '%s'");
+          g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_TEMPORARY_FAILURE,
+                       _("Temporarily unable to resolve '%s'"), rrname);
         }
       else
         {
-          errnum = G_RESOLVER_ERROR_INTERNAL;
-          format = _("Error resolving '%s'");
+          g_set_error (error, G_RESOLVER_ERROR, G_RESOLVER_ERROR_INTERNAL,
+                       _("Error resolving '%s'"), rrname);
         }
 
-      g_set_error (error, G_RESOLVER_ERROR, errnum, format, rrname);
       return NULL;
     }
 
@@ -930,7 +938,7 @@ g_threaded_resolver_class_init (GThreadedResolverClass *threaded_class)
   resolver_class->lookup_records_async     = lookup_records_async;
   resolver_class->lookup_records_finish    = lookup_records_finish;
 
-  /* Initialize _g_resolver_addrinfo_hints */
+  /* Initialize addrinfo_hints */
 #ifdef AI_ADDRCONFIG
   addrinfo_hints.ai_flags |= AI_ADDRCONFIG;
 #endif

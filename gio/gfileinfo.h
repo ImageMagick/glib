@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -89,6 +87,20 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.
  **/
 #define G_FILE_ATTRIBUTE_STANDARD_IS_VIRTUAL "standard::is-virtual"         /* boolean */
+
+/**
+ * G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE:
+ *
+ * A key in the "standard" namespace for checking if a file is
+ * volatile. This is meant for opaque, non-POSIX-like backends to
+ * indicate that the URI is not persistent. Applications should look
+ * at #G_FILE_ATTRIBUTE_STANDARD_SYMLINK_TARGET for the persistent URI.
+ *
+ * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.
+ *
+ * Since: 2.46
+ **/
+#define G_FILE_ATTRIBUTE_STANDARD_IS_VOLATILE "standard::is-volatile"      /* boolean */
 
 /**
  * G_FILE_ATTRIBUTE_STANDARD_NAME:
@@ -703,6 +715,21 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.
  **/
 #define G_FILE_ATTRIBUTE_THUMBNAILING_FAILED "thumbnail::failed"         /* boolean */
+/**
+ * G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID:
+ *
+ * A key in the "thumbnail" namespace for checking whether the thumbnail is outdated.
+ * This attribute is %TRUE if the thumbnail is up-to-date with the file it represents,
+ * and %FALSE if the file has been modified since the thumbnail was generated.
+ *
+ * If %G_FILE_ATTRIBUTE_THUMBNAILING_FAILED is %TRUE and this attribute is %FALSE,
+ * it indicates that thumbnailing may be attempted again and may succeed.
+ *
+ * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_BOOLEAN.
+ *
+ * Since: 2.40
+ */
+#define G_FILE_ATTRIBUTE_THUMBNAIL_IS_VALID "thumbnail::is-valid"        /* boolean */
 
 /* Preview */
 
@@ -813,7 +840,7 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * was trashed. Corresponding #GFileAttributeType is
  * %G_FILE_ATTRIBUTE_TYPE_BYTE_STRING.
  *
- * Since: 2.24.
+ * Since: 2.24
  **/
 #define G_FILE_ATTRIBUTE_TRASH_ORIG_PATH "trash::orig-path"     /* byte string */
 
@@ -825,7 +852,7 @@ typedef struct _GFileInfoClass   GFileInfoClass;
  * was trashed. The format of the returned string is YYYY-MM-DDThh:mm:ss.
  * Corresponding #GFileAttributeType is %G_FILE_ATTRIBUTE_TYPE_STRING.
  *
- * Since: 2.24.
+ * Since: 2.24
  **/
 #define G_FILE_ATTRIBUTE_TRASH_DELETION_DATE "trash::deletion-date"  /* string */
 

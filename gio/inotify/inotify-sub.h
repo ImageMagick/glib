@@ -14,8 +14,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Author: John McCutchan <john@johnmccutchan.com>
 */
@@ -36,7 +35,6 @@ typedef struct
 
 inotify_sub *_ih_sub_new (const gchar  *dirname,
 			  const gchar  *filename,
-			  gboolean      pair_moves,
 			  gboolean      watch_hardlinks,
 			  gpointer      user_data);
 void         _ih_sub_free (inotify_sub *sub);

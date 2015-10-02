@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: t; c-basic-offset: 2; tab-width: 8 -*- */
 
-/* inotify-helper.c - Gnome VFS Monitor based on inotify.
+/* inotify-missing.c - GVFS Monitor based on inotify.
 
    Copyright (C) 2005 John McCutchan
 
@@ -16,8 +16,7 @@
 
    You should have received a copy of the GNU Library General Public
    License along with the Gnome Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.
+   see <http://www.gnu.org/licenses/>.
 
    Authors: 
 		 John McCutchan <john@johnmccutchan.com>

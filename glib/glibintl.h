@@ -2,7 +2,7 @@
 #define __GLIBINTL_H__
 
 #ifndef SIZEOF_CHAR
-//#error "config.h must be included prior to glibintl.h"
+#error "config.h must be included prior to glibintl.h"
 #endif
 
 GLIB_AVAILABLE_IN_ALL

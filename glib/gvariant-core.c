@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -672,7 +670,7 @@ g_variant_ref (GVariant *value)
  * @value: a #GVariant
  *
  * #GVariant uses a floating reference count system.  All functions with
- * names starting with <literal>g_variant_new_</literal> return floating
+ * names starting with `g_variant_new_` return floating
  * references.
  *
  * Calling g_variant_ref_sink() on a #GVariant with a floating reference
@@ -846,7 +844,7 @@ g_variant_get_size (GVariant *value)
  * serialised data, you must know the type of the #GVariant, and (if the
  * machine might be different) the endianness of the machine that stored
  * it. As a result, file formats or network messages that incorporate
- * serialised #GVariant<!---->s must include this information either
+ * serialised #GVariants must include this information either
  * implicitly (for instance "the file always contains a
  * %G_VARIANT_TYPE_VARIANT and it is always in little-endian order") or
  * explicitly (by storing the type and/or endianness in addition to the

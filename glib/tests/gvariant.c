@@ -1520,7 +1520,9 @@ test_array (void)
         g_variant_serialiser_serialise (serialised, random_instance_filler,
                                         (gpointer *) instances, n_children);
 
-        g_assert (memcmp (serialised.data, data, serialised.size) == 0);
+        if (serialised.size)
+          g_assert (memcmp (serialised.data, data, serialised.size) == 0);
+
         g_assert (g_variant_serialised_n_children (serialised) == n_children);
 
         for (i = 0; i < n_children; i++)
@@ -1681,7 +1683,9 @@ test_tuple (void)
         g_variant_serialiser_serialise (serialised, random_instance_filler,
                                         (gpointer *) instances, n_children);
 
-        g_assert (memcmp (serialised.data, data, serialised.size) == 0);
+        if (serialised.size)
+          g_assert (memcmp (serialised.data, data, serialised.size) == 0);
+
         g_assert (g_variant_serialised_n_children (serialised) == n_children);
 
         for (i = 0; i < n_children; i++)
@@ -1774,7 +1778,9 @@ test_variant (void)
         g_variant_serialiser_serialise (serialised, random_instance_filler,
                                         (gpointer *) &instance, 1);
 
-        g_assert (memcmp (serialised.data, data, serialised.size) == 0);
+        if (serialised.size)
+          g_assert (memcmp (serialised.data, data, serialised.size) == 0);
+
         g_assert (g_variant_serialised_n_children (serialised) == 1);
 
         child = g_variant_serialised_get_child (serialised, 0);
@@ -1879,7 +1885,7 @@ struct _TreeInstance
   union {
     guint64 integer;
     gdouble floating;
-    gchar string[32];
+    gchar string[200];
   } data;
   gsize data_size;
 };
@@ -1998,7 +2004,7 @@ tree_instance_new (const GVariantType *type,
       break;
 
     case 's': case 'o': case 'g':
-      instance->data_size = g_test_rand_int_range (10, 20);
+      instance->data_size = g_test_rand_int_range (10, 200);
       make_random_string (instance->data.string, instance->data_size, type);
       break;
     }
@@ -2195,7 +2201,7 @@ static void
 serialise_tree (TreeInstance       *tree,
                 GVariantSerialised *serialised)
 {
-  GVariantSerialised empty = {  };
+  GVariantSerialised empty = {0, };
 
   *serialised = empty;
   tree_filler (serialised, tree);
@@ -2218,8 +2224,7 @@ test_byteswap (void)
 
   g_variant_serialised_byteswap (two);
 
-  g_assert_cmpint (one.size, ==, two.size);
-  g_assert (memcmp (one.data, two.data, one.size) == 0);
+  g_assert_cmpmem (one.data, one.size, two.data, two.size);
 
   tree_instance_free (tree);
   g_free (one.data);
@@ -3741,6 +3746,25 @@ test_parses (void)
     g_free (printed);
   }
 
+  /* escapes */
+  {
+    const gchar orig[] = " \342\200\254 \360\220\210\240 \a \b \f \n \r \t \v ";
+    GVariant *value;
+    gchar *printed;
+
+    value = g_variant_new_string (orig);
+    printed = g_variant_print (value, FALSE);
+    g_variant_unref (value);
+
+    g_assert_cmpstr (printed, ==, "' \\u202c \\U00010220 \\a \\b \\f \\n \\r \\t \\v '");
+    value = g_variant_parse (NULL, printed, NULL, NULL, NULL);
+    g_assert_cmpstr (g_variant_get_string (value, NULL), ==, orig);
+    g_variant_unref (value);
+    g_free (printed);
+  }
+
+#ifndef _MSC_VER
+  /* inf/nan strings are C99 features which Visual C++ does not support */
   /* inf/nan mini test */
   {
     const gchar *tests[] = { "inf", "-inf", "nan" };
@@ -3762,6 +3786,7 @@ test_parses (void)
         g_variant_unref (value);
       }
   }
+#endif
 
   g_variant_type_info_assert_no_infos ();
 }
@@ -4105,25 +4130,159 @@ test_lookup (void)
   g_variant_unref (dict);
 }
 
+static GVariant *
+untrusted (GVariant *a)
+{
+  GVariant *b;
+  const GVariantType *type;
+  GBytes *bytes;
+
+  type = g_variant_get_type (a);
+  bytes = g_variant_get_data_as_bytes (a);
+  b = g_variant_new_from_bytes (type, bytes, FALSE);
+  g_bytes_unref (bytes);
+  g_variant_unref (a);
+
+  return b;
+}
+
 static void
 test_compare (void)
 {
   GVariant *a;
   GVariant *b;
 
-  a = g_variant_new_byte (5);
+  a = untrusted (g_variant_new_byte (5));
   b = g_variant_new_byte (6);
   g_assert (g_variant_compare (a, b) < 0);
   g_variant_unref (a);
   g_variant_unref (b);
-  a = g_variant_new_string ("abc");
+  a = untrusted (g_variant_new_int16 (G_MININT16));
+  b = g_variant_new_int16 (G_MAXINT16);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_uint16 (0));
+  b = g_variant_new_uint16 (G_MAXUINT16);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_int32 (G_MININT32));
+  b = g_variant_new_int32 (G_MAXINT32);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_uint32 (0));
+  b = g_variant_new_uint32 (G_MAXUINT32);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_int64 (G_MININT64));
+  b = g_variant_new_int64 (G_MAXINT64);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_uint64 (0));
+  b = g_variant_new_uint64 (G_MAXUINT64);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_double (G_MINDOUBLE));
+  b = g_variant_new_double (G_MAXDOUBLE);
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_string ("abc"));
   b = g_variant_new_string ("abd");
   g_assert (g_variant_compare (a, b) < 0);
   g_variant_unref (a);
   g_variant_unref (b);
-  a = g_variant_new_boolean (FALSE);
+  a = untrusted (g_variant_new_object_path ("/abc"));
+  b = g_variant_new_object_path ("/abd");
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_signature ("g"));
+  b = g_variant_new_signature ("o");
+  g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_boolean (FALSE));
   b = g_variant_new_boolean (TRUE);
   g_assert (g_variant_compare (a, b) < 0);
+  g_variant_unref (a);
+  g_variant_unref (b);
+}
+
+static void
+test_equal (void)
+{
+  GVariant *a;
+  GVariant *b;
+
+  a = untrusted (g_variant_new_byte (5));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_int16 (G_MININT16));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_uint16 (0));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_int32 (G_MININT32));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_uint32 (0));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_int64 (G_MININT64));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_uint64 (0));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_double (G_MINDOUBLE));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_string ("abc"));
+  g_assert (g_variant_equal (a, a));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_object_path ("/abc"));
+  g_assert (g_variant_equal (a, a));
+  b = g_variant_get_normal_form (a);
+  a = untrusted (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_signature ("g"));
+  g_assert (g_variant_equal (a, a));
+  b = g_variant_get_normal_form (a);
+  a = untrusted (a);
+  g_assert (g_variant_equal (a, b));
+  g_variant_unref (a);
+  g_variant_unref (b);
+  a = untrusted (g_variant_new_boolean (FALSE));
+  b = g_variant_get_normal_form (a);
+  g_assert (g_variant_equal (a, b));
   g_variant_unref (a);
   g_variant_unref (b);
 }
@@ -4207,6 +4366,9 @@ test_check_format_string (void)
   g_assert (!g_variant_check_format_string (value, "(s^&ay)", TRUE));
   g_test_assert_expected_messages ();
   g_assert (g_variant_check_format_string (value, "(s^&ay)", FALSE));
+
+  g_assert (g_variant_check_format_string (value, "r", FALSE));
+  g_assert (g_variant_check_format_string (value, "(?a?)", FALSE));
 
   g_variant_unref (value);
 }
@@ -4330,6 +4492,47 @@ test_gbytes (void)
   g_variant_unref (tuple);
 }
 
+typedef struct {
+  const GVariantType *type;
+  const gchar *in;
+  const gchar *out;
+} ContextTest;
+
+static void
+test_print_context (void)
+{
+  ContextTest tests[] = {
+    { NULL, "(1, 2, 3, 'abc", "          ^^^^" },
+    { NULL, "[1, 2, 3, 'str']", " ^        ^^^^^" },
+    { G_VARIANT_TYPE_UINT16, "{ 'abc':'def' }", "  ^^^^^^^^^^^^^^^" },
+    { NULL, "<5", "    ^" },
+    { NULL, "'ab\\ux'", "  ^^^^^^^" },
+    { NULL, "'ab\\U00efx'", "  ^^^^^^^^^^^" }
+  };
+  GVariant *v;
+  gchar *s;
+  gint i;
+  GError *error = NULL;
+
+  for (i = 0; i < G_N_ELEMENTS (tests); i++)
+    {
+      v = g_variant_parse (tests[i].type, tests[i].in, NULL, NULL, &error);
+      g_assert_null (v);
+      s = g_variant_parse_error_print_context (error, tests[i].in);
+      g_assert (strstr (s, tests[i].out) != NULL);
+      g_free (s);
+      g_clear_error (&error);
+    }
+}
+
+static void
+test_error_quark (void)
+{
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  g_assert (g_variant_parser_get_error_quark () == g_variant_parse_error_quark ());
+G_GNUC_END_IGNORE_DEPRECATIONS
+}
+
 int
 main (int argc, char **argv)
 {
@@ -4378,6 +4581,7 @@ main (int argc, char **argv)
   g_test_add_func ("/gvariant/lookup-value", test_lookup_value);
   g_test_add_func ("/gvariant/lookup", test_lookup);
   g_test_add_func ("/gvariant/compare", test_compare);
+  g_test_add_func ("/gvariant/equal", test_equal);
   g_test_add_func ("/gvariant/fixed-array", test_fixed_array);
   g_test_add_func ("/gvariant/check-format-string", test_check_format_string);
 
@@ -4385,6 +4589,8 @@ main (int argc, char **argv)
   g_test_add_func ("/gvariant/checksum-nested", test_checksum_nested);
 
   g_test_add_func ("/gvariant/gbytes", test_gbytes);
+  g_test_add_func ("/gvariant/print-context", test_print_context);
+  g_test_add_func ("/gvariant/error-quark", test_error_quark);
 
   return g_test_run ();
 }

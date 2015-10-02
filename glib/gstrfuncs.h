@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -195,6 +193,8 @@ GLIB_AVAILABLE_IN_ALL
 gchar*                g_ascii_strup       (const gchar *str,
 					   gssize       len) G_GNUC_MALLOC;
 
+GLIB_AVAILABLE_IN_2_40
+gboolean              g_str_is_ascii      (const gchar *str);
 
 GLIB_DEPRECATED
 gint                  g_strcasecmp     (const gchar *s1,
@@ -219,8 +219,7 @@ gchar*	              g_strdup_printf  (const gchar *format,
 					...) G_GNUC_PRINTF (1, 2) G_GNUC_MALLOC;
 GLIB_AVAILABLE_IN_ALL
 gchar*	              g_strdup_vprintf (const gchar *format,
-					va_list      args) G_GNUC_PRINTF(1, 0)
-					G_GNUC_MALLOC;
+					va_list      args) G_GNUC_PRINTF(1, 0) G_GNUC_MALLOC;
 GLIB_AVAILABLE_IN_ALL
 gchar*	              g_strndup	       (const gchar *str,
 					gsize        n) G_GNUC_MALLOC;  
@@ -287,6 +286,24 @@ guint                 g_strv_length    (gchar       **str_array);
 GLIB_AVAILABLE_IN_ALL
 gchar*                g_stpcpy         (gchar        *dest,
                                         const char   *src);
+
+GLIB_AVAILABLE_IN_2_40
+gchar *                 g_str_to_ascii                                  (const gchar   *str,
+                                                                         const gchar   *from_locale);
+
+GLIB_AVAILABLE_IN_2_40
+gchar **                g_str_tokenize_and_fold                         (const gchar   *string,
+                                                                         const gchar   *translit_locale,
+                                                                         gchar       ***ascii_alternates);
+
+GLIB_AVAILABLE_IN_2_40
+gboolean                g_str_match_string                              (const gchar   *search_term,
+                                                                         const gchar   *potential_hit,
+                                                                         gboolean       accept_alternates);
+
+GLIB_AVAILABLE_IN_2_44
+gboolean              g_strv_contains  (const gchar * const *strv,
+                                        const gchar         *str);
 
 G_END_DECLS
 

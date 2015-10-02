@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  *          Matthias Clasen <mclasen@redhat.com>
@@ -39,8 +37,8 @@ typedef struct
   void (* keys_changed)          (GObject             *target,
                                   GSettingsBackend    *backend,
                                   const gchar         *prefix,
-                                  const gchar * const *names,
-                                  gpointer             origin_tag);
+                                  gpointer             origin_tag,
+                                  const gchar * const *names);
   void (* writable_changed)      (GObject             *target,
                                   GSettingsBackend    *backend,
                                   const gchar         *key);
@@ -62,6 +60,9 @@ GVariant *              g_settings_backend_read                         (GSettin
                                                                          const gchar                    *key,
                                                                          const GVariantType             *expected_type,
                                                                          gboolean                        default_value);
+GVariant *              g_settings_backend_read_user_value              (GSettingsBackend               *backend,
+                                                                         const gchar                    *key,
+                                                                         const GVariantType             *expected_type);
 gboolean                g_settings_backend_write                        (GSettingsBackend               *backend,
                                                                          const gchar                    *key,
                                                                          GVariant                       *value,

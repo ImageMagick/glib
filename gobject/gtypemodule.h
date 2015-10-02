@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef __G_TYPE_MODULE_H__
 #define __G_TYPE_MODULE_H__
@@ -42,7 +40,7 @@ typedef struct _GTypeModuleClass GTypeModuleClass;
  * GTypeModule:
  * @name: the name of the module
  * 
- * The members of the <structname>GTypeModule</structname> structure should not 
+ * The members of the GTypeModule structure should not 
  * be accessed directly, except for the @name field.
  */
 struct _GTypeModule 
@@ -94,9 +92,9 @@ struct _GTypeModuleClass
  * class initialization function, an instance initialization function (see 
  * #GTypeInfo for information about these) and a static variable named 
  * @t_n<!-- -->_parent_class pointing to the parent class. Furthermore, 
- * it defines a <function>*_get_type()</function> and a static 
- * <function>*_register_type()</function> function for use in your
- * <function>module_init()</function>.
+ * it defines a `*_get_type()` and a static `*_register_type()` functions
+ * for use in your `module_init()`.
+ *
  * See G_DEFINE_DYNAMIC_TYPE_EXTENDED() for an example.
  * 
  * Since: 2.14
@@ -184,6 +182,7 @@ static gint     TypeName##_private_offset; \
 \
 _G_DEFINE_TYPE_EXTENDED_CLASS_INIT(TypeName, type_name) \
 \
+G_GNUC_UNUSED \
 static inline gpointer \
 type_name##_get_instance_private (TypeName *self) \
 { \
@@ -242,6 +241,20 @@ type_name##_register_type (GTypeModule *type_module) \
   g_type_module_add_interface (type_module, g_define_type_id, TYPE_IFACE, &g_implement_interface_info); \
 }
 
+/**
+ * G_ADD_PRIVATE_DYNAMIC:
+ * @TypeName: the name of the type in CamelCase
+ *
+ * A convenience macro to ease adding private data to instances of a new dynamic
+ * type in the @_C_ section of G_DEFINE_DYNAMIC_TYPE_EXTENDED(). See
+ * G_ADD_PRIVATE() for details, it is similar but for static types.
+ *
+ * Note that this macro can only be used together with the
+ * G_DEFINE_DYNAMIC_TYPE_EXTENDED macros, since it depends on variable
+ * names from that macro.
+ *
+ * Since: 2.38
+ */
 #define G_ADD_PRIVATE_DYNAMIC(TypeName)         { \
   TypeName##_private_offset = sizeof (TypeName##Private); \
 }

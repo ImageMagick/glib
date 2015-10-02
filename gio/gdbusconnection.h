@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -263,7 +261,7 @@ GVariant *g_dbus_connection_call_with_unix_fd_list_sync       (GDBusConnection  
  * @interface_name: The D-Bus interface name the method was invoked on.
  * @method_name: The name of the method that was invoked.
  * @parameters: A #GVariant tuple with parameters.
- * @invocation: A #GDBusMethodInvocation object that can be used to return a value or error.
+ * @invocation: (transfer full): A #GDBusMethodInvocation object that must be used to return a value or error.
  * @user_data: The @user_data #gpointer passed to g_dbus_connection_register_object().
  *
  * The type of the @method_call function in #GDBusInterfaceVTable.
@@ -342,36 +340,42 @@ typedef gboolean  (*GDBusInterfaceSetPropertyFunc) (GDBusConnection       *conne
  *
  * Since 2.38, if you want to handle getting/setting D-Bus properties
  * asynchronously, give %NULL as your get_property() or set_property()
- * function.  The D-Bus call will be directed to your @method_call
- * function, with the provided @interface_name set to
- * <literal>"org.freedesktop.DBus.Properties"</literal>.
+ * function. The D-Bus call will be directed to your @method_call function,
+ * with the provided @interface_name set to "org.freedesktop.DBus.Properties".
  *
- * The usual checks on the validity of the calls is performed.  For
- * <literal>'Get'</literal> calls, an error is automatically returned if
- * the property does not exist or the permissions do not allow access.
- * The same checks are performed for <literal>'Set'</literal> calls, and
- * the provided value is also checked for being the correct type.
+ * Ownership of the #GDBusMethodInvocation object passed to the
+ * method_call() function is transferred to your handler; you must
+ * call one of the methods of #GDBusMethodInvocation to return a reply
+ * (possibly empty), or an error. These functions also take ownership
+ * of the passed-in invocation object, so unless the invocation
+ * object has otherwise been referenced, it will be then be freed.
+ * Calling one of these functions may be done within your
+ * method_call() implementation but it also can be done at a later
+ * point to handle the method asynchronously.
  *
- * For both <literal>'Get'</literal> and <literal>'Set'</literal> calls,
- * the #GDBusMethodInvocation passed to the method_call handler can be
- * queried with g_dbus_method_invocation_get_property_info() to get a
- * pointer to the #GDBusPropertyInfo of the property.
+ * The usual checks on the validity of the calls is performed. For
+ * `Get` calls, an error is automatically returned if the property does
+ * not exist or the permissions do not allow access. The same checks are
+ * performed for `Set` calls, and the provided value is also checked for
+ * being the correct type.
  *
- * If you have readable properties specified in your interface info, you
- * must ensure that you either provide a non-%NULL @get_property()
- * function or provide implementations of both the
- * <literal>'Get'</literal> and <literal>'GetAll'</literal> methods on
- * the <literal>'org.freedesktop.DBus.Properties'</literal> interface in
- * your @method_call function.  Note that the required return type of
- * the <literal>'Get'</literal> call is <literal>(v)</literal>, not the
- * type of the property.  <literal>'GetAll'</literal> expects a return
- * value of type <literal>a{sv}</literal>.
+ * For both `Get` and `Set` calls, the #GDBusMethodInvocation
+ * passed to the @method_call handler can be queried with
+ * g_dbus_method_invocation_get_property_info() to get a pointer
+ * to the #GDBusPropertyInfo of the property.
  *
- * If you have writable properties specified in your interface info, you
- * must ensure that you either provide a non-%NULL @set_property()
- * function or provide an implementation of the <literal>'Set'</literal>
- * call.  If implementing the call, you must return the value of type
- * %G_VARIANT_TYPE_UNIT.
+ * If you have readable properties specified in your interface info,
+ * you must ensure that you either provide a non-%NULL @get_property()
+ * function or provide implementations of both the `Get` and `GetAll`
+ * methods on org.freedesktop.DBus.Properties interface in your @method_call
+ * function. Note that the required return type of the `Get` call is
+ * `(v)`, not the type of the property. `GetAll` expects a return value
+ * of type `a{sv}`.
+ *
+ * If you have writable properties specified in your interface info,
+ * you must ensure that you either provide a non-%NULL @set_property()
+ * function or provide an implementation of the `Set` call. If implementing
+ * the call, you must return the value of type %G_VARIANT_TYPE_UNIT.
  *
  * Since: 2.26
  */
@@ -397,6 +401,14 @@ guint            g_dbus_connection_register_object            (GDBusConnection  
                                                                gpointer                    user_data,
                                                                GDestroyNotify              user_data_free_func,
                                                                GError                    **error);
+GLIB_AVAILABLE_IN_2_46
+guint            g_dbus_connection_register_object_with_closures (GDBusConnection         *connection,
+                                                                  const gchar             *object_path,
+                                                                  GDBusInterfaceInfo      *interface_info,
+                                                                  GClosure                *method_call_closure,
+                                                                  GClosure                *get_property_closure,
+                                                                  GClosure                *set_property_closure,
+                                                                  GError                 **error);
 GLIB_AVAILABLE_IN_ALL
 gboolean         g_dbus_connection_unregister_object          (GDBusConnection            *connection,
                                                                guint                       registration_id);

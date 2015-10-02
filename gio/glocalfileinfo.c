@@ -15,14 +15,14 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
 
 #include "config.h"
+
+#include <glib.h>
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
@@ -30,15 +30,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <fcntl.h>
 #include <errno.h>
-#ifdef HAVE_GRP_H
+#ifdef G_OS_UNIX
 #include <grp.h>
-#endif
-#ifdef HAVE_PWD_H
 #include <pwd.h>
 #endif
 #ifdef HAVE_SELINUX
@@ -62,11 +57,13 @@
 #include <gfileinfo-priv.h>
 #include <gvfs.h>
 
-#ifndef G_OS_WIN32
+#ifdef G_OS_UNIX
+#include <unistd.h>
 #include "glib-unix.h"
 #include "glib-private.h"
 #endif
-#include "glibintl.h"
+
+#include "thumbnail-verify.h"
 
 #ifdef G_OS_WIN32
 #include <windows.h>
@@ -95,6 +92,7 @@
 #include "gioerror.h"
 #include "gthemedicon.h"
 #include "gcontenttypeprivate.h"
+#include "glibintl.h"
 
 
 struct ThumbMD5Context {
@@ -664,6 +662,7 @@ get_xattrs_from_fd (int                    fd,
 		g_free (escaped_attr);
 	      
 	      get_one_xattr_from_fd (fd, info, gio_attr, attr);
+	      g_free (gio_attr);
 	    }
 	  
 	  len = strlen (attr) + 1;
@@ -975,6 +974,18 @@ set_info_from_stat (GFileInfo             *info,
   _g_file_info_set_attribute_uint32_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CHANGED_USEC, statbuf->st_ctim.tv_nsec / 1000);
 #endif
 
+#if defined (HAVE_STRUCT_STAT_ST_BIRTHTIME) && defined (HAVE_STRUCT_STAT_ST_BIRTHTIMENSEC)
+  _g_file_info_set_attribute_uint64_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CREATED, statbuf->st_birthtime);
+  _g_file_info_set_attribute_uint32_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CREATED_USEC, statbuf->st_birthtimensec / 1000);
+#elif defined (HAVE_STRUCT_STAT_ST_BIRTHTIM) && defined (HAVE_STRUCT_STAT_ST_BIRTHTIM_TV_NSEC)
+  _g_file_info_set_attribute_uint64_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CREATED, statbuf->st_birthtim.tv_sec);
+  _g_file_info_set_attribute_uint32_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CREATED_USEC, statbuf->st_birthtim.tv_nsec / 1000);
+#elif defined (HAVE_STRUCT_STAT_ST_BIRTHTIME)
+  _g_file_info_set_attribute_uint64_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CREATED, statbuf->st_birthtime);
+#elif defined (HAVE_STRUCT_STAT_ST_BIRTHTIM)
+  _g_file_info_set_attribute_uint64_by_id (info, G_FILE_ATTRIBUTE_ID_TIME_CREATED, statbuf->st_birthtim);
+#endif
+
   if (_g_file_attribute_matcher_matches_id (attribute_matcher,
 					    G_FILE_ATTRIBUTE_ID_ETAG_VALUE))
     {
@@ -1219,20 +1230,20 @@ get_content_type (const char          *basename,
 {
   if (is_symlink &&
       (symlink_broken || (flags & G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS)))
-    return g_strdup ("inode/symlink");
+    return g_content_type_from_mime_type ("inode/symlink");
   else if (statbuf != NULL && S_ISDIR(statbuf->st_mode))
-    return g_strdup ("inode/directory");
+    return g_content_type_from_mime_type ("inode/directory");
 #ifndef G_OS_WIN32
   else if (statbuf != NULL && S_ISCHR(statbuf->st_mode))
-    return g_strdup ("inode/chardevice");
+    return g_content_type_from_mime_type ("inode/chardevice");
   else if (statbuf != NULL && S_ISBLK(statbuf->st_mode))
-    return g_strdup ("inode/blockdevice");
+    return g_content_type_from_mime_type ("inode/blockdevice");
   else if (statbuf != NULL && S_ISFIFO(statbuf->st_mode))
-    return g_strdup ("inode/fifo");
+    return g_content_type_from_mime_type ("inode/fifo");
 #endif
 #ifdef S_ISSOCK
   else if (statbuf != NULL && S_ISSOCK(statbuf->st_mode))
-    return g_strdup ("inode/socket");
+    return g_content_type_from_mime_type ("inode/socket");
 #endif
   else
     {
@@ -1242,7 +1253,10 @@ get_content_type (const char          *basename,
       content_type = g_content_type_guess (basename, NULL, 0, &result_uncertain);
       
 #ifndef G_OS_WIN32
-      if (!fast && result_uncertain && path != NULL)
+      /* Don't sniff zero-length files in order to avoid reading files
+       * that appear normal but are not (eg: files in /proc and /sys)
+       */
+      if (!fast && result_uncertain && path != NULL && statbuf && statbuf->st_size != 0)
 	{
 	  guchar sniff_buffer[4096];
 	  gsize sniff_length;
@@ -1278,9 +1292,11 @@ get_content_type (const char          *basename,
   
 }
 
+/* @stat_buf is the pre-calculated result of stat(path), or %NULL if that failed. */
 static void
-get_thumbnail_attributes (const char *path,
-                          GFileInfo  *info)
+get_thumbnail_attributes (const char     *path,
+                          GFileInfo      *info,
+                          const GLocalFileStat *stat_buf)
 {
   GChecksum *checksum;
   char *uri;
@@ -1291,8 +1307,6 @@ get_thumbnail_attributes (const char *path,
 
   checksum = g_checksum_new (G_CHECKSUM_MD5);
   g_checksum_update (checksum, (const guchar *) uri, strlen (uri));
-  
-  g_free (uri);
 
   basename = g_strconcat (g_checksum_get_string (checksum), ".png", NULL);
   g_checksum_free (checksum);
@@ -1302,7 +1316,11 @@ get_thumbnail_attributes (const char *path,
                                NULL);
 
   if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
-    _g_file_info_set_attribute_byte_string_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_PATH, filename);
+    {
+      _g_file_info_set_attribute_byte_string_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_PATH, filename);
+      _g_file_info_set_attribute_boolean_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_IS_VALID,
+                                                thumbnail_verify (filename, uri, stat_buf));
+    }
   else
     {
       g_free (filename);
@@ -1311,7 +1329,11 @@ get_thumbnail_attributes (const char *path,
                                    NULL);
 
       if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
-        _g_file_info_set_attribute_byte_string_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_PATH, filename);
+        {
+          _g_file_info_set_attribute_byte_string_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_PATH, filename);
+          _g_file_info_set_attribute_boolean_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_IS_VALID,
+                                                    thumbnail_verify (filename, uri, stat_buf));
+        }
       else
         {
           g_free (filename);
@@ -1322,11 +1344,16 @@ get_thumbnail_attributes (const char *path,
                                        NULL);
 
           if (g_file_test (filename, G_FILE_TEST_IS_REGULAR))
-            _g_file_info_set_attribute_boolean_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAILING_FAILED, TRUE);
+            {
+              _g_file_info_set_attribute_boolean_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAILING_FAILED, TRUE);
+              _g_file_info_set_attribute_boolean_by_id (info, G_FILE_ATTRIBUTE_ID_THUMBNAIL_IS_VALID,
+                                                        thumbnail_verify (filename, uri, stat_buf));
+            }
         }
     }
   g_free (basename);
   g_free (filename);
+  g_free (uri);
 }
 
 #ifdef G_OS_WIN32
@@ -1443,7 +1470,7 @@ read_hidden_file (const gchar *dirname)
   gchar *filename;
 
   filename = g_build_path ("/", dirname, ".hidden", NULL);
-  g_file_get_contents (filename, &contents, NULL, NULL);
+  (void) g_file_get_contents (filename, &contents, NULL, NULL);
   g_free (filename);
 
   if (contents != NULL)
@@ -1569,6 +1596,7 @@ _g_local_file_info_get_nostat (GFileInfo              *info,
 
 static const char *
 get_icon_name (const char *path,
+               const char *content_type,
                gboolean    use_symbolic,
                gboolean   *with_fallbacks_out)
 {
@@ -1613,6 +1641,10 @@ get_icon_name (const char *path,
     {
       name = use_symbolic ? "folder-videos-symbolic" : "folder-videos";
     }
+  else if (g_strcmp0 (content_type, "inode/directory") == 0)
+    {
+      name = use_symbolic ? "folder-symbolic" : "folder";
+    }
   else
     {
       name = NULL;
@@ -1627,14 +1659,13 @@ get_icon_name (const char *path,
 static GIcon *
 get_icon (const char *path,
           const char *content_type,
-          gboolean    is_folder,
           gboolean    use_symbolic)
 {
   GIcon *icon = NULL;
   const char *icon_name;
   gboolean with_fallbacks;
 
-  icon_name = get_icon_name (path, use_symbolic, &with_fallbacks);
+  icon_name = get_icon_name (path, content_type, use_symbolic, &with_fallbacks);
   if (icon_name != NULL)
     {
       if (with_fallbacks)
@@ -1648,11 +1679,6 @@ get_icon (const char *path,
         icon = g_content_type_get_symbolic_icon (content_type);
       else
         icon = g_content_type_get_icon (content_type);
-
-      if (G_IS_THEMED_ICON (icon) && is_folder)
-        {
-          g_themed_icon_append_name (G_THEMED_ICON (icon), use_symbolic ? "folder-symbolic" : "folder");
-        }
     }
 
   return icon;
@@ -1840,7 +1866,7 @@ _g_local_file_info_get (const char             *basename,
 	      GIcon *icon;
 
               /* non symbolic icon */
-              icon = get_icon (path, content_type, S_ISDIR (statbuf.st_mode), FALSE);
+              icon = get_icon (path, content_type, FALSE);
               if (icon != NULL)
                 {
                   g_file_info_set_icon (info, icon);
@@ -1848,7 +1874,7 @@ _g_local_file_info_get (const char             *basename,
                 }
 
               /* symbolic icon */
-              icon = get_icon (path, content_type, S_ISDIR (statbuf.st_mode), TRUE);
+              icon = get_icon (path, content_type, TRUE);
               if (icon != NULL)
                 {
                   g_file_info_set_symbolic_icon (info, icon);
@@ -1935,7 +1961,12 @@ _g_local_file_info_get (const char             *basename,
 
   if (_g_file_attribute_matcher_matches_id (attribute_matcher,
 					    G_FILE_ATTRIBUTE_ID_THUMBNAIL_PATH))
-    get_thumbnail_attributes (path, info);
+    {
+      if (stat_ok)
+          get_thumbnail_attributes (path, info, &statbuf);
+      else
+          get_thumbnail_attributes (path, info, NULL);
+    }
 
   vfs = g_vfs_get_default ();
   class = G_VFS_GET_CLASS (vfs);
@@ -2138,7 +2169,7 @@ set_unix_mode (char                       *filename,
   return TRUE;
 }
 
-#ifdef HAVE_CHOWN
+#ifdef G_OS_UNIX
 static gboolean
 set_unix_uid_gid (char                       *filename,
 		  const GFileAttributeValue  *uid_value,
@@ -2422,7 +2453,7 @@ _g_local_file_info_set_attribute (char                 *filename,
   if (strcmp (attribute, G_FILE_ATTRIBUTE_UNIX_MODE) == 0)
     return set_unix_mode (filename, flags, &value, error);
   
-#ifdef HAVE_CHOWN
+#ifdef G_OS_UNIX
   else if (strcmp (attribute, G_FILE_ATTRIBUTE_UNIX_UID) == 0)
     return set_unix_uid_gid (filename, &value, NULL, flags, error);
   else if (strcmp (attribute, G_FILE_ATTRIBUTE_UNIX_GID) == 0)
@@ -2499,13 +2530,11 @@ _g_local_file_info_set_attributes  (char                 *filename,
 				    GError              **error)
 {
   GFileAttributeValue *value;
-#ifdef HAVE_CHOWN
+#ifdef G_OS_UNIX
   GFileAttributeValue *uid, *gid;
-#endif
 #ifdef HAVE_UTIMES
   GFileAttributeValue *mtime, *mtime_usec, *atime, *atime_usec;
 #endif
-#if defined (HAVE_CHOWN) || defined (HAVE_UTIMES)
   GFileAttributeStatus status;
 #endif
   gboolean res;
@@ -2535,7 +2564,7 @@ _g_local_file_info_set_attributes  (char                 *filename,
     }
 #endif
 
-#ifdef HAVE_CHOWN
+#ifdef G_OS_UNIX
   /* Group uid and gid setting into one call
    * Change ownership before permissions, since ownership changes can
      change permissions (e.g. setuid)

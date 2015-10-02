@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Stef Walter <stefw@collabora.co.uk>
  */
@@ -51,6 +49,42 @@
  * GTlsDatabase:
  *
  * Abstract base class for the backend-specific database types.
+ *
+ * Since: 2.30
+ */
+
+/**
+ * GTlsDatabaseClass:
+ * @verify_chain: Virtual method implementing
+ *  g_tls_database_verify_chain().
+ * @verify_chain_async: Virtual method implementing
+ *  g_tls_database_verify_chain_async().
+ * @verify_chain_finish: Virtual method implementing
+ *  g_tls_database_verify_chain_finish().
+ * @create_certificate_handle: Virtual method implementing
+ *  g_tls_database_create_certificate_handle().
+ * @lookup_certificate_for_handle: Virtual method implementing
+ *  g_tls_database_lookup_certificate_for_handle().
+ * @lookup_certificate_for_handle_async: Virtual method implementing
+ *  g_tls_database_lookup_certificate_for_handle_async().
+ * @lookup_certificate_for_handle_finish: Virtual method implementing
+ *  g_tls_database_lookup_certificate_for_handle_finish().
+ * @lookup_certificate_issuer: Virtual method implementing
+ *  g_tls_database_lookup_certificate_issuer().
+ * @lookup_certificate_issuer_async: Virtual method implementing
+ *  g_tls_database_lookup_certificate_issuer_async().
+ * @lookup_certificate_issuer_finish: Virtual method implementing
+ *  g_tls_database_lookup_certificate_issuer_finish().
+ * @lookup_certificates_issued_by: Virtual method implementing
+ *  g_tls_database_lookup_certificates_issued_by().
+ * @lookup_certificates_issued_by_async: Virtual method implementing
+ *  g_tls_database_lookup_certificates_issued_by_async().
+ * @lookup_certificates_issued_by_finish: Virtual method implementing
+ *  g_tls_database_lookup_certificates_issued_by_finish().
+ *
+ * The class for #GTlsDatabase. Derived classes should implement the various
+ * virtual methods. _async and _finish methods have a default
+ * implementation that runs the corresponding sync method in a thread.
  *
  * Since: 2.30
  */
@@ -439,7 +473,7 @@ g_tls_database_class_init (GTlsDatabaseClass *klass)
  * This function can block, use g_tls_database_verify_chain_async() to perform
  * the verification operation asynchronously.
  *
- * Return value: the appropriate #GTlsCertificateFlags which represents the
+ * Returns: the appropriate #GTlsCertificateFlags which represents the
  * result of verification.
  *
  * Since: 2.30
@@ -536,7 +570,7 @@ g_tls_database_verify_chain_async (GTlsDatabase           *self,
  *
  * Finish an asynchronous verify chain operation. See
  * g_tls_database_verify_chain() for more information. *
- * Return value: the appropriate #GTlsCertificateFlags which represents the
+ * Returns: the appropriate #GTlsCertificateFlags which represents the
  * result of verification.
  *
  * Since: 2.30
@@ -570,7 +604,9 @@ g_tls_database_verify_chain_finish (GTlsDatabase          *self,
  * and between applications. If a certificate is modified in the database,
  * then it is not guaranteed that this handle will continue to point to it.
  *
- * Returns: (allow-none): a newly allocated string containing the handle.
+ * Returns: (nullable): a newly allocated string containing the
+ * handle.
+ *
  * Since: 2.30
  */
 gchar*
@@ -606,7 +642,7 @@ g_tls_database_create_certificate_handle (GTlsDatabase            *self,
  * This function can block, use g_tls_database_lookup_certificate_for_handle_async() to perform
  * the lookup operation asynchronously.
  *
- * Return value: (transfer full) (allow-none): a newly allocated
+ * Returns: (transfer full) (allow-none): a newly allocated
  * #GTlsCertificate, or %NULL. Use g_object_unref() to release the certificate.
  *
  * Since: 2.30
@@ -684,7 +720,7 @@ g_tls_database_lookup_certificate_for_handle_async (GTlsDatabase            *sel
  * If the handle is no longer valid, or does not point to a certificate in
  * this database, then %NULL will be returned.
  *
- * Return value: (transfer full): a newly allocated #GTlsCertificate object.
+ * Returns: (transfer full): a newly allocated #GTlsCertificate object.
  * Use g_object_unref() to release the certificate.
  *
  * Since: 2.30
@@ -721,7 +757,7 @@ g_tls_database_lookup_certificate_for_handle_finish (GTlsDatabase            *se
  * This function can block, use g_tls_database_lookup_certificate_issuer_async() to perform
  * the lookup operation asynchronously.
  *
- * Return value: (transfer full): a newly allocated issuer #GTlsCertificate,
+ * Returns: (transfer full): a newly allocated issuer #GTlsCertificate,
  * or %NULL. Use g_object_unref() to release the certificate.
  *
  * Since: 2.30
@@ -796,7 +832,7 @@ g_tls_database_lookup_certificate_issuer_async (GTlsDatabase           *self,
  * Finish an asynchronous lookup issuer operation. See
  * g_tls_database_lookup_certificate_issuer() for more information.
  *
- * Return value: (transfer full): a newly allocated issuer #GTlsCertificate,
+ * Returns: (transfer full): a newly allocated issuer #GTlsCertificate,
  * or %NULL. Use g_object_unref() to release the certificate.
  *
  * Since: 2.30
@@ -829,7 +865,7 @@ g_tls_database_lookup_certificate_issuer_finish (GTlsDatabase          *self,
  * This function can block, use g_tls_database_lookup_certificates_issued_by_async() to perform
  * the lookup operation asynchronously.
  *
- * Return value: (transfer full) (element-type GTlsCertificate): a newly allocated list of #GTlsCertificate
+ * Returns: (transfer full) (element-type GTlsCertificate): a newly allocated list of #GTlsCertificate
  * objects. Use g_object_unref() on each certificate, and g_list_free() on the release the list.
  *
  * Since: 2.30
@@ -908,7 +944,7 @@ g_tls_database_lookup_certificates_issued_by_async (GTlsDatabase           *self
  * Finish an asynchronous lookup of certificates. See
  * g_tls_database_lookup_certificates_issued_by() for more information.
  *
- * Return value: (transfer full) (element-type GTlsCertificate): a newly allocated list of #GTlsCertificate
+ * Returns: (transfer full) (element-type GTlsCertificate): a newly allocated list of #GTlsCertificate
  * objects. Use g_object_unref() on each certificate, and g_list_free() on the release the list.
  *
  * Since: 2.30

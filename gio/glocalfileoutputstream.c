@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -25,9 +23,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <errno.h>
 #include <string.h>
 
@@ -41,6 +36,7 @@
 #include "glocalfileinfo.h"
 
 #ifdef G_OS_UNIX
+#include <unistd.h>
 #include "gfiledescriptorbased.h"
 #endif
 
@@ -265,7 +261,7 @@ _g_local_file_output_stream_really_close (GLocalFileOutputStream *file,
 	  if (g_cancellable_set_error_if_cancelled (cancellable, error))
 	    goto err_out;
 	  
-#ifdef HAVE_LINK
+#ifdef G_OS_UNIX
 	  /* create original -> backup link, the original is then renamed over */
 	  if (g_unlink (file->priv->backup_filename) != 0 &&
 	      errno != ENOENT)

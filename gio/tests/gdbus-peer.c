@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -38,17 +36,11 @@
 #include <gio/gnetworking.h>
 #include <gio/gunixsocketaddress.h>
 #include <gio/gunixfdlist.h>
+#include <gio/gcredentialsprivate.h>
 
 #ifdef G_OS_UNIX
 #include <gio/gunixconnection.h>
 #include <errno.h>
-#endif
-
-#if (defined(__linux__) || \
-  defined(__FreeBSD__) || \
-  defined(__FreeBSD_kernel__) || \
-  defined(__OpenBSD__))
-#define SHOULD_HAVE_CREDENTIALS_PASSING
 #endif
 
 #include "gdbus-tests.h"
@@ -306,13 +298,13 @@ on_new_connection (GDBusServer *server,
   GError *error;
   guint reg_id;
 
-  //g_print ("Client connected.\n"
+  //g_printerr ("Client connected.\n"
   //         "Negotiated capabilities: unix-fd-passing=%d\n",
   //         g_dbus_connection_get_capabilities (connection) & G_DBUS_CAPABILITY_FLAGS_UNIX_FD_PASSING);
 
   g_ptr_array_add (data->current_connections, g_object_ref (connection));
 
-#ifdef SHOULD_HAVE_CREDENTIALS_PASSING
+#if G_CREDENTIALS_SUPPORTED
     {
       GCredentials *credentials;
 
@@ -343,14 +335,34 @@ on_new_connection (GDBusServer *server,
   return TRUE;
 }
 
-static void
-create_service_loop (GMainContext *service_context)
+/* We don't tell the main thread about the new GDBusServer until it has
+ * had a chance to start listening. */
+static gboolean
+idle_in_service_loop (gpointer loop)
 {
   g_assert (service_loop == NULL);
   g_mutex_lock (&service_loop_lock);
-  service_loop = g_main_loop_new (service_context, FALSE);
+  service_loop = loop;
   g_cond_broadcast (&service_loop_cond);
   g_mutex_unlock (&service_loop_lock);
+
+  return G_SOURCE_REMOVE;
+}
+
+static void
+run_service_loop (GMainContext *service_context)
+{
+  GMainLoop *loop;
+  GSource *source;
+
+  g_assert (service_loop == NULL);
+
+  loop = g_main_loop_new (service_context, FALSE);
+  source = g_idle_source_new ();
+  g_source_set_callback (source, idle_in_service_loop, loop, NULL);
+  g_source_attach (source, service_context);
+  g_source_unref (source);
+  g_main_loop_run (loop);
 }
 
 static void
@@ -425,8 +437,7 @@ service_thread_func (gpointer user_data)
 
   g_dbus_server_start (server);
 
-  create_service_loop (service_context);
-  g_main_loop_run (service_loop);
+  run_service_loop (service_context);
 
   g_main_context_pop_thread_default (service_context);
 
@@ -520,8 +531,7 @@ service_thread_func (gpointer data)
                     data);
   g_socket_service_start (service);
 
-  create_service_loop (service_context);
-  g_main_loop_run (service_loop);
+  run_service_loop (service_context);
 
   g_main_context_pop_thread_default (service_context);
 
@@ -825,8 +835,7 @@ test_peer (void)
                          &len2,
                          &error);
     g_assert_no_error (error);
-    g_assert_cmpint (len, ==, len2);
-    g_assert (memcmp (buf, buf2, len) == 0);
+    g_assert_cmpmem (buf, len, buf2, len2);
     g_free (buf2);
     g_free (buf);
   }
@@ -844,9 +853,8 @@ test_peer (void)
   g_error_free (error);
 #endif /* G_OS_UNIX */
 
-  /* Check that g_socket_get_credentials() work - this really should
-   * be in a GSocket-specific test suite but no such test suite exists
-   * right now.
+  /* Check that g_socket_get_credentials() work - (though this really
+   * should be in socket.c)
    */
   {
     GSocket *socket;
@@ -855,30 +863,15 @@ test_peer (void)
     g_assert (G_IS_SOCKET (socket));
     error = NULL;
     credentials = g_socket_get_credentials (socket, &error);
-#ifdef __linux__
-    {
-      struct ucred *native_creds;
-      g_assert_no_error (error);
-      g_assert (G_IS_CREDENTIALS (credentials));
-      native_creds = g_credentials_get_native (credentials, G_CREDENTIALS_TYPE_LINUX_UCRED);
-      g_assert (native_creds != NULL);
-      g_assert (native_creds->uid == getuid ());
-      g_assert (native_creds->gid == getgid ());
-      g_assert (native_creds->pid == getpid ());
-    }
-    g_object_unref (credentials);
-#elif defined (__OpenBSD__)
-    {
-      struct sockpeercred *native_creds;
-      g_assert_no_error (error);
-      g_assert (G_IS_CREDENTIALS (credentials));
-      native_creds = g_credentials_get_native (credentials, G_CREDENTIALS_TYPE_OPENBSD_SOCKPEERCRED);
-      g_assert (native_creds != NULL);
-      g_assert (native_creds->uid == getuid ());
-      g_assert (native_creds->gid == getgid ());
-      g_assert (native_creds->pid == getpid ());
-    }
-    g_object_unref (credentials);
+
+#if G_CREDENTIALS_SOCKET_GET_CREDENTIALS_SUPPORTED
+    g_assert_no_error (error);
+    g_assert (G_IS_CREDENTIALS (credentials));
+
+    g_assert_cmpuint (g_credentials_get_unix_user (credentials, NULL), ==,
+                      getuid ());
+    g_assert_cmpuint (g_credentials_get_unix_pid (credentials, NULL), ==,
+                      getpid ());
 #else
     g_assert_error (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED);
     g_assert (credentials == NULL);
@@ -1236,8 +1229,7 @@ nonce_tcp_service_thread_func (gpointer user_data)
 
   g_dbus_server_start (server);
 
-  create_service_loop (service_context);
-  g_main_loop_run (service_loop);
+  run_service_loop (service_context);
 
   g_main_context_pop_thread_default (service_context);
 
@@ -1429,8 +1421,7 @@ tcp_anonymous_service_thread_func (gpointer user_data)
 
   g_dbus_server_start (server);
 
-  create_service_loop (service_context);
-  g_main_loop_run (service_loop);
+  run_service_loop (service_context);
 
   g_main_context_pop_thread_default (service_context);
 
@@ -1543,7 +1534,7 @@ codegen_on_new_connection (GDBusServer *server,
   ExampleAnimal *animal = user_data;
   GError        *error = NULL;
 
-  /* g_print ("Client connected.\n" */
+  /* g_printerr ("Client connected.\n" */
   /*          "Negotiated capabilities: unix-fd-passing=%d\n", */
   /*          g_dbus_connection_get_capabilities (connection) & G_DBUS_CAPABILITY_FLAGS_UNIX_FD_PASSING); */
 
@@ -1585,8 +1576,7 @@ codegen_service_thread_func (gpointer user_data)
                     G_CALLBACK (codegen_on_new_connection),
                     animal);
 
-  create_service_loop (service_context);
-  g_main_loop_run (service_loop);
+  run_service_loop (service_context);
 
   g_object_unref (animal);
 
@@ -1618,6 +1608,7 @@ codegen_test_peer (void)
   GThread             *service_thread;
   GError              *error = NULL;
   GVariant            *value;
+  const gchar         *s;
 
   /* bring up a server - we run the server in a different thread to avoid deadlocks */
   service_thread = g_thread_new ("codegen_test_peer",
@@ -1681,6 +1672,16 @@ codegen_test_peer (void)
   example_animal_call_poke_sync (animal2, FALSE, TRUE, NULL, &error);
   g_assert_no_error (error);
 
+  /* Some random unrelated call, just to get some test coverage */
+  value = g_dbus_proxy_call_sync (G_DBUS_PROXY (animal2),
+                                  "org.freedesktop.DBus.Peer.GetMachineId",
+                                  NULL, G_DBUS_CALL_FLAGS_NONE, -1,
+                                  NULL, &error);
+  g_assert_no_error (error);
+  g_variant_get (value, "(&s)", &s);
+  g_assert (g_dbus_is_guid (s));
+  g_variant_unref (value);
+  
   /* Poke server and make sure animal is updated */
   value = g_dbus_proxy_call_sync (G_DBUS_PROXY (animal2),
                                   "org.freedesktop.DBus.Peer.Ping",

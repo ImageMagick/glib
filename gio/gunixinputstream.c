@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -33,7 +31,6 @@
 #include <glib/gstdio.h>
 #include <glib/glib-unix.h>
 #include "gioerror.h"
-#include "gsimpleasyncresult.h"
 #include "gunixinputstream.h"
 #include "gcancellable.h"
 #include "gasynchelper.h"
@@ -53,9 +50,9 @@
  * asynchronous I/O. If it refers to a regular file, it will fall back
  * to doing asynchronous I/O in another thread.)
  *
- * Note that <filename>&lt;gio/gunixinputstream.h&gt;</filename> belongs
- * to the UNIX-specific GIO interfaces, thus you have to use the
- * <filename>gio-unix-2.0.pc</filename> pkg-config file when using it.
+ * Note that `<gio/gunixinputstream.h>` belongs to the UNIX-specific GIO
+ * interfaces, thus you have to use the `gio-unix-2.0.pc` pkg-config
+ * file when using it.
  */
 
 enum {
@@ -303,7 +300,7 @@ g_unix_input_stream_set_close_fd (GUnixInputStream *stream,
  * Returns whether the file descriptor of @stream will be
  * closed when the stream is closed.
  *
- * Return value: %TRUE if the file descriptor is closed when done
+ * Returns: %TRUE if the file descriptor is closed when done
  *
  * Since: 2.20
  */
@@ -321,7 +318,7 @@ g_unix_input_stream_get_close_fd (GUnixInputStream *stream)
  *
  * Return the UNIX file descriptor that the stream reads from.
  *
- * Return value: The file descriptor of @stream
+ * Returns: The file descriptor of @stream
  *
  * Since: 2.20
  */

@@ -1,6 +1,6 @@
 include $(top_srcdir)/glib.mk
 
-LDADD = $(top_builddir)/glib/libglib-2.0.la $(top_builddir)/gobject/libgobject-2.0.la
+LDADD = $(top_builddir)/gobject/libgobject-2.0.la $(top_builddir)/glib/libglib-2.0.la
 AM_CPPFLAGS = $(gmodule_INCLUDES) $(GLIB_DEBUG_FLAGS)
 DEFS = -DGLIB_DISABLE_DEPRECATION_WARNINGS -DG_LOG_DOMAIN=\"GLib\"
 AM_CFLAGS = -g
@@ -48,11 +48,10 @@ if ENABLE_TIMELOOP
 installed_test_programs += timeloop-closure
 endif
 
-if CROSS_COMPILING
-  glib_genmarshal=$(GLIB_GENMARSHAL)
-else
-  glib_genmarshal=$(top_builddir)/gobject/glib-genmarshal
-endif
+# The marshal test requires running a binary, which means we cannot
+# build it when cross-compiling
+if !CROSS_COMPILING
+glib_genmarshal=$(top_builddir)/gobject/glib-genmarshal
 
 testmarshal.h: stamp-testmarshal.h
 	@true
@@ -68,14 +67,9 @@ testmarshal.c: @REBUILD@ testmarshal.h testmarshal.list $(glib_genmarshal)
 
 BUILT_SOURCES += testmarshal.h testmarshal.c
 CLEANFILES += stamp-testmarshal.h
-
-EXTRA_DIST += \
-	testcommon.h				\
-	testmarshal.list
-
-BUILT_EXTRA_DIST += \
-	testmarshal.h				\
-	testmarshal.c
+EXTRA_DIST += testcommon.h testmarshal.list
+BUILT_EXTRA_DIST += testmarshal.h testmarshal.c
+endif # !CROSS_COMPILING
 
 dist-hook: $(BUILT_EXTRA_DIST)
 	files='$(BUILT_EXTRA_DIST)';				\

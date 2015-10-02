@@ -40,12 +40,14 @@ EXTRA_DIST += 			\
 	sanity_check		\
 	README.commits		\
 	README.in		\
+	README.rationale	\
 	INSTALL.in		\
 	README.win32		\
 	HACKING			\
 	autogen.sh		\
 	glib.mk			\
 	glib-tap.mk		\
+	tap-driver.sh		\
 	tap-test		\
 	makefile.msc		\
 	msvc_recommended_pragmas.h \

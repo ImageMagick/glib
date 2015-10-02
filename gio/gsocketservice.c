@@ -14,9 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  *          Alexander Larsson <alexl@redhat.com>
@@ -26,6 +24,7 @@
  * SECTION:gsocketservice
  * @title: GSocketService
  * @short_description: Make it easy to implement a network service
+ * @include: gio/gio.h
  * @see_also: #GThreadedSocketService, #GSocketListener.
  *
  * A #GSocketService is an object that represents a service that
@@ -48,9 +47,9 @@
  * If you are interested in writing connection handlers that contain
  * blocking code then see #GThreadedSocketService.
  *
- * The socket service runs on the main loop of the <link
- * linkend="g-main-context-push-thread-default-context">thread-default
- * context</link> of the thread it is created in, and is not
+ * The socket service runs on the main loop of the 
+ * [thread-default context][g-main-context-push-thread-default-context]
+ * of the thread it is created in, and is not
  * threadsafe in general. However, the calls to start and stop the
  * service are thread-safe so these can be used from threads that
  * handle incoming clients.
@@ -64,6 +63,7 @@
 #include <gio/gio.h>
 #include "gsocketlistener.h"
 #include "gsocketconnection.h"
+#include "glibintl.h"
 
 struct _GSocketServicePrivate
 {
@@ -77,6 +77,12 @@ static guint g_socket_service_incoming_signal;
 G_LOCK_DEFINE_STATIC(active);
 
 G_DEFINE_TYPE_WITH_PRIVATE (GSocketService, g_socket_service, G_TYPE_SOCKET_LISTENER)
+
+enum
+{
+  PROP_0,
+  PROP_ACTIVE
+};
 
 static void g_socket_service_ready (GObject      *object,
 				    GAsyncResult *result,
@@ -118,6 +124,90 @@ do_accept (GSocketService  *service)
   service->priv->outstanding_accept = TRUE;
 }
 
+static gboolean
+get_active (GSocketService *service)
+{
+  gboolean active;
+
+  G_LOCK (active);
+  active = service->priv->active;
+  G_UNLOCK (active);
+
+  return active;
+}
+
+static void
+set_active (GSocketService *service, gboolean active)
+{
+  gboolean notify = FALSE;
+
+  active = !!active;
+
+  G_LOCK (active);
+
+  if (active != service->priv->active)
+    {
+      service->priv->active = active;
+      notify = TRUE;
+
+      if (active)
+        {
+          if (service->priv->outstanding_accept)
+            g_cancellable_cancel (service->priv->cancellable);
+          else
+            do_accept (service);
+        }
+      else
+        {
+          if (service->priv->outstanding_accept)
+            g_cancellable_cancel (service->priv->cancellable);
+        }
+    }
+
+  G_UNLOCK (active);
+
+  if (notify)
+    g_object_notify (G_OBJECT (service), "active");
+}
+
+static void
+g_socket_service_get_property (GObject    *object,
+                               guint       prop_id,
+                               GValue     *value,
+                               GParamSpec *pspec)
+{
+  GSocketService *service = G_SOCKET_SERVICE (object);
+
+  switch (prop_id)
+    {
+    case PROP_ACTIVE:
+      g_value_set_boolean (value, get_active (service));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+static void
+g_socket_service_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
+{
+  GSocketService *service = G_SOCKET_SERVICE (object);
+
+  switch (prop_id)
+    {
+    case PROP_ACTIVE:
+      set_active (service, g_value_get_boolean (value));
+      break;
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
 static void
 g_socket_service_changed (GSocketListener *listener)
 {
@@ -130,11 +220,7 @@ g_socket_service_changed (GSocketListener *listener)
       if (service->priv->outstanding_accept)
 	g_cancellable_cancel (service->priv->cancellable);
       else
-	{
-	  g_socket_listener_accept_async (listener, service->priv->cancellable,
-					  g_socket_service_ready, NULL);
-	  service->priv->outstanding_accept = TRUE;
-	}
+	do_accept (service);
     }
 
   G_UNLOCK (active);
@@ -156,12 +242,9 @@ g_socket_service_changed (GSocketListener *listener)
 gboolean
 g_socket_service_is_active (GSocketService *service)
 {
-  gboolean active;
+  g_return_val_if_fail (G_IS_SOCKET_SERVICE (service), FALSE);
 
-  G_LOCK (active);
-  active = service->priv->active;
-  G_UNLOCK (active);
-  return active;
+  return get_active (service);
 }
 
 /**
@@ -179,19 +262,9 @@ g_socket_service_is_active (GSocketService *service)
 void
 g_socket_service_start (GSocketService *service)
 {
-  G_LOCK (active);
+  g_return_if_fail (G_IS_SOCKET_SERVICE (service));
 
-  if (!service->priv->active)
-    {
-      service->priv->active = TRUE;
-
-      if (service->priv->outstanding_accept)
-	g_cancellable_cancel (service->priv->cancellable);
-      else
-	do_accept (service);
-    }
-
-  G_UNLOCK (active);
+  set_active (service, TRUE);
 }
 
 /**
@@ -204,24 +277,21 @@ g_socket_service_start (GSocketService *service)
  * This call is thread-safe, so it may be called from a thread
  * handling an incoming client request.
  *
+ * Note that this only stops accepting new connections; it does not
+ * close the listening sockets, and you can call
+ * g_socket_service_start() again later to begin listening again. To
+ * close the listening sockets, call g_socket_listener_close(). (This
+ * will happen automatically when the #GSocketService is finalized.)
+ *
  * Since: 2.22
  */
 void
 g_socket_service_stop (GSocketService *service)
 {
-  G_LOCK (active);
+  g_return_if_fail (G_IS_SOCKET_SERVICE (service));
 
-  if (service->priv->active)
-    {
-      service->priv->active = FALSE;
-
-      if (service->priv->outstanding_accept)
-	g_cancellable_cancel (service->priv->cancellable);
-    }
-
-  G_UNLOCK (active);
+  set_active (service, FALSE);
 }
-
 
 static gboolean
 g_socket_service_incoming (GSocketService    *service,
@@ -242,6 +312,8 @@ g_socket_service_class_init (GSocketServiceClass *class)
   GSocketListenerClass *listener_class = G_SOCKET_LISTENER_CLASS (class);
 
   gobject_class->finalize = g_socket_service_finalize;
+  gobject_class->set_property = g_socket_service_set_property;
+  gobject_class->get_property = g_socket_service_get_property;
   listener_class->changed = g_socket_service_changed;
   class->incoming = g_socket_service_real_incoming;
 
@@ -265,11 +337,25 @@ g_socket_service_class_init (GSocketServiceClass *class)
    * Since: 2.22
    */
   g_socket_service_incoming_signal =
-    g_signal_new ("incoming", G_TYPE_FROM_CLASS (class), G_SIGNAL_RUN_LAST,
+    g_signal_new (I_("incoming"), G_TYPE_FROM_CLASS (class), G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GSocketServiceClass, incoming),
                   g_signal_accumulator_true_handled, NULL,
                   NULL, G_TYPE_BOOLEAN,
                   2, G_TYPE_SOCKET_CONNECTION, G_TYPE_OBJECT);
+
+  /**
+   * GSocketService:active:
+   *
+   * Whether the service is currently accepting connections.
+   *
+   * Since: 2.46
+   */
+  g_object_class_install_property (gobject_class, PROP_ACTIVE,
+                                   g_param_spec_boolean ("active",
+                                                         P_("Active"),
+                                                         P_("Whether the service is currently accepting connections"),
+                                                         TRUE,
+                                                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 }
 
 static void
@@ -307,7 +393,6 @@ g_socket_service_ready (GObject      *object,
 
   G_UNLOCK (active);
 }
-
 
 /**
  * g_socket_service_new:

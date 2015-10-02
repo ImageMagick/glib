@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -31,13 +29,13 @@
 
 G_MODULE_EXPORT gchar* gplugin_b_state;
 
-const gchar* g_module_check_init (GModule *module);
-void   g_module_unload (GModule *module);
+G_MODULE_EXPORT const gchar* g_module_check_init (GModule *module);
+G_MODULE_EXPORT void   g_module_unload (GModule *module);
 
-void gplugin_b_func (void);
-void gplugin_clash_func (void);
-void g_clash_func (void);
-void gplugin_say_boo_func (void);
+G_MODULE_EXPORT void gplugin_b_func (void);
+G_MODULE_EXPORT void gplugin_clash_func (void);
+G_MODULE_EXPORT void g_clash_func (void);
+G_MODULE_EXPORT void gplugin_say_boo_func (void);
 
 G_MODULE_EXPORT const gchar*
 g_module_check_init (GModule *module)

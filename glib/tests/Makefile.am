@@ -22,6 +22,7 @@ dist_test_data = \
 
 dist_test_extra_scripts = \
 	echo-script			\
+	echo-script.bat			\
 	$(NULL)
 
 test_extra_programs = \
@@ -57,6 +58,7 @@ test_programs = \
 	logging				\
 	mainloop			\
 	mappedfile			\
+	markup				\
 	markup-parse			\
 	markup-collect			\
 	markup-escape			\
@@ -76,6 +78,7 @@ test_programs = \
 	regex				\
 	rwlock				\
 	scannerapi			\
+	search-utils			\
 	sequence			\
 	shell				\
 	slice				\
@@ -89,6 +92,7 @@ test_programs = \
 	test-printf			\
 	thread				\
 	timeout				\
+	timer				\
 	tree				\
 	utf8-performance		\
 	utf8-pointer			\
@@ -141,10 +145,17 @@ markup_tests = \
 	valid-1 valid-2 valid-3 valid-4 valid-5 \
 	valid-6 valid-7 valid-8 valid-9 valid-10 \
 	valid-11 valid-12 valid-13 valid-14 valid-15 \
+	valid-16 \
+	$(NULL)
+
+cdata_markup_tests = \
+	valid-8 valid-16 \
 	$(NULL)
 
 dist_test_data += $(all_markup_data)
-all_markup_data = $(addprefix markups/,$(markup_tests:=.gmarkup) $(markup_tests:=.expected))
+all_markup_data = \
+	$(addprefix markups/,$(markup_tests:=.gmarkup) $(markup_tests:=.expected)) \
+	$(addprefix markups/,$(cdata_markup_tests.=.cdata-as-text))
 
 # -----------------------------------------------------------------------------
 
@@ -186,6 +197,12 @@ CLEANFILES += tmpsample.xml
 check-am: gtester-xmllint-check
 
 private_LDFLAGS = @G_THREAD_LIBS@
+endif
+
+if HAVE_GCC
+test_programs += \
+	autoptr				\
+	$(NULL)
 endif
 
 # -----------------------------------------------------------------------------

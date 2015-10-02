@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Sam Thursfield <ssssam@gmail.com>
  */
@@ -230,7 +228,7 @@ g_message_win32_error (DWORD result_code,
   if (result_code == ERROR_KEY_DELETED)
     trace ("(%s)", win32_message);
   else
-    g_message (win32_message);
+    g_message ("%s", win32_message);
 };
 
 
@@ -1656,9 +1654,6 @@ watch_start (GRegistryBackend *self)
 
   g_return_val_if_fail (self->watch == NULL, FALSE);
 
-  self->cache_lock = g_slice_new (CRITICAL_SECTION);
-  InitializeCriticalSection (self->cache_lock);
-
   watch = g_slice_new (WatchThreadState);
   watch->owner = G_SETTINGS_BACKEND (self);
 
@@ -1687,8 +1682,6 @@ watch_start (GRegistryBackend *self)
   return TRUE;
 
 fail_2:
-  DeleteCriticalSection (self->cache_lock);
-  g_slice_free (CRITICAL_SECTION, self->cache_lock);
   DeleteCriticalSection (watch->message_lock);
   g_slice_free (CRITICAL_SECTION, watch->message_lock);
   CloseHandle (watch->message_sent_event);
@@ -1722,9 +1715,7 @@ watch_stop_unlocked (GRegistryBackend *self)
 
   LeaveCriticalSection (watch->message_lock);
   DeleteCriticalSection (watch->message_lock);
-  DeleteCriticalSection (self->cache_lock);
   g_slice_free (CRITICAL_SECTION, watch->message_lock);
-  g_slice_free (CRITICAL_SECTION, self->cache_lock);
   CloseHandle (watch->message_sent_event);
   CloseHandle (watch->message_received_event);
   CloseHandle (watch->thread);
@@ -1756,8 +1747,12 @@ watch_add_notify (GRegistryBackend *self,
   EnterCriticalSection (self->cache_lock);
   cache_node = registry_cache_get_node_for_key (self->cache_root, gsettings_prefix, TRUE);
 
-  g_return_val_if_fail (cache_node != NULL, FALSE);
-  g_return_val_if_fail (cache_node->data != NULL, FALSE);
+  if (cache_node == NULL || cache_node->data == NULL)
+    {
+      LeaveCriticalSection (self->cache_lock);
+      g_warn_if_reached ();
+      return FALSE;
+    }
   
   cache_item = cache_node->data;
 
@@ -1766,6 +1761,7 @@ watch_add_notify (GRegistryBackend *self,
     {
       trace ("watch_add_notify: prefix %s already watched, %i subscribers.\n",
              gsettings_prefix, cache_item->subscription_count);
+      LeaveCriticalSection (self->cache_lock);
       return FALSE;
     }
 
@@ -1933,6 +1929,9 @@ g_registry_backend_finalize (GObject *object)
       watch_stop_unlocked (self);
     }
 
+  DeleteCriticalSection (self->cache_lock);
+  g_slice_free (CRITICAL_SECTION, self->cache_lock);
+
   g_free (self->base_path);
 }
 
@@ -1966,6 +1965,9 @@ g_registry_backend_init (GRegistryBackend *self)
   item->name = g_strdup ("<root>");
   item->ref_count = 1;
   self->cache_root = g_node_new (item);
+
+  self->cache_lock = g_slice_new (CRITICAL_SECTION);
+  InitializeCriticalSection (self->cache_lock);
 
   self->watch = NULL;
 }

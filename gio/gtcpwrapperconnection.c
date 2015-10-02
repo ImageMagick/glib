@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Nicolas Dufresne <nicolas.dufresne@colllabora.co.uk>
  */
@@ -23,7 +21,9 @@
 /**
  * SECTION:gtcpwrapperconnection
  * @title: GTcpWrapperConnection
- * @short_description: Wrapper for non-GSocketConnection-based, GSocket-based GIOStreams
+ * @short_description: Wrapper for non-GSocketConnection-based,
+ *     GSocket-based GIOStreams
+ * @include: gio/gio.h
  * @see_also: #GSocketConnection.
  *
  * A #GTcpWrapperConnection can be used to wrap a #GIOStream that is
@@ -34,6 +34,13 @@
  *
  * Since: 2.28
  */
+
+/**
+ * GTcpWrapperConnection:
+ *
+ * #GTcpWrapperConnection is an opaque data structure and can only be accessed
+ * using the following functions.
+ **/
 
 #include "config.h"
 
@@ -157,7 +164,7 @@ g_tcp_wrapper_connection_init (GTcpWrapperConnection *connection)
  *
  * Wraps @base_io_stream and @socket together as a #GSocketConnection.
  *
- * Return value: the new #GSocketConnection.
+ * Returns: the new #GSocketConnection.
  *
  * Since: 2.28
  */
@@ -183,7 +190,7 @@ g_tcp_wrapper_connection_new (GIOStream *base_io_stream,
  *
  * Get's @conn's base #GIOStream
  *
- * Return value: (transfer none): @conn's base #GIOStream
+ * Returns: (transfer none): @conn's base #GIOStream
  */
 GIOStream *
 g_tcp_wrapper_connection_get_base_io_stream (GTcpWrapperConnection *conn)

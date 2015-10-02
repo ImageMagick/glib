@@ -14,9 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  *          Alexander Larsson <alexl@redhat.com>
@@ -28,6 +26,7 @@
 
 #include "giostream.h"
 #include "gasyncresult.h"
+#include "gioprivate.h"
 #include "gtask.h"
 
 /**
@@ -57,9 +56,9 @@
  * To close a stream use g_io_stream_close() which will close the common
  * stream object and also the individual substreams. You can also close
  * the substreams themselves. In most cases this only marks the
- * substream as closed, so further I/O on it fails. However, some streams
- * may support "half-closed" states where one direction of the stream
- * is actually shut down.
+ * substream as closed, so further I/O on it fails but common state in the
+ * #GIOStream may still be open. However, some streams may support
+ * "half-closed" states where one direction of the stream is actually shut down.
  *
  * Since: 2.22
  */
@@ -75,7 +74,6 @@ enum
 struct _GIOStreamPrivate {
   guint closed : 1;
   guint pending : 1;
-  GAsyncReadyCallback outstanding_callback;
 };
 
 static gboolean g_io_stream_real_close        (GIOStream            *stream,
@@ -264,7 +262,7 @@ g_io_stream_has_pending (GIOStream *stream)
  * already set or @stream is closed, it will return %FALSE and set
  * @error.
  *
- * Return value: %TRUE if pending was previously unset and is now set.
+ * Returns: %TRUE if pending was previously unset and is now set.
  *
  * Since: 2.22
  */
@@ -372,7 +370,7 @@ g_io_stream_real_close (GIOStream     *stream,
  * The default implementation of this method just calls close on the
  * individual input/output streams.
  *
- * Return value: %TRUE on success, %FALSE on failure
+ * Returns: %TRUE on success, %FALSE on failure
  *
  * Since: 2.22
  */
@@ -416,12 +414,25 @@ async_ready_close_callback_wrapper (GObject      *source_object,
                                     gpointer      user_data)
 {
   GIOStream *stream = G_IO_STREAM (source_object);
+  GIOStreamClass *klass = G_IO_STREAM_GET_CLASS (stream);
+  GTask *task = user_data;
+  GError *error = NULL;
+  gboolean success;
 
   stream->priv->closed = TRUE;
   g_io_stream_clear_pending (stream);
-  if (stream->priv->outstanding_callback)
-    (*stream->priv->outstanding_callback) (source_object, res, user_data);
-  g_object_unref (stream);
+
+  if (g_async_result_legacy_propagate_error (res, &error))
+    success = FALSE;
+  else
+    success = klass->close_finish (stream, res, &error);
+
+  if (error)
+    g_task_return_error (task, error);
+  else
+    g_task_return_boolean (task, success);
+
+  g_object_unref (task);
 }
 
 /**
@@ -454,15 +465,14 @@ g_io_stream_close_async (GIOStream           *stream,
 {
   GIOStreamClass *class;
   GError *error = NULL;
+  GTask *task;
 
   g_return_if_fail (G_IS_IO_STREAM (stream));
 
+  task = g_task_new (stream, cancellable, callback, user_data);
+
   if (stream->priv->closed)
     {
-      GTask *task;
-
-      task = g_task_new (stream, cancellable, callback, user_data);
-      g_task_set_source_tag (task, g_io_stream_close_async);
       g_task_return_boolean (task, TRUE);
       g_object_unref (task);
       return;
@@ -470,17 +480,15 @@ g_io_stream_close_async (GIOStream           *stream,
 
   if (!g_io_stream_set_pending (stream, &error))
     {
-      g_task_report_error (stream, callback, user_data,
-                           g_io_stream_close_async,
-                           error);
+      g_task_return_error (task, error);
+      g_object_unref (task);
       return;
     }
 
   class = G_IO_STREAM_GET_CLASS (stream);
-  stream->priv->outstanding_callback = callback;
-  g_object_ref (stream);
+
   class->close_async (stream, io_priority, cancellable,
-		      async_ready_close_callback_wrapper, user_data);
+		      async_ready_close_callback_wrapper, task);
 }
 
 /**
@@ -501,18 +509,10 @@ g_io_stream_close_finish (GIOStream     *stream,
 			  GAsyncResult  *result,
 			  GError       **error)
 {
-  GIOStreamClass *class;
-
   g_return_val_if_fail (G_IS_IO_STREAM (stream), FALSE);
-  g_return_val_if_fail (G_IS_ASYNC_RESULT (result), FALSE);
+  g_return_val_if_fail (g_task_is_valid (result, stream), FALSE);
 
-  if (g_async_result_legacy_propagate_error (result, error))
-    return FALSE;
-  else if (g_async_result_is_tagged (result, g_io_stream_close_async))
-    return g_task_propagate_boolean (G_TASK (result), error);
-
-  class = G_IO_STREAM_GET_CLASS (stream);
-  return class->close_finish (stream, result, error);
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 
@@ -543,6 +543,53 @@ close_async_thread (GTask        *task,
   g_task_return_boolean (task, TRUE);
 }
 
+typedef struct
+{
+  GError *error;
+  gint pending;
+} CloseAsyncData;
+
+static void
+stream_close_complete (GObject      *source,
+                       GAsyncResult *result,
+                       gpointer      user_data)
+{
+  GTask *task = user_data;
+  CloseAsyncData *data;
+
+  data = g_task_get_task_data (task);
+  data->pending--;
+
+  if (G_IS_OUTPUT_STREAM (source))
+    {
+      GError *error = NULL;
+
+      /* Match behaviour with the sync route and give precedent to the
+       * error returned from closing the output stream.
+       */
+      g_output_stream_close_finish (G_OUTPUT_STREAM (source), result, &error);
+      if (error)
+        {
+          if (data->error)
+            g_error_free (data->error);
+          data->error = error;
+        }
+    }
+  else
+    g_input_stream_close_finish (G_INPUT_STREAM (source), result, data->error ? NULL : &data->error);
+
+  if (data->pending == 0)
+    {
+      if (data->error)
+        g_task_return_error (task, data->error);
+      else
+        g_task_return_boolean (task, TRUE);
+
+      g_slice_free (CloseAsyncData, data);
+      g_object_unref (task);
+    }
+}
+
 static void
 g_io_stream_real_close_async (GIOStream           *stream,
 			      int                  io_priority,
@@ -550,14 +597,41 @@ g_io_stream_real_close_async (GIOStream           *stream,
 			      GAsyncReadyCallback  callback,
 			      gpointer             user_data)
 {
+  GInputStream *input;
+  GOutputStream *output;
   GTask *task;
 
   task = g_task_new (stream, cancellable, callback, user_data);
   g_task_set_check_cancellable (task, FALSE);
   g_task_set_priority (task, io_priority);
-  
-  g_task_run_in_thread (task, close_async_thread);
-  g_object_unref (task);
+
+  input = g_io_stream_get_input_stream (stream);
+  output = g_io_stream_get_output_stream (stream);
+
+  if (g_input_stream_async_close_is_via_threads (input) && g_output_stream_async_close_is_via_threads (output))
+    {
+      /* No sense in dispatching to the thread twice -- just do it all
+       * in one go.
+       */
+      g_task_run_in_thread (task, close_async_thread);
+      g_object_unref (task);
+    }
+  else
+    {
+      CloseAsyncData *data;
+
+      /* We should avoid dispatching to another thread in case either
+       * object that would not do it for itself because it may not be
+       * threadsafe.
+       */
+      data = g_slice_new (CloseAsyncData);
+      data->error = NULL;
+      data->pending = 2;
+
+      g_task_set_task_data (task, data, NULL);
+      g_input_stream_close_async (input, io_priority, cancellable, stream_close_complete, task);
+      g_output_stream_close_async (output, io_priority, cancellable, stream_close_complete, task);
+    }
 }
 
 static gboolean

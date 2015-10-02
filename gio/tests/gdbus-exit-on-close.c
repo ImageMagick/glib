@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -61,8 +59,6 @@ quit_later_cb (gpointer data G_GNUC_UNUSED)
 
   return FALSE;
 }
-
-#define VANISHED_PATTERN "*Remote peer vanished with error: Underlying GIOStream returned 0 bytes on an async read (g-io-error-quark, 0). Exiting.*"
 
 static void
 closed_cb (GDBusConnection  *c G_GNUC_UNUSED,
@@ -190,15 +186,9 @@ test_exit_on_close (gconstpointer test_data)
 
   if (td->exit_on_close == EXPLICITLY_FALSE ||
       td->who_closes == LOCAL)
-    {
-      g_test_trap_assert_stdout_unmatched (VANISHED_PATTERN);
-      g_test_trap_assert_passed ();
-    }
+    g_test_trap_assert_passed ();
   else
-    {
-      g_test_trap_assert_stdout (VANISHED_PATTERN);
-      g_test_trap_assert_failed();
-    }
+    g_test_trap_assert_failed();
 }
 
 /* ---------------------------------------------------------------------------------------------------- */

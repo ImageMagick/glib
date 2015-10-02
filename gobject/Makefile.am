@@ -45,6 +45,7 @@ endif
 
 libgobjectincludedir = $(includedir)/glib-2.0/gobject
 libgobject_2_0_la_LDFLAGS = $(GLIB_LINK_FLAGS) \
+  $(GOBJECT_LINK_FLAGS) \
   $(gobject_win32_res_ldflag) \
   -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE) \
   -export-dynamic $(no_undefined)
@@ -60,6 +61,7 @@ libgobject_2_0_la_DEPENDENCIES = $(gobject_win32_res)
 #
 # GObject library header files for public installation
 gobject_public_h_sources = \
+	gobject-autocleanups.h	\
 	glib-types.h		\
 	gbinding.h		\
 	gboxed.h		\
@@ -216,44 +218,29 @@ BUILT_EXTRA_DIST += \
 gobject-win32-res.o: gobject.rc
 	$(AM_V_GEN) $(WINDRES) gobject.rc $@
 
-gobject-2.0.lib: libgobject-2.0.la gobject.def
-	lib -machine:@LIB_EXE_MACHINE_FLAG@ -name:libgobject-2.0-$(LT_CURRENT_MINUS_AGE).dll -def:$(builddir)/gobject.def -out:$@
+gobject.def: libgobject-2.0.la
+	$(AM_V_GEN) dumpbin.exe -exports .libs/libgobject-2.0-0.dll | awk 'BEGIN { print "EXPORTS" } / +[[:digit:]]+ +[[:xdigit:]]+ +[[:xdigit:]]+/{ print $$4 }' > gobject.def.tmp && mv gobject.def.tmp gobject.def
 
-dist-hook: $(BUILT_EXTRA_DIST) ../build/win32/vs9/gobject.vcproj ../build/win32/vs10/gobject.vcxproj ../build/win32/vs10/gobject.vcxproj.filters
+gobject-2.0.lib: libgobject-2.0.la gobject.def
+	$(AM_V_GEN) lib.exe -machine:@LIB_EXE_MACHINE_FLAG@ -name:libgobject-2.0-$(LT_CURRENT_MINUS_AGE).dll -def:$(builddir)/gobject.def -out:$@
+
+# ------ MSVC Project File Generation ------
+MSVCPROJS = gobject
+
+gobject_FILES = $(libgobject_2_0_la_SOURCES)
+gobject_EXCLUDES = dummy
+
+gobject_HEADERS_DIR = $(libgobjectincludedir)
+gobject_HEADERS_INST = $(gobject_public_h_sources)
+gobject_HEADERS_EXCLUDES = dummy
+
+include $(top_srcdir)/build/Makefile.msvcproj
+
+dist-hook: $(BUILT_EXTRA_DIST) $(top_builddir)/build/win32/vs9/gobject.vcproj $(top_builddir)/build/win32/vs9/gobject.headers
 	files='$(BUILT_EXTRA_DIST)'; \
 	for f in $$files; do \
 	  if test -f $$f; then d=.; else d=$(srcdir); fi; \
 	  cp $$d/$$f $(distdir) || exit 1; done
-
-../build/win32/vs9/gobject.vcproj: $(top_srcdir)/build/win32/vs9/gobject.vcprojin
-	for F in $(libgobject_2_0_la_SOURCES); do \
-		case $$F in \
-		*.c) echo '   <File RelativePath="..\..\..\gobject\'$$F'" />' \
-		     ;; \
-		esac; \
-	done >libgobject.sourcefiles
-	$(CPP) -P - <$(top_srcdir)/build/win32/vs9/gobject.vcprojin >$@
-	rm libgobject.sourcefiles
-
-../build/win32/vs10/gobject.vcxproj: $(top_srcdir)/build/win32/vs10/gobject.vcxprojin
-	for F in $(libgobject_2_0_la_SOURCES); do \
-		case $$F in \
-		*.c) echo '    <ClCompile Include="..\..\..\gobject\'$$F'" />' \
-		     ;; \
-		esac; \
-	done >libgobject.vs10.sourcefiles
-	$(CPP) -P - <$(top_srcdir)/build/win32/vs10/gobject.vcxprojin >$@
-	rm libgobject.vs10.sourcefiles
-
-../build/win32/vs10/gobject.vcxproj.filters: $(top_srcdir)/build/win32/vs10/gobject.vcxproj.filtersin
-	for F in $(libgobject_2_0_la_SOURCES); do \
-		case $$F in \
-		*.c) echo '    <ClCompile Include="..\..\..\gobject\'$$F'"><Filter>Source Files</Filter></ClCompile>' \
-		     ;; \
-		esac; \
-	done >libgobject.vs10.sourcefiles.filters
-	$(CPP) -P - <$(top_srcdir)/build/win32/vs10/gobject.vcxproj.filtersin >$@
-	rm libgobject.vs10.sourcefiles.filters
 
 install-data-local: install-ms-lib
 

@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -30,6 +28,9 @@
 #include <stdio.h>
 #include <locale.h>
 #include <errno.h>
+#ifdef G_OS_UNIX
+#include <unistd.h>
+#endif
 #ifdef G_OS_WIN32
 #include <io.h>
 #endif
@@ -37,10 +38,6 @@
 #include <gio/gmemoryoutputstream.h>
 #include <gio/gzlibcompressor.h>
 #include <gio/gconverteroutputstream.h>
-
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
 #include <glib.h>
 #include "gvdb/gvdb-builder.h"
@@ -191,7 +188,7 @@ find_file (const gchar *filename)
   /* search all the sourcedirs for the correct files in order */
   for (i = 0; sourcedirs[i] != NULL; i++)
     {
-	real_file = g_build_filename (sourcedirs[i], filename, NULL);
+	real_file = g_build_path ("/", sourcedirs[i], filename, NULL);
 	exists = g_file_test (real_file, G_FILE_TEST_EXISTS);
 	if (exists)
 	  return real_file;
@@ -297,9 +294,8 @@ end_element (GMarkupParseContext  *context,
 
           if (xml_stripblanks && xmllint != NULL)
             {
-              gchar *argv[8];
-              int status, fd, argc;
-              gchar *stderr_child = NULL;
+              int fd;
+	      GSubprocess *proc;
 
               tmp_file = g_strdup ("resource-XXXXXXXX");
               if ((fd = g_mkstemp (tmp_file)) == -1)
@@ -315,43 +311,29 @@ end_element (GMarkupParseContext  *context,
                 }
               close (fd);
 
-              argc = 0;
-              argv[argc++] = (gchar *) xmllint;
-              argv[argc++] = "--nonet";
-              argv[argc++] = "--noblanks";
-              argv[argc++] = "--output";
-              argv[argc++] = tmp_file;
-              argv[argc++] = real_file;
-              argv[argc++] = NULL;
-              g_assert (argc <= G_N_ELEMENTS (argv));
-
-              if (!g_spawn_sync (NULL /* cwd */, argv, NULL /* envv */,
-                                 G_SPAWN_STDOUT_TO_DEV_NULL,
-                                 NULL, NULL, NULL, &stderr_child, &status, &my_error))
-                {
-                  g_propagate_error (error, my_error);
-                  goto cleanup;
-                }
-	      
-	      /* Ugly...we shoud probably just let stderr be inherited */
-	      if (!g_spawn_check_exit_status (status, NULL))
-                {
-                  g_set_error (error, G_IO_ERROR, G_IO_ERROR_FAILED,
-                               _("Error processing input file with xmllint:\n%s"), stderr_child);
-                  g_free (stderr_child);
-                  goto cleanup;
-                }
-
-              g_free (stderr_child);
+              proc = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_SILENCE, error,
+                                       xmllint, "--nonet", "--noblanks", "--output", tmp_file, real_file, NULL);
               g_free (real_file);
+	      real_file = NULL;
+
+	      if (!proc)
+		goto cleanup;
+
+	      if (!g_subprocess_wait_check (proc, NULL, error))
+		{
+		  g_object_unref (proc);
+                  goto cleanup;
+                }
+
+	      g_object_unref (proc);
+
               real_file = g_strdup (tmp_file);
             }
 
           if (to_pixdata)
             {
-              gchar *argv[4];
-              gchar *stderr_child = NULL;
-              int status, fd, argc;
+              int fd;
+	      GSubprocess *proc;
 
               if (gdk_pixbuf_pixdata == NULL)
                 {
@@ -375,31 +357,19 @@ end_element (GMarkupParseContext  *context,
                 }
               close (fd);
 
-              argc = 0;
-              argv[argc++] = (gchar *) gdk_pixbuf_pixdata;
-              argv[argc++] = real_file;
-              argv[argc++] = tmp_file2;
-              argv[argc++] = NULL;
-              g_assert (argc <= G_N_ELEMENTS (argv));
-
-              if (!g_spawn_sync (NULL /* cwd */, argv, NULL /* envv */,
-                                 G_SPAWN_STDOUT_TO_DEV_NULL,
-                                 NULL, NULL, NULL, &stderr_child, &status, &my_error))
-                {
-                  g_propagate_error (error, my_error);
-                  goto cleanup;
-                }
-	      
-	      if (!g_spawn_check_exit_status (status, NULL))
-                {
-                  g_set_error (error, G_IO_ERROR, G_IO_ERROR_FAILED,
-			       _("Error processing input file with to-pixdata:\n%s"), stderr_child);
-                  g_free (stderr_child);
-                  goto cleanup;
-                }
-
-              g_free (stderr_child);
+              proc = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_SILENCE, error,
+                                       gdk_pixbuf_pixdata, real_file, tmp_file2, NULL);
               g_free (real_file);
+              real_file = NULL;
+
+	      if (!g_subprocess_wait_check (proc, NULL, error))
+		{
+		  g_object_unref (proc);
+                  goto cleanup;
+		}
+
+	      g_object_unref (proc);
+
               real_file = g_strdup (tmp_file2);
             }
 	}
@@ -699,6 +669,12 @@ main (int argc, char **argv)
 	    base[strlen(base) - strlen (".gresource")] = 0;
 	  target_basename = g_strconcat (base, ".c", NULL);
 	}
+      else if (generate_header)
+        {
+          if (g_str_has_suffix (base, ".gresource"))
+            base[strlen(base) - strlen (".gresource")] = 0;
+          target_basename = g_strconcat (base, ".h", NULL);
+        }
       else
 	{
 	  if (g_str_has_suffix (base, ".gresource"))

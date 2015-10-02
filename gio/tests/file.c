@@ -456,7 +456,7 @@ test_create_delete (gconstpointer d)
    */
   if (!strcmp (G_OBJECT_TYPE_NAME (data->monitor), "GPollFileMonitor"))
     {
-      g_print ("skipping test for this GFileMonitor implementation");
+      g_test_skip ("skipping test for this GFileMonitor implementation");
       goto skip;
     }
 
@@ -646,6 +646,7 @@ test_replace_cancel (void)
   GCancellable *cancellable;
   gchar *path;
   gsize nwrote;
+  guint count;
   GError *error = NULL;
 
   g_test_bug ("629301");
@@ -686,6 +687,51 @@ test_replace_cancel (void)
   g_assert_no_error (error);
   g_assert (info != NULL);
   g_object_unref (info);
+
+  g_file_enumerator_close (fenum, NULL, &error);
+  g_assert_no_error (error);
+  g_object_unref (fenum);
+
+  /* Also test the g_file_enumerator_iterate() API */
+  fenum = g_file_enumerate_children (tmpdir, NULL, 0, NULL, &error);
+  g_assert_no_error (error);
+  count = 0;
+
+  while (TRUE)
+    {
+      gboolean ret = g_file_enumerator_iterate (fenum, &info, NULL, NULL, &error);
+      g_assert (ret);
+      g_assert_no_error (error);
+      if (!info)
+        break;
+      count++;
+    }
+  g_assert_cmpint (count, ==, 2);
+
+  g_file_enumerator_close (fenum, NULL, &error);
+  g_assert_no_error (error);
+  g_object_unref (fenum);
+
+  /* Now test just getting child from the g_file_enumerator_iterate() API */
+  fenum = g_file_enumerate_children (tmpdir, "standard::name", 0, NULL, &error);
+  g_assert_no_error (error);
+  count = 0;
+
+  while (TRUE)
+    {
+      GFile *child;
+      gboolean ret = g_file_enumerator_iterate (fenum, NULL, &child, NULL, &error);
+
+      g_assert (ret);
+      g_assert_no_error (error);
+
+      if (!child)
+        break;
+
+      g_assert (G_IS_FILE (child));
+      count++;
+    }
+  g_assert_cmpint (count, ==, 2);
 
   g_file_enumerator_close (fenum, NULL, &error);
   g_assert_no_error (error);
@@ -806,6 +852,197 @@ test_copy_preserve_mode (void)
 }
 #endif
 
+static gchar *
+splice_to_string (GInputStream   *stream,
+                  GError        **error)
+{
+  GMemoryOutputStream *buffer = NULL;
+  char *ret = NULL;
+
+  buffer = (GMemoryOutputStream*)g_memory_output_stream_new (NULL, 0, g_realloc, g_free);
+  if (g_output_stream_splice ((GOutputStream*)buffer, stream, 0, NULL, error) < 0)
+    goto out;
+
+  if (!g_output_stream_write ((GOutputStream*)buffer, "\0", 1, NULL, error))
+    goto out;
+
+  if (!g_output_stream_close ((GOutputStream*)buffer, NULL, error))
+    goto out;
+
+  ret = g_memory_output_stream_steal_data (buffer);
+ out:
+  g_clear_object (&buffer);
+  return ret;
+}
+
+static guint64
+get_size_from_du (const gchar *path)
+{
+  GSubprocess *du;
+  gchar *result;
+  gchar *endptr;
+  guint64 size;
+  GError *error = NULL;
+
+  du = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_PIPE,
+                         &error,
+                         "du", "--bytes", "-s", path, NULL);
+  g_assert_no_error (error);
+
+  result = splice_to_string (g_subprocess_get_stdout_pipe (du), &error);
+  g_assert_no_error (error);
+
+  size = g_ascii_strtoll (result, &endptr, 10);
+
+  g_object_unref (du);
+  g_free (result);
+
+  return size;
+}
+
+static void
+test_measure (void)
+{
+  GFile *file;
+  guint64 size;
+  guint64 num_bytes;
+  guint64 num_dirs;
+  guint64 num_files;
+  GError *error = NULL;
+  gboolean ok;
+  gchar *path;
+
+  path = g_test_build_filename (G_TEST_DIST, "desktop-files", NULL);
+  file = g_file_new_for_path (path);
+
+  if (g_find_program_in_path ("du"))
+    {
+      size = get_size_from_du (path);
+    }
+  else
+    {
+      g_test_message ("du not found, skipping byte measurement");
+      size = 0;
+    }
+
+  ok = g_file_measure_disk_usage (file,
+                                  G_FILE_MEASURE_APPARENT_SIZE,
+                                  NULL,
+                                  NULL,
+                                  NULL,
+                                  &num_bytes,
+                                  &num_dirs,
+                                  &num_files,
+                                  &error);
+  g_assert (ok);
+  g_assert_no_error (error);
+
+  if (size > 0)
+    g_assert_cmpuint (num_bytes, ==, size);
+  g_assert_cmpuint (num_dirs, ==, 6);
+  g_assert_cmpuint (num_files, ==, 30);
+
+  g_object_unref (file);
+  g_free (path);
+}
+
+typedef struct {
+  guint64 expected_bytes;
+  guint64 expected_dirs;
+  guint64 expected_files;
+  gint progress_count;
+  guint64 progress_bytes;
+  guint64 progress_dirs;
+  guint64 progress_files;
+} MeasureData;
+
+static void
+measure_progress (gboolean reporting,
+                  guint64  current_size,
+                  guint64  num_dirs,
+                  guint64  num_files,
+                  gpointer user_data)
+{
+  MeasureData *data = user_data;
+
+  data->progress_count += 1;
+
+  g_assert_cmpuint (current_size, >=, data->progress_bytes);
+  g_assert_cmpuint (num_dirs, >=, data->progress_dirs);
+  g_assert_cmpuint (num_files, >=, data->progress_files);
+
+  data->progress_bytes = current_size;
+  data->progress_dirs = num_dirs;
+  data->progress_files = num_files;
+}
+
+static void
+measure_done (GObject      *source,
+              GAsyncResult *res,
+              gpointer      user_data)
+{
+  MeasureData *data = user_data;
+  guint64 num_bytes, num_dirs, num_files;
+  GError *error = NULL;
+  gboolean ok;
+
+  ok = g_file_measure_disk_usage_finish (G_FILE (source), res, &num_bytes, &num_dirs, &num_files, &error);
+  g_assert (ok);
+  g_assert_no_error (error);
+
+  if (data->expected_bytes > 0)
+    g_assert_cmpuint (data->expected_bytes, ==, num_bytes);
+  g_assert_cmpuint (data->expected_dirs, ==, num_dirs);
+  g_assert_cmpuint (data->expected_files, ==, num_files);
+
+  g_assert_cmpuint (data->progress_count, >, 0);
+  g_assert_cmpuint (num_bytes, >=, data->progress_bytes);
+  g_assert_cmpuint (num_dirs, >=, data->progress_dirs);
+  g_assert_cmpuint (num_files, >=, data->progress_files);
+
+  g_free (data);
+  g_object_unref (source);
+}
+
+static void
+test_measure_async (void)
+{
+  gchar *path;
+  GFile *file;
+  MeasureData *data;
+
+  data = g_new (MeasureData, 1);
+
+  data->progress_count = 0;
+  data->progress_bytes = 0;
+  data->progress_files = 0;
+  data->progress_dirs = 0;
+
+  path = g_test_build_filename (G_TEST_DIST, "desktop-files", NULL);
+  file = g_file_new_for_path (path);
+
+  if (g_find_program_in_path ("du"))
+    {
+      data->expected_bytes = get_size_from_du (path);
+    }
+  else
+    {
+      g_test_message ("du not found, skipping byte measurement");
+      data->expected_bytes = 0;
+    }
+
+  g_free (path);
+
+  data->expected_dirs = 6;
+  data->expected_files = 30;
+
+  g_file_measure_disk_usage_async (file,
+                                   G_FILE_MEASURE_APPARENT_SIZE,
+                                   0, NULL,
+                                   measure_progress, data,
+                                   measure_done, data);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -829,6 +1066,8 @@ main (int argc, char *argv[])
 #ifdef G_OS_UNIX
   g_test_add_func ("/file/copy-preserve-mode", test_copy_preserve_mode);
 #endif
+  g_test_add_func ("/file/measure", test_measure);
+  g_test_add_func ("/file/measure-async", test_measure_async);
 
   return g_test_run ();
 }

@@ -17,8 +17,6 @@ EXTRA_DIST = \
 	gthread.vcxproj.filters \
 	gio.vcxproj \
 	gio.vcxproj.filters \
-	testglib.vcxproj \
-	testglib.vcxproj.filters \
 	glib-compile-schemas.vcxproj \
 	glib-compile-schemas.vcxproj.filters \
 	gsettings.vcxproj \
@@ -31,14 +29,16 @@ EXTRA_DIST = \
 	gio-querymodules.vcxproj.filters \
 	gdbus.vcxproj \
 	gdbus.vcxproj.filters \
-	install.vcxproj	\
+	glib-install.vcxproj	\
 	glib-build-defines.props	\
 	glib-install.props	\
 	glib-version-paths.props	\
-	glibprepbuild.props
+	glib-gen-srcs.props
 
 DISTCLEANFILES = $(EXTRA_DIST)
 
-MSVC_SLN = glib
+MSVC_VER = 11
+MSVC_FORMAT_VER = 12
+MSVC_VER_LONG = 2012
 
 include $(top_srcdir)/build/Makefile-newvs.am

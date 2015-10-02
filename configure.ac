@@ -30,7 +30,7 @@ m4_define(glib_configure_ac)
 # <mclasen> on the unstable (ie master), interface age = 0
 
 m4_define([glib_major_version], [2])
-m4_define([glib_minor_version], [38])
+m4_define([glib_minor_version], [46])
 m4_define([glib_micro_version], [0])
 m4_define([glib_interface_age], [0])
 m4_define([glib_binary_age],
@@ -61,7 +61,7 @@ AC_CONFIG_SRCDIR([glib/glib.h])
 AC_CONFIG_MACRO_DIR([m4macros])
 
 # Save this value here, since automake will set cflags later
-cflags_set=${CFLAGS+set}
+cflags_set=${CFLAGS:+set}
 
 AM_INIT_AUTOMAKE([1.11 -Wno-portability no-define no-dist-gzip dist-xz tar-ustar])
 AM_MAINTAINER_MODE([enable])
@@ -116,17 +116,6 @@ AC_USE_SYSTEM_EXTENSIONS
 AM_CONDITIONAL(HAVE_GCC, [test "$GCC" = "yes"])
 
 AC_CANONICAL_HOST
-
-AC_MSG_CHECKING([for the BeOS])
-case $host in
-  *-*-beos*)
-    glib_native_beos="yes"
-    ;;
-  *)
-    glib_native_beos="no"
-    ;;
-esac
-AC_MSG_RESULT([$glib_native_beos])
 
 dnl
 
@@ -224,13 +213,28 @@ AM_CONDITIONAL(MS_LIB_AVAILABLE, [test x$ms_librarian = xyes])
 
 AS_IF([test "x$glib_have_carbon" = "xyes"], [
   AC_DEFINE(HAVE_CARBON, 1, [define to 1 if Carbon is available])
-  LDFLAGS="$LDFLAGS -Wl,-framework,Carbon"
-])
+  CARBON_LIBS="-Wl,-framework,Carbon"
+  LDFLAGS="$LDFLAGS $CARBON_LIBS"
+], [CARBON_LIBS=""])
 
-if test "x$glib_have_cocoa" = "xyes"; then
+AC_SUBST([CARBON_LIBS])
+
+AS_IF([test "x$glib_have_cocoa" = "xyes"], [
   AC_DEFINE(HAVE_COCOA, 1, [define to 1 if Cocoa is available])
-  LDFLAGS="$LDFLAGS -Wl,-framework,Foundation"
-fi
+  COCOA_LIBS="-Wl,-framework,Foundation"
+  LDFLAGS="$LDFLAGS $COCOA_LIBS"
+
+  osx_version=`sw_vers -productVersion`
+  osx_min_version="10.9.0"
+  AC_MSG_CHECKING([OSX version >= $osx_min_version])
+  AS_VERSION_COMPARE([$osx_version], [$osx_min_version], [
+    AC_MSG_RESULT([no])
+    AC_MSG_ERROR([OSX version is too old!])
+  ])
+  AC_MSG_RESULT([yes])
+], [COCOA_LIBS=""])
+
+AC_SUBST([COCOA_LIBS])
 
 dnl declare --enable-* args and collect ac_help strings
 AC_ARG_ENABLE(debug,
@@ -296,7 +300,7 @@ AC_SYS_LARGEFILE
 PKG_PROG_PKG_CONFIG(0.16)
 
 if test "x$enable_debug" = "xyes"; then
-  if test x$cflags_set != xset ; then
+  if test "x$cflags_set" != "x" ; then
       case " $CFLAGS " in
       *[[\ \	]]-g[[\ \	]]*) ;;
       *) CFLAGS="$CFLAGS -g" ;;
@@ -518,47 +522,10 @@ AS_IF([test "$glib_native_win32" = "yes"], [
 ])
 AM_CONDITIONAL(OS_WIN32_AND_DLL_COMPILATION, [test x$glib_native_win32 = xyes -a x$glib_win32_static_compilation != xyes])
 
-dnl
-dnl DU4 native cc currently needs -std1 for ANSI mode (instead of K&R)
-dnl
-AS_IF([test $cross_compiling != yes], [
-    AC_MSG_CHECKING([for extra flags to get ANSI library prototypes])
-    glib_save_LIBS=$LIBS
-    LIBS="$LIBS -lm"
-    AC_TRY_RUN([#include <math.h>
-		 int main (void) { return (log(1) != log(1.)); }],
-	 AC_MSG_RESULT(none needed),
-	 glib_save_CFLAGS=$CFLAGS
-	 CFLAGS="$CFLAGS -std1"
-	 AC_TRY_RUN([#include <math.h>
-		     int main (void) { return (log(1) != log(1.)); }],
-	     AC_MSG_RESULT(-std1),
-	     AC_MSG_RESULT()
-	     CFLAGS=$glib_save_CFLAGS
-	     AC_MSG_WARN(
-		    [No ANSI prototypes found in library. (-std1 didn't work.)])
-	 )
-    )
-    LIBS=$glib_save_LIBS
-])
-
-dnl NeXTStep cc seems to need this
-AC_MSG_CHECKING([for extra flags for POSIX compliance])
-AC_TRY_COMPILE([#include <dirent.h>], [DIR *dir;],
-  AC_MSG_RESULT(none needed),
-  glib_save_CFLAGS=$CFLAGS
-  CFLAGS="$CFLAGS -posix"
-  AC_TRY_COMPILE([#include <dirent.h>], [DIR *dir;],
-    AC_MSG_RESULT(-posix),
-    AC_MSG_RESULT()
-    CFLAGS=$glib_save_CFLAGS
-    AC_MSG_WARN([Could not determine POSIX flag. (-posix didn't work.)])))
-
 # Checks for library functions.
-AC_FUNC_VPRINTF
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS(mmap posix_memalign memalign valloc fsync pipe2 issetugid)
-AC_CHECK_FUNCS(atexit on_exit timegm gmtime_r)
+AC_CHECK_FUNCS(timegm gmtime_r strerror_r)
 
 AC_CACHE_CHECK([for __libc_enable_secure], glib_cv_have_libc_enable_secure,
   [AC_TRY_LINK([#include <unistd.h>
@@ -644,13 +611,12 @@ dnl
 AC_CACHE_CHECK([for growing stack pointer],glib_cv_stack_grows,[
         AC_TRY_RUN([
 	volatile int *a = 0, *b = 0;
-	void foo (void);
-	int main () { volatile int y = 7; a = &y; foo (); return b > a; }
-	void foo (void) { volatile int x = 5; b = &x; }
+	void f (int i) { volatile int x = 5; if (i == 0) b = &x; else f (i - 1); }
+	int main () { volatile int y = 7; a = &y; f (100); return b > a ? 0 : 1; }
        	],
-	glib_cv_stack_grows=no
-        ,
 	glib_cv_stack_grows=yes
+        ,
+	glib_cv_stack_grows=no
         ,)
 ])
 
@@ -725,21 +691,6 @@ main (void) {
   int i = 1;
 }]])],[g_can_inline=yes],[g_can_inline=no])
 AC_MSG_RESULT($g_can_inline)
-
-dnl *** check for working do while(0) macros ***
-AC_CACHE_CHECK([for working do while(0) macros], g_cv_support_dowhile_macros, [
-	AC_TRY_COMPILE([],[
-	#define STMT_START do
-	#define STMT_END while(0)
-	#define STMT_TEST STMT_START { i = 0; } STMT_END
-	int main(void) { int i = 1; STMT_TEST; return i; }],
-	[g_cv_support_dowhile_macros=yes],
-	[g_cv_support_dowhile_macros=no],
-	[g_cv_support_dowhile_macros=yes])
-])
-if test x$g_cv_support_dowhile_macros = xyes; then
-  AC_DEFINE(HAVE_DOWHILE_MACROS, 1, [define for working do while(0) macros])
-fi
 
 # check for flavours of varargs macros
 AC_MSG_CHECKING(for ISO C99 varargs macros in C)
@@ -820,29 +771,23 @@ AM_CONDITIONAL(HAVE_SUNSTUDIO_VISIBILITY, [test x$g_have_sunstudio_visibility = 
 # check for bytesex stuff
 AC_C_BIGENDIAN
 if test x$ac_cv_c_bigendian = xuniversal ; then
-AC_TRY_COMPILE([#include <endian.h>], [#if __BYTE_ORDER == __BIG_ENDIAN
-#else
-#error Not a big endian. 
-#endif],
-    ac_cv_c_bigendian=yes
-    ,AC_TRY_COMPILE([#include <endian.h>], [#if __BYTE_ORDER == __LITTLE_ENDIAN
-#else
-#error Not a little endian. 
-#endif],
-    ac_cv_c_bigendian=no
-    ,AC_MSG_WARN([Could not determine endianness.])))
+  AC_MSG_ERROR([Universal builds not supported: see https://bugs.gnome.org/742548])
 fi
 
 
 # check for header files
-AC_CHECK_HEADERS([dirent.h float.h limits.h pwd.h grp.h sys/param.h sys/poll.h sys/resource.h])
-AC_CHECK_HEADERS([sys/time.h sys/times.h sys/wait.h unistd.h values.h])
-AC_CHECK_HEADERS([sys/select.h sys/types.h stdint.h inttypes.h sched.h malloc.h])
+AC_CHECK_HEADERS([sys/param.h sys/resource.h mach/mach_time.h])
+AC_CHECK_HEADERS([sys/select.h stdint.h inttypes.h sched.h malloc.h])
 AC_CHECK_HEADERS([sys/vfs.h sys/vmount.h sys/statfs.h sys/statvfs.h sys/filio.h])
 AC_CHECK_HEADERS([mntent.h sys/mnttab.h sys/vfstab.h sys/mntctl.h fstab.h])
-AC_CHECK_HEADERS([sys/uio.h sys/mkdev.h])
-AC_CHECK_HEADERS([linux/magic.h])
-AC_CHECK_HEADERS([sys/prctl.h])
+AC_CHECK_HEADERS([linux/magic.h sys/prctl.h])
+
+# Some versions of MSC lack these
+AC_CHECK_HEADERS([dirent.h sys/time.h])
+
+# We don't care about this, but we need to keep including it in
+# glibconfig.h for backward compatibility
+AC_CHECK_HEADERS([values.h])
 
 AC_CHECK_HEADERS([sys/mount.h sys/sysctl.h], [], [],
 [#if HAVE_SYS_PARAM_H
@@ -851,13 +796,16 @@ AC_CHECK_HEADERS([sys/mount.h sys/sysctl.h], [], [],
 ])
 AC_CHECK_FUNCS(sysctlbyname)
 
+AC_HEADER_MAJOR
 AC_CHECK_HEADERS([xlocale.h])
 
 # check for structure fields
-AC_CHECK_MEMBERS([struct stat.st_mtimensec, struct stat.st_mtim.tv_nsec, struct stat.st_atimensec, struct stat.st_atim.tv_nsec, struct stat.st_ctimensec, struct stat.st_ctim.tv_nsec])
+AC_CHECK_MEMBERS([struct stat.st_mtimensec, struct stat.st_mtim.tv_nsec, struct stat.st_atimensec, struct stat.st_atim.tv_nsec, struct stat.st_ctimensec, struct stat.st_ctim.tv_nsec, struct stat.st_birthtime, struct stat.st_birthtimensec, struct stat.st_birthtim, struct stat.st_birthtim.tv_nsec])
 AC_CHECK_MEMBERS([struct stat.st_blksize, struct stat.st_blocks, struct statfs.f_fstypename, struct statfs.f_bavail],,, [#include <sys/types.h>
 #include <sys/stat.h>
+#ifdef G_OS_UNIX
 #include <unistd.h>
+#endif
 #ifdef HAVE_SYS_STATFS_H
 #include <sys/statfs.h>
 #endif
@@ -876,8 +824,7 @@ AC_STRUCT_DIRENT_D_TYPE
 
 # Checks for libcharset
 AM_LANGINFO_CODESET
-AC_CHECK_HEADERS([stddef.h stdlib.h string.h])
-AC_CHECK_FUNCS(setlocale)
+gl_GLIBC21
 
 # check additional type sizes
 AC_CHECK_SIZEOF(size_t)
@@ -981,12 +928,7 @@ AS_IF([test $ac_cv_sizeof_ssize_t = $ac_cv_sizeof_int &&
 #ifdef HAVE_STDINT_H
 # include <stdint.h>
 #endif
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
+#include <sys/types.h>
 int main ()
 {
   ssize_t s = 1;
@@ -1005,12 +947,7 @@ int main ()
 #ifdef HAVE_STDINT_H
 # include <stdint.h>
 #endif
-#ifdef HAVE_UNISTD_H
-# include <unistd.h>
-#endif
-#ifdef HAVE_SYS_TYPES_H
-# include <sys/types.h>
-#endif
+#include <sys/types.h>
 int main ()
 {
    ssize_t s = 1;
@@ -1023,10 +960,10 @@ int main ()
 AC_MSG_RESULT($glib_ssize_type)
 
 # Check for some functions
-AC_CHECK_FUNCS(lstat strerror strsignal memmove vsnprintf stpcpy strcasecmp strncasecmp poll getcwd vasprintf setenv unsetenv getc_unlocked readlink symlink fdwalk memmem)
-AC_CHECK_FUNCS(chown lchmod lchown fchmod fchown link utimes getgrgid getpwuid getresuid)
+AC_CHECK_FUNCS(lstat strsignal vsnprintf stpcpy strcasecmp strncasecmp poll vasprintf setenv unsetenv getc_unlocked readlink symlink fdwalk memmem)
+AC_CHECK_FUNCS(lchmod lchown fchmod fchown utimes getresuid)
 AC_CHECK_FUNCS(getmntent_r setmntent endmntent hasmntopt getfsstat getvfsstat fallocate)
-# Check for high-resolution sleep functions
+case $host_os in aix*) ac_cv_func_splice=no ;; esac # AIX splice() is something else
 AC_CHECK_FUNCS(splice)
 AC_CHECK_FUNCS(prlimit)
 
@@ -1063,9 +1000,6 @@ AC_CHECK_FUNCS(_NSGetEnviron)
 
 AC_CHECK_FUNCS(newlocale uselocale strtod_l strtoll_l strtoull_l)
 
-AC_FUNC_VSNPRINTF_C99
-AC_FUNC_PRINTF_UNIX98
-
 # Internet address families
 if test $glib_native_win32 = yes; then
   glib_inet_includes=["
@@ -1095,7 +1029,7 @@ if $glib_failed ; then
   AC_MSG_ERROR([Could not determine values for MSG_* constants])
 fi
 
-AC_CHECK_FUNCS(getprotobyname_r endservent if_nametoindex if_indextoname)
+AC_CHECK_FUNCS(getprotobyname_r endservent if_nametoindex if_indextoname sendmmsg)
 
 AS_IF([test $glib_native_win32 = yes], [
   # <wspiapi.h> in the Windows SDK and in mingw-w64 has wrappers for
@@ -1224,9 +1158,23 @@ AS_IF([test "$ac_cv_func_statfs" = yes], [
       AC_MSG_ERROR([unable to determine number of arguments to statfs()])])])
 ])
 
+dnl
+dnl open takes O_DIRECTORY as an option
+dnl
+AC_MSG_CHECKING([open() option O_DIRECTORY])
+AC_TRY_COMPILE([#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>],
+[open(0, O_DIRECTORY, 0);],[
+	AC_MSG_RESULT([yes])
+	AC_DEFINE(HAVE_OPEN_O_DIRECTORY, 1, [open option O_DIRECTORY])],[
+	AC_MSG_RESULT([no])])
+
 #
 # Check whether to use an included printf
 #
+AC_FUNC_VSNPRINTF_C99
+AC_FUNC_PRINTF_UNIX98
 
 AC_ARG_ENABLE(included-printf,
               [AS_HELP_STRING([--enable-included-printf],
@@ -1278,33 +1226,6 @@ AC_CHECK_TYPES(ptrdiff_t)
 jm_AC_TYPE_INTMAX_T
 AC_CHECK_FUNCS([snprintf wcslen])
 AC_FUNC_SNPRINTF_C99
-
-# Check if bcopy can be used for overlapping copies, if memmove isn't found.
-# The check is borrowed from the PERL Configure script.
-AS_IF([test "$ac_cv_func_memmove" != "yes"], [
-  AC_CACHE_CHECK(whether bcopy can handle overlapping copies,
-    glib_cv_working_bcopy,[AC_TRY_RUN([
-      int main() {
-        char buf[128], abc[128], *b;
-        int len, off, align;
-        bcopy("abcdefghijklmnopqrstuvwxyz0123456789", abc, 36);
-        for (align = 7; align >= 0; align--) {
-          for (len = 36; len; len--) {
-            b = buf+align; bcopy(abc, b, len);
-            for (off = 1; off <= len; off++) {
-              bcopy(b, b+off, len); bcopy(b+off, b, len);
-                if (bcmp(b, abc, len)) return(1);
-            }
-          }
-        }
-        return(0);
-      }],glib_cv_working_bcopy=yes,glib_cv_working_bcopy=no)])
-
-  GLIB_ASSERT_SET(glib_cv_working_bcopy)
-  if test "$glib_cv_working_bcopy" = "yes"; then
-    AC_DEFINE(HAVE_WORKING_BCOPY,1,[Have a working bcopy])
-  fi
-])
 
 # Check if <sys/select.h> needs to be included for fd_set
 AC_MSG_CHECKING([for fd_set])
@@ -1554,15 +1475,6 @@ AS_IF([ test -z "$G_MODULE_IMPL"], [
 			             [G_MODULE_IMPL=G_MODULE_IMPL_DL],[])],
 		      [])
 ])
-dnl *** load_image (BeOS)
-AS_IF([test -z "$G_MODULE_IMPL" && test "x$glib_native_beos" = "xyes"], [
-  AC_CHECK_LIB(root, load_image,
-      [G_MODULE_LIBS="-lbe -lroot -lglib-2.0 "
-      G_MODULE_LIBS_EXTRA="-L\$(top_builddir_full)/.libs"
-      G_MODULE_PLUGIN_LIBS="-L\$(top_builddir_full)/gmodule/.libs -lgmodule"
-      G_MODULE_IMPL=G_MODULE_IMPL_BEOS],
-      [])
-])
 dnl *** NSLinkModule (dyld) in system libraries (Darwin)
 AS_IF([ test -z "$G_MODULE_IMPL" ], [
  	AC_CHECK_FUNC(NSLinkModule,
@@ -1577,13 +1489,6 @@ AS_IF([ test -z "$G_MODULE_IMPL"], [
 			           [G_MODULE_LIBS=-ldl
 		                   G_MODULE_IMPL=G_MODULE_IMPL_DL],[])],
 		     [])
-])
-dnl *** shl_load() in libdld (HP-UX)
-AS_IF([ test -z "$G_MODULE_IMPL"], [
-	AC_CHECK_LIB(dld, shl_load,
-		[G_MODULE_LIBS=-ldld
-		G_MODULE_IMPL=G_MODULE_IMPL_DLD],
-		[])
 ])
 dnl *** additional checks for G_MODULE_IMPL_DL
 AS_IF([ test "$G_MODULE_IMPL" = "G_MODULE_IMPL_DL" ], [
@@ -1765,8 +1670,7 @@ dnl *****************************
 inotify_support=no
 AC_CHECK_HEADERS([sys/inotify.h],
 [
-	inotify_support=yes
-	AC_CHECK_FUNCS(inotify_init1)
+  AC_CHECK_FUNCS(inotify_init1, [inotify_support=yes], [inotify_support=no])
 ])
 
 AM_CONDITIONAL(HAVE_INOTIFY, [test "$inotify_support" = "yes"])
@@ -1781,22 +1685,6 @@ AC_CHECK_HEADERS([sys/event.h],
 ])
 
 AM_CONDITIONAL(HAVE_KQUEUE, [test "$kqueue_support" = "yes"])
-
-dnl *********************************
-dnl ** Check for Solaris FEN (GIO) **
-dnl *********************************
-fen_support=no
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
-#include <port.h> 
-#ifndef PORT_SOURCE_FILE 
-#error "Please upgrade to Nevada 72 or above to suppoert FEN" 
-#endif 
-int main() { return 0; } ]])],
-[
-	fen_support=yes
-],)
-
-AM_CONDITIONAL(HAVE_FEN, [test "$fen_support" = "yes"])
 
 dnl ****************************
 dnl *** Checks for FAM (GIO) ***
@@ -1998,24 +1886,20 @@ AC_MSG_CHECKING(for thread implementation)
 
 have_threads=no
 AS_IF([ test "x$with_threads" = xyes || test "x$with_threads" = xposix], [
-	# -D_POSIX4_DRAFT_SOURCE -D_POSIX4A_DRAFT10_SOURCE is for DG/UX
-	# -U_OSF_SOURCE is for Digital UNIX 4.0d
-	GTHREAD_COMPILE_IMPL_DEFINES="-D_POSIX4_DRAFT_SOURCE -D_POSIX4A_DRAFT10_SOURCE -U_OSF_SOURCE"
-	glib_save_CPPFLAGS="$CPPFLAGS"
-	CPPFLAGS="$CPPFLAGS $GTHREAD_COMPILE_IMPL_DEFINES"
         AS_IF([ test "x$have_threads" = xno], [
                 AC_TRY_COMPILE([#include <pthread.h>],
 			[pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;],
 			have_threads=posix)
 	])
 	# Tru64Unix requires -pthread to find pthread.h. See #103020
-	CPPFLAGS="$CPPFLAGS -pthread"
 	if test "x$have_threads" = xno; then
-	AC_TRY_COMPILE([#include <pthread.h>],
+		glib_save_CPPFLAGS="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS -pthread"
+		AC_TRY_COMPILE([#include <pthread.h>],
 		       [pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;],
 		       have_threads=posix)
+		CPPFLAGS="$glib_save_CPPFLAGS"
         fi
-	CPPFLAGS="$glib_save_CPPFLAGS"
 ])
 if test "x$with_threads" = xyes || test "x$with_threads" = xwin32; then
         case $host in
@@ -2114,9 +1998,6 @@ AS_IF([ test x"$G_THREAD_CFLAGS" = x], [
 			# Guide".
 			G_THREAD_CFLAGS="-D_THREAD_SAFE"
 		fi
-		;;
-	*-dg-dgux*)  # DG/UX
-		G_THREAD_CFLAGS="-D_REENTRANT -D_POSIX4A_DRAFT10_SOURCE"
 		;;
 	*-sysv5uw7*) # UnixWare 7 
 		# We are not using gcc with -pthread. Catched above.
@@ -2230,15 +2111,6 @@ if test "x$G_THREAD_LIBS" = xerror; then
         AC_MSG_ERROR($LIBS_NOT_FOUND_1$have_threads$LIBS_NOT_FOUND_2)
 fi
 
-case $host in
-  *-*-beos*)
-    G_THREAD_LIBS="-lbe -lroot -lglib-2.0 "
-    G_THREAD_LIBS_EXTRA="-L\$(top_builddir_full)/.libs"
-    ;;
-  *)
-    ;;
-esac
-
 AC_MSG_CHECKING(thread related libraries)
 AC_MSG_RESULT($G_THREAD_LIBS)
 
@@ -2250,7 +2122,7 @@ glib_save_LIBS="$LIBS"
 # to always be linked with the thread libs on some platforms. 
 # LIBS="$LIBS $G_THREAD_LIBS"
 AC_CHECK_FUNCS(localtime_r gmtime_r)
-AS_IF([ test "$ac_cv_header_pwd_h" = "yes"], [
+AS_IF([ test "$glib_native_win32" != "yes"], [
  	AC_CACHE_CHECK([for posix getpwuid_r],
 		ac_cv_func_posix_getpwuid_r,
 		[AC_TRY_RUN([
@@ -2289,7 +2161,7 @@ int main () {
 		fi
 	fi
 ])
-AS_IF([ test "$ac_cv_header_grp_h" = "yes"], [
+AS_IF([ test "$glib_native_win32" != "yes"], [
    	AC_CACHE_CHECK([for posix getgrgid_r],
 		ac_cv_func_posix_getgrgid_r,
 		[AC_TRY_RUN([
@@ -2352,23 +2224,24 @@ AS_IF([ test x"$have_threads" = xposix], [
              AC_DEFINE(HAVE_PTHREAD_CONDATTR_SETCLOCK,1,
                 [Have function pthread_condattr_setclock])],
             [AC_MSG_RESULT(no)])
-        AC_MSG_CHECKING(for pthread_cond_timedwait_monotonic)
+        AC_MSG_CHECKING(for pthread_cond_timedwait_relative_np)
         AC_LINK_IFELSE(
             [AC_LANG_PROGRAM(
                 [#include <pthread.h>],
-                [pthread_cond_timedwait_monotonic(NULL, NULL, NULL)])],
+                [pthread_cond_timedwait_relative_np(NULL, NULL, NULL)])],
             [AC_MSG_RESULT(yes)
-             AC_DEFINE(HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC,1,
-                [Have function pthread_cond_timedwait_monotonic])],
+             AC_DEFINE(HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE_NP,1,
+                [Have function pthread_cond_timedwait_relative_np])],
             [AC_MSG_RESULT(no)])
-        AC_MSG_CHECKING(for pthread_cond_timedwait_monotonic_np)
+        dnl Sets thread names on OS X 10.6, iOS 3.2 (and higher)
+        AC_MSG_CHECKING(for pthread_setname_np(const char*))
         AC_LINK_IFELSE(
             [AC_LANG_PROGRAM(
                 [#include <pthread.h>],
-                [pthread_cond_timedwait_monotonic_np(NULL, NULL, NULL)])],
+                [pthread_setname_np("example")])],
             [AC_MSG_RESULT(yes)
-             AC_DEFINE(HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC_NP,1,
-                [Have function pthread_cond_timedwait_monotonic_np])],
+             AC_DEFINE(HAVE_PTHREAD_SETNAME_NP_WITHOUT_TID,1,
+                [Have function pthread_setname_np(const char*)])],
             [AC_MSG_RESULT(no)])
         CPPFLAGS="$glib_save_CPPFLAGS"
 ])
@@ -2398,9 +2271,6 @@ case $host in
   *-*-freebsd*|*-*-linux*)
     G_THREAD_LIBS_FOR_GTHREAD="`echo $G_THREAD_LIBS | sed s/-pthread/-lpthread/`"
     ;;
-  *-*-openbsd*)
-    LDFLAGS="$LDFLAGS -pthread"
-    ;;
   *)
     G_THREAD_LIBS_FOR_GTHREAD="$G_THREAD_LIBS"
     ;;
@@ -2413,7 +2283,6 @@ AC_SUBST(G_THREAD_LIBS_EXTRA)
 
 AC_CHECK_FUNCS(clock_gettime, [], [
   AC_CHECK_LIB(rt, clock_gettime, [
-    AC_DEFINE(HAVE_CLOCK_GETTIME, 1)
     G_THREAD_LIBS="$G_THREAD_LIBS -lrt"
     G_THREAD_LIBS_FOR_GTHREAD="$G_THREAD_LIBS_FOR_GTHREAD -lrt"
   ])
@@ -2510,13 +2379,7 @@ AC_CACHE_CHECK(for futex(2) system call,
 #include <sys/syscall.h>
 #include <unistd.h>
 ],[
-int
-main (void)
-{
-  /* it is not like this actually runs or anything... */
   syscall (__NR_futex, NULL, FUTEX_WAKE, FUTEX_WAIT);
-  return 0;
-}
 ])],glib_cv_futex=yes,glib_cv_futex=no))
 if test x"$glib_cv_futex" = xyes; then
   AC_DEFINE(HAVE_FUTEX, 1, [we have the futex(2) system call])
@@ -2527,12 +2390,7 @@ AC_CACHE_CHECK(for eventfd(2) system call,
 #include <sys/eventfd.h>
 #include <unistd.h>
 ],[
-int
-main (void)
-{
   eventfd (0, EFD_CLOEXEC);
-  return 0;
-}
 ])],glib_cv_eventfd=yes,glib_cv_eventfd=no))
 if test x"$glib_cv_eventfd" = x"yes"; then
   AC_DEFINE(HAVE_EVENTFD, 1, [we have the eventfd(2) system call])
@@ -2545,11 +2403,11 @@ dnl ****************************************
 
 glib_poll_includes=["
 #include <sys/types.h>
-#include <sys/poll.h>
+#include <poll.h>
 "]
 
 AS_IF([ test $ac_cv_header_sys_types_h = yes &&
-   test $ac_cv_header_sys_poll_h = yes ], [
+   test $ac_cv_func_poll = yes ], [
   glib_failed=false
   GLIB_CHECK_VALUE(POLLIN, $glib_poll_includes, glib_failed=true)
   GLIB_CHECK_VALUE(POLLOUT, $glib_poll_includes, glib_failed=true)
@@ -2574,9 +2432,6 @@ AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	#include <stdlib.h>
 	#include <fcntl.h>
 	#include <poll.h>
-	#ifdef HAVE_SYS_POLL_H
-	#include <sys/poll.h>
-	#endif
 	int main(void) {
 	  struct pollfd fds[1];
 	  int fd;
@@ -2682,29 +2537,9 @@ int error = EILSEQ;
 ], have_eilseq=yes, have_eilseq=no);
 AC_MSG_RESULT($have_eilseq)
 
-dnl ******************************************************************
-dnl *** If we are cross-compiling, look for glib-genmarshal and    ***
-dnl *** glib-compile-schemas in PATH                               ***
-dnl ******************************************************************
-
+dnl Add a conditional we can use when cross-compiling, so we avoid running
+dnl binaries
 AM_CONDITIONAL(CROSS_COMPILING, test $cross_compiling = yes)
-
-AS_IF([ test $cross_compiling = yes ], [
-  AC_PATH_PROG(GLIB_GENMARSHAL, glib-genmarshal, no)
-  if test x$GLIB_GENMARSHAL = xno; then
-    AC_MSG_ERROR(Could not find a glib-genmarshal in your PATH)
-  fi
-
-  AC_PATH_PROG(GLIB_COMPILE_SCHEMAS, glib-compile-schemas, no)
-  if test x$GLIB_COMPILE_SCHEMAS = xno; then
-    AC_MSG_ERROR(Could not find a glib-compile-schemas in your PATH)
-  fi
-
-  AC_PATH_PROG(GLIB_COMPILE_RESOURCES, glib-compile-resources, no)
-  if test x$GLIB_COMPILE_RESOURCES = xno; then
-    AC_MSG_ERROR(Could not find a glib-compile-resources in your PATH)
-  fi
-])
 
 dnl **************************
 dnl *** Checks for gtk-doc ***
@@ -2712,7 +2547,7 @@ dnl **************************
 # gtkdocize greps for ^GTK_DOC_CHECK and parses it, so you need to have
 # it on it's own line.
 m4_ifdef([GTK_DOC_CHECK], [
-GTK_DOC_CHECK([1.15], [--flavour no-tmpl])
+GTK_DOC_CHECK([1.20], [--flavour no-tmpl])
 ],[
 AM_CONDITIONAL([ENABLE_GTK_DOC],[false])
 ])
@@ -2748,7 +2583,7 @@ AS_IF([test "$enable_man" != no], [
   dnl check for DocBook XSL stylesheets in the local catalog
   JH_CHECK_XML_CATALOG([http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl],
      [DocBook XSL Stylesheets], [have_docbook_style=yes],[have_docbook_style=no])
-  AS_IF([ test "$have_docbook_dtd" != yes ], [
+  AS_IF([ test "$have_docbook_style" != yes ], [
     AS_IF([ test "$enable_man" = yes ], [
       AC_MSG_ERROR([DocBook XSL Stylesheets are required for --enable-man])
     ])
@@ -2826,15 +2661,15 @@ dnl ************************************
 dnl *** Enable lcov coverage reports ***
 dnl ************************************
 
-AC_ARG_ENABLE(gcov,
-  AS_HELP_STRING([--enable-gcov],
+AC_ARG_ENABLE(coverage,
+  AS_HELP_STRING([--enable-coverage],
 		 [enable coverage testing with gcov]),
   [use_gcov=$enableval], [use_gcov=no])
 
 AS_IF([ test "x$use_gcov" = "xyes"], [
   dnl we need gcc:
   if test "$GCC" != "yes"; then
-    AC_MSG_ERROR([GCC is required for --enable-gcov])
+    AC_MSG_ERROR([GCC is required for --enable-coverage])
   fi
 
   dnl Check if ccache is being used
@@ -2845,7 +2680,7 @@ AS_IF([ test "x$use_gcov" = "xyes"], [
   esac
 
   if test "$gcc_ccache" = "yes" && (test -z "$CCACHE_DISABLE" || test "$CCACHE_DISABLE" != "1"); then
-    AC_MSG_ERROR([ccache must be disabled when --enable-gcov option is used. You can disable ccache by setting environment variable CCACHE_DISABLE=1.])
+    AC_MSG_ERROR([ccache must be disabled when --enable-coverage option is used. You can disable ccache by setting environment variable CCACHE_DISABLE=1.])
   fi
 
   ltp_version_list="1.6 1.7 1.8 1.9 1.10"
@@ -2911,20 +2746,13 @@ AC_CONFIG_COMMANDS([glib/glibconfig.h],
 
 _______EOF
 
-	if test x$glib_limits_h = xyes; then
-	  echo '#include <limits.h>' >> $outfile
-	fi
-	if test x$glib_float_h = xyes; then
-	  echo '#include <float.h>' >> $outfile
-	fi
+	echo '#include <limits.h>' >> $outfile
+	echo '#include <float.h>' >> $outfile
 	if test x$glib_values_h = xyes; then
 	  echo '#include <values.h>' >> $outfile
 	fi
 	if test "$glib_header_alloca_h" = "yes"; then
 	  echo '#define GLIB_HAVE_ALLOCA_H' >> $outfile
-	fi
-	if test x$glib_sys_poll_h = xyes; then
-	  echo '#define GLIB_HAVE_SYS_POLL_H' >> $outfile
 	fi
 	if test x$glib_included_printf != xyes; then
           echo "
@@ -2939,24 +2767,25 @@ _______EOF
 
 G_BEGIN_DECLS
 
-#define G_MINFLOAT	$glib_mf
-#define G_MAXFLOAT	$glib_Mf
-#define G_MINDOUBLE	$glib_md
-#define G_MAXDOUBLE	$glib_Md
-#define G_MINSHORT	$glib_ms
-#define G_MAXSHORT	$glib_Ms
-#define G_MAXUSHORT	$glib_Mus
-#define G_MININT	$glib_mi
-#define G_MAXINT	$glib_Mi
-#define G_MAXUINT	$glib_Mui
-#define G_MINLONG	$glib_ml
-#define G_MAXLONG	$glib_Ml
-#define G_MAXULONG	$glib_Mul
+#define G_MINFLOAT	FLT_MIN
+#define G_MAXFLOAT	FLT_MAX
+#define G_MINDOUBLE	DBL_MIN
+#define G_MAXDOUBLE	DBL_MAX
+#define G_MINSHORT	SHRT_MIN
+#define G_MAXSHORT	SHRT_MAX
+#define G_MAXUSHORT	USHRT_MAX
+#define G_MININT	INT_MIN
+#define G_MAXINT	INT_MAX
+#define G_MAXUINT	UINT_MAX
+#define G_MINLONG	LONG_MIN
+#define G_MAXLONG	LONG_MAX
+#define G_MAXULONG	ULONG_MAX
 
 _______EOF
 
 
 	### this should always be true in a modern C/C++ compiler
+	### and is statically asserted by glib-init.c
 	cat >>$outfile <<_______EOF
 typedef signed char gint8;
 typedef unsigned char guint8;
@@ -3062,8 +2891,10 @@ _______EOF
 
 
 	cat >>$outfile <<_______EOF
-$glib_atexit
-$glib_memmove
+#ifndef G_DISABLE_DEPRECATED
+#define g_ATEXIT(proc)	(atexit (proc))
+#define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END
+#endif
 $glib_defines
 $glib_os
 $glib_static_compilation
@@ -3131,7 +2962,7 @@ _______EOF
 	if test x$g_have_eilseq = xno; then
 		cat >>$outfile <<_______EOF
 #ifndef EILSEQ
-/* On some systems, like SunOS and NetBSD, EILSEQ is not defined.
+/* On some pre-C99 systems, EILSEQ is not defined.
  * The correspondence between this and the corresponding definition
  * in libiconv is essential.
  */
@@ -3240,38 +3071,6 @@ if test "x${ac_cv_working_alloca_h+set}" = xset ; then
   glib_header_alloca_h="$ac_cv_working_alloca_h"
 else
   glib_header_alloca_h="$ac_cv_header_alloca_h"
-fi
-
-case xyes in
-x$ac_cv_header_float_h)
-  glib_float_h=yes
-  glib_mf=FLT_MIN glib_Mf=FLT_MAX
-  glib_md=DBL_MIN glib_Md=DBL_MAX
-  ;;
-x$ac_cv_header_values_h)
-  glib_values_h=yes
-  glib_mf=MINFLOAT  glib_Mf=MAXFLOAT
-  glib_md=MINDOUBLE glib_Md=MAXDOUBLE
-  ;;
-esac
-
-case xyes in
-x$ac_cv_header_limits_h)
-  glib_limits_h=yes
-  glib_ms=SHRT_MIN glib_Ms=SHRT_MAX glib_Mus=USHRT_MAX
-  glib_mi=INT_MIN  glib_Mi=INT_MAX  glib_Mui=UINT_MAX
-  glib_ml=LONG_MIN glib_Ml=LONG_MAX glib_Mul=ULONG_MAX
-  ;;
-x$ac_cv_header_values_h)
-  glib_values_h=yes
-  glib_ms=MINSHORT glib_Ms=MAXSHORT glib_Mus="(((gushort)G_MAXSHORT)*2+1)"
-  glib_mi=MININT   glib_Mi=MAXINT   glib_Mui="(((guint)G_MAXINT)*2+1)"
-  glib_ml=MINLONG  glib_Ml=MAXLONG  glib_Mul="(((gulong)G_MAXLONG)*2+1)"
-  ;;
-esac
-
-if test x$ac_cv_header_sys_poll_h = xyes ; then
-  glib_sys_poll_h=yes
 fi
 
 if test x$enable_included_printf = xyes ; then
@@ -3451,39 +3250,6 @@ $ac_cv_sizeof___int64)
 esac
 
 
-case xyes in
-x$ac_cv_func_atexit)
-  glib_atexit="
-#ifdef NeXT /* @#%@! NeXTStep */
-# define g_ATEXIT(proc)	(!atexit (proc))
-#else
-# define g_ATEXIT(proc)	(atexit (proc))
-#endif"
-  ;;
-x$ac_cv_func_on_exit)
-  glib_atexit="
-#define g_ATEXIT(proc)	(on_exit ((void (*)(int, void*))(proc), NULL))"
-  ;;
-esac
-
-case xyes in
-x$ac_cv_func_memmove)
-  glib_memmove='
-#define g_memmove(dest,src,len) G_STMT_START { memmove ((dest), (src), (len)); } G_STMT_END'
-  ;;
-x$glib_cv_working_bcopy)
-  glib_memmove="
-/* memmove isn't available, but bcopy can copy overlapping memory regions */
-#define g_memmove(d,s,n) G_STMT_START { bcopy ((s), (d), (n)); } G_STMT_END"
-  ;;
-*)  
-  glib_memmove="
-/* memmove isn't found and bcopy can't copy overlapping memory regions, 
- * so we have to roll our own copy routine. */
-void g_memmove (void* dest, const void * src, unsigned long len);"
-  ;;
-esac
-
 glib_defines="
 #define GLIB_MAJOR_VERSION $GLIB_MAJOR_VERSION
 #define GLIB_MINOR_VERSION $GLIB_MINOR_VERSION
@@ -3570,9 +3336,6 @@ g_module_suffix="$glib_gmodule_suffix"
 
 g_pid_type="$glib_pid_type"
 case $host in
-  *-*-beos*)
-    glib_os="#define G_OS_BEOS"
-    ;;
   *-*-cygwin*)
     glib_os="#define G_OS_UNIX
 #define G_PLATFORM_WIN32
@@ -3651,21 +3414,57 @@ dnl
 AC_ARG_ENABLE(Bsymbolic,
               [AS_HELP_STRING([--disable-Bsymbolic],
                               [avoid linking with -Bsymbolic])],,
-              [SAVED_LDFLAGS="${LDFLAGS}"
+              [SAVED_LDFLAGS="${LDFLAGS}" SAVED_LIBS="${LIBS}"
                AC_MSG_CHECKING([for -Bsymbolic-functions linker flag])
                LDFLAGS=-Wl,-Bsymbolic-functions
-               AC_TRY_LINK([], [int main (void) { return 0; }],
+               LIBS=
+               AC_TRY_LINK([], [return 0],
                            AC_MSG_RESULT(yes)
                            enable_Bsymbolic=yes,
                            AC_MSG_RESULT(no)
                            enable_Bsymbolic=no)
-               LDFLAGS="${SAVED_LDFLAGS}"])
+               LDFLAGS="${SAVED_LDFLAGS}" LIBS="${SAVED_LIBS}"])
 
 if test "x${enable_Bsymbolic}" = "xyes"; then
   GLIB_LINK_FLAGS=-Wl,-Bsymbolic-functions
 fi
 
 AC_SUBST(GLIB_LINK_FLAGS)
+
+dnl
+dnl Check for -z,nodelete linker flag: the type system assumes that
+dnl libgobject stays loaded for the lifetime of the process.
+dnl Since ld.bfd does not treat wrong -z options as fatal by default,
+dnl we also try to check for the --fatal-warnings linker flag if
+dnl auto-detecting.
+dnl
+
+AC_ARG_ENABLE([znodelete],
+              [AS_HELP_STRING([--disable-znodelete],
+                              [avoid linking with -z,nodelete])],,
+              [SAVED_LDFLAGS="${LDFLAGS}" SAVED_LIBS="${LIBS}"
+               AC_MSG_CHECKING([for --fatal-warnings linker flag])
+               LDFLAGS=-Wl,--fatal-warnings
+               LIBS=
+               AC_TRY_LINK([], [return 0],
+                           AC_MSG_RESULT(yes)
+                           [ldflags_fatal=-Wl,--fatal-warnings],
+                           AC_MSG_RESULT(no)
+                           ldflags_fatal=)
+               AC_MSG_CHECKING([for -z,nodelete linker flag])
+               LDFLAGS="$ldflags_fatal -Wl,-z,nodelete"
+               AC_TRY_LINK([], [return 0],
+                           AC_MSG_RESULT(yes)
+                           enable_znodelete=yes,
+                           AC_MSG_RESULT(no)
+                           enable_znodelete=no)
+               LDFLAGS="${SAVED_LDFLAGS}" LIBS="${SAVED_LIBS}"])
+
+if test "x${enable_znodelete}" = "xyes"; then
+  GOBJECT_LINK_FLAGS=-Wl,-z,nodelete
+fi
+
+AC_SUBST(GOBJECT_LINK_FLAGS)
 
 dnl
 dnl Check for -fvisibility=hidden to determine if we can do GNU-style
@@ -3684,7 +3483,7 @@ case "$host" in
     SAVED_CFLAGS="${CFLAGS}"
     CFLAGS="-fvisibility=hidden"
     AC_MSG_CHECKING([for -fvisibility=hidden compiler flag])
-    AC_TRY_COMPILE([], [int main (void) { return 0; }],
+    AC_TRY_COMPILE([], [return 0],
                    AC_MSG_RESULT(yes)
                    enable_fvisibility_hidden=yes,
                    AC_MSG_RESULT(no)
@@ -3766,8 +3565,12 @@ build/Makefile
 build/win32/Makefile
 build/win32/dirent/Makefile
 build/win32/vs9/Makefile
+build/win32/vs9/glib-gen-srcs.vsprops
 build/win32/vs10/Makefile
+build/win32/vs10/glib-gen-srcs.props
 build/win32/vs11/Makefile
+build/win32/vs12/Makefile
+build/win32/vs14/Makefile
 glib/Makefile
 glib/glib.stp
 glib/libcharset/Makefile
@@ -3789,13 +3592,13 @@ gio/gnetworking.h
 gio/xdgmime/Makefile
 gio/inotify/Makefile
 gio/kqueue/Makefile
-gio/fen/Makefile
 gio/fam/Makefile
 gio/win32/Makefile
 gio/tests/Makefile
 gio/tests/gdbus-object-manager-example/Makefile
 gio/tests/services/Makefile
 gio/tests/services/org.gtk.GDBus.Examples.ObjectManager.service
+gio/tests/modules/Makefile
 po/Makefile.in
 docs/Makefile
 docs/reference/Makefile

@@ -34,6 +34,7 @@ G_TYPE_CLASS_GET_PRIVATE
 G_TYPE_CHECK_INSTANCE
 G_TYPE_CHECK_INSTANCE_CAST
 G_TYPE_CHECK_INSTANCE_TYPE
+G_TYPE_CHECK_INSTANCE_FUNDAMENTAL_TYPE
 G_TYPE_CHECK_CLASS_CAST
 G_TYPE_CHECK_CLASS_TYPE
 G_TYPE_CHECK_VALUE
@@ -100,7 +101,11 @@ GTypeInterfaceCheckFunc
 g_type_value_table_peek
 g_type_ensure
 g_type_get_type_registration_serial
+g_type_get_instance_count
 
+G_DECLARE_FINAL_TYPE
+G_DECLARE_DERIVABLE_TYPE
+G_DECLARE_INTERFACE
 G_DEFINE_TYPE
 G_DEFINE_TYPE_WITH_PRIVATE
 G_DEFINE_TYPE_WITH_CODE
@@ -125,6 +130,7 @@ G_TYPE_FUNDAMENTAL_SHIFT
 g_type_check_instance
 g_type_check_instance_cast
 g_type_check_instance_is_a
+g_type_check_instance_is_fundamentally_a
 g_type_check_class_cast
 g_type_check_class_is_a
 g_type_check_is_value_type
@@ -215,6 +221,7 @@ g_type_module_register_flags
 G_DEFINE_DYNAMIC_TYPE
 G_DEFINE_DYNAMIC_TYPE_EXTENDED
 G_IMPLEMENT_INTERFACE_DYNAMIC
+G_ADD_PRIVATE_DYNAMIC
 
 <SUBSECTION Standard>
 G_TYPE_MODULE
@@ -259,6 +266,7 @@ GParameter
 g_object_ref
 g_object_unref
 g_object_ref_sink
+g_set_object
 g_clear_object
 GInitiallyUnowned
 GInitiallyUnownedClass
@@ -380,13 +388,16 @@ G_TYPE_TIME_ZONE
 G_TYPE_IO_CHANNEL
 G_TYPE_IO_CONDITION
 G_TYPE_VARIANT_BUILDER
+G_TYPE_VARIANT_DICT
 G_TYPE_KEY_FILE
 G_TYPE_MAIN_CONTEXT
 G_TYPE_MAIN_LOOP
+G_TYPE_MAPPED_FILE
 G_TYPE_MARKUP_PARSE_CONTEXT
 G_TYPE_SOURCE
 G_TYPE_POLLFD
 G_TYPE_THREAD
+G_TYPE_OPTION_GROUP
 GStrv
 
 <SUBSECTION Standard>
@@ -408,6 +419,7 @@ g_time_zone_get_type
 g_variant_get_gtype
 g_variant_type_get_gtype
 g_variant_builder_get_type
+g_variant_dict_get_type
 g_gtype_get_type
 g_main_context_get_type
 g_main_loop_get_type
@@ -415,6 +427,11 @@ g_source_get_type
 g_pollfd_get_type
 g_bytes_get_type
 g_key_file_get_type
+g_checksum_get_type
+g_mapped_file_get_type
+g_markup_parse_context_get_type
+g_thread_get_type
+g_option_group_get_type
 </SECTION>
 
 <SECTION>
@@ -434,6 +451,7 @@ g_value_init
 g_value_copy
 g_value_reset
 g_value_unset
+g_value_init_from_instance
 g_value_set_instance
 g_value_fits_pointer
 g_value_peek_pointer
@@ -481,7 +499,6 @@ G_PARAM_SPEC_VALUE_TYPE
 GParamSpec
 GParamSpecClass
 GParamFlags
-G_PARAM_READWRITE
 G_PARAM_STATIC_STRINGS
 G_PARAM_MASK
 G_PARAM_USER_SHIFT
@@ -496,6 +513,7 @@ g_param_value_validate
 g_param_value_convert
 g_param_values_cmp
 g_param_spec_get_name
+g_param_spec_get_name_quark
 g_param_spec_get_nick
 g_param_spec_get_blurb
 g_param_spec_get_qdata

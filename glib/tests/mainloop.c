@@ -22,6 +22,7 @@
 
 #include <glib.h>
 #include "glib-private.h"
+#include <stdio.h>
 #include <string.h>
 
 static gboolean cb (gpointer data)
@@ -118,6 +119,7 @@ test_maincontext_basic (void)
   id = g_source_attach (source, ctx);
   g_source_unref (source);
   g_assert (g_source_remove_by_user_data (data));
+  g_assert (!g_source_remove_by_user_data ((gpointer)0x1234));
 
   g_idle_add (cb, data);
   g_assert (g_idle_remove_by_data (data));
@@ -693,6 +695,7 @@ typedef struct {
 
   GSource *timeout1, *timeout2;
   gint64 time1;
+  GTimeVal tv;
 } TimeTestData;
 
 static gboolean
@@ -713,6 +716,10 @@ timeout1_callback (gpointer user_data)
       mtime1 = g_get_monotonic_time ();
       data->time1 = g_source_get_time (source);
 
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      g_source_get_current_time (source, &data->tv);
+G_GNUC_END_IGNORE_DEPRECATIONS
+
       /* g_source_get_time() does not change during a single callback */
       g_usleep (1000000);
       mtime2 = g_get_monotonic_time ();
@@ -723,6 +730,8 @@ timeout1_callback (gpointer user_data)
     }
   else
     {
+      GTimeVal tv;
+
       /* Second iteration */
       g_assert (g_source_is_destroyed (data->timeout2));
 
@@ -732,6 +741,14 @@ timeout1_callback (gpointer user_data)
        */
       time2 = g_source_get_time (source);
       g_assert_cmpint (data->time1, <, time2);
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+      g_source_get_current_time (source, &tv);
+G_GNUC_END_IGNORE_DEPRECATIONS
+
+      g_assert (tv.tv_sec > data->tv.tv_sec ||
+                (tv.tv_sec == data->tv.tv_sec &&
+                 tv.tv_usec > data->tv.tv_usec));
 
       g_main_loop_quit (data->loop);
     }
@@ -1026,6 +1043,55 @@ test_wakeup(void)
   g_main_context_unref (ctx);
 }
 
+static void
+test_remove_invalid (void)
+{
+  g_test_expect_message ("GLib", G_LOG_LEVEL_CRITICAL, "Source ID 3000000000 was not found*");
+  g_source_remove (3000000000u);
+  g_test_assert_expected_messages ();
+}
+
+static gboolean
+trivial_prepare (GSource *source,
+                 gint    *timeout)
+{
+  *timeout = 0;
+  return TRUE;
+}
+
+static gint n_finalized;
+
+static void
+trivial_finalize (GSource *source)
+{
+  n_finalized++;
+}
+
+static void
+test_unref_while_pending (void)
+{
+  static GSourceFuncs funcs = { trivial_prepare, NULL, NULL, trivial_finalize };
+  GMainContext *context;
+  GSource *source;
+
+  context = g_main_context_new ();
+
+  source = g_source_new (&funcs, sizeof (GSource));
+  g_source_attach (source, context);
+  g_source_unref (source);
+
+  /* Do incomplete main iteration -- get a pending source but don't dispatch it. */
+  g_main_context_prepare (context, NULL);
+  g_main_context_query (context, 0, NULL, NULL, 0);
+  g_main_context_check (context, 1000, NULL, 0);
+
+  /* Destroy the context */
+  g_main_context_unref (context);
+
+  /* Make sure we didn't leak the source */
+  g_assert_cmpint (n_finalized, ==, 1);
+}
+
 #ifdef G_OS_UNIX
 
 #include <glib-unix.h>
@@ -1148,6 +1214,7 @@ assert_main_context_state (gint n_to_poll,
   GMainContext *context;
   gboolean consumed[10] = { };
   GPollFD poll_fds[10];
+  gboolean acquired;
   gboolean immediate;
   gint max_priority;
   gint timeout;
@@ -1156,6 +1223,9 @@ assert_main_context_state (gint n_to_poll,
   va_list ap;
 
   context = g_main_context_default ();
+
+  acquired = g_main_context_acquire (context);
+  g_assert (acquired);
 
   immediate = g_main_context_prepare (context, &max_priority);
   g_assert (!immediate);
@@ -1189,6 +1259,8 @@ assert_main_context_state (gint n_to_poll,
 
   if (g_main_context_check (context, max_priority, poll_fds, n))
     g_main_context_dispatch (context);
+
+  g_main_context_release (context);
 }
 
 static gboolean
@@ -1265,7 +1337,9 @@ test_unix_fd_source (void)
   g_assert (in && out);
 
   g_source_destroy (out_source);
+  g_source_unref (out_source);
   g_source_destroy (in_source);
+  g_source_unref (in_source);
   close (fds[1]);
   close (fds[0]);
 }
@@ -1395,7 +1469,260 @@ test_source_unix_fd_api (void)
   close (fds_b[1]);
 }
 
+static gboolean
+unixfd_quit_loop (gint         fd,
+                  GIOCondition condition,
+                  gpointer     user_data)
+{
+  GMainLoop *loop = user_data;
+
+  g_main_loop_quit (loop);
+
+  return FALSE;
+}
+
+static void
+test_unix_file_poll (void)
+{
+  gint fd;
+  GSource *source;
+  GMainLoop *loop;
+
+  fd = open ("/dev/null", O_RDONLY);
+  g_assert (fd >= 0);
+
+  loop = g_main_loop_new (NULL, FALSE);
+
+  source = g_unix_fd_source_new (fd, G_IO_IN);
+  g_source_set_callback (source, (GSourceFunc) unixfd_quit_loop, loop, NULL);
+  g_source_attach (source, NULL);
+
+  /* Should not block */
+  g_main_loop_run (loop);
+
+  g_source_destroy (source);
+
+  assert_main_context_state (0);
+
+  g_source_unref (source);
+
+  g_main_loop_unref (loop);
+
+  close (fd);
+}
+
 #endif
+
+static gboolean
+timeout_cb (gpointer data)
+{
+  GMainLoop *loop = data;
+  GMainContext *context;
+
+  context = g_main_loop_get_context (loop);
+  g_assert (g_main_loop_is_running (loop));
+  g_assert (g_main_context_is_owner (context));
+
+  g_main_loop_quit (loop);
+
+  return G_SOURCE_REMOVE;
+}
+
+static gpointer
+threadf (gpointer data)
+{
+  GMainContext *context = data;
+  GMainLoop *loop;
+  GSource *source;
+
+  loop = g_main_loop_new (context, FALSE);
+  source = g_timeout_source_new (250);
+  g_source_set_callback (source, timeout_cb, loop, NULL);
+  g_source_attach (source, context);
+  g_source_unref (source);
+ 
+  g_main_loop_run (loop);
+
+  g_main_loop_unref (loop);
+
+  return NULL;
+}
+
+static void
+test_mainloop_wait (void)
+{
+  GMainContext *context;
+  GThread *t1, *t2;
+
+  context = g_main_context_new ();
+
+  t1 = g_thread_new ("t1", threadf, context);
+  t2 = g_thread_new ("t2", threadf, context);
+
+  g_thread_join (t1);
+  g_thread_join (t2);
+
+  g_main_context_unref (context);
+}
+
+static gboolean
+nfds_in_cb (GIOChannel   *io,
+            GIOCondition  condition,
+            gpointer      user_data)
+{
+  gboolean *in_cb_ran = user_data;
+
+  *in_cb_ran = TRUE;
+  g_assert_cmpint (condition, ==, G_IO_IN);
+  return FALSE;
+}
+
+static gboolean
+nfds_out_cb (GIOChannel   *io,
+             GIOCondition  condition,
+             gpointer      user_data)
+{
+  gboolean *out_cb_ran = user_data;
+
+  *out_cb_ran = TRUE;
+  g_assert_cmpint (condition, ==, G_IO_OUT);
+  return FALSE;
+}
+
+static gboolean
+nfds_out_low_cb (GIOChannel   *io,
+                 GIOCondition  condition,
+                 gpointer      user_data)
+{
+  g_assert_not_reached ();
+  return FALSE;
+}
+
+static void
+test_nfds (void)
+{
+  GMainContext *ctx;
+  GPollFD out_fds[3];
+  gint fd, nfds;
+  GIOChannel *io;
+  GSource *source1, *source2, *source3;
+  gboolean source1_ran = FALSE, source3_ran = FALSE;
+  gchar *tmpfile;
+  GError *error = NULL;
+
+  ctx = g_main_context_new ();
+  nfds = g_main_context_query (ctx, G_MAXINT, NULL,
+                               out_fds, G_N_ELEMENTS (out_fds));
+  /* An "empty" GMainContext will have a single GPollFD, for its
+   * internal GWakeup.
+   */
+  g_assert_cmpint (nfds, ==, 1);
+
+  fd = g_file_open_tmp (NULL, &tmpfile, &error);
+  g_assert_no_error (error);
+
+  io = g_io_channel_unix_new (fd);
+#ifdef G_OS_WIN32
+  /* The fd in the pollfds won't be the same fd we passed in */
+  g_io_channel_win32_make_pollfd (io, G_IO_IN, out_fds);
+  fd = out_fds[0].fd;
+#endif
+
+  /* Add our first pollfd */
+  source1 = g_io_create_watch (io, G_IO_IN);
+  g_source_set_priority (source1, G_PRIORITY_DEFAULT);
+  g_source_set_callback (source1, (GSourceFunc) nfds_in_cb,
+                         &source1_ran, NULL);
+  g_source_attach (source1, ctx);
+
+  nfds = g_main_context_query (ctx, G_MAXINT, NULL,
+                               out_fds, G_N_ELEMENTS (out_fds));
+  g_assert_cmpint (nfds, ==, 2);
+  if (out_fds[0].fd == fd)
+    g_assert_cmpint (out_fds[0].events, ==, G_IO_IN);
+  else if (out_fds[1].fd == fd)
+    g_assert_cmpint (out_fds[1].events, ==, G_IO_IN);
+  else
+    g_assert_not_reached ();
+
+  /* Add a second pollfd with the same fd but different event, and
+   * lower priority.
+   */
+  source2 = g_io_create_watch (io, G_IO_OUT);
+  g_source_set_priority (source2, G_PRIORITY_LOW);
+  g_source_set_callback (source2, (GSourceFunc) nfds_out_low_cb,
+                         NULL, NULL);
+  g_source_attach (source2, ctx);
+
+  /* g_main_context_query() should still return only 2 pollfds,
+   * one of which has our fd, and a combined events field.
+   */
+  nfds = g_main_context_query (ctx, G_MAXINT, NULL,
+                               out_fds, G_N_ELEMENTS (out_fds));
+  g_assert_cmpint (nfds, ==, 2);
+  if (out_fds[0].fd == fd)
+    g_assert_cmpint (out_fds[0].events, ==, G_IO_IN | G_IO_OUT);
+  else if (out_fds[1].fd == fd)
+    g_assert_cmpint (out_fds[1].events, ==, G_IO_IN | G_IO_OUT);
+  else
+    g_assert_not_reached ();
+
+  /* But if we query with a max priority, we won't see the
+   * lower-priority one.
+   */
+  nfds = g_main_context_query (ctx, G_PRIORITY_DEFAULT, NULL,
+                               out_fds, G_N_ELEMENTS (out_fds));
+  g_assert_cmpint (nfds, ==, 2);
+  if (out_fds[0].fd == fd)
+    g_assert_cmpint (out_fds[0].events, ==, G_IO_IN);
+  else if (out_fds[1].fd == fd)
+    g_assert_cmpint (out_fds[1].events, ==, G_IO_IN);
+  else
+    g_assert_not_reached ();
+
+  /* Third pollfd */
+  source3 = g_io_create_watch (io, G_IO_OUT);
+  g_source_set_priority (source3, G_PRIORITY_DEFAULT);
+  g_source_set_callback (source3, (GSourceFunc) nfds_out_cb,
+                         &source3_ran, NULL);
+  g_source_attach (source3, ctx);
+
+  nfds = g_main_context_query (ctx, G_MAXINT, NULL,
+                               out_fds, G_N_ELEMENTS (out_fds));
+  g_assert_cmpint (nfds, ==, 2);
+  if (out_fds[0].fd == fd)
+    g_assert_cmpint (out_fds[0].events, ==, G_IO_IN | G_IO_OUT);
+  else if (out_fds[1].fd == fd)
+    g_assert_cmpint (out_fds[1].events, ==, G_IO_IN | G_IO_OUT);
+  else
+    g_assert_not_reached ();
+
+  /* Now actually iterate the loop; the fd should be readable and
+   * writable, so source1 and source3 should be triggered, but *not*
+   * source2, since it's lower priority than them. (Though on
+   * G_OS_WIN32, source3 doesn't get triggered, probably because of
+   * giowin32 weirdness...)
+   */
+  g_main_context_iteration (ctx, FALSE);
+
+  g_assert (source1_ran);
+#ifndef G_OS_WIN32
+  g_assert (source3_ran);
+#endif
+
+  g_source_destroy (source1);
+  g_source_unref (source1);
+  g_source_destroy (source2);
+  g_source_unref (source2);
+  g_source_destroy (source3);
+  g_source_unref (source3);
+
+  g_io_channel_unref (io);
+  remove (tmpfile);
+  g_free (tmpfile);
+
+  g_main_context_unref (ctx);
+}
 
 int
 main (int argc, char *argv[])
@@ -1416,11 +1743,16 @@ main (int argc, char *argv[])
   g_test_add_func ("/mainloop/overflow", test_mainloop_overflow);
   g_test_add_func ("/mainloop/ready-time", test_ready_time);
   g_test_add_func ("/mainloop/wakeup", test_wakeup);
+  g_test_add_func ("/mainloop/remove-invalid", test_remove_invalid);
+  g_test_add_func ("/mainloop/unref-while-pending", test_unref_while_pending);
 #ifdef G_OS_UNIX
   g_test_add_func ("/mainloop/unix-fd", test_unix_fd);
   g_test_add_func ("/mainloop/unix-fd-source", test_unix_fd_source);
   g_test_add_func ("/mainloop/source-unix-fd-api", test_source_unix_fd_api);
+  g_test_add_func ("/mainloop/wait", test_mainloop_wait);
+  g_test_add_func ("/mainloop/unix-file-poll", test_unix_file_poll);
 #endif
+  g_test_add_func ("/mainloop/nfds", test_nfds);
 
   return g_test_run ();
 }

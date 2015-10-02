@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -57,7 +55,7 @@ typedef struct _GAppLaunchContextPrivate GAppLaunchContextPrivate;
  * GAppInfoIface:
  * @g_iface: The parent interface.
  * @dup: Copies a #GAppInfo.
- * @equal: Checks two #GAppInfo<!-- -->s for equality.
+ * @equal: Checks two #GAppInfos for equality.
  * @get_id: Gets a string identifier for a #GAppInfo.
  * @get_name: Gets the name of the application for a #GAppInfo.
  * @get_description: Gets a short description for the application described by the #GAppInfo.
@@ -80,6 +78,7 @@ typedef struct _GAppLaunchContextPrivate GAppLaunchContextPrivate;
  * @get_commandline: Gets the commandline for the #GAppInfo. Since 2.20
  * @get_display_name: Gets the display name for the #GAppInfo. Since 2.24
  * @set_as_last_used_for_type: Sets the application as the last used. See g_app_info_set_as_last_used_for_type().
+ * @get_supported_types: Retrieves the list of content types that @app_info claims to support.
  *
  * Application Information interface, for operating system portability.
  */
@@ -295,6 +294,20 @@ char *             g_app_launch_context_get_startup_notify_id (GAppLaunchContext
 GLIB_AVAILABLE_IN_ALL
 void               g_app_launch_context_launch_failed         (GAppLaunchContext *context,
                                                                const char *       startup_notify_id);
+
+#define G_TYPE_APP_INFO_MONITOR                             (g_app_info_monitor_get_type ())
+#define G_APP_INFO_MONITOR(inst)                            (G_TYPE_CHECK_INSTANCE_CAST ((inst),                     \
+                                                             G_TYPE_APP_INFO_MONITOR, GAppInfoMonitor))
+#define G_IS_APP_INFO_MONITOR(inst)                         (G_TYPE_CHECK_INSTANCE_TYPE ((inst),                     \
+                                                             G_TYPE_APP_INFO_MONITOR))
+
+typedef struct _GAppInfoMonitor                             GAppInfoMonitor;
+
+GLIB_AVAILABLE_IN_2_40
+GType                   g_app_info_monitor_get_type                     (void);
+
+GLIB_AVAILABLE_IN_2_40
+GAppInfoMonitor *       g_app_info_monitor_get                          (void);
 
 G_END_DECLS
 

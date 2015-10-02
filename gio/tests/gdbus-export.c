@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -735,10 +733,17 @@ static const GDBusSubtreeVTable dynamic_subtree_vtable =
 
 /* -------------------- */
 
+typedef struct
+{
+  const gchar *object_path;
+  gboolean check_remote_errors;
+} TestDispatchThreadFuncArgs;
+
 static gpointer
 test_dispatch_thread_func (gpointer user_data)
 {
-  const gchar *object_path = user_data;
+  TestDispatchThreadFuncArgs *args = user_data;
+  const gchar *object_path = args->object_path;
   GDBusProxy *foo_proxy;
   GVariant *value;
   GVariant *inner;
@@ -899,8 +904,13 @@ test_dispatch_thread_func (gpointer user_data)
                                   NULL,
                                   &error);
   g_assert (value == NULL);
-  g_assert_error (error, G_DBUS_ERROR, G_DBUS_ERROR_SPAWN_FILE_INVALID);
-  g_assert_cmpstr (error->message, ==, "GDBus.Error:org.freedesktop.DBus.Error.Spawn.FileInvalid: Returning some error instead of writing the value 'NotReadable' to the property ''But Writable you are!''");
+  if (args->check_remote_errors)
+    {
+      /* _with_closures variant doesn't support customizing error data. */
+      g_assert_error (error, G_DBUS_ERROR, G_DBUS_ERROR_SPAWN_FILE_INVALID);
+      g_assert_cmpstr (error->message, ==, "GDBus.Error:org.freedesktop.DBus.Error.Spawn.FileInvalid: Returning some error instead of writing the value 'NotReadable' to the property ''But Writable you are!''");
+    }
+  g_assert (error != NULL && error->domain == G_DBUS_ERROR);
   g_error_free (error);
 
   error = NULL;
@@ -943,14 +953,17 @@ test_dispatch_thread_func (gpointer user_data)
 }
 
 static void
-test_dispatch (const gchar *object_path)
+test_dispatch (const gchar *object_path,
+               gboolean     check_remote_errors)
 {
   GThread *thread;
+  
+  TestDispatchThreadFuncArgs args = {object_path, check_remote_errors};
 
   /* run this in a thread to avoid deadlocks */
   thread = g_thread_new ("test_dispatch",
                          test_dispatch_thread_func,
-                         (gpointer) object_path);
+                         (gpointer) &args);
   g_main_loop_run (loop);
   g_thread_join (thread);
 }
@@ -1201,7 +1214,7 @@ test_object_registration (void)
   num_successful_registrations++;
 
   /* now register a dynamic subtree, spawning objects as they are called */
-  dyna_data = g_ptr_array_new ();
+  dyna_data = g_ptr_array_new_with_free_func (g_free);
   dyna_subtree_registration_id = g_dbus_connection_register_subtree (c,
                                                                      "/foo/dyna",
                                                                      &dynamic_subtree_vtable,
@@ -1221,9 +1234,9 @@ test_object_registration (void)
 
   /* Install three nodes in the dynamic subtree via the dyna_data backdoor and
    * assert that they show up correctly in the introspection data */
-  g_ptr_array_add (dyna_data, "lol");
-  g_ptr_array_add (dyna_data, "cat");
-  g_ptr_array_add (dyna_data, "cheezburger");
+  g_ptr_array_add (dyna_data, g_strdup ("lol"));
+  g_ptr_array_add (dyna_data, g_strdup ("cat"));
+  g_ptr_array_add (dyna_data, g_strdup ("cheezburger"));
   nodes = get_nodes_at (c, "/foo/dyna");
   g_assert (nodes != NULL);
   g_assert_cmpint (g_strv_length (nodes), ==, 3);
@@ -1346,8 +1359,8 @@ test_object_registration (void)
    * We do this for both a regular registered object (/foo/boss) and also for an object
    * registered through the subtree mechanism.
    */
-  test_dispatch ("/foo/boss");
-  test_dispatch ("/foo/boss/executives/vp0");
+  test_dispatch ("/foo/boss", TRUE);
+  test_dispatch ("/foo/boss/executives/vp0", TRUE);
 
   /* To prevent from exiting and attaching a D-Bus tool like D-Feet; uncomment: */
 #if 0
@@ -1390,6 +1403,34 @@ test_object_registration (void)
   g_assert_cmpint (g_strv_length (nodes), ==, 0);
   g_strfreev (nodes);
 #endif
+
+  g_object_unref (c);
+}
+
+static void
+test_object_registration_with_closures (void)
+{
+  GError *error;
+  guint registration_id;
+
+  error = NULL;
+  c = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+  g_assert_no_error (error);
+  g_assert (c != NULL);
+
+  registration_id = g_dbus_connection_register_object_with_closures (c,
+                                                                     "/foo/boss",
+                                                                     (GDBusInterfaceInfo *) &foo_interface_info,
+                                                                     g_cclosure_new (G_CALLBACK (foo_method_call), NULL, NULL),
+                                                                     g_cclosure_new (G_CALLBACK (foo_get_property), NULL, NULL),
+                                                                     g_cclosure_new (G_CALLBACK (foo_set_property), NULL, NULL),
+                                                                     &error);
+  g_assert_no_error (error);
+  g_assert (registration_id > 0);
+
+  test_dispatch ("/foo/boss", FALSE);
+
+  g_assert (g_dbus_connection_unregister_object (c, registration_id));
 
   g_object_unref (c);
 }
@@ -1460,13 +1501,13 @@ check_interfaces (GDBusConnection  *c,
 #if 0
   if (g_strv_length ((gchar**)interfaces) != i - 1)
     {
-      g_print ("expected ");
+      g_printerr ("expected ");
       for (i = 0; interfaces[i]; i++)
-        g_print ("%s ", interfaces[i]);
-      g_print ("\ngot ");
+        g_printerr ("%s ", interfaces[i]);
+      g_printerr ("\ngot ");
       for (i = 0; node_info->interfaces[i]; i++)
-        g_print ("%s ", node_info->interfaces[i]->name);
-      g_print ("\n");
+        g_printerr ("%s ", node_info->interfaces[i]->name);
+      g_printerr ("\n");
     }
 #endif
   g_assert_cmpint (g_strv_length ((gchar**)interfaces), ==, i - 1);
@@ -1739,19 +1780,17 @@ main (int   argc,
   /* all the tests rely on a shared main loop */
   loop = g_main_loop_new (NULL, FALSE);
 
-  session_bus_up ();
-
   g_test_add_func ("/gdbus/object-registration", test_object_registration);
+  g_test_add_func ("/gdbus/object-registration-with-closures", test_object_registration_with_closures);
   g_test_add_func ("/gdbus/registered-interfaces", test_registered_interfaces);
   g_test_add_func ("/gdbus/async-properties", test_async_properties);
 
   /* TODO: check that we spit out correct introspection data */
   /* TODO: check that registering a whole subtree works */
 
-  ret = g_test_run();
+  ret = session_bus_run ();
 
-  /* tear down bus */
-  session_bus_down ();
+  g_main_loop_unref (loop);
 
   return ret;
 }

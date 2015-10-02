@@ -24,6 +24,7 @@
 #define GLIB_DISABLE_DEPRECATION_WARNINGS
 
 #include "glib.h"
+#include "glib-private.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -94,7 +95,7 @@ static void
 test_version (void)
 {
   if (g_test_verbose ())
-    g_print ("(header %d.%d.%d library %d.%d.%d) ",
+    g_printerr ("(header %d.%d.%d library %d.%d.%d) ",
               GLIB_MAJOR_VERSION, GLIB_MINOR_VERSION, GLIB_MICRO_VERSION,
               glib_major_version, glib_minor_version, glib_micro_version);
 
@@ -261,20 +262,6 @@ test_find_program (void)
 }
 
 static void
-test_debug_help (void)
-{
-  GDebugKey keys[] = {
-    { "key1", 1 },
-    { "key2", 2 },
-    { "key3", 4 },
-  };
-  guint res;
-
-  res = g_parse_debug_string ("help", keys, G_N_ELEMENTS (keys));
-  g_assert_cmpint (res, ==, 0);
-}
-
-static void
 test_debug (void)
 {
   GDebugKey keys[] = {
@@ -308,7 +295,13 @@ test_debug (void)
   res = g_parse_debug_string ("all", keys, G_N_ELEMENTS (keys));
   g_assert_cmpint (res, ==, 7);
 
-  g_test_trap_subprocess ("/utils/debug/subprocess/help", 0, 0);
+  if (g_test_subprocess ())
+    {
+      res = g_parse_debug_string ("help", keys, G_N_ELEMENTS (keys));
+      g_assert_cmpint (res, ==, 0);
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
   g_test_trap_assert_passed ();
   g_test_trap_assert_stderr ("*Supported debug values: key1 key2 key3 all help*");
 }
@@ -325,6 +318,21 @@ test_codeset (void)
   g_assert_cmpstr (c, ==, c2);
 
   g_free (c);
+}
+
+static void
+test_codeset2 (void)
+{
+  if (g_test_subprocess ())
+    {
+      const gchar *c;
+      g_setenv ("CHARSET", "UTF-8", TRUE);
+      g_get_charset (&c);
+      g_assert_cmpstr (c, ==, "UTF-8");
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
+  g_test_trap_assert_passed ();
 }
 
 static void
@@ -440,7 +448,6 @@ test_xdg_dirs (void)
 
   g_assert_cmpstr (s, ==, xdg);
 
-  g_strfreev ((gchar **)dirs);
   g_free (s);
 }
 #endif
@@ -484,6 +491,44 @@ test_clear_pointer (void)
   g_assert (a == NULL);
 }
 
+static int obj_count;
+
+static void
+get_obj (gpointer *obj_out)
+{
+  gpointer obj = g_malloc (5);
+  obj_count++;
+
+  if (obj_out)
+    *obj_out = g_steal_pointer (&obj);
+
+  if (obj)
+    {
+      g_free (obj);
+      obj_count--;
+    }
+}
+
+static void
+test_take_pointer (void)
+{
+  gpointer a;
+  gpointer b;
+
+  get_obj (NULL);
+
+  get_obj (&a);
+  g_assert (a);
+
+  /* ensure that it works to skip the macro */
+  b = (g_steal_pointer) (&a);
+  g_assert (!a);
+  obj_count--;
+  g_free (b);
+
+  g_assert (!obj_count);
+}
+
 static void
 test_misc_mem (void)
 {
@@ -512,6 +557,34 @@ test_nullify (void)
   g_nullify_pointer (&p);
 
   g_assert (p == NULL);
+}
+
+static void
+atexit_func (void)
+{
+  g_print ("atexit called");
+}
+
+static void
+test_atexit (void)
+{
+  if (g_test_subprocess ())
+    {
+      g_atexit (atexit_func);
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
+  g_test_trap_assert_passed ();
+  g_test_trap_assert_stdout ("*atexit called*");
+}
+
+static void
+test_check_setuid (void)
+{
+  gboolean res;
+
+  res = GLIB_PRIVATE_CALL(g_check_setuid) ();
+  g_assert (!res);
 }
 
 int
@@ -544,8 +617,8 @@ main (int   argc,
   g_test_add_func ("/utils/swap", test_swap);
   g_test_add_func ("/utils/find-program", test_find_program);
   g_test_add_func ("/utils/debug", test_debug);
-  g_test_add_func ("/utils/debug/subprocess/help", test_debug_help);
   g_test_add_func ("/utils/codeset", test_codeset);
+  g_test_add_func ("/utils/codeset2", test_codeset2);
   g_test_add_func ("/utils/basename", test_basename);
   g_test_add_func ("/utils/gettext", test_gettext);
   g_test_add_func ("/utils/username", test_username);
@@ -557,8 +630,11 @@ main (int   argc,
   g_test_add_func ("/utils/specialdir", test_special_dir);
   g_test_add_func ("/utils/specialdir/desktop", test_desktop_special_dir);
   g_test_add_func ("/utils/clear-pointer", test_clear_pointer);
+  g_test_add_func ("/utils/take-pointer", test_take_pointer);
   g_test_add_func ("/utils/misc-mem", test_misc_mem);
   g_test_add_func ("/utils/nullify", test_nullify);
+  g_test_add_func ("/utils/atexit", test_atexit);
+  g_test_add_func ("/utils/check-setuid", test_check_setuid);
 
   return g_test_run ();
 }

@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -401,6 +399,7 @@ void        g_io_channel_win32_set_debug (GIOChannel *channel,
 
 #endif
 
+#ifndef __GTK_DOC_IGNORE__
 #ifdef G_OS_WIN32
 #define g_io_channel_new_file g_io_channel_new_file_utf8
 
@@ -409,6 +408,7 @@ GIOChannel *g_io_channel_new_file_utf8 (const gchar  *filename,
                                         const gchar  *mode,
                                         GError      **error);
 #endif
+#endif /* __GTK_DOC_IGNORE__ */
 
 G_END_DECLS
 

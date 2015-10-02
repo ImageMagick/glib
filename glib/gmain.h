@@ -12,9 +12,7 @@
  * Library General Public License for more details.
  *
  * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __G_MAIN_H__
@@ -44,7 +42,7 @@ typedef enum /*< flags >*/
 /**
  * GMainContext:
  *
- * The <structname>GMainContext</structname> struct is an opaque data
+ * The `GMainContext` struct is an opaque data
  * type representing a set of sources to be handled in a main loop.
  */
 typedef struct _GMainContext            GMainContext;
@@ -52,7 +50,7 @@ typedef struct _GMainContext            GMainContext;
 /**
  * GMainLoop:
  *
- * The <structname>GMainLoop</structname> struct is an opaque data type
+ * The `GMainLoop` struct is an opaque data type
  * representing the main event loop of a GLib or GTK+ application.
  */
 typedef struct _GMainLoop               GMainLoop;
@@ -60,7 +58,7 @@ typedef struct _GMainLoop               GMainLoop;
 /**
  * GSource:
  *
- * The <structname>GSource</structname> struct is an opaque data type
+ * The `GSource` struct is an opaque data type
  * representing an event source.
  */
 typedef struct _GSource                 GSource;
@@ -73,7 +71,7 @@ typedef struct _GSourcePrivate          GSourcePrivate;
  * @get: Called to extract the callback function and data from the
  *     callback object.
 
- * The <structname>GSourceCallbackFuncs</structname> struct contains
+ * The `GSourceCallbackFuncs` struct contains
  * functions for managing callback objects.
  */
 typedef struct _GSourceCallbackFuncs    GSourceCallbackFuncs;
@@ -103,10 +101,12 @@ typedef struct _GSourceCallbackFuncs    GSourceCallbackFuncs;
  *     function may be %NULL if the source was never connected to a callback
  *     using g_source_set_callback(). The @dispatch function should call the
  *     callback function with @user_data and whatever additional parameters
- *     are needed for this type of event source.
+ *     are needed for this type of event source. The return value of the
+ *     @dispatch function should be #G_SOURCE_REMOVE if the source should be
+ *     removed or #G_SOURCE_CONTINUE to keep it.
  * @finalize: Called when the source is finalized.
  *
- * The <structname>GSourceFuncs</structname> struct contains a table of
+ * The `GSourceFuncs` struct contains a table of
  * functions used to handle event sources in a generic manner.
  *
  * For idle sources, the prepare and check functions always return %TRUE

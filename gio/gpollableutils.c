@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -103,7 +101,7 @@ static GSourceFuncs pollable_source_funcs =
  * anything on its own; use g_source_add_child_source() to add other
  * sources to it to cause it to trigger.
  *
- * Return value: (transfer full): the new #GSource.
+ * Returns: (transfer full): the new #GSource.
  *
  * Since: 2.28
  */
@@ -136,7 +134,7 @@ g_pollable_source_new (GObject *pollable_stream)
  * g_pollable_source_new(), but also attaching @child_source (with a
  * dummy callback), and @cancellable, if they are non-%NULL.
  *
- * Return value: (transfer full): the new #GSource.
+ * Returns: (transfer full): the new #GSource.
  *
  * Since: 2.34
  */
@@ -171,7 +169,8 @@ g_pollable_source_new_full (gpointer      pollable_stream,
 /**
  * g_pollable_stream_read:
  * @stream: a #GInputStream
- * @buffer: a buffer to read data into
+ * @buffer: (array length=count) (element-type guint8): a buffer to
+ *   read data into
  * @count: the number of bytes to read
  * @blocking: whether to do blocking I/O
  * @cancellable: (allow-none): optional #GCancellable object, %NULL to ignore.
@@ -291,7 +290,7 @@ g_pollable_stream_write (GOutputStream   *stream,
  * behavior is undefined. If @blocking is %TRUE, then @stream does not
  * need to be a #GPollableOutputStream.
  *
- * Return value: %TRUE on success, %FALSE if there was an error
+ * Returns: %TRUE on success, %FALSE if there was an error
  *
  * Since: 2.34
  */

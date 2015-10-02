@@ -56,7 +56,7 @@ extern int get_kqueue_descriptor(void);
  * Picks up new file descriptors for monitoring from a global queue.
  *
  * To add new items to the list, use _kqueue_thread_push_fd().
- **/
+ */
 static void
 _kqueue_thread_collect_fds (kevents *events)
 {
@@ -97,7 +97,7 @@ _kqueue_thread_collect_fds (kevents *events)
  * to cancel monitoring on them. The list will be freed then.
  *
  * To add new items to the list, use _kqueue_thread_remove_fd().
- **/
+ */
 static void
 _kqueue_thread_cleanup_fds (kevents *events)
 {
@@ -140,7 +140,7 @@ _kqueue_thread_cleanup_fds (kevents *events)
  *     probably will be reduced.
  *
  * Removes a concrete file descriptor from monitoring.
- **/
+ */
 static void
 _kqueue_thread_drop_fd (kevents *events, int fd)
 {
@@ -169,14 +169,8 @@ _kqueue_thread_drop_fd (kevents *events, int fd)
  * and writes the notifications into it.
  *
  * Control commands are single-byte characters:
- * <itemizedlist>
- * <listitem>
- *   'A' - pick up new file descriptors to monitor
- * </listitem>
- * <listitem>
- *   'R' - remove some descriptors from monitoring.
- * </listitem>
- * </itemizedlist>
+ * - 'A' - pick up new file descriptors to monitor
+ * - 'R' - remove some descriptors from monitoring.
  *
  * For details, see _kqueue_thread_collect_fds() and
  * _kqueue_thread_cleanup_fds().
@@ -185,7 +179,7 @@ _kqueue_thread_drop_fd (kevents *events, int fd)
  * are represented with #kqueue_notification objects.
  *
  * Returns: %NULL
- **/
+ */
 void*
 _kqueue_thread_func (void *arg)
 {
@@ -280,7 +274,7 @@ _kqueue_thread_func (void *arg)
  * The kqueue thread will not start monitoring on it immediately, it
  * should be bumped via its command file descriptor manually.
  * See kqueue_thread() and _kqueue_thread_collect_fds() for details.
- **/
+ */
 void
 _kqueue_thread_push_fd (int fd)
 {
@@ -300,7 +294,7 @@ _kqueue_thread_push_fd (int fd)
  * The kqueue thread will not stop monitoring on it immediately, it
  * should be bumped via its command file descriptor manually.
  * See kqueue_thread() and _kqueue_thread_collect_fds() for details.
- **/
+ */
 void
 _kqueue_thread_remove_fd (int fd)
 {

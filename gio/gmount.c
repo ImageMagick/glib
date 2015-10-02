@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  *         David Zeuthen <davidz@redhat.com>
@@ -769,7 +767,8 @@ g_mount_remount_finish (GMount        *mount,
  * Tries to guess the type of content stored on @mount. Returns one or
  * more textual identifiers of well-known content types (typically
  * prefixed with "x-content/"), e.g. x-content/image-dcf for camera 
- * memory cards. See the <ulink url="http://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec">shared-mime-info</ulink>
+ * memory cards. See the 
+ * [shared-mime-info](http://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec)
  * specification for more on x-content types.
  *
  * This is an asynchronous operation (see
@@ -856,7 +855,8 @@ g_mount_guess_content_type_finish (GMount        *mount,
  * Tries to guess the type of content stored on @mount. Returns one or
  * more textual identifiers of well-known content types (typically
  * prefixed with "x-content/"), e.g. x-content/image-dcf for camera 
- * memory cards. See the <ulink url="http://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec">shared-mime-info</ulink>
+ * memory cards. See the 
+ * [shared-mime-info](http://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec)
  * specification for more on x-content types.
  *
  * This is an synchronous operation and as such may block doing IO;
@@ -946,10 +946,10 @@ get_private (GMount *mount)
  * situation, a #GVolumeMonitor implementation would create two
  * #GVolume objects (for example, one for the camera functionality of
  * the device and one for a SD card reader on the device) with
- * activation URIs <literal>gphoto2://[usb:001,002]/store1/</literal>
- * and <literal>gphoto2://[usb:001,002]/store2/</literal>. When the
+ * activation URIs `gphoto2://[usb:001,002]/store1/`
+ * and `gphoto2://[usb:001,002]/store2/`. When the
  * underlying mount (with root
- * <literal>gphoto2://[usb:001,002]/</literal>) is mounted, said
+ * `gphoto2://[usb:001,002]/`) is mounted, said
  * #GVolumeMonitor implementation would create two #GMount objects
  * (each with their root matching the corresponding volume activation
  * root) that would shadow the original mount.

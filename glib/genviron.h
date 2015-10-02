@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -60,6 +58,7 @@ GLIB_AVAILABLE_IN_ALL
 gchar **      g_environ_unsetenv (gchar       **envp,
                                   const gchar  *variable) G_GNUC_WARN_UNUSED_RESULT;
 
+#ifndef __GTK_DOC_IGNORE__
 #ifdef G_OS_WIN32
 #define g_getenv   g_getenv_utf8
 #define g_setenv   g_setenv_utf8
@@ -74,7 +73,7 @@ gboolean     g_setenv_utf8   (const gchar  *variable,
 GLIB_AVAILABLE_IN_ALL
 void         g_unsetenv_utf8 (const gchar  *variable);
 #endif
-
+#endif /* __GTK_DOC_IGNORE__ */
 G_END_DECLS
 
 #endif /* __G_ENVIRON_H__ */

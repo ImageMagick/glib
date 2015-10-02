@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -46,7 +44,7 @@ typedef struct _GUnixMountPoint GUnixMountPoint;
 /**
  * GUnixMountMonitor:
  *
- * Watches #GUnixMount<!-- -->s for changes.
+ * Watches #GUnixMounts for changes.
  **/
 typedef struct _GUnixMountMonitor      GUnixMountMonitor;
 typedef struct _GUnixMountMonitorClass GUnixMountMonitorClass;
@@ -56,6 +54,7 @@ typedef struct _GUnixMountMonitorClass GUnixMountMonitorClass;
 #define G_UNIX_MOUNT_MONITOR_CLASS(k)    (G_TYPE_CHECK_CLASS_CAST((k), G_TYPE_UNIX_MOUNT_MONITOR, GUnixMountMonitorClass))
 #define G_IS_UNIX_MOUNT_MONITOR(o)       (G_TYPE_CHECK_INSTANCE_TYPE ((o), G_TYPE_UNIX_MOUNT_MONITOR))
 #define G_IS_UNIX_MOUNT_MONITOR_CLASS(k) (G_TYPE_CHECK_CLASS_TYPE ((k), G_TYPE_UNIX_MOUNT_MONITOR))
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GUnixMountMonitor, g_object_unref)
 
 GLIB_AVAILABLE_IN_ALL
 void           g_unix_mount_free                    (GUnixMountEntry    *mount_entry);
@@ -127,9 +126,11 @@ gboolean       g_unix_mount_points_changed_since    (guint64             time);
 
 GLIB_AVAILABLE_IN_ALL
 GType              g_unix_mount_monitor_get_type       (void) G_GNUC_CONST;
-GLIB_AVAILABLE_IN_ALL
+GLIB_AVAILABLE_IN_2_44
+GUnixMountMonitor *g_unix_mount_monitor_get            (void);
+GLIB_DEPRECATED_IN_2_44_FOR(g_unix_mount_monitor_get)
 GUnixMountMonitor *g_unix_mount_monitor_new            (void);
-GLIB_AVAILABLE_IN_ALL
+GLIB_DEPRECATED_IN_2_44
 void               g_unix_mount_monitor_set_rate_limit (GUnixMountMonitor *mount_monitor,
                                                         int                limit_msec);
 

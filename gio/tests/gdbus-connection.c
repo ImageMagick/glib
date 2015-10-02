@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -51,7 +49,7 @@ _log (const gchar *format, ...)
   now_tm = localtime (&now_time);
   strftime (time_buf, sizeof time_buf, "%H:%M:%S", now_tm);
 
-  g_print ("%s.%06d: %s\n",
+  g_printerr ("%s.%06d: %s\n",
            time_buf, (gint) now.tv_usec / 1000,
            str);
   g_free (str);
@@ -121,6 +119,23 @@ a_gdestroynotify_that_sets_a_gboolean_to_true_and_quits_loop (gpointer user_data
 }
 
 static void
+test_connection_bus_failure (void)
+{
+  GDBusConnection *c;
+  GError *error = NULL;
+
+  /*
+   * Check for correct behavior when no bus is present
+   *
+   */
+  c = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+  g_assert (error != NULL);
+  g_assert (!g_dbus_error_is_remote_error (error));
+  g_assert (c == NULL);
+  g_error_free (error);
+}
+
+static void
 test_connection_life_cycle (void)
 {
   gboolean ret;
@@ -135,16 +150,6 @@ test_connection_life_cycle (void)
   guint registration_id;
 
   error = NULL;
-
-  /*
-   * Check for correct behavior when no bus is present
-   *
-   */
-  c = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-  g_assert (error != NULL);
-  g_assert (!g_dbus_error_is_remote_error (error));
-  g_assert (c == NULL);
-  g_error_free (error);
 
   /*
    *  Check for correct behavior when a bus is present
@@ -286,6 +291,9 @@ msg_cb_expect_error_disconnected (GDBusConnection *connection,
   GError *error;
   GVariant *result;
 
+  /* Make sure gdbusconnection isn't holding @connection's lock. (#747349) */
+  g_dbus_connection_get_last_serial (connection);
+
   error = NULL;
   result = g_dbus_connection_call_finish (connection,
                                           res,
@@ -305,6 +313,9 @@ msg_cb_expect_error_unknown_method (GDBusConnection *connection,
 {
   GError *error;
   GVariant *result;
+
+  /* Make sure gdbusconnection isn't holding @connection's lock. (#747349) */
+  g_dbus_connection_get_last_serial (connection);
 
   error = NULL;
   result = g_dbus_connection_call_finish (connection,
@@ -326,6 +337,9 @@ msg_cb_expect_success (GDBusConnection *connection,
   GError *error;
   GVariant *result;
 
+  /* Make sure gdbusconnection isn't holding @connection's lock. (#747349) */
+  g_dbus_connection_get_last_serial (connection);
+
   error = NULL;
   result = g_dbus_connection_call_finish (connection,
                                           res,
@@ -344,6 +358,9 @@ msg_cb_expect_error_cancelled (GDBusConnection *connection,
 {
   GError *error;
   GVariant *result;
+
+  /* Make sure gdbusconnection isn't holding @connection's lock. (#747349) */
+  g_dbus_connection_get_last_serial (connection);
 
   error = NULL;
   result = g_dbus_connection_call_finish (connection,
@@ -364,6 +381,9 @@ msg_cb_expect_error_cancelled_2 (GDBusConnection *connection,
 {
   GError *error;
   GVariant *result;
+
+  /* Make sure gdbusconnection isn't holding @connection's lock. (#747349) */
+  g_dbus_connection_get_last_serial (connection);
 
   error = NULL;
   result = g_dbus_connection_call_finish (connection,
@@ -1000,9 +1020,6 @@ test_connection_filter (void)
   g_assert_cmpint (data.num_handled, ==, 4);
   g_assert_cmpint (data.num_outgoing, ==, 4);
 
-  /* this is safe; testserver will exit once the bus goes away */
-  g_assert (g_spawn_command_line_async (g_test_get_filename (G_TEST_BUILT, "gdbus-testserver", NULL), NULL));
-
   /* wait for service to be available */
   signal_handler_id = g_dbus_connection_signal_subscribe (c,
                                                           "org.freedesktop.DBus", /* sender */
@@ -1015,6 +1032,10 @@ test_connection_filter (void)
                                                           NULL,
                                                           NULL);
   g_assert_cmpint (signal_handler_id, !=, 0);
+
+  /* this is safe; testserver will exit once the bus goes away */
+  g_assert (g_spawn_command_line_async (g_test_get_filename (G_TEST_BUILT, "gdbus-testserver", NULL), NULL));
+
   timeout_mainloop_id = g_timeout_add (30000, test_connection_filter_on_timeout, NULL);
   g_main_loop_run (loop);
   g_source_remove (timeout_mainloop_id);
@@ -1091,12 +1112,16 @@ send_bogus_message (GDBusConnection *c, guint32 *out_serial)
   error = NULL;
   g_dbus_connection_send_message (c, m, G_DBUS_SEND_MESSAGE_FLAGS_NONE, out_serial, &error);
   g_assert_no_error (error);
+  g_object_unref (m);
 }
+
+#define SLEEP_USEC (100 * 1000)
 
 static gpointer
 serials_thread_func (GDBusConnection *c)
 {
   guint32 message_serial;
+  guint i;
 
   /* No calls on this thread yet */
   g_assert_cmpint (g_dbus_connection_get_last_serial(c), ==, 0);
@@ -1105,8 +1130,15 @@ serials_thread_func (GDBusConnection *c)
   message_serial = 0;
   send_bogus_message (c, &message_serial);
 
-  /* Give it some time to actually send the message out */
-  g_usleep (250000);
+  /* Give it some time to actually send the message out. 10 seconds
+   * should be plenty, even on slow machines. */
+  for (i = 0; i < 10 * G_USEC_PER_SEC / SLEEP_USEC; i++)
+    {
+      if (g_dbus_connection_get_last_serial(c) != 0)
+        break;
+
+      g_usleep (SLEEP_USEC);
+    }
 
   g_assert_cmpint (g_dbus_connection_get_last_serial(c), !=, 0);
   g_assert_cmpint (g_dbus_connection_get_last_serial(c), ==, message_serial);
@@ -1142,10 +1174,7 @@ test_connection_serials (void)
 
   /* Wait until threads are finished */
   for (i = 0; i < NUM_THREADS; i++)
-    {
       g_thread_join (pool[i]);
-      g_thread_unref (pool[i]);
-    }
 
   /* No calls in between on this thread, should be the last value */
   g_assert_cmpint (g_dbus_connection_get_last_serial (c), ==, 2);
@@ -1220,12 +1249,16 @@ int
 main (int   argc,
       char *argv[])
 {
+  int ret;
   g_test_init (&argc, &argv, NULL);
 
   /* all the tests rely on a shared main loop */
   loop = g_main_loop_new (NULL, FALSE);
 
   g_test_dbus_unset ();
+
+  /* gdbus cleanup is pretty racy due to worker threads, so always do this test first */
+  g_test_add_func ("/gdbus/connection/bus-failure", test_connection_bus_failure);
 
   g_test_add_func ("/gdbus/connection/basic", test_connection_basic);
   g_test_add_func ("/gdbus/connection/life-cycle", test_connection_life_cycle);
@@ -1234,5 +1267,8 @@ main (int   argc,
   g_test_add_func ("/gdbus/connection/signal-match-rules", test_connection_signal_match_rules);
   g_test_add_func ("/gdbus/connection/filter", test_connection_filter);
   g_test_add_func ("/gdbus/connection/serials", test_connection_serials);
-  return g_test_run();
+  ret = g_test_run();
+
+  g_main_loop_unref (loop);
+  return ret;
 }

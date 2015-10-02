@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  */
@@ -56,6 +54,8 @@ typedef struct _GSocketControlMessageClass                  GSocketControlMessag
  * @get_type: gets the protocol specific type of the message.
  * @serialize: Writes out the message data.
  * @deserialize: Tries to deserialize a message.
+ *
+ * Class structure for #GSocketControlMessage.
  **/
 
 struct _GSocketControlMessageClass

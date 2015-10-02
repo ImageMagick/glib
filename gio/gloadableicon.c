@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -62,11 +60,12 @@ g_loadable_icon_default_init (GLoadableIconIface *iface)
  * g_loadable_icon_load:
  * @icon: a #GLoadableIcon.
  * @size: an integer.
- * @type: (out) (allow-none): a location to store the type of the
- *        loaded icon, %NULL to ignore.
- * @cancellable: (allow-none): optional #GCancellable object, %NULL to ignore. 
- * @error: a #GError location to store the error occurring, or %NULL to 
+ * @type: (out) (optional): a location to store the type of the loaded
+ * icon, %NULL to ignore.
+ * @cancellable: (allow-none): optional #GCancellable object, %NULL to
  * ignore.
+ * @error: a #GError location to store the error occurring, or %NULL
+ * to ignore.
  * 
  * Loads a loadable icon. For the asynchronous version of this function, 
  * see g_loadable_icon_load_async().
@@ -122,8 +121,8 @@ g_loadable_icon_load_async (GLoadableIcon       *icon,
  * g_loadable_icon_load_finish:
  * @icon: a #GLoadableIcon.
  * @res: a #GAsyncResult.
- * @type: (out) (allow-none): a location to store the type of the
- *        loaded icon, %NULL to ignore.
+ * @type: (out) (optional): a location to store the type of the loaded
+ *        icon, %NULL to ignore.
  * @error: a #GError location to store the error occurring, or %NULL to 
  * ignore.
  * 

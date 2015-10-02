@@ -89,28 +89,24 @@
    */
 /* #undef HAVE_ALLOCA_H */
 
-/* Define to 1 if you have the `atexit' function. */
-#define HAVE_ATEXIT 1
-
 /* Define to 1 if you have the <attr/xattr.h> header file. */
 /* #undef HAVE_ATTR_XATTR_H */
 
 /* Define to 1 if you have the `bind_textdomain_codeset' function. */
 #define HAVE_BIND_TEXTDOMAIN_CODESET 1
 
+#if (_MSC_VER >= 1900)
 /* Define if you have a version of the snprintf function with semantics as
    specified by the ISO C99 standard. */
-/* #undef HAVE_C99_SNPRINTF */
+#define HAVE_C99_SNPRINTF 1
 
 /* Define if you have a version of the vsnprintf function with semantics as
    specified by the ISO C99 standard. */
-/* #undef HAVE_C99_VSNPRINTF */
+#define HAVE_C99_VSNPRINTF 1
+#endif
 
 /* define to 1 if Carbon is available */
 /* #undef HAVE_CARBON */
-
-/* Define to 1 if you have the `chown' function. */
-/* #undef HAVE_CHOWN */
 
 /* Define to 1 if you have the `clock_gettime' function. */
 /* #undef HAVE_CLOCK_GETTIME */
@@ -140,12 +136,6 @@
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
 /* #undef HAVE_DLFCN_H */
-
-/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
-/* #undef HAVE_DOPRNT */
-
-/* define for working do while(0) macros */
-#define HAVE_DOWHILE_MACROS 1
 
 /* Define to 1 if using dtrace probes. */
 /* #undef HAVE_DTRACE */
@@ -180,9 +170,6 @@
 /* Define to 1 if you have the `fdwalk' function. */
 /* #undef HAVE_FDWALK */
 
-/* Define to 1 if you have the <float.h> header file. */
-#define HAVE_FLOAT_H 1
-
 /* Define to 1 if you have the <fstab.h> header file. */
 /* #undef HAVE_FSTAB_H */
 
@@ -192,26 +179,17 @@
 /* we have the futex(2) system call */
 /* #undef HAVE_FUTEX */
 
-/* Define to 1 if you have the `getcwd' function. */
-#define HAVE_GETCWD 1
-
 /* Define to 1 if you have the `getc_unlocked' function. */
 /* #undef HAVE_GETC_UNLOCKED */
 
 /* Define to 1 if you have the `getfsstat' function. */
 /* #undef HAVE_GETFSSTAT */
 
-/* Define to 1 if you have the `getgrgid' function. */
-/* #undef HAVE_GETGRGID */
-
 /* Define to 1 if you have the `getmntent_r' function. */
 /* #undef HAVE_GETMNTENT_R */
 
 /* Define to 1 if you have the `getprotobyname_r' function. */
 /* #undef HAVE_GETPROTOBYNAME_R */
-
-/* Define to 1 if you have the `getpwuid' function. */
-/* #undef HAVE_GETPWUID */
 
 /* Define to 1 if you have the `getresuid' function. */
 /* #undef HAVE_GETRESUID */
@@ -228,24 +206,27 @@
 /* define to use system printf */
 /* #undef HAVE_GOOD_PRINTF */
 
-/* Define to 1 if you have the <grp.h> header file. */
-/* #undef HAVE_GRP_H */
-
 /* Define to 1 if you have the `hasmntopt' function. */
 /* #undef HAVE_HASMNTOPT */
 
+/* Target the Windows XP API */
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501
+#endif
+
+#if _WIN32_WINNT >= 0x0600
+/* if_indextoname() and if_nametoindex() are available on Windows Vista/Server
+ * 2008 or later, so we can make use of them when building agaist Vista/Server
+ * 2008 or later.
+ */
+
 /* Define to 1 if you have the `if_indextoname' function. */
-/* This is available on Windows, but the catch is that this will require */
-/* Windows Vista/Server 2008, so disabled for now-please see */
-/* http://msdn.microsoft.com/en-us/library/windows/desktop/bb408408%28v=vs.85%29.aspx */
-/* #undef HAVE_IF_INDEXTONAME */
+#define HAVE_IF_INDEXTONAME 1
 
 /* Define to 1 if you have the `if_nametoindex' function. */
-/* This is available on Windows, but the catch is that this will require */
-/* Windows Vista/Server 2008, so disabled for now-please see */
-/* http://msdn.microsoft.com/en-us/library/windows/desktop/bb408409%28v=vs.85%29.aspx */
-/* A workaround for Windows XP is under review in Bug 668071 */
-/* #undef HAVE_IF_NAMETOINDEX */
+#define HAVE_IF_NAMETOINDEX 1
+
+#endif
 
 /* Define to 1 if you have the `inotify_init1' function. */
 /* #undef HAVE_INOTIFY_INIT1 */
@@ -254,27 +235,24 @@
 #define HAVE_INT64_AND_I64 1
 
 /* Define if you have the 'intmax_t' type in <stdint.h> or <inttypes.h>. */
-#ifndef _MSC_VER
+#if !defined (_MSC_VER) || (_MSC_VER >= 1600)
 #define HAVE_INTMAX_T 1
-#else /* _MSC_VER */
-#if (_MSC_VER >= 1600)
-#define HAVE_INTMAX_T 1
-#endif
+#else /* !_MSC_VER || _MSC_VER >= 1600 */
 /* #undef HAVE_INTMAX_T */
-#endif /* _MSC_VER */
+#endif /* _MSC_VER < 1600 */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#ifndef _MSC_VER
+#if !defined (_MSC_VER) || (_MSC_VER >= 1800)
 #define HAVE_INTTYPES_H 1
-#else /* _MSC_VER */
+#else /* !_MSC_VER || _MSC_VER >= 1800 */
 /* #undef HAVE_INTTYPES_H */
-#endif /* _MSC_VER */
+#endif /* _MSC_VER < 1800 */
 
 /* Define if <inttypes.h> exists, doesn't clash with <sys/types.h>, and
    declares uintmax_t. */
 #ifndef _MSC_VER
 #define HAVE_INTTYPES_H_WITH_UINTMAX 1
-#else /* _MSC_VER */
+#else /* !_MSC_VER */
 /* #undef HAVE_INTTYPES_H_WITH_UINTMAX */
 #endif /* _MSC_VER */
 
@@ -314,12 +292,6 @@
 /* Define if libelf is available */
 /* #undef HAVE_LIBELF */
 
-/* Define to 1 if you have the <limits.h> header file. */
-#define HAVE_LIMITS_H 1
-
-/* Define to 1 if you have the `link' function. */
-/* #undef HAVE_LINK */
-
 /* Define to 1 if you have the <linux/magic.h> header file. */
 /* #undef HAVE_LINUX_MAGIC_H */
 
@@ -345,6 +317,9 @@
 /* Define to 1 if you have the `lstat' function. */
 /* #undef HAVE_LSTAT */
 
+/* Define to 1 if you have the <mach/mach_time.h> header file. */
+/* #undef HAVE_MACH_MACH_TIME_H */
+
 /* Define to 1 if you have the <malloc.h> header file. */
 #define HAVE_MALLOC_H 1
 
@@ -353,9 +328,6 @@
 
 /* Define to 1 if you have the `memmem' function. */
 /* #undef HAVE_MEMMEM */
-
-/* Define to 1 if you have the `memmove' function. */
-#define HAVE_MEMMOVE 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -381,8 +353,8 @@
 /* Have non-POSIX function getpwuid_r */
 /* #undef HAVE_NONPOSIX_GETPWUID_R */
 
-/* Define to 1 if you have the `on_exit' function. */
-/* #undef HAVE_ON_EXIT */
+/* open option O_DIRECTORY */
+/* #undef HAVE_OPEN_O_DIRECTORY */
 
 /* Define to 1 if you have the `pipe2' function. */
 /* #undef HAVE_PIPE2 */
@@ -408,17 +380,11 @@
 /* Have function pthread_condattr_setclock */
 /* #undef HAVE_PTHREAD_CONDATTR_SETCLOCK */
 
-/* Have function pthread_cond_timedwait_monotonic */
-/* #undef HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC */
-
-/* Have function pthread_cond_timedwait_monotonic_np */
-/* #undef HAVE_PTHREAD_COND_TIMEDWAIT_MONOTONIC_NP */
+/* Have function pthread_cond_timedwait_relative_np */
+/* #undef HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE_NP */
 
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #define HAVE_PTRDIFF_T 1
-
-/* Define to 1 if you have the <pwd.h> header file. */
-/* #undef HAVE_PWD_H */
 
 /* Define to 1 if you have the `readlink' function. */
 /* #undef HAVE_READLINK */
@@ -432,14 +398,14 @@
 /* Define to 1 if libselinux is available */
 /* #undef HAVE_SELINUX */
 
+/* Define to 1 if you have the `sendmmsg` function */
+/* #undef HAVE_SENDMMSG */
+
 /* Define to 1 if you have the <selinux/selinux.h> header file. */
 /* #undef HAVE_SELINUX_SELINUX_H */
 
 /* Define to 1 if you have the `setenv' function. */
 /* #undef HAVE_SETENV */
-
-/* Define to 1 if you have the `setlocale' function. */
-#define HAVE_SETLOCALE 1
 
 /* Define to 1 if you have the `setmntent' function. */
 /* #undef HAVE_SETMNTENT */
@@ -448,14 +414,14 @@
 #define HAVE_SIG_ATOMIC_T 1
 
 /* Define to 1 if you have the `snprintf' function. */
-#ifndef _MSC_VER
+#if !defined (_MSC_VER) || (_MSC_VER >= 1900)
 #define HAVE_SNPRINTF 1
 #ifdef __DMC__
 #define snprintf _snprintf
 #endif
-#else /* _MSC_VER */
+#else /* !_MSC_VER || _MSC_VER >= 1900 */
 /* #undef HAVE_SNPRINTF */
-#endif /* _MSC_VER */
+#endif /* _MSC_VER < 1900 */
 
 /* Define to 1 if you have the `splice' function. */
 /* #undef HAVE_SPLICE */
@@ -465,9 +431,6 @@
 
 /* Define to 1 if you have the `statvfs' function. */
 /* #undef HAVE_STATVFS */
-
-/* Define to 1 if you have the <stddef.h> header file. */
-#define HAVE_STDDEF_H 1
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #ifndef _MSC_VER
@@ -492,9 +455,6 @@
 #endif
 #endif /* _MSC_VER */
 
-/* Define to 1 if you have the <stdlib.h> header file. */
-#define HAVE_STDLIB_H 1
-
 /* Define to 1 if you have the `stpcpy' function. */
 /* #undef HAVE_STPCPY */
 
@@ -507,18 +467,12 @@
 #define HAVE_STRCASECMP 1
 #endif /* _MSC_VER or __gcc__ */
 
-/* Define to 1 if you have the `strerror' function. */
-#define HAVE_STRERROR 1
-
 /* Define to 1 if you have the <strings.h> header file. */
 #if !defined(_MSC_VER) && !defined(__DMC__)
 #define HAVE_STRINGS_H 1
 #else /* _MSC_VER or __DMC__ */
 /* #undef HAVE_STRINGS_H */
 #endif /* _MSC_VER or __DMC__ */
-
-/* Define to 1 if you have the <string.h> header file. */
-#define HAVE_STRING_H 1
 
 /* Have functions strlcpy and strlcat */
 /* #undef HAVE_STRLCPY */
@@ -609,9 +563,6 @@
 /* Define to 1 if you have the <sys/inotify.h> header file. */
 /* #undef HAVE_SYS_INOTIFY_H */
 
-/* Define to 1 if you have the <sys/mkdev.h> header file. */
-/* #undef HAVE_SYS_MKDEV_H */
-
 /* Define to 1 if you have the <sys/mntctl.h> header file. */
 /* #undef HAVE_SYS_MNTCTL_H */
 
@@ -631,9 +582,6 @@
 #else /* _MSC_VER or __DMC__ */
 /* #undef HAVE_SYS_PARAM_H */
 #endif /* _MSC_VER or __DMC__ */
-
-/* Define to 1 if you have the <sys/poll.h> header file. */
-/* #undef HAVE_SYS_POLL_H */
 
 /* Define to 1 if you have the <sys/prctl.h> header file. */
 /* #undef HAVE_SYS_PRCTL_H */
@@ -656,21 +604,12 @@
 /* Define to 1 if you have the <sys/sysctl.h> header file. */
 /* #undef HAVE_SYS_SYSCTL_H */
 
-/* Define to 1 if you have the <sys/times.h> header file. */
-/* #undef HAVE_SYS_TIMES_H */
-
 /* Define to 1 if you have the <sys/time.h> header file. */
 #ifndef _MSC_VER
 #define HAVE_SYS_TIME_H 1
 #else /* _MSC_VER */
 /* #undef HAVE_SYS_TIME_H */
 #endif /* _MSC_VER */
-
-/* Define to 1 if you have the <sys/types.h> header file. */
-#define HAVE_SYS_TYPES_H 1
-
-/* Define to 1 if you have the <sys/uio.h> header file. */
-/* #undef HAVE_SYS_UIO_H */
 
 /* Define to 1 if you have the <sys/vfstab.h> header file. */
 /* #undef HAVE_SYS_VFSTAB_H */
@@ -681,21 +620,11 @@
 /* Define to 1 if you have the <sys/vmount.h> header file. */
 /* #undef HAVE_SYS_VMOUNT_H */
 
-/* Define to 1 if you have the <sys/wait.h> header file. */
-/* #undef HAVE_SYS_WAIT_H */
-
 /* Define to 1 if you have the <sys/xattr.h> header file. */
 /* #undef HAVE_SYS_XATTR_H */
 
 /* Define to 1 if you have the `timegm' function. */
 /* #undef HAVE_TIMEGM */
-
-/* Define to 1 if you have the <unistd.h> header file. */
-#ifndef _MSC_VER
-#define HAVE_UNISTD_H 1
-#else /* _MSC_VER */
-/* #undef HAVE_UNISTD_H */
-#endif /* _MSC_VER */
 
 /* Define if your printf function family supports positional parameters as
    specified by Unix98. */
@@ -723,21 +652,15 @@
 /* Define to 1 if you have the `vasprintf' function. */
 #define HAVE_VASPRINTF 1
 
-/* Define to 1 if you have the `vprintf' function. */
-#define HAVE_VPRINTF 1
-
 /* Define to 1 if you have the `vsnprintf' function. */
-#ifndef _MSC_VER
+#if !defined (_MSC_VER) || (_MSC_VER >= 1500)
 #define HAVE_VSNPRINTF 1
 #ifdef __DMC__
 #define vsnprintf _vsnprintf
 #endif
-#else /* _MSC_VER */
-#if (_MSC_VER >= 1500)
-#define HAVE_VSNPRINTF 1
-#endif /* VS 2008+ has vsnprintf */
+#else /* !_MSC_VER || _MSC_VER >= 1500 */
 /* #undef HAVE_VSNPRINTF */
-#endif /* _MSC_VER */
+#endif /* _MSC_VER < 1500 */
 
 /* Define if you have the 'wchar_t' type. */
 #define HAVE_WCHAR_T 1
@@ -747,9 +670,6 @@
 
 /* Define if you have the 'wint_t' type. */
 #define HAVE_WINT_T 1
-
-/* Have a working bcopy */
-/* #undef HAVE_WORKING_BCOPY */
 
 /* Define to 1 if xattr is available */
 /* #undef HAVE_XATTR */
@@ -766,6 +686,14 @@
 /* Define to the sub-directory in which libtool stores uninstalled libraries.
    */
 #define LT_OBJDIR ".libs/"
+
+/* Define to 1 if `major', `minor', and `makedev' are declared in <mkdev.h>.
+   */
+/* #undef MAJOR_IN_MKDEV */
+
+/* Define to 1 if `major', `minor', and `makedev' are declared in
+   <sysmacros.h>. */
+/* #undef MAJOR_IN_SYSMACROS */
 
 /* didn't find fd_set */
 #define NO_FD_SET 1
@@ -793,9 +721,6 @@
 
 /* define if posix_memalign() can allocate any size */
 /* #undef POSIX_MEMALIGN_WITH_COMPLIANT_ALLOCS */
-
-/* whether realloc (NULL,) works */
-#define REALLOC_0_WORKS 1
 
 /* The size of `char', as computed by sizeof. */
 #define SIZEOF_CHAR 1
@@ -932,9 +857,6 @@
 
 /* Define to 1 if you need to in order for `stat' and other things to work. */
 /* #undef _POSIX_SOURCE */
-
-/* Target the Windows XP API */
-#define _WIN32_WINNT 0x0501
 
 /* Needed to get declarations for msg_control and msg_controllen on Solaris */
 /* #undef _XOPEN_SOURCE */

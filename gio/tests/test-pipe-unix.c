@@ -14,9 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Simon McVittie <simon.mcvittie@collabora.co.uk>
  */
@@ -36,7 +34,7 @@
 #   error This module only exists on Unix
 #endif
 
-/*
+/**
  * test_pipe:
  * @is: (out) (allow-none): used to return a #GInputStream
  * @os: (out) (allow-none): used to return a #GOutputStream
@@ -82,7 +80,7 @@ test_pipe (GInputStream  **is,
   return TRUE;
 }
 
-/*
+/**
  * test_bidi_pipe:
  * @left: (out) (allow-none): used to return one #GIOStream
  * @right: (out) (allow-none): used to return the other #GIOStream

@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 #ifndef __G_SIGNAL_H__
 #define __G_SIGNAL_H__
@@ -149,7 +147,7 @@ typedef enum
  * @G_CONNECT_AFTER: whether the handler should be called before or after the 
  *  default handler of the signal.
  * @G_CONNECT_SWAPPED: whether the instance and data should be swapped when
- *  calling the handler.
+ *  calling the handler; see g_signal_connect_swapped() for an example.
  * 
  * The connection flags are used to specify the behaviour of a signal's 
  * connection.
@@ -194,9 +192,8 @@ typedef enum
  * assume that instances thereof remain persistent across all signal emissions
  * they are used in. This is only useful for non ref-counted, value-copy types.
  * 
- * To flag a signal argument in this way, add 
- * <literal>| G_SIGNAL_TYPE_STATIC_SCOPE</literal> to the corresponding argument
- * of g_signal_new().
+ * To flag a signal argument in this way, add `| G_SIGNAL_TYPE_STATIC_SCOPE`
+ * to the corresponding argument of g_signal_new().
  * |[
  * g_signal_new ("size_request",
  *   G_TYPE_FROM_CLASS (gobject_class),
@@ -240,11 +237,11 @@ struct _GSignalInvocationHint
  * @n_params: The number of parameters that user callbacks take.
  * @param_types: (array length=n_params): The individual parameter types for
  *  user callbacks, note that the effective callback signature is:
- *  <programlisting>
+ *  |[<!-- language="C" -->
  *  @return_type callback (#gpointer     data1,
  *  [param_types param_names,]
  *  gpointer     data2);
- *  </programlisting>
+ *  ]|
  * 
  * A structure holding in-depth information for a specific signal. It is
  * filled in by the g_signal_query() function.
@@ -468,8 +465,11 @@ void   g_signal_chain_from_overridden_handler (gpointer           instance,
  * Connects a #GCallback function to a signal for a particular object.
  * 
  * The handler will be called before the default handler of the signal.
+ *
+ * See [memory management of signal handlers][signal-memory-management] for
+ * details on how to handle the return value and memory management of @data.
  * 
- * Returns: the handler id
+ * Returns: the handler id (always greater than 0 for successful connections)
  */
 #define g_signal_connect(instance, detailed_signal, c_handler, data) \
     g_signal_connect_data ((instance), (detailed_signal), (c_handler), (data), NULL, (GConnectFlags) 0)
@@ -484,7 +484,7 @@ void   g_signal_chain_from_overridden_handler (gpointer           instance,
  * 
  * The handler will be called after the default handler of the signal.
  * 
- * Returns: the handler id
+ * Returns: the handler id (always greater than 0 for successful connections)
  */
 #define g_signal_connect_after(instance, detailed_signal, c_handler, data) \
     g_signal_connect_data ((instance), (detailed_signal), (c_handler), (data), NULL, G_CONNECT_AFTER)
@@ -498,9 +498,31 @@ void   g_signal_chain_from_overridden_handler (gpointer           instance,
  * Connects a #GCallback function to a signal for a particular object.
  * 
  * The instance on which the signal is emitted and @data will be swapped when 
- * calling the handler.
+ * calling the handler. This is useful when calling pre-existing functions to
+ * operate purely on the @data, rather than the @instance: swapping the
+ * parameters avoids the need to write a wrapper function.
+ *
+ * For example, this allows the shorter code:
+ * |[<!-- language="C" -->
+ * g_signal_connect_swapped (button, "clicked",
+ *                           (GCallback) gtk_widget_hide, other_widget);
+ * ]|
+ *
+ * Rather than the cumbersome:
+ * |[<!-- language="C" -->
+ * static void
+ * button_clicked_cb (GtkButton *button, GtkWidget *other_widget)
+ * {
+ *     gtk_widget_hide (other_widget);
+ * }
+ *
+ * …
+ *
+ * g_signal_connect (button, "clicked",
+ *                   (GCallback) button_clicked_cb, other_widget);
+ * ]|
  * 
- * Returns: the handler id
+ * Returns: the handler ID (always greater than 0 for successful connections)
  */
 #define g_signal_connect_swapped(instance, detailed_signal, c_handler, data) \
     g_signal_connect_data ((instance), (detailed_signal), (c_handler), (data), NULL, G_CONNECT_SWAPPED)

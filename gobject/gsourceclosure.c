@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -34,8 +32,9 @@ G_DEFINE_BOXED_TYPE (GIOChannel, g_io_channel, g_io_channel_ref, g_io_channel_un
 GType
 g_io_condition_get_type (void)
 {
-  static GType etype = 0;
-  if (etype == 0)
+  static volatile GType etype = 0;
+
+  if (g_once_init_enter (&etype))
     {
       static const GFlagsValue values[] = {
 	{ G_IO_IN,   "G_IO_IN",   "in" },
@@ -46,7 +45,8 @@ g_io_condition_get_type (void)
 	{ G_IO_NVAL, "G_IO_NVAL", "nval" },
 	{ 0, NULL, NULL }
       };
-      etype = g_flags_register_static ("GIOCondition", values);
+      GType type_id = g_flags_register_static ("GIOCondition", values);
+      g_once_init_leave (&etype, type_id);
     }
   return etype;
 }

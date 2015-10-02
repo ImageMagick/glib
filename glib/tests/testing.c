@@ -20,6 +20,12 @@
  * if advised of the possibility of such damage.
  */
 
+/* We want to distinguish between messages originating from libglib
+ * and messages originating from this program.
+ */
+#undef G_LOG_DOMAIN
+#define G_LOG_DOMAIN "testing"
+
 #include <glib.h>
 
 #include <stdlib.h>
@@ -37,6 +43,20 @@ static void
 test_assertions_bad_cmpint (void)
 {
   g_assert_cmpint (4, !=, 4);
+  exit (0);
+}
+
+static void
+test_assertions_bad_cmpmem_len (void)
+{
+  g_assert_cmpmem ("foo", 3, "foot", 4);
+  exit (0);
+}
+
+static void
+test_assertions_bad_cmpmem_data (void)
+{
+  g_assert_cmpmem ("foo", 3, "fzz", 3);
   exit (0);
 }
 
@@ -60,6 +80,7 @@ test_assertions (void)
   g_assert_cmpstr ("foo", <, "fzz");
   g_assert_cmpstr ("fzz", >, "faa");
   g_assert_cmpstr ("fzz", ==, "fzz");
+  g_assert_cmpmem ("foo", 3, "foot", 3);
 
   g_test_trap_subprocess ("/misc/assertions/subprocess/bad_cmpstr", 0, 0);
   g_test_trap_assert_failed ();
@@ -68,6 +89,15 @@ test_assertions (void)
   g_test_trap_subprocess ("/misc/assertions/subprocess/bad_cmpint", 0, 0);
   g_test_trap_assert_failed ();
   g_test_trap_assert_stderr ("*assertion failed*");
+
+  g_test_trap_subprocess ("/misc/assertions/subprocess/bad_cmpmem_len", 0, 0);
+  g_test_trap_assert_failed ();
+  g_test_trap_assert_stderr ("*assertion failed*len*");
+
+  g_test_trap_subprocess ("/misc/assertions/subprocess/bad_cmpmem_data", 0, 0);
+  g_test_trap_assert_failed ();
+  g_test_trap_assert_stderr ("*assertion failed*");
+  g_test_trap_assert_stderr_unmatched ("*assertion failed*len*");
 }
 
 /* test g_test_timer* API */
@@ -134,65 +164,61 @@ G_GNUC_END_IGNORE_DEPRECATIONS
 #endif /* G_OS_UNIX */
 
 static void
-test_subprocess_fail_child (void)
-{
-  g_assert_not_reached ();
-}
-
-static void
 test_subprocess_fail (void)
 {
-  g_test_trap_subprocess ("/trap_subprocess/fail/subprocess", 0, 0);
-  g_test_trap_assert_failed ();
-  g_test_trap_assert_stderr ("*ERROR*test_subprocess_fail_child*should not be reached*");
-}
+  if (g_test_subprocess ())
+    {
+      g_assert_not_reached ();
+      return;
+    }
 
-static void
-test_subprocess_no_such_test_child (void)
-{
-  g_test_trap_subprocess ("/trap_subprocess/this-test-does-not-exist", 0, 0);
-  g_assert_not_reached ();
+  g_test_trap_subprocess (NULL, 0, 0);
+  g_test_trap_assert_failed ();
+  g_test_trap_assert_stderr ("*ERROR*test_subprocess_fail*should not be reached*");
 }
 
 static void
 test_subprocess_no_such_test (void)
 {
-  g_test_trap_subprocess ("/trap_subprocess/no-such-test/subprocess", 0, 0);
+  if (g_test_subprocess ())
+    {
+      g_test_trap_subprocess ("/trap_subprocess/this-test-does-not-exist", 0, 0);
+      g_assert_not_reached ();
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
   g_test_trap_assert_failed ();
   g_test_trap_assert_stderr ("*test does not exist*");
   g_test_trap_assert_stderr_unmatched ("*should not be reached*");
 }
 
 static void
-test_subprocess_patterns_child (void)
-{
-  g_print ("some stdout text: somagic17\n");
-  g_printerr ("some stderr text: semagic43\n");
-  exit (0);
-}
-
-static void
 test_subprocess_patterns (void)
 {
-  g_test_trap_subprocess ("/trap_subprocess/patterns/subprocess", 0,  0);
+  if (g_test_subprocess ())
+    {
+      g_print ("some stdout text: somagic17\n");
+      g_printerr ("some stderr text: semagic43\n");
+      exit (0);
+    }
+  g_test_trap_subprocess (NULL, 0,  0);
   g_test_trap_assert_passed ();
   g_test_trap_assert_stdout ("*somagic17*");
   g_test_trap_assert_stderr ("*semagic43*");
 }
 
 static void
-test_subprocess_timeout_child (void)
-{
-  /* loop and sleep forever */
-  while (TRUE)
-    g_usleep (1000 * 1000);
-}
-
-static void
 test_subprocess_timeout (void)
 {
+  if (g_test_subprocess ())
+    {
+      /* loop and sleep forever */
+      while (TRUE)
+        g_usleep (1000 * 1000);
+      return;
+    }
   /* allow child to run for only a fraction of a second */
-  g_test_trap_subprocess ("/trap_subprocess/timeout/subprocess", 0.11 * 1000000, 0);
+  g_test_trap_subprocess (NULL, 0.11 * 1000000, 0);
   g_test_trap_assert_failed ();
   g_assert (g_test_trap_reached_timeout ());
 }
@@ -381,6 +407,15 @@ test_expected_messages_null_domain (void)
 }
 
 static void
+test_expected_messages_expect_error (void)
+{
+  /* make sure we can't try to expect a g_error() */
+  g_test_expect_message ("GLib", G_LOG_LEVEL_CRITICAL, "*G_LOG_LEVEL_ERROR*");
+  g_test_expect_message (G_LOG_DOMAIN, G_LOG_LEVEL_ERROR, "this won't work");
+  g_test_assert_expected_messages ();
+}
+
+static void
 test_expected_messages_extra_warning (void)
 {
   g_test_expect_message (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
@@ -428,7 +463,7 @@ test_expected_messages (void)
   g_test_trap_subprocess ("/misc/expected-messages/subprocess/wrong-warning", 0, 0);
   g_test_trap_assert_failed ();
   g_test_trap_assert_stderr_unmatched ("*should not be reached*");
-  g_test_trap_assert_stderr ("*Did not see expected message CRITICAL*should not be *WARNING*This is a * warning*");
+  g_test_trap_assert_stderr ("*GLib-CRITICAL*Did not see expected message testing-CRITICAL*should not be *WARNING*This is a * warning*");
 
   g_test_trap_subprocess ("/misc/expected-messages/subprocess/expected", 0, 0);
   g_test_trap_assert_passed ();
@@ -444,7 +479,20 @@ test_expected_messages (void)
 
   g_test_trap_subprocess ("/misc/expected-messages/subprocess/unexpected-extra-warning", 0, 0);
   g_test_trap_assert_failed ();
-  g_test_trap_assert_stderr ("*Did not see expected message CRITICAL*nope*");
+  g_test_trap_assert_stderr ("*GLib:ERROR*Did not see expected message testing-CRITICAL*nope*");
+}
+
+static void
+test_expected_messages_debug (void)
+{
+  g_test_expect_message ("Test", G_LOG_LEVEL_WARNING, "warning message");
+  g_log ("Test", G_LOG_LEVEL_DEBUG, "should be ignored");
+  g_log ("Test", G_LOG_LEVEL_WARNING, "warning message");
+  g_test_assert_expected_messages ();
+
+  g_test_expect_message ("Test", G_LOG_LEVEL_DEBUG, "debug message");
+  g_log ("Test", G_LOG_LEVEL_DEBUG, "debug message");
+  g_test_assert_expected_messages ();
 }
 
 static void
@@ -541,10 +589,147 @@ test_dash_p (void)
   g_test_trap_assert_stdout_unmatched ("*Test /misc/dash-p/subprocess/hidden*");
 }
 
+static void
+test_nonfatal (void)
+{
+  if (g_test_subprocess ())
+    {
+      g_test_set_nonfatal_assertions ();
+      g_assert_cmpint (4, ==, 5);
+      g_print ("The End\n");
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
+  g_test_trap_assert_failed ();
+  g_test_trap_assert_stderr ("*assertion failed*4 == 5*");
+  g_test_trap_assert_stdout ("*The End*");
+}
+
+static void
+test_skip (void)
+{
+  g_test_skip ("Skipped should count as passed, not failed");
+}
+
+static void
+test_pass (void)
+{
+}
+
+static void
+test_fail (void)
+{
+  if (g_test_subprocess ())
+    {
+      g_test_fail ();
+      g_assert (g_test_failed ());
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
+  g_test_trap_assert_failed ();
+}
+
+static void
+test_incomplete (void)
+{
+  if (g_test_subprocess ())
+    {
+      g_test_incomplete ("not done");
+      g_assert (g_test_failed ());
+      return;
+    }
+  g_test_trap_subprocess (NULL, 0, 0);
+  g_test_trap_assert_failed ();
+}
+
+static void
+test_subprocess_timed_out (void)
+{
+  if (g_test_subprocess ())
+    {
+      g_usleep (1000000);
+      return;
+    }
+  g_test_trap_subprocess (NULL, 50000, 0);
+  g_assert (g_test_trap_reached_timeout ());
+}
+
+static const char *argv0;
+
+static void
+test_skip_all (void)
+{
+  GPtrArray *argv;
+  GError *error = NULL;
+  int status;
+
+  argv = g_ptr_array_new ();
+  g_ptr_array_add (argv, (char *) argv0);
+  g_ptr_array_add (argv, "--GTestSubprocess");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip");
+  g_ptr_array_add (argv, NULL);
+
+  g_spawn_sync (NULL, (char **) argv->pdata, NULL,
+                G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                NULL, NULL, NULL, NULL, &status,
+                &error);
+  g_assert_no_error (error);
+
+  g_spawn_check_exit_status (status, &error);
+  g_assert_error (error, G_SPAWN_EXIT_ERROR, 77);
+  g_clear_error (&error);
+
+  g_ptr_array_set_size (argv, 0);
+  g_ptr_array_add (argv, (char *) argv0);
+  g_ptr_array_add (argv, "--GTestSubprocess");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip-all/subprocess/skip1");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip-all/subprocess/skip2");
+  g_ptr_array_add (argv, NULL);
+
+  g_spawn_sync (NULL, (char **) argv->pdata, NULL,
+                G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                NULL, NULL, NULL, NULL, &status,
+                &error);
+  g_assert_no_error (error);
+
+  g_spawn_check_exit_status (status, &error);
+  g_assert_error (error, G_SPAWN_EXIT_ERROR, 77);
+  g_clear_error (&error);
+
+  g_ptr_array_set_size (argv, 0);
+  g_ptr_array_add (argv, (char *) argv0);
+  g_ptr_array_add (argv, "--GTestSubprocess");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip-all/subprocess/pass");
+  g_ptr_array_add (argv, "-p");
+  g_ptr_array_add (argv, "/misc/skip-all/subprocess/skip1");
+  g_ptr_array_add (argv, NULL);
+
+  g_spawn_sync (NULL, (char **) argv->pdata, NULL,
+                G_SPAWN_STDOUT_TO_DEV_NULL | G_SPAWN_STDERR_TO_DEV_NULL,
+                NULL, NULL, NULL, NULL, &status,
+                &error);
+  g_assert_no_error (error);
+
+  g_spawn_check_exit_status (status, &error);
+  g_assert_no_error (error);
+
+  g_ptr_array_unref (argv);
+}
+
 int
 main (int   argc,
       char *argv[])
 {
+  argv0 = argv[0];
+
   g_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/random-generator/rand-1", test_rand1);
@@ -553,6 +738,8 @@ main (int   argc,
   g_test_add_func ("/misc/assertions", test_assertions);
   g_test_add_func ("/misc/assertions/subprocess/bad_cmpstr", test_assertions_bad_cmpstr);
   g_test_add_func ("/misc/assertions/subprocess/bad_cmpint", test_assertions_bad_cmpint);
+  g_test_add_func ("/misc/assertions/subprocess/bad_cmpmem_len", test_assertions_bad_cmpmem_len);
+  g_test_add_func ("/misc/assertions/subprocess/bad_cmpmem_data", test_assertions_bad_cmpmem_data);
   g_test_add_data_func ("/misc/test-data", (void*) 0xc0c0baba, test_data_test);
   g_test_add ("/misc/primetoul", Fixturetest, (void*) 0xc0cac01a, fixturetest_setup, fixturetest_test, fixturetest_teardown);
   if (g_test_perf())
@@ -566,16 +753,11 @@ main (int   argc,
 #endif
 
   g_test_add_func ("/trap_subprocess/fail", test_subprocess_fail);
-  g_test_add_func ("/trap_subprocess/fail/subprocess", test_subprocess_fail_child);
   g_test_add_func ("/trap_subprocess/no-such-test", test_subprocess_no_such_test);
-  g_test_add_func ("/trap_subprocess/no-such-test/subprocess", test_subprocess_no_such_test_child);
   if (g_test_slow ())
-    {
-      g_test_add_func ("/trap_subprocess/timeout", test_subprocess_timeout);
-      g_test_add_func ("/trap_subprocess/timeout/subprocess", test_subprocess_timeout_child);
-    }
+    g_test_add_func ("/trap_subprocess/timeout", test_subprocess_timeout);
+
   g_test_add_func ("/trap_subprocess/patterns", test_subprocess_patterns);
-  g_test_add_func ("/trap_subprocess/patterns/subprocess", test_subprocess_patterns_child);
 
   g_test_add_func ("/misc/fatal-log-handler", test_fatal_log_handler);
   g_test_add_func ("/misc/fatal-log-handler/subprocess/critical-pass", test_fatal_log_handler_critical_pass);
@@ -590,6 +772,8 @@ main (int   argc,
   g_test_add_func ("/misc/expected-messages/subprocess/null-domain", test_expected_messages_null_domain);
   g_test_add_func ("/misc/expected-messages/subprocess/extra-warning", test_expected_messages_extra_warning);
   g_test_add_func ("/misc/expected-messages/subprocess/unexpected-extra-warning", test_expected_messages_unexpected_extra_warning);
+  g_test_add_func ("/misc/expected-messages/expect-error", test_expected_messages_expect_error);
+  g_test_add_func ("/misc/expected-messages/skip-debug", test_expected_messages_debug);
 
   g_test_add_func ("/misc/dash-p", test_dash_p);
   g_test_add_func ("/misc/dash-p/child", test_dash_p_child);
@@ -599,6 +783,17 @@ main (int   argc,
   g_test_add_func ("/misc/dash-p/child/sub2", test_dash_p_child_sub2);
   g_test_add_func ("/misc/dash-p/subprocess/hidden", test_dash_p_hidden);
   g_test_add_func ("/misc/dash-p/subprocess/hidden/sub", test_dash_p_hidden_sub);
+
+  g_test_add_func ("/misc/nonfatal", test_nonfatal);
+
+  g_test_add_func ("/misc/skip", test_skip);
+  g_test_add_func ("/misc/skip-all", test_skip_all);
+  g_test_add_func ("/misc/skip-all/subprocess/skip1", test_skip);
+  g_test_add_func ("/misc/skip-all/subprocess/skip2", test_skip);
+  g_test_add_func ("/misc/skip-all/subprocess/pass", test_pass);
+  g_test_add_func ("/misc/fail", test_fail);
+  g_test_add_func ("/misc/incomplete", test_incomplete);
+  g_test_add_func ("/misc/timeout", test_subprocess_timed_out);
 
   return g_test_run();
 }

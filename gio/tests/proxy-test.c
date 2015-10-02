@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include <string.h>
@@ -889,7 +887,7 @@ assert_direct (GSocketConnection *conn)
 
   addr = g_socket_connection_get_remote_address (conn, &error);
   g_assert_no_error (error);
-  g_assert (!G_IS_PROXY_ADDRESS (addr));
+  g_assert (addr != NULL && !G_IS_PROXY_ADDRESS (addr));
   g_object_unref (addr);
 
   addr = g_socket_connection_get_local_address (conn, &error);

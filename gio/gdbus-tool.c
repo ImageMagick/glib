@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -204,6 +202,12 @@ print_paths (GDBusConnection *c,
   const gchar *xml_data;
   GDBusNodeInfo *node;
   guint n;
+
+  if (!g_dbus_is_name (name))
+    {
+      g_printerr (_("Error: %s is not a valid name\n"), name);
+      goto out;
+    }
 
   error = NULL;
   result = g_dbus_connection_call_sync (c,
@@ -671,18 +675,24 @@ handle_emit (gint        *argc,
                                &error);
       if (value == NULL)
         {
+          gchar *context;
+
+          context = g_variant_parse_error_print_context (error, (*argv)[n]);
           g_error_free (error);
           error = NULL;
           value = _g_variant_parse_me_harder (NULL, (*argv)[n], &error);
           if (value == NULL)
             {
+              /* Use the original non-"parse-me-harder" error */
               g_printerr (_("Error parsing parameter %d: %s\n"),
                           n,
-                          error->message);
+                          context);
               g_error_free (error);
+              g_free (context);
               g_variant_builder_clear (&builder);
               goto out;
             }
+          g_free (context);
         }
       g_variant_builder_add_value (&builder, value);
     }
@@ -859,6 +869,12 @@ handle_call (gint        *argc,
         }
     }
 
+  if (!request_completion && !g_dbus_is_name (opt_call_dest))
+    {
+      g_printerr (_("Error: %s is not a valid bus name\n"), opt_call_dest);
+      goto out;
+    }
+
   /* validate and complete object path */
   if (complete_paths)
     {
@@ -973,6 +989,9 @@ handle_call (gint        *argc,
                                &error);
       if (value == NULL)
         {
+          gchar *context;
+
+          context = g_variant_parse_error_print_context (error, (*argv)[n]);
           g_error_free (error);
           error = NULL;
           value = _g_variant_parse_me_harder (type, (*argv)[n], &error);
@@ -984,19 +1003,21 @@ handle_call (gint        *argc,
                   g_printerr (_("Error parsing parameter %d of type '%s': %s\n"),
                               n,
                               s,
-                              error->message);
+                              context);
                   g_free (s);
                 }
               else
                 {
                   g_printerr (_("Error parsing parameter %d: %s\n"),
                               n,
-                              error->message);
+                              context);
                 }
               g_error_free (error);
               g_variant_builder_clear (&builder);
+              g_free (context);
               goto out;
             }
+          g_free (context);
         }
       g_variant_builder_add_value (&builder, value);
     }
@@ -1592,6 +1613,13 @@ handle_introspect (gint        *argc,
       print_paths (c, opt_introspect_dest, "/");
       goto out;
     }
+
+  if (!request_completion && !g_dbus_is_name (opt_introspect_dest))
+    {
+        g_printerr (_("Error: %s is not a valid bus name\n"), opt_introspect_dest);
+      goto out;
+    }
+
   if (opt_introspect_object_path == NULL)
     {
       if (request_completion)
@@ -1726,16 +1754,12 @@ handle_monitor (gint        *argc,
   gchar *s;
   GError *error;
   GDBusConnection *c;
-  GVariant *result;
-  GDBusNodeInfo *node;
   gboolean complete_names;
   gboolean complete_paths;
   GMainLoop *loop;
 
   ret = FALSE;
   c = NULL;
-  node = NULL;
-  result = NULL;
 
   modify_argv0_for_command (argc, argv, "monitor");
 
@@ -1819,6 +1843,13 @@ handle_monitor (gint        *argc,
           goto out;
         }
     }
+
+  if (!request_completion && !g_dbus_is_name (opt_monitor_dest))
+    {
+      g_printerr (_("Error: %s is not a valid bus name\n"), opt_monitor_dest);
+      goto out;
+    }
+
   if (complete_paths)
     {
       print_paths (c, opt_monitor_dest, "/");
@@ -1878,10 +1909,6 @@ handle_monitor (gint        *argc,
   ret = TRUE;
 
  out:
-  if (node != NULL)
-    g_dbus_node_info_unref (node);
-  if (result != NULL)
-    g_variant_unref (result);
   if (c != NULL)
     g_object_unref (c);
   g_option_context_free (o);

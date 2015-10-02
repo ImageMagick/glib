@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -54,7 +52,7 @@ typedef struct _GFileIface    		GFileIface;
  * @g_iface: The parent interface.
  * @dup: Duplicates a #GFile.
  * @hash: Creates a hash of a #GFile.
- * @equal: Checks equality of two given #GFile<!-- -->s.
+ * @equal: Checks equality of two given #GFiles.
  * @is_native: Checks to see if a file is native to the system.
  * @has_uri_scheme: Checks to see if a #GFile has a given URI scheme.
  * @get_uri_scheme: Gets the URI scheme for a #GFile.
@@ -82,8 +80,8 @@ typedef struct _GFileIface    		GFileIface;
  * @set_display_name: Sets the display name for a #GFile.
  * @set_display_name_async: Asynchronously sets a #GFile's display name.
  * @set_display_name_finish: Finishes asynchronously setting a #GFile's display name.
- * @query_settable_attributes: Returns a list of #GFileAttribute<!-- -->s that can be set.
- * @_query_settable_attributes_async: Asynchronously gets a list of #GFileAttribute<!-- -->s that can be set.
+ * @query_settable_attributes: Returns a list of #GFileAttributes that can be set.
+ * @_query_settable_attributes_async: Asynchronously gets a list of #GFileAttributes that can be set.
  * @_query_settable_attributes_finish: Finishes asynchronously querying settable attributes.
  * @query_writable_namespaces: Returns a list of #GFileAttribute namespaces that are writable.
  * @_query_writable_namespaces_async: Asynchronously gets a list of #GFileAttribute namespaces that are writable.
@@ -152,6 +150,9 @@ typedef struct _GFileIface    		GFileIface;
  * @eject_mountable_with_operation_finish: Finishes an eject operation using a #GMountOperation. Since 2.22.
  * @poll_mountable: Polls a mountable object for media changes. Since 2.22.
  * @poll_mountable_finish: Finishes an poll operation for media changes. Since 2.22.
+ * @measure_disk_usage: Recursively measures the disk usage of @file. Since 2.38
+ * @measure_disk_usage_async: Asynchronously recursively measures the disk usage of @file. Since 2.38
+ * @measure_disk_usage_finish: Finishes an asynchronous recursive measurement of the disk usage of @file. Since 2.38
  *
  * An interface for writing VFS file handles.
  **/
@@ -1223,6 +1224,15 @@ GLIB_AVAILABLE_IN_ALL
 void     g_file_replace_contents_async       (GFile                  *file,
 					      const char             *contents,
 					      gsize                   length,
+					      const char             *etag,
+					      gboolean                make_backup,
+					      GFileCreateFlags        flags,
+					      GCancellable           *cancellable,
+					      GAsyncReadyCallback     callback,
+					      gpointer                user_data);
+GLIB_AVAILABLE_IN_2_40
+void     g_file_replace_contents_bytes_async (GFile                  *file,
+					      GBytes                 *contents,
 					      const char             *etag,
 					      gboolean                make_backup,
 					      GFileCreateFlags        flags,

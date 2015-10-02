@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __G_TASK_H__
@@ -154,6 +152,8 @@ gssize        g_task_propagate_int             (GTask           *task,
                                                 GError         **error);
 GLIB_AVAILABLE_IN_2_36
 gboolean      g_task_had_error                 (GTask           *task);
+GLIB_AVAILABLE_IN_2_44
+gboolean      g_task_get_completed             (GTask           *task);
 
 G_END_DECLS
 

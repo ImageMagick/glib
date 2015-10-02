@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  */
@@ -280,11 +278,7 @@ main (int argc, char **argv)
 {
   g_test_init (&argc, &argv, NULL);
 
-  session_bus_up ();
-
   g_test_add_func ("/appinfo/dbusappinfo", test_dbus_appinfo);
 
-  session_bus_down ();
-
-  return g_test_run ();
+  return session_bus_run ();
 }

@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -921,17 +919,14 @@ main (int   argc,
   /* all the tests rely on a shared main loop */
   loop = g_main_loop_new (NULL, FALSE);
 
-  session_bus_up ();
-
   g_test_add_func ("/gdbus/proxy", test_proxy);
   g_test_add_func ("/gdbus/proxy/no-properties", test_no_properties);
   g_test_add_func ("/gdbus/proxy/wellknown-noauto", test_wellknown_noauto);
   g_test_add_func ("/gdbus/proxy/async", test_async);
 
-  ret = g_test_run();
+  ret = session_bus_run();
 
   g_dbus_node_info_unref (introspection_data);
 
-  session_bus_down ();
   return ret;
 }

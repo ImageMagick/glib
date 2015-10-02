@@ -1,10 +1,5 @@
-#include "config.h"
-
 #include <glib.h>
 #include <string.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <stdlib.h>
 
 /* Test GChecksum by computing the checksums of every initial
@@ -873,8 +868,7 @@ test_checksum_reset (gconstpointer d)
       g_assert_cmpint (len, ==, len2);
       digest2 = g_malloc (len2);
       g_checksum_get_digest (checksum, digest2, &len2);
-      g_assert_cmpint (len, ==, len2);
-      g_assert (memcmp (digest, digest2, len) == 0);
+      g_assert_cmpmem (digest, len, digest2, len);
       g_free (digest);
       g_free (digest2);
 

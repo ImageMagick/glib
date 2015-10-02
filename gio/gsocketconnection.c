@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Christian Kellner <gicmo@gnome.org>
  *          Samuel Cormier-Iijima <sciyoshi@gmail.com>
@@ -31,6 +29,7 @@
 
 #include "gsocketoutputstream.h"
 #include "gsocketinputstream.h"
+#include "gioprivate.h"
 #include <gio/giostream.h>
 #include <gio/gtask.h>
 #include "gunixconnection.h"
@@ -57,6 +56,10 @@
  * custom socket connection types for specific combination of socket
  * family/type/protocol using g_socket_connection_factory_register_type().
  *
+ * To close a #GSocketConnection, use g_io_stream_close(). Closing both
+ * substreams of the #GIOStream separately will not close the underlying
+ * #GSocket.
+ *
  * Since: 2.22
  */
 
@@ -71,6 +74,8 @@ struct _GSocketConnectionPrivate
   GSocket       *socket;
   GInputStream  *input_stream;
   GOutputStream *output_stream;
+
+  GSocketAddress *cached_remote_address;
 
   gboolean       in_dispose;
 };
@@ -267,7 +272,7 @@ g_socket_connection_connect_finish (GSocketConnection  *connection,
  * This can be useful if you want to do something unusual on it
  * not supported by the #GSocketConnection APIs.
  *
- * Returns: (transfer none): a #GSocketAddress or %NULL on error.
+ * Returns: (transfer none): a #GSocket or %NULL on error.
  *
  * Since: 2.22
  */
@@ -305,6 +310,13 @@ g_socket_connection_get_local_address (GSocketConnection  *connection,
  *
  * Try to get the remote address of a socket connection.
  *
+ * Since GLib 2.40, when used with g_socket_client_connect() or
+ * g_socket_client_connect_async(), during emission of
+ * %G_SOCKET_CLIENT_CONNECTING, this function will return the remote
+ * address that will be used for the connection.  This allows
+ * applications to print e.g. "Connecting to example.com
+ * (10.42.77.3)...".
+ *
  * Returns: (transfer full): a #GSocketAddress or %NULL on error.
  *     Free the returned object with g_object_unref().
  *
@@ -314,7 +326,25 @@ GSocketAddress *
 g_socket_connection_get_remote_address (GSocketConnection  *connection,
 					GError            **error)
 {
+  if (!g_socket_is_connected (connection->priv->socket))
+    {
+      return connection->priv->cached_remote_address ?
+        g_object_ref (connection->priv->cached_remote_address) : NULL;
+    }
   return g_socket_get_remote_address (connection->priv->socket, error);
+}
+
+/* Private API allowing applications to retrieve the resolved address
+ * now, before we start connecting.
+ *
+ * https://bugzilla.gnome.org/show_bug.cgi?id=712547
+ */
+void
+g_socket_connection_set_cached_remote_address (GSocketConnection *connection,
+                                               GSocketAddress    *address)
+{
+  g_clear_object (&connection->priv->cached_remote_address);
+  connection->priv->cached_remote_address = address ? g_object_ref (address) : NULL;
 }
 
 static void
@@ -369,6 +399,8 @@ g_socket_connection_dispose (GObject *object)
   GSocketConnection *connection = G_SOCKET_CONNECTION (object);
 
   connection->priv->in_dispose = TRUE;
+
+  g_clear_object (&connection->priv->cached_remote_address);
 
   G_OBJECT_CLASS (g_socket_connection_parent_class)
     ->dispose (object);

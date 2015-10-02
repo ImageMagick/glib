@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  */
@@ -48,7 +46,7 @@
 /* DBus Interface definition {{{1 */
 
 /* For documentation of these interfaces, see
- * https://live.gnome.org/GApplication/DBusAPI
+ * https://wiki.gnome.org/Projects/GLib/GApplication/DBusAPI
  */
 static const gchar org_gtk_Application_xml[] =
   "<node>"
@@ -203,11 +201,19 @@ g_application_impl_method_call (GDBusConnection       *connection,
 
   else if (strcmp (method_name, "Open") == 0)
     {
+      GApplicationFlags flags;
       GVariant *platform_data;
       const gchar *hint;
       GVariant *array;
       GFile **files;
       gint n, i;
+
+      flags = g_application_get_flags (impl->app);
+      if ((flags & G_APPLICATION_HANDLES_OPEN) == 0)
+        {
+          g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED, "Application does not open files");
+          return;
+        }
 
       /* freedesktop interface has no hint parameter */
       if (g_str_equal (interface_name, "org.freedesktop.Application"))
@@ -246,9 +252,18 @@ g_application_impl_method_call (GDBusConnection       *connection,
 
   else if (strcmp (method_name, "CommandLine") == 0)
     {
+      GApplicationFlags flags;
       GApplicationCommandLine *cmdline;
       GVariant *platform_data;
       int status;
+
+      flags = g_application_get_flags (impl->app);
+      if ((flags & G_APPLICATION_HANDLES_COMMAND_LINE) == 0)
+        {
+          g_dbus_method_invocation_return_error (invocation, G_DBUS_ERROR, G_DBUS_ERROR_NOT_SUPPORTED,
+                                                 "Application does not handle command line arguments");
+          return;
+        }
 
       /* Only on the GtkApplication interface */
 
@@ -685,9 +700,9 @@ g_application_impl_cmdline_done (GObject      *source,
 }
 
 int
-g_application_impl_command_line (GApplicationImpl  *impl,
-                                 gchar            **arguments,
-                                 GVariant          *platform_data)
+g_application_impl_command_line (GApplicationImpl    *impl,
+                                 const gchar * const *arguments,
+                                 GVariant            *platform_data)
 {
   const static GDBusInterfaceVTable vtable = {
     g_application_impl_cmdline_method_call
@@ -738,6 +753,7 @@ g_application_impl_command_line (GApplicationImpl  *impl,
                                               g_variant_new ("(o^aay@a{sv})", object_path, arguments, platform_data),
                                               G_VARIANT_TYPE ("(i)"), 0, G_MAXINT, fd_list, NULL,
                                               g_application_impl_cmdline_done, &data);
+    g_object_unref (fd_list);
   }
 #else
   g_dbus_connection_call (impl->session_bus, impl->bus_name, impl->object_path,
@@ -889,13 +905,19 @@ g_dbus_command_line_new (GDBusMethodInvocation *invocation)
 {
   GDBusCommandLine *gdbcl;
   GVariant *args;
+  GVariant *arguments, *platform_data;
 
   args = g_dbus_method_invocation_get_parameters (invocation);
 
+  arguments = g_variant_get_child_value (args, 1);
+  platform_data = g_variant_get_child_value (args, 2);
   gdbcl = g_object_new (g_dbus_command_line_get_type (),
-                        "arguments", g_variant_get_child_value (args, 1),
-                        "platform-data", g_variant_get_child_value (args, 2),
+                        "arguments", arguments,
+                        "platform-data", platform_data,
                         NULL);
+  g_variant_unref (arguments);
+  g_variant_unref (platform_data);
+
   gdbcl->connection = g_dbus_method_invocation_get_connection (invocation);
   gdbcl->bus_name = g_dbus_method_invocation_get_sender (invocation);
   g_variant_get_child (args, 0, "&o", &gdbcl->object_path);

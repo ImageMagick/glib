@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  */
@@ -31,6 +29,7 @@ G_DEFINE_INTERFACE (GAction, g_action, G_TYPE_OBJECT)
  * SECTION:gaction
  * @title: GAction
  * @short_description: An action interface
+ * @include: gio/gio.h
  *
  * #GAction represents a single named action.
  *
@@ -50,7 +49,7 @@ G_DEFINE_INTERFACE (GAction, g_action, G_TYPE_OBJECT)
  *
  * #GAction is merely the interface to the concept of an action, as
  * described above.  Various implementations of actions exist, including
- * #GSimpleAction and #GtkAction.
+ * #GSimpleAction.
  *
  * In all cases, the implementing class is responsible for storing the
  * name of the action, the parameter type, the enabled state, the
@@ -61,6 +60,13 @@ G_DEFINE_INTERFACE (GAction, g_action, G_TYPE_OBJECT)
  *
  * Probably the only useful thing to do with a #GAction is to put it
  * inside of a #GSimpleActionGroup.
+ **/
+
+/**
+ * GAction:
+ *
+ * #GAction is an opaque data structure and can only be accessed
+ * using the following functions.
  **/
 
 /**
@@ -87,7 +93,7 @@ g_action_default_init (GActionInterface *iface)
    * GAction:name:
    *
    * The name of the action.  This is mostly meaningful for identifying
-   * the action once it has been added to a #GActionGroup.
+   * the action once it has been added to a #GActionGroup. It is immutable.
    *
    * Since: 2.28
    **/
@@ -103,7 +109,8 @@ g_action_default_init (GActionInterface *iface)
    * GAction:parameter-type:
    *
    * The type of the parameter that must be given when activating the
-   * action.
+   * action. This is immutable, and may be %NULL if no parameter is needed when
+   * activating the action.
    *
    * Since: 2.28
    **/
@@ -137,7 +144,7 @@ g_action_default_init (GActionInterface *iface)
    * GAction:state-type:
    *
    * The #GVariantType of the state that the action has, or %NULL if the
-   * action is stateless.
+   * action is stateless. This is immutable.
    *
    * Since: 2.28
    **/
@@ -328,7 +335,7 @@ g_action_get_state_type (GAction *action)
  * The return value (if non-%NULL) should be freed with
  * g_variant_unref() when it is no longer required.
  *
- * Returns: (transfer full): the state range hint
+ * Returns: (nullable) (transfer full): the state range hint
  *
  * Since: 2.28
  **/

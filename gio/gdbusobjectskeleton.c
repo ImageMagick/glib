@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: David Zeuthen <davidz@redhat.com>
  */
@@ -175,9 +173,9 @@ g_dbus_object_skeleton_class_init (GDBusObjectSkeletonClass *klass)
    * Emitted when a method is invoked by a remote caller and used to
    * determine if the method call is authorized.
    *
-   * This signal is like #GDBusInterfaceSkeleton<!-- -->'s
-   * #GDBusInterfaceSkeleton::g-authorize-method signal, except that it is
-   * for the enclosing object.
+   * This signal is like #GDBusInterfaceSkeleton's
+   * #GDBusInterfaceSkeleton::g-authorize-method signal,
+   * except that it is for the enclosing object.
    *
    * The default class handler just returns %TRUE.
    *
@@ -186,7 +184,7 @@ g_dbus_object_skeleton_class_init (GDBusObjectSkeletonClass *klass)
    * Since: 2.30
    */
   signals[AUTHORIZE_METHOD_SIGNAL] =
-    g_signal_new ("authorize-method",
+    g_signal_new (I_("authorize-method"),
                   G_TYPE_DBUS_OBJECT_SKELETON,
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GDBusObjectSkeletonClass, authorize_method),

@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -237,10 +235,10 @@ static void
 completion_check_cache (GCompletion* cmp,
 			gchar**	     new_prefix)
 {
-  register GList* list;
-  register gsize len;  
-  register gsize i;
-  register gsize plen;
+  GList* list;
+  gsize len;
+  gsize i;
+  gsize plen;
   gchar* postfix;
   gchar* s;
   
@@ -294,7 +292,7 @@ completion_check_cache (GCompletion* cmp,
  * You should use this function instead of g_completion_complete() if your 
  * items are UTF-8 strings.
  *
- * Return value: (element-type utf8) (transfer none): the list of items whose strings begin with @prefix. This should
+ * Returns: (element-type utf8) (transfer none): the list of items whose strings begin with @prefix. This should
  * not be changed.
  *
  * Since: 2.4

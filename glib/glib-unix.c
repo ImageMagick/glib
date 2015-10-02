@@ -14,9 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Colin Walters <walters@verbum.org>
  */
@@ -65,19 +63,17 @@ g_unix_set_error_from_errno (GError **error,
 /**
  * g_unix_open_pipe:
  * @fds: Array of two integers
- * @flags: Bitfield of file descriptor flags, see "man 2 fcntl"
+ * @flags: Bitfield of file descriptor flags, as for fcntl()
  * @error: a #GError
  *
  * Similar to the UNIX pipe() call, but on modern systems like Linux
  * uses the pipe2() system call, which atomically creates a pipe with
- * the configured flags.  The only supported flag currently is
- * <literal>FD_CLOEXEC</literal>.  If for example you want to configure
- * <literal>O_NONBLOCK</literal>, that must still be done separately with
- * fcntl().
+ * the configured flags. The only supported flag currently is
+ * %FD_CLOEXEC. If for example you want to configure %O_NONBLOCK, that
+ * must still be done separately with fcntl().
  *
- * <note>This function does *not* take <literal>O_CLOEXEC</literal>, it takes
- * <literal>FD_CLOEXEC</literal> as if for fcntl(); these are
- * different on Linux/glibc.</note>
+ * This function does not take %O_CLOEXEC, it takes %FD_CLOEXEC as if
+ * for fcntl(); these are different on Linux/glibc.
  *
  * Returns: %TRUE on success, %FALSE if not (and errno will be set).
  *
@@ -140,8 +136,8 @@ g_unix_open_pipe (int     *fds,
  * @error: a #GError
  *
  * Control the non-blocking state of the given file descriptor,
- * according to @nonblock.  On most systems this uses <literal>O_NONBLOCK</literal>, but
- * on some older ones may use <literal>O_NDELAY</literal>.
+ * according to @nonblock. On most systems this uses %O_NONBLOCK, but
+ * on some older ones may use %O_NDELAY.
  *
  * Returns: %TRUE if successful
  *
@@ -189,17 +185,15 @@ g_unix_set_fd_nonblocking (gint       fd,
  * @signum: A signal number
  *
  * Create a #GSource that will be dispatched upon delivery of the UNIX
- * signal @signum.  In GLib versions before 2.36, only
- * <literal>SIGHUP</literal>, <literal>SIGINT</literal>,
- * <literal>SIGTERM</literal> can be monitored.  In GLib 2.36,
- * <literal>SIGUSR1</literal> and <literal>SIGUSR2</literal> were
- * added.
+ * signal @signum.  In GLib versions before 2.36, only `SIGHUP`, `SIGINT`,
+ * `SIGTERM` can be monitored.  In GLib 2.36, `SIGUSR1` and `SIGUSR2`
+ * were added.
  *
  * Note that unlike the UNIX default, all sources which have created a
  * watch will be dispatched, regardless of which underlying thread
  * invoked g_unix_signal_source_new().
  *
- * For example, an effective use of this function is to handle <literal>SIGTERM</literal>
+ * For example, an effective use of this function is to handle `SIGTERM`
  * cleanly; flushing any outstanding files, and then calling
  * g_main_loop_quit ().  It is not safe to do any of this a regular
  * UNIX signal handler; your handler may be invoked while malloc() or
@@ -228,7 +222,7 @@ g_unix_signal_source_new (int signum)
 }
 
 /**
- * g_unix_signal_add_full:
+ * g_unix_signal_add_full: (rename-to g_unix_signal_add)
  * @priority: the priority of the signal source. Typically this will be in
  *            the range between #G_PRIORITY_DEFAULT and #G_PRIORITY_HIGH.
  * @signum: Signal number
@@ -242,7 +236,6 @@ g_unix_signal_source_new (int signum)
  *
  * Returns: An ID (greater than 0) for the event source
  *
- * Rename to: g_unix_signal_add
  * Since: 2.30
  */
 guint

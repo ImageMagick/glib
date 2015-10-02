@@ -17,9 +17,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -131,7 +129,7 @@ g_dir_open_with_errno (const gchar *path,
  * directory can then be retrieved using g_dir_read_name().  Note
  * that the ordering is not defined.
  *
- * Return value: a newly allocated #GDir on success, %NULL on failure.
+ * Returns: a newly allocated #GDir on success, %NULL on failure.
  *   If non-%NULL, you must free the result with g_dir_close()
  *   when you are finished with it.
  **/
@@ -235,8 +233,7 @@ g_dir_new_from_dirp (gpointer dirp)
  * factors.
  *
  * %NULL may also be returned in case of errors. On Unix, you can
- * check <literal>errno</literal> to find out if %NULL was returned
- * because of an error.
+ * check `errno` to find out if %NULL was returned because of an error.
  *
  * On Unix, the '.' and '..' entries are omitted, and the returned
  * name is in the on-disk encoding.
@@ -244,7 +241,7 @@ g_dir_new_from_dirp (gpointer dirp)
  * On Windows, as is true of all GLib functions which operate on
  * filenames, the returned name is in UTF-8.
  *
- * Return value: The entry's name or %NULL if there are no
+ * Returns: The entry's name or %NULL if there are no
  *   more entries. The return value is owned by GLib and
  *   must not be modified or freed.
  **/

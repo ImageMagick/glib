@@ -16,8 +16,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with GLib; see the file COPYING.LIB.  If not,
- * write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *   Boston, MA 02111-1307, USA.
+ * see <http://www.gnu.org/licenses/>.
  */
 
 #ifndef __G_KEY_FILE_H__
@@ -94,6 +93,10 @@ GLIB_AVAILABLE_IN_ALL
 gchar    *g_key_file_to_data                (GKeyFile             *key_file,
 					     gsize                *length,
 					     GError              **error) G_GNUC_MALLOC;
+GLIB_AVAILABLE_IN_2_40
+gboolean  g_key_file_save_to_file           (GKeyFile             *key_file,
+                                             const gchar          *filename,
+                                             GError              **error);
 GLIB_AVAILABLE_IN_ALL
 gchar    *g_key_file_get_start_group        (GKeyFile             *key_file) G_GNUC_MALLOC;
 GLIB_AVAILABLE_IN_ALL

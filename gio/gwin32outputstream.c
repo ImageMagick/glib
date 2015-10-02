@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  * Author: Tor Lillqvist <tml@iki.fi>
@@ -31,8 +29,8 @@
 #include <glib/gstdio.h>
 #include "gioerror.h"
 #include "gwin32outputstream.h"
+#include "giowin32-priv.h"
 #include "gcancellable.h"
-#include "gsimpleasyncresult.h"
 #include "gasynchelper.h"
 #include "glibintl.h"
 
@@ -46,9 +44,9 @@
  * #GWin32OutputStream implements #GOutputStream for writing to a
  * Windows file handle.
  *
- * Note that <filename>&lt;gio/gwin32outputstream.h&gt;</filename> belongs
- * to the Windows-specific GIO interfaces, thus you have to use the
- * <filename>gio-windows-2.0.pc</filename> pkg-config file when using it.
+ * Note that `<gio/gwin32outputstream.h>` belongs to the Windows-specific GIO
+ * interfaces, thus you have to use the `gio-windows-2.0.pc` pkg-config file
+ * when using it.
  */
 
 enum {
@@ -60,6 +58,7 @@ enum {
 struct _GWin32OutputStreamPrivate {
   HANDLE handle;
   gboolean close_handle;
+  gint fd;
 };
 
 G_DEFINE_TYPE_WITH_PRIVATE (GWin32OutputStream, g_win32_output_stream, G_TYPE_OUTPUT_STREAM)
@@ -177,6 +176,7 @@ g_win32_output_stream_init (GWin32OutputStream *win32_stream)
   win32_stream->priv = g_win32_output_stream_get_instance_private (win32_stream);
   win32_stream->priv->handle = NULL;
   win32_stream->priv->close_handle = TRUE;
+  win32_stream->priv->fd = -1;
 }
 
 /**
@@ -240,7 +240,7 @@ g_win32_output_stream_set_close_handle (GWin32OutputStream *stream,
  * Returns whether the handle of @stream will be closed when the
  * stream is closed.
  *
- * Return value: %TRUE if the handle is closed when done
+ * Returns: %TRUE if the handle is closed when done
  *
  * Since: 2.26
  */
@@ -258,7 +258,7 @@ g_win32_output_stream_get_close_handle (GWin32OutputStream *stream)
  *
  * Return the Windows handle that the stream writes to.
  *
- * Return value: The handle descriptor of @stream
+ * Returns: The handle descriptor of @stream
  *
  * Since: 2.26
  */
@@ -351,19 +351,44 @@ g_win32_output_stream_close (GOutputStream  *stream,
   if (!win32_stream->priv->close_handle)
     return TRUE;
 
-  res = CloseHandle (win32_stream->priv->handle);
-  if (!res)
+  if (win32_stream->priv->fd != -1)
     {
-      int errsv = GetLastError ();
-      gchar *emsg = g_win32_error_message (errsv);
+      if (close (win32_stream->priv->fd) < 0)
+	{
+	  g_set_error_literal (error, G_IO_ERROR,
+			       g_io_error_from_errno (errno),
+			       g_strerror (errno));
+	  return FALSE;
+	}
+    }
+  else
+    {
+      res = CloseHandle (win32_stream->priv->handle);
+      if (!res)
+	{
+	  int errsv = GetLastError ();
+	  gchar *emsg = g_win32_error_message (errsv);
 
-      g_set_error (error, G_IO_ERROR,
-		   g_io_error_from_win32_error (errsv),
-		   _("Error closing handle: %s"),
-		   emsg);
-      g_free (emsg);
-      return FALSE;
+	  g_set_error (error, G_IO_ERROR,
+		       g_io_error_from_win32_error (errsv),
+		       _("Error closing handle: %s"),
+		       emsg);
+	  g_free (emsg);
+	  return FALSE;
+	}
     }
 
   return TRUE;
+}
+
+GOutputStream *
+g_win32_output_stream_new_from_fd (gint      fd,
+				  gboolean  close_fd)
+{
+  GWin32OutputStream *win32_stream;
+
+  win32_stream = G_WIN32_OUTPUT_STREAM (g_win32_output_stream_new ((HANDLE) _get_osfhandle (fd), close_fd));
+  win32_stream->priv->fd = fd;
+
+  return (GOutputStream*)win32_stream;
 }

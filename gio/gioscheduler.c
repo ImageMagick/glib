@@ -13,9 +13,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Author: Alexander Larsson <alexl@redhat.com>
  */
@@ -31,14 +29,12 @@
  * @short_description: I/O Scheduler
  * @include: gio/gio.h
  * 
- * <note><para>
- *   As of GLib 2.36, the <literal>g_io_scheduler</literal> methods
- *   are deprecated in favor of #GThreadPool and #GTask.
- * </para></note>
+ * As of GLib 2.36, #GIOScheduler is deprecated in favor of
+ * #GThreadPool and #GTask.
  *
  * Schedules asynchronous I/O operations. #GIOScheduler integrates 
  * into the main event loop (#GMainLoop) and uses threads.
- **/
+ */
 
 struct _GIOSchedulerJob {
   GList *active_link;
@@ -99,7 +95,7 @@ io_job_thread (GTask         *task,
  * @job_func: a #GIOSchedulerJobFunc.
  * @user_data: data to pass to @job_func
  * @notify: (allow-none): a #GDestroyNotify for @user_data, or %NULL
- * @io_priority: the <link linkend="io-priority">I/O priority</link>
+ * @io_priority: the [I/O priority][io-priority]
  * of the request.
  * @cancellable: optional #GCancellable object, %NULL to ignore.
  *
@@ -262,6 +258,7 @@ g_io_scheduler_job_send_to_mainloop (GIOSchedulerJob *job,
   g_source_set_priority (source, G_PRIORITY_DEFAULT);
   g_source_set_callback (source, mainloop_proxy_func, proxy,
 			 NULL);
+  g_source_set_name (source, "[gio] mainloop_proxy_func");
 
   g_source_attach (source, job->context);
   g_source_unref (source);
@@ -318,6 +315,7 @@ g_io_scheduler_job_send_to_mainloop_async (GIOSchedulerJob *job,
   g_source_set_priority (source, G_PRIORITY_DEFAULT);
   g_source_set_callback (source, mainloop_proxy_func, proxy,
 			 (GDestroyNotify)mainloop_proxy_free);
+  g_source_set_name (source, "[gio] mainloop_proxy_func");
 
   g_source_attach (source, job->context);
   g_source_unref (source);

@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Authors: Ryan Lortie <desrt@desrt.ca>
  */
@@ -55,6 +53,10 @@ void                    g_simple_action_set_enabled                     (GSimple
 GLIB_AVAILABLE_IN_2_30
 void                    g_simple_action_set_state                       (GSimpleAction      *simple,
                                                                          GVariant           *value);
+
+GLIB_AVAILABLE_IN_2_44
+void                    g_simple_action_set_state_hint                  (GSimpleAction      *simple,
+                                                                         GVariant           *state_hint);
 
 G_END_DECLS
 

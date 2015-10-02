@@ -1,15 +1,18 @@
 #define GLIB_DISABLE_DEPRECATION_WARNINGS
 
-#include <config.h>
 #include <glib.h>
 #include <string.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 #include <glib/gstdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
+
+#ifdef G_OS_UNIX
+#include <unistd.h>
+#endif
+#ifdef G_OS_WIN32
+#include <io.h>
+#endif
 
 static void
 test_basic (void)
@@ -51,6 +54,7 @@ test_device (void)
 
   file = g_mapped_file_new ("/dev/null", FALSE, &error);
   g_assert (g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_INVAL) ||
+            g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NODEV) ||
             g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NOMEM));
   g_assert (file == NULL);
   g_error_free (error);

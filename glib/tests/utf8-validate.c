@@ -12,12 +12,11 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "glib.h"
+#include <string.h>
 
 #define UNICODE_VALID(Char)                   \
     ((Char) < 0x110000 &&                     \
@@ -86,6 +85,7 @@ Test test[] = {
   /* continuation bytes */
   { "\x80", -1, 0, FALSE },
   { "\xbf", -1, 0, FALSE },
+  { "\xbf\x80", -1, 0, FALSE },
   { "\x80\xbf", -1, 0, FALSE },
   { "\x80\xbf\x80", -1, 0, FALSE },
   { "\x80\xbf\x80\xbf", -1, 0, FALSE },
@@ -282,6 +282,14 @@ do_test (gconstpointer d)
 
   g_assert (result == test->valid);
   g_assert (end - test->text == test->offset);
+
+  if (test->max_len < 0)
+    {
+      result = g_utf8_validate (test->text, strlen (test->text), &end);
+
+      g_assert (result == test->valid);
+      g_assert (end - test->text == test->offset);
+    }
 }
 
 int

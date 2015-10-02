@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -44,6 +42,7 @@ G_BEGIN_DECLS
  * @G_CONVERT_ERROR_PARTIAL_INPUT: Partial character sequence at end of input.
  * @G_CONVERT_ERROR_BAD_URI: URI is invalid.
  * @G_CONVERT_ERROR_NOT_ABSOLUTE_PATH: Pathname is not an absolute path.
+ * @G_CONVERT_ERROR_NO_MEMORY: No memory available. Since: 2.40
  *
  * Error codes returned by character set conversion routines.
  */
@@ -54,7 +53,8 @@ typedef enum
   G_CONVERT_ERROR_FAILED,
   G_CONVERT_ERROR_PARTIAL_INPUT,
   G_CONVERT_ERROR_BAD_URI,
-  G_CONVERT_ERROR_NOT_ABSOLUTE_PATH
+  G_CONVERT_ERROR_NOT_ABSOLUTE_PATH,
+  G_CONVERT_ERROR_NO_MEMORY
 } GConvertError;
 
 /**
@@ -69,11 +69,10 @@ GLIB_AVAILABLE_IN_ALL
 GQuark g_convert_error_quark (void);
 
 /**
- * GIconv:
+ * GIConv:
  *
- * The <structname>GIConv</structname> struct wraps an
- * iconv() conversion descriptor. It contains private data
- * and should only be accessed using the following functions.
+ * The GIConv struct wraps an iconv() conversion descriptor. It contains
+ * private data and should only be accessed using the following functions.
  */
 typedef struct _GIConv *GIConv;
 
@@ -167,6 +166,7 @@ gchar *g_filename_display_basename (const gchar *filename) G_GNUC_MALLOC;
 GLIB_AVAILABLE_IN_ALL
 gchar **g_uri_list_extract_uris (const gchar *uri_list) G_GNUC_MALLOC;
 
+#ifndef __GTK_DOC_IGNORE__
 #ifdef G_OS_WIN32
 #define g_filename_to_utf8   g_filename_to_utf8_utf8
 #define g_filename_from_utf8 g_filename_from_utf8_utf8
@@ -194,6 +194,7 @@ gchar *g_filename_to_uri_utf8    (const gchar  *filename,
                                   const gchar  *hostname,
                                   GError      **error) G_GNUC_MALLOC;
 #endif
+#endif /* __GTK_DOC_IGNORE__ */
 
 G_END_DECLS
 

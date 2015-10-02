@@ -12,9 +12,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 /*
@@ -100,20 +98,20 @@ gchar*          g_win32_get_package_installation_subdirectory (const gchar *pack
 GLIB_AVAILABLE_IN_ALL
 gchar*          g_win32_get_package_installation_directory_of_module (gpointer hmodule);
 
-GLIB_AVAILABLE_IN_ALL
+GLIB_DEPRECATED_IN_2_44_FOR(g_win32_check_windows_version)
 guint		g_win32_get_windows_version (void);
 
 GLIB_AVAILABLE_IN_ALL
 gchar*          g_win32_locale_filename_from_utf8 (const gchar *utf8filename);
 
+GLIB_AVAILABLE_IN_2_40
+gchar **        g_win32_get_command_line (void);
+
 /* As of GLib 2.14 we only support NT-based Windows */
 #define G_WIN32_IS_NT_BASED() TRUE
 #define G_WIN32_HAVE_WIDECHAR_API() TRUE
 
-G_END_DECLS
-
-#endif	 /* G_PLATFORM_WIN32 */
-
+#ifndef __GTK_DOC_IGNORE__
 #ifdef G_OS_WIN32
 #ifdef _WIN64
 #define g_win32_get_package_installation_directory g_win32_get_package_installation_directory_utf8
@@ -127,7 +125,35 @@ GLIB_AVAILABLE_IN_ALL
 gchar *g_win32_get_package_installation_subdirectory_utf8 (const gchar *package,
                                                            const gchar *dll_name,
                                                            const gchar *subdir);
-
 #endif /* G_OS_WIN32 */
+#endif /* __GTK_DOC_IGNORE__ */
+
+/**
+ * GWin32OSType:
+ * @G_WIN32_OS_ANY: The running system can be a workstation or a server edition of
+ *  Windows.  The type of the running system is therefore not checked.
+ * @G_WIN32_OS_WORKSTATION: The running system is a workstation edition of Windows,
+ *  such as Windows 7 Professional.
+ * @G_WIN32_OS_SERVER: The running system is a server edition of Windows, such as
+ *  Windows Server 2008 R2.
+ *
+ * Type of Windows edition to check for at run-time.
+ **/
+typedef enum
+{
+  G_WIN32_OS_ANY,
+  G_WIN32_OS_WORKSTATION,
+  G_WIN32_OS_SERVER,
+} GWin32OSType;
+
+GLIB_AVAILABLE_IN_2_44
+gboolean g_win32_check_windows_version (const gint major,
+                                        const gint minor,
+                                        const gint spver,
+                                        const GWin32OSType os_type);
+
+G_END_DECLS
+
+#endif	 /* G_PLATFORM_WIN32 */
 
 #endif /* __G_WIN32_H__ */

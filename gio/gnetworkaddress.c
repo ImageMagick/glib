@@ -15,9 +15,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General
- * Public License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Public License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -101,15 +99,7 @@ g_network_address_finalize (GObject *object)
 
   g_free (addr->priv->hostname);
   g_free (addr->priv->scheme);
-
-  if (addr->priv->sockaddrs)
-    {
-      GList *a;
-
-      for (a = addr->priv->sockaddrs; a; a = a->next)
-        g_object_unref (a->data);
-      g_list_free (addr->priv->sockaddrs);
-    }
+  g_list_free_full (addr->priv->sockaddrs, g_object_unref);
 
   G_OBJECT_CLASS (g_network_address_parent_class)->finalize (object);
 }
@@ -183,8 +173,7 @@ g_network_address_set_property (GObject      *object,
       break;
 
     case PROP_SCHEME:
-      if (addr->priv->scheme)
-        g_free (addr->priv->scheme);
+      g_free (addr->priv->scheme);
       addr->priv->scheme = g_value_dup_string (value);
       break;
 
@@ -249,29 +238,17 @@ g_network_address_set_addresses (GNetworkAddress *addr,
 static gboolean
 g_network_address_parse_sockaddr (GNetworkAddress *addr)
 {
-  struct addrinfo hints, *res = NULL;
   GSocketAddress *sockaddr;
-  gchar port[32];
 
-  memset (&hints, 0, sizeof (hints));
-  hints.ai_socktype = SOCK_STREAM;
-  hints.ai_flags = AI_NUMERICHOST
-#ifdef AI_NUMERICSERV
-    | AI_NUMERICSERV
-#endif
-    ;
-  g_snprintf (port, sizeof (port), "%u", addr->priv->port);
-
-  if (getaddrinfo (addr->priv->hostname, port, &hints, &res) != 0)
+  sockaddr = g_inet_socket_address_new_from_string (addr->priv->hostname,
+                                                    addr->priv->port);
+  if (sockaddr)
+    {
+      addr->priv->sockaddrs = g_list_prepend (addr->priv->sockaddrs, sockaddr);
+      return TRUE;
+    }
+  else
     return FALSE;
-
-  sockaddr = g_socket_address_new_from_native (res->ai_addr, res->ai_addrlen);
-  freeaddrinfo (res);
-  if (!sockaddr || !G_IS_INET_SOCKET_ADDRESS (sockaddr))
-    return FALSE;
-
-  addr->priv->sockaddrs = g_list_prepend (addr->priv->sockaddrs, sockaddr);
-  return TRUE;
 }
 
 /**
@@ -282,7 +259,13 @@ g_network_address_parse_sockaddr (GNetworkAddress *addr)
  * Creates a new #GSocketConnectable for connecting to the given
  * @hostname and @port.
  *
- * Return value: (transfer full) (type GNetworkAddress): the new #GNetworkAddress
+ * Note that depending on the configuration of the machine, a
+ * @hostname of `localhost` may refer to the IPv4 loopback address
+ * only, or to both IPv4 and IPv6; use
+ * g_network_address_new_loopback() to create a #GNetworkAddress that
+ * is guaranteed to resolve to both addresses.
+ *
+ * Returns: (transfer full) (type GNetworkAddress): the new #GNetworkAddress
  *
  * Since: 2.22
  */
@@ -294,6 +277,45 @@ g_network_address_new (const gchar *hostname,
                        "hostname", hostname,
                        "port", port,
                        NULL);
+}
+
+/**
+ * g_network_address_new_loopback:
+ * @port: the port
+ *
+ * Creates a new #GSocketConnectable for connecting to the local host
+ * over a loopback connection to the given @port. This is intended for
+ * use in connecting to local services which may be running on IPv4 or
+ * IPv6.
+ *
+ * The connectable will return IPv4 and IPv6 loopback addresses,
+ * regardless of how the host resolves `localhost`. By contrast,
+ * g_network_address_new() will often only return an IPv4 address when
+ * resolving `localhost`, and an IPv6 address for `localhost6`.
+ *
+ * g_network_address_get_hostname() will always return `localhost` for
+ * #GNetworkAddresses created with this constructor.
+ *
+ * Returns: (transfer full) (type GNetworkAddress): the new #GNetworkAddress
+ *
+ * Since: 2.44
+ */
+GSocketConnectable *
+g_network_address_new_loopback (guint16 port)
+{
+  GNetworkAddress *addr;
+  GList *addrs = NULL;
+
+  addr = g_object_new (G_TYPE_NETWORK_ADDRESS,
+                       "hostname", "localhost",
+                       "port", port,
+                       NULL);
+
+  addrs = g_list_append (addrs, g_inet_address_new_loopback (AF_INET6));
+  addrs = g_list_append (addrs, g_inet_address_new_loopback (AF_INET));
+  g_network_address_set_addresses (addr, addrs, 0);
+
+  return G_SOCKET_CONNECTABLE (addr);
 }
 
 /**
@@ -324,7 +346,8 @@ g_network_address_new (const gchar *hostname,
  * is deprecated, because it depends on the contents of /etc/services,
  * which is generally quite sparse on platforms other than Linux.)
  *
- * Return value: (transfer full): the new #GNetworkAddress, or %NULL on error
+ * Returns: (transfer full) (type GNetworkAddress): the new
+ *   #GNetworkAddress, or %NULL on error
  *
  * Since: 2.22
  */
@@ -467,7 +490,7 @@ _g_uri_parse_authority (const char  *uri,
 		        char       **userinfo)
 {
   char *tmp_str;
-  const char *start, *p;
+  const char *start, *p, *at, *delim;
   char c;
 
   g_return_val_if_fail (uri != NULL, FALSE);
@@ -507,7 +530,14 @@ _g_uri_parse_authority (const char  *uri,
 
   start += 2;
 
-  if (strchr (start, '@') != NULL)
+  /* check if the @ sign is part of the authority before attempting to
+   * decode the userinfo */
+  delim = strpbrk (start, "/?#[]");
+  at = strchr (start, '@');
+  if (at && delim && at > delim)
+    at = NULL;
+
+  if (at != NULL)
     {
       /* Decode userinfo:
        * userinfo      = *( unreserved / pct-encoded / sub-delims / ":" )
@@ -735,7 +765,8 @@ _g_uri_from_authority (const gchar *protocol,
  * g_network_address_parse() allows #GSocketClient to determine
  * when to use application-specific proxy protocols.
  *
- * Return value: (transfer full): the new #GNetworkAddress, or %NULL on error
+ * Returns: (transfer full) (type GNetworkAddress): the new
+ *   #GNetworkAddress, or %NULL on error
  *
  * Since: 2.26
  */
@@ -781,7 +812,7 @@ g_network_address_parse_uri (const gchar  *uri,
  * Gets @addr's hostname. This might be either UTF-8 or ASCII-encoded,
  * depending on what @addr was created with.
  *
- * Return value: @addr's hostname
+ * Returns: @addr's hostname
  *
  * Since: 2.22
  */
@@ -799,7 +830,7 @@ g_network_address_get_hostname (GNetworkAddress *addr)
  *
  * Gets @addr's port number
  *
- * Return value: @addr's port (which may be 0)
+ * Returns: @addr's port (which may be 0)
  *
  * Since: 2.22
  */
@@ -817,7 +848,7 @@ g_network_address_get_port (GNetworkAddress *addr)
  *
  * Gets @addr's scheme
  *
- * Return value: @addr's scheme (%NULL if not built from URI)
+ * Returns: @addr's scheme (%NULL if not built from URI)
  *
  * Since: 2.26
  */

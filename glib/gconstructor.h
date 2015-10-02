@@ -34,13 +34,13 @@
   static void _func(void); \
   static int _func ## _wrapper(void) { _func(); return 0; } \
   __pragma(section(".CRT$XCU",read)) \
-  __declspec(allocate(".CRT$XCU")) static int (* _array ## _func)(void) = _func ## _wrapper;
+  __declspec(allocate(".CRT$XCU")) void (* _array ## _func)(void) = _func ## _wrapper;
 
 #define G_DEFINE_DESTRUCTOR(_func) \
   static void _func(void); \
   static int _func ## _constructor(void) { atexit (_func); return 0; } \
   __pragma(section(".CRT$XCU",read)) \
-  __declspec(allocate(".CRT$XCU")) static int (* _array ## _func)(void) = _func ## _constructor;
+  __declspec(allocate(".CRT$XCU")) void (* _array ## _func)(void) = _func ## _constructor;
 
 #elif defined (_MSC_VER)
 
@@ -55,14 +55,14 @@
 #define G_DEFINE_CONSTRUCTOR(_func) \
   static void _func(void); \
   static int _func ## _wrapper(void) { _func(); return 0; } \
-  __declspec(allocate(".CRT$XCU")) static int (*p)(void) = _func ## _wrapper;
+  __declspec(allocate(".CRT$XCU")) void (*p)(void) = _func ## _wrapper;
 
 #define G_DEFINE_DESTRUCTOR_PRAGMA_ARGS(_func) \
   section(".CRT$XCU",read)
 #define G_DEFINE_DESTRUCTOR(_func) \
   static void _func(void); \
   static int _func ## _constructor(void) { atexit (_func); return 0; } \
-  __declspec(allocate(".CRT$XCU")) static int (* _array ## _func)(void) = _func ## _constructor;
+  __declspec(allocate(".CRT$XCU")) void (* _array ## _func)(void) = _func ## _constructor;
 
 #elif defined(__SUNPRO_C)
 

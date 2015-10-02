@@ -4363,12 +4363,12 @@ g_type_init (void)
 #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(gobject_init_ctor)
 #endif
-G_DEFINE_CONSTRUCTOR(gobject_init_ctor)
+/* G_DEFINE_CONSTRUCTOR(gobject_init_ctor) */
 #else
 # error Your platform/compiler is missing constructor support
 #endif
 
-static void
+void
 gobject_init_ctor (void)
 {
   const gchar *env_string;

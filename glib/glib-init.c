@@ -236,55 +236,29 @@ glib_init (void)
   g_quark_init ();
 }
 
-#if defined (G_OS_WIN32)
+HMODULE glib_dll = NULL;
 
-BOOL WINAPI DllMain (HINSTANCE hinstDLL,
-                     DWORD     fdwReason,
-                     LPVOID    lpvReserved);
-
-HMODULE glib_dll;
-
-BOOL WINAPI
-DllMain (HINSTANCE hinstDLL,
-         DWORD     fdwReason,
-         LPVOID    lpvReserved)
-{
-  switch (fdwReason)
-    {
-    case DLL_PROCESS_ATTACH:
-      glib_dll = hinstDLL;
-      g_clock_win32_init ();
-#ifdef THREADS_WIN32
-      g_thread_win32_init ();
-#endif
-      glib_init ();
-      break;
-
-    case DLL_THREAD_DETACH:
-#ifdef THREADS_WIN32
-      g_thread_win32_thread_detach ();
-#endif
-      break;
-
-    default:
-      /* do nothing */
-      ;
-    }
-
-  return TRUE;
-}
-
-#elif defined (G_HAS_CONSTRUCTORS)
+#if defined (G_HAS_CONSTRUCTORS)
 
 #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(glib_init_ctor)
 #endif
 G_DEFINE_CONSTRUCTOR(glib_init_ctor)
+G_DEFINE_DESTRUCTOR(glib_init_dtor)
 
 static void
 glib_init_ctor (void)
 {
-  glib_init ();
+  g_clock_win32_init();
+  g_thread_win32_init();
+  glib_init();
+  gobject_init_ctor();
+}
+
+static void
+glib_init_dtor(void)
+{
+  g_thread_win32_thread_detach();
 }
 
 #else

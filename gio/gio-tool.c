@@ -174,7 +174,7 @@ attribute_flags_to_string (GFileAttributeInfoFlags flags)
         {
           if (!first)
             g_string_append (s, ", ");
-          g_string_append (s, gettext (flag_descr[i].descr));
+          g_string_append (s, /* gettext */ (flag_descr[i].descr));
           first = FALSE;
         }
     }
@@ -247,6 +247,7 @@ usage (void)
   exit (1);
 }
 
+/*
 int
 main (int argc, char **argv)
 {
@@ -332,3 +333,4 @@ main (int argc, char **argv)
 
   return 1;
 }
+*/

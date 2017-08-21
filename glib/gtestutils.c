@@ -54,6 +54,9 @@
 #include "gspawn.h"
 #include "glib-private.h"
 
+#if (_MSC_VER < 1600)
+#pragma optimize("",off)
+#endif
 
 /**
  * SECTION:testing
@@ -3551,3 +3554,6 @@ g_test_get_filename (GTestFileType  file_type,
  * Since: 2.16
  **/
 /* --- macros docs END --- */
+#if (_MSC_VER < 1600)
+#pragma optimize("",on)
+#endif

@@ -1017,8 +1017,10 @@ _g_io_modules_ensure_extension_points_registered (void)
       ep = g_io_extension_point_register (G_NETWORK_MONITOR_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_NETWORK_MONITOR);
 
+      /*
       ep = g_io_extension_point_register (G_NOTIFICATION_BACKEND_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_NOTIFICATION_BACKEND);
+      */
     }
   
   G_UNLOCK (registered_extensions);

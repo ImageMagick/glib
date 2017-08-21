@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSimpleAction: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GAction.html" title="GAction">
 <link rel="next" href="GPropertyAction.html" title="GPropertyAction">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -37,7 +37,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSimpleAction.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -88,7 +88,7 @@
 </div>
 <div class="refsect1">
 <a name="GSimpleAction.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -129,7 +129,7 @@
 </div>
 <div class="refsect1">
 <a name="GSimpleAction.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -151,7 +151,7 @@
 </div>
 <div class="refsect1">
 <a name="GSimpleAction.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -184,7 +184,7 @@ GSimpleAction implements
 <p>A <a class="link" href="GSimpleAction.html" title="GSimpleAction"><span class="type">GSimpleAction</span></a> is the obvious simple implementation of the <a class="link" href="GAction.html" title="GAction"><span class="type">GAction</span></a>
 interface. This is the easiest way to create an action for purposes of
 adding it to a <a class="link" href="GSimpleActionGroup.html" title="GSimpleActionGroup"><span class="type">GSimpleActionGroup</span></a>.</p>
-<p>See also <a href="http://developer.gnome.org/gtk3/GtkAction.html#GtkAction-struct"><span class="type">GtkAction</span></a>.</p>
+<p>See also <span class="type">GtkAction</span>.</p>
 </div>
 <div class="refsect1">
 <a name="GSimpleAction.functions_details"></a><h2>Functions</h2>
@@ -196,8 +196,8 @@ g_simple_action_new (<em class="parameter"><code>const <a href="../glib-Basic-Ty
 <p>Creates a new action.</p>
 <p>The created action is stateless.  See <a class="link" href="GSimpleAction.html#g-simple-action-new-stateful" title="g_simple_action_new_stateful ()"><code class="function">g_simple_action_new_stateful()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-action-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -212,13 +212,13 @@ g_simple_action_new (<em class="parameter"><code>const <a href="../glib-Basic-Ty
 <tr>
 <td class="parameter_name"><p>parameter_type</p></td>
 <td class="parameter_description"><p> the type of parameter to the activate function. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.2.7"></a><h4>Returns</h4>
+<a name="g-simple-action-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GSimpleAction.html" title="GSimpleAction"><span class="type">GSimpleAction</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -237,8 +237,8 @@ must have the same <a href="../glib-GVariantType.html#GVariantType"><span class=
 <p>If the <em class="parameter"><code>state</code></em>
  GVariant is floating, it is consumed.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.3.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-action-new-stateful.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -253,7 +253,7 @@ must have the same <a href="../glib-GVariantType.html#GVariantType"><span class=
 <tr>
 <td class="parameter_name"><p>parameter_type</p></td>
 <td class="parameter_description"><p> the type of the parameter to the activate function. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state</p></td>
@@ -264,7 +264,7 @@ must have the same <a href="../glib-GVariantType.html#GVariantType"><span class=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.3.8"></a><h4>Returns</h4>
+<a name="g-simple-action-new-stateful.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GSimpleAction.html" title="GSimpleAction"><span class="type">GSimpleAction</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -281,8 +281,8 @@ have its state changed from outside callers.</p>
 <p>This should only be called by the implementor of the action.  Users
 of the action should not attempt to modify its enabled flag.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.4.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-action-set-enabled.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -319,8 +319,8 @@ request the change.</p>
 <p>If the <em class="parameter"><code>value</code></em>
  GVariant is floating, it is consumed.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.5.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-action-set-state.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -352,8 +352,8 @@ g_simple_action_set_state_hint (<em class="parameter"><code><a class="link" href
 <p>See <a class="link" href="GAction.html#g-action-get-state-hint" title="g_action_get_state_hint ()"><code class="function">g_action_get_state_hint()</code></a> for more information about
 action state hints.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.11.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-action-set-state-hint.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -368,7 +368,7 @@ action state hints.</p>
 <tr>
 <td class="parameter_name"><p>state_hint</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> representing the state hint. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -457,8 +457,8 @@ type, the default is to forward them directly to
 <a class="link" href="GSimpleAction.html#GSimpleAction-change-state" title="The “change-state” signal"><span class="type">“change-state”</span></a>.  This should allow almost all users
 of <a class="link" href="GSimpleAction.html" title="GSimpleAction"><span class="type">GSimpleAction</span></a> to connect only one handler or the other.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.14.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GSimpleAction-activate.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -473,7 +473,7 @@ of <a class="link" href="GSimpleAction.html" title="GSimpleAction"><span class="
 <tr>
 <td class="parameter_name"><p>parameter</p></td>
 <td class="parameter_description"><p> the parameter to the activation. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -521,19 +521,19 @@ call <a class="link" href="GSimpleAction.html#g-simple-action-set-state" title="
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">change_volume_state</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GSimpleAction</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">action</span><span class="symbol">,</span>
-<span class="normal">                     </span><span class="usertype">GVariant</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">value</span><span class="symbol">,</span>
-<span class="normal">                     </span><span class="usertype">gpointer</span><span class="normal">       user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">gint</span><span class="normal"> requested</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
+<span class="function">change_volume_state</span> <span class="gtkdoc opt">(</span>GSimpleAction <span class="gtkdoc opt">*</span>action<span class="gtkdoc opt">,</span>
+                     GVariant      <span class="gtkdoc opt">*</span>value<span class="gtkdoc opt">,</span>
+                     gpointer       user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  gint requested<span class="gtkdoc opt">;</span>
 
-<span class="normal">  requested </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="../glib-GVariant.html#g-variant-get-int32">g_variant_get_int32</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">value</span><span class="symbol">);</span>
+  requested <span class="gtkdoc opt">=</span> <span class="function"><a href="../glib-GVariant.html#g-variant-get-int32">g_variant_get_int32</a></span> <span class="gtkdoc opt">(</span>value<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="comment">// Volume only goes from 0 to 10</span>
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="number">0</span><span class="normal"> </span><span class="symbol">&lt;=</span><span class="normal"> requested </span><span class="symbol">&amp;&amp;</span><span class="normal"> requested </span><span class="symbol">&lt;=</span><span class="normal"> </span><span class="number">10</span><span class="symbol">)</span>
-<span class="normal">    </span><span class="function"><a href="GSimpleAction.html#g-simple-action-set-state">g_simple_action_set_state</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">action</span><span class="symbol">,</span><span class="normal"> value</span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="gtkdoc slc">// Volume only goes from 0 to 10</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="number">0</span> <span class="gtkdoc opt">&lt;=</span> requested <span class="gtkdoc opt">&amp;&amp;</span> requested <span class="gtkdoc opt">&lt;=</span> <span class="number">10</span><span class="gtkdoc opt">)</span>
+    <span class="function"><a href="GSimpleAction.html#g-simple-action-set-state">g_simple_action_set_state</a></span> <span class="gtkdoc opt">(</span>action<span class="gtkdoc opt">,</span> value<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -543,8 +543,8 @@ call <a class="link" href="GSimpleAction.html#g-simple-action-set-state" title="
 <p>The handler need not set the state to the requested value.
 It could set it to any value at all, or take some other action.</p>
 <div class="refsect3">
-<a name="id-1.4.24.8.14.3.11"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GSimpleAction-change-state.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -559,7 +559,7 @@ It could set it to any value at all, or take some other action.</p>
 <tr>
 <td class="parameter_name"><p>value</p></td>
 <td class="parameter_description"><p> the requested value for the state. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -575,6 +575,6 @@ It could set it to any value at all, or take some other action.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -328,14 +328,14 @@ typedef enum {
  *   by file renames (moves) and send a single G_FILE_MONITOR_EVENT_MOVED
  *   event instead (NB: not supported on all backends; the default
  *   behaviour -without specifying this flag- is to send single DELETED
- *   and CREATED events).  Deprecated since 2.44: use
+ *   and CREATED events).  Deprecated since 2.46: use
  *   %G_FILE_MONITOR_WATCH_MOVES instead.
  * @G_FILE_MONITOR_WATCH_HARD_LINKS: Watch for changes to the file made
  *   via another hard link. Since 2.36.
  * @G_FILE_MONITOR_WATCH_MOVES: Watch for rename operations on a
  *   monitored directory.  This causes %G_FILE_MONITOR_EVENT_RENAMED,
  *   %G_FILE_MONITOR_EVENT_MOVED_IN and %G_FILE_MONITOR_EVENT_MOVED_OUT
- *   events to be emitted when possible.  Since: 2.44.
+ *   events to be emitted when possible.  Since: 2.46.
  *
  * Flags used to set what a #GFileMonitor will watch for.
  */
@@ -403,13 +403,13 @@ typedef enum {
  *   (deprecated) %G_FILE_MONITOR_SEND_MOVED flag is set
  * @G_FILE_MONITOR_EVENT_RENAMED: the file was renamed within the
  *   current directory -- only sent if the %G_FILE_MONITOR_WATCH_MOVES
- *   flag is set.  Since: 2.44.
+ *   flag is set.  Since: 2.46.
  * @G_FILE_MONITOR_EVENT_MOVED_IN: the file was moved into the
  *   monitored directory from another location -- only sent if the
- *   %G_FILE_MONITOR_WATCH_MOVES flag is set.  Since: 2.44.
+ *   %G_FILE_MONITOR_WATCH_MOVES flag is set.  Since: 2.46.
  * @G_FILE_MONITOR_EVENT_MOVED_OUT: the file was moved out of the
  *   monitored directory to another location -- only sent if the
- *   %G_FILE_MONITOR_WATCH_MOVES flag is set.  Since: 2.44
+ *   %G_FILE_MONITOR_WATCH_MOVES flag is set.  Since: 2.46
  *
  * Specifies what type of event a monitor event is.
  **/
@@ -495,6 +495,7 @@ typedef enum {
  *     returned %G_IO_ERROR_FAILED. Now they should all return the same
  *     value, which has this more logical name. Since 2.44.
  * @G_IO_ERROR_NOT_CONNECTED: Transport endpoint is not connected. Since 2.44
+ * @G_IO_ERROR_MESSAGE_TOO_LARGE: Message too large. Since 2.48.
  *
  * Error codes returned by GIO functions.
  *
@@ -559,7 +560,8 @@ typedef enum {
   G_IO_ERROR_PROXY_NOT_ALLOWED,
   G_IO_ERROR_BROKEN_PIPE,
   G_IO_ERROR_CONNECTION_CLOSED = G_IO_ERROR_BROKEN_PIPE,
-  G_IO_ERROR_NOT_CONNECTED
+  G_IO_ERROR_NOT_CONNECTED,
+  G_IO_ERROR_MESSAGE_TOO_LARGE
 } GIOErrorEnum;
 
 
@@ -950,6 +952,8 @@ typedef enum
  * @G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT: Allow another message bus connection to claim the name.
  * @G_BUS_NAME_OWNER_FLAGS_REPLACE: If another message bus connection owns the name and have
  * specified #G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT, then take the name from the other connection.
+ * @G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE: If another message bus connection owns the name, immediately
+ * return an error from g_bus_own_name() rather than entering the waiting queue for that name. (Since 2.54)
  *
  * Flags used in g_bus_own_name().
  *
@@ -959,8 +963,11 @@ typedef enum
 {
   G_BUS_NAME_OWNER_FLAGS_NONE = 0,                    /*< nick=none >*/
   G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT = (1<<0),  /*< nick=allow-replacement >*/
-  G_BUS_NAME_OWNER_FLAGS_REPLACE = (1<<1)            /*< nick=replace >*/
+  G_BUS_NAME_OWNER_FLAGS_REPLACE = (1<<1),           /*< nick=replace >*/
+  G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE = (1<<2)       /*< nick=do-not-queue >*/
 } GBusNameOwnerFlags;
+/* When adding new flags, their numeric values must currently match those
+ * used in the D-Bus Specification. */
 
 /**
  * GBusNameWatcherFlags:
@@ -984,14 +991,14 @@ typedef enum
  * @G_DBUS_PROXY_FLAGS_NONE: No flags set.
  * @G_DBUS_PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES: Don't load properties.
  * @G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS: Don't connect to signals on the remote object.
- * @G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START: If not set and the proxy if for a well-known name,
- * then request the bus to launch an owner for the name if no-one owns the name. This flag can
- * only be used in proxies for well-known names.
- * @G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES: If set, the property value for any <emphasis>invalidated property</emphasis> will be (asynchronously) retrieved upon receiving the <ulink url="http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-properties">PropertiesChanged</ulink> D-Bus signal and the property will not cause emission of the #GDBusProxy::g-properties-changed signal. When the value is received the #GDBusProxy::g-properties-changed signal is emitted for the property along with the retrieved value. Since 2.32.
+ * @G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START: If the proxy is for a well-known name,
+ * do not ask the bus to launch an owner during proxy initialization or a method call.
+ * This flag is only meaningful in proxies for well-known names.
+ * @G_DBUS_PROXY_FLAGS_GET_INVALIDATED_PROPERTIES: If set, the property value for any __invalidated property__ will be (asynchronously) retrieved upon receiving the [`PropertiesChanged`](http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-properties) D-Bus signal and the property will not cause emission of the #GDBusProxy::g-properties-changed signal. When the value is received the #GDBusProxy::g-properties-changed signal is emitted for the property along with the retrieved value. Since 2.32.
  * @G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START_AT_CONSTRUCTION: If the proxy is for a well-known name,
  * do not ask the bus to launch an owner during proxy initialization, but allow it to be
  * autostarted by a method call. This flag is only meaningful in proxies for well-known names,
- * and only if %G_DBUS_PROXY_FLAGS_DO_NOT_AUTOSTART is not also specified.
+ * and only if %G_DBUS_PROXY_FLAGS_DO_NOT_AUTO_START is not also specified.
  *
  * Flags used when constructing an instance of a #GDBusProxy derived class.
  *
@@ -1396,11 +1403,11 @@ typedef enum
 /**
  * GCredentialsType:
  * @G_CREDENTIALS_TYPE_INVALID: Indicates an invalid native credential type.
- * @G_CREDENTIALS_TYPE_LINUX_UCRED: The native credentials type is a <type>struct ucred</type>.
- * @G_CREDENTIALS_TYPE_FREEBSD_CMSGCRED: The native credentials type is a <type>struct cmsgcred</type>.
- * @G_CREDENTIALS_TYPE_OPENBSD_SOCKPEERCRED: The native credentials type is a <type>struct sockpeercred</type>. Added in 2.30.
- * @G_CREDENTIALS_TYPE_SOLARIS_UCRED: The native credentials type is a <type>ucred_t</type>. Added in 2.40.
- * @G_CREDENTIALS_TYPE_NETBSD_UNPCBID: The native credentials type is a <type>struct unpcbid</type>.
+ * @G_CREDENTIALS_TYPE_LINUX_UCRED: The native credentials type is a struct ucred.
+ * @G_CREDENTIALS_TYPE_FREEBSD_CMSGCRED: The native credentials type is a struct cmsgcred.
+ * @G_CREDENTIALS_TYPE_OPENBSD_SOCKPEERCRED: The native credentials type is a struct sockpeercred. Added in 2.30.
+ * @G_CREDENTIALS_TYPE_SOLARIS_UCRED: The native credentials type is a ucred_t. Added in 2.40.
+ * @G_CREDENTIALS_TYPE_NETBSD_UNPCBID: The native credentials type is a struct unpcbid.
  *
  * Enumeration describing different kinds of native credential types.
  *
@@ -1452,7 +1459,7 @@ typedef enum
  *     launching process to the primary instance. Set this flag if your
  *     application is expected to behave differently depending on certain
  *     environment variables. For instance, an editor might be expected
- *     to use the <envar>GIT_COMMITTER_NAME</envar> environment variable
+ *     to use the `GIT_COMMITTER_NAME` environment variable
  *     when editing a git commit message. The environment is available
  *     to the #GApplication::command-line signal handler, via
  *     g_application_command_line_getenv().
@@ -1462,6 +1469,9 @@ typedef enum
  *     owner of the application ID nor does it check if an existing
  *     owner already exists.  Everything occurs in the local process.
  *     Since: 2.30.
+ * @G_APPLICATION_CAN_OVERRIDE_APP_ID: Allow users to override the
+ *     application ID from the command line with `--gapplication-app-id`.
+ *     Since: 2.48
  *
  * Flags used to define the behaviour of a #GApplication.
  *
@@ -1477,7 +1487,9 @@ typedef enum
   G_APPLICATION_HANDLES_COMMAND_LINE = (1 << 3),
   G_APPLICATION_SEND_ENVIRONMENT    =  (1 << 4),
 
-  G_APPLICATION_NON_UNIQUE =           (1 << 5)
+  G_APPLICATION_NON_UNIQUE =           (1 << 5),
+
+  G_APPLICATION_CAN_OVERRIDE_APP_ID =  (1 << 6)
 } GApplicationFlags;
 
 /**

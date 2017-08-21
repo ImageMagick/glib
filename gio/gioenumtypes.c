@@ -4,7 +4,6 @@
 #include "config.h"
 #include "gioenumtypes.h"
 #include <gio.h>
-
 /* enumerations from "gioenums.h" */
 GType
 g_app_info_create_flags_get_type (void)
@@ -27,7 +26,6 @@ g_app_info_create_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_converter_flags_get_type (void)
 {
@@ -48,7 +46,6 @@ g_converter_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_converter_result_get_type (void)
 {
@@ -70,7 +67,6 @@ g_converter_result_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_data_stream_byte_order_get_type (void)
 {
@@ -91,7 +87,6 @@ g_data_stream_byte_order_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_data_stream_newline_type_get_type (void)
 {
@@ -113,7 +108,6 @@ g_data_stream_newline_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_attribute_type_get_type (void)
 {
@@ -141,7 +135,6 @@ g_file_attribute_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_attribute_info_flags_get_type (void)
 {
@@ -162,7 +155,6 @@ g_file_attribute_info_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_attribute_status_get_type (void)
 {
@@ -183,7 +175,6 @@ g_file_attribute_status_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_query_info_flags_get_type (void)
 {
@@ -203,7 +194,6 @@ g_file_query_info_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_create_flags_get_type (void)
 {
@@ -224,7 +214,6 @@ g_file_create_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_measure_flags_get_type (void)
 {
@@ -246,7 +235,6 @@ g_file_measure_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_mount_mount_flags_get_type (void)
 {
@@ -265,7 +253,6 @@ g_mount_mount_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_mount_unmount_flags_get_type (void)
 {
@@ -285,7 +272,6 @@ g_mount_unmount_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_drive_start_flags_get_type (void)
 {
@@ -304,7 +290,6 @@ g_drive_start_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_drive_start_stop_type_get_type (void)
 {
@@ -327,7 +312,6 @@ g_drive_start_stop_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_copy_flags_get_type (void)
 {
@@ -352,7 +336,6 @@ g_file_copy_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_monitor_flags_get_type (void)
 {
@@ -375,7 +358,6 @@ g_file_monitor_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_type_get_type (void)
 {
@@ -400,7 +382,6 @@ g_file_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_filesystem_preview_type_get_type (void)
 {
@@ -421,7 +402,6 @@ g_filesystem_preview_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_file_monitor_event_get_type (void)
 {
@@ -450,7 +430,6 @@ g_file_monitor_event_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_io_error_enum_get_type (void)
 {
@@ -506,6 +485,7 @@ g_io_error_enum_get_type (void)
         { G_IO_ERROR_BROKEN_PIPE, "G_IO_ERROR_BROKEN_PIPE", "broken-pipe" },
         { G_IO_ERROR_CONNECTION_CLOSED, "G_IO_ERROR_CONNECTION_CLOSED", "connection-closed" },
         { G_IO_ERROR_NOT_CONNECTED, "G_IO_ERROR_NOT_CONNECTED", "not-connected" },
+        { G_IO_ERROR_MESSAGE_TOO_LARGE, "G_IO_ERROR_MESSAGE_TOO_LARGE", "message-too-large" },
         { 0, NULL, NULL }
       };
       GType g_define_type_id =
@@ -515,7 +495,6 @@ g_io_error_enum_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_ask_password_flags_get_type (void)
 {
@@ -538,7 +517,6 @@ g_ask_password_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_password_save_get_type (void)
 {
@@ -559,7 +537,6 @@ g_password_save_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_mount_operation_result_get_type (void)
 {
@@ -580,7 +557,6 @@ g_mount_operation_result_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_output_stream_splice_flags_get_type (void)
 {
@@ -601,7 +577,6 @@ g_output_stream_splice_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_io_stream_splice_flags_get_type (void)
 {
@@ -623,7 +598,6 @@ g_io_stream_splice_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_emblem_origin_get_type (void)
 {
@@ -645,7 +619,6 @@ g_emblem_origin_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_resolver_error_get_type (void)
 {
@@ -666,7 +639,6 @@ g_resolver_error_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_resolver_record_type_get_type (void)
 {
@@ -689,7 +661,6 @@ g_resolver_record_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_resource_error_get_type (void)
 {
@@ -709,7 +680,6 @@ g_resource_error_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_resource_flags_get_type (void)
 {
@@ -729,7 +699,6 @@ g_resource_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_resource_lookup_flags_get_type (void)
 {
@@ -748,7 +717,6 @@ g_resource_lookup_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_socket_family_get_type (void)
 {
@@ -770,7 +738,6 @@ g_socket_family_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_socket_type_get_type (void)
 {
@@ -792,7 +759,6 @@ g_socket_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_socket_msg_flags_get_type (void)
 {
@@ -814,7 +780,6 @@ g_socket_msg_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_socket_protocol_get_type (void)
 {
@@ -837,7 +802,6 @@ g_socket_protocol_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_zlib_compressor_format_get_type (void)
 {
@@ -858,7 +822,6 @@ g_zlib_compressor_format_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_unix_socket_address_type_get_type (void)
 {
@@ -881,7 +844,6 @@ g_unix_socket_address_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_bus_type_get_type (void)
 {
@@ -903,7 +865,6 @@ g_bus_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_bus_name_owner_flags_get_type (void)
 {
@@ -915,6 +876,7 @@ g_bus_name_owner_flags_get_type (void)
         { G_BUS_NAME_OWNER_FLAGS_NONE, "G_BUS_NAME_OWNER_FLAGS_NONE", "none" },
         { G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT, "G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT", "allow-replacement" },
         { G_BUS_NAME_OWNER_FLAGS_REPLACE, "G_BUS_NAME_OWNER_FLAGS_REPLACE", "replace" },
+        { G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE, "G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE", "do-not-queue" },
         { 0, NULL, NULL }
       };
       GType g_define_type_id =
@@ -924,7 +886,6 @@ g_bus_name_owner_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_bus_name_watcher_flags_get_type (void)
 {
@@ -944,7 +905,6 @@ g_bus_name_watcher_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_proxy_flags_get_type (void)
 {
@@ -968,7 +928,6 @@ g_dbus_proxy_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_error_get_type (void)
 {
@@ -1031,7 +990,6 @@ g_dbus_error_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_connection_flags_get_type (void)
 {
@@ -1055,7 +1013,6 @@ g_dbus_connection_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_capability_flags_get_type (void)
 {
@@ -1075,7 +1032,6 @@ g_dbus_capability_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_call_flags_get_type (void)
 {
@@ -1096,7 +1052,6 @@ g_dbus_call_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_message_type_get_type (void)
 {
@@ -1119,7 +1074,6 @@ g_dbus_message_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_message_flags_get_type (void)
 {
@@ -1141,7 +1095,6 @@ g_dbus_message_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_message_header_field_get_type (void)
 {
@@ -1169,7 +1122,6 @@ g_dbus_message_header_field_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_property_info_flags_get_type (void)
 {
@@ -1190,7 +1142,6 @@ g_dbus_property_info_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_subtree_flags_get_type (void)
 {
@@ -1210,7 +1161,6 @@ g_dbus_subtree_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_server_flags_get_type (void)
 {
@@ -1231,7 +1181,6 @@ g_dbus_server_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_signal_flags_get_type (void)
 {
@@ -1253,7 +1202,6 @@ g_dbus_signal_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_send_message_flags_get_type (void)
 {
@@ -1273,7 +1221,6 @@ g_dbus_send_message_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_credentials_type_get_type (void)
 {
@@ -1297,7 +1244,6 @@ g_credentials_type_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_message_byte_order_get_type (void)
 {
@@ -1317,7 +1263,6 @@ g_dbus_message_byte_order_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_application_flags_get_type (void)
 {
@@ -1333,6 +1278,7 @@ g_application_flags_get_type (void)
         { G_APPLICATION_HANDLES_COMMAND_LINE, "G_APPLICATION_HANDLES_COMMAND_LINE", "handles-command-line" },
         { G_APPLICATION_SEND_ENVIRONMENT, "G_APPLICATION_SEND_ENVIRONMENT", "send-environment" },
         { G_APPLICATION_NON_UNIQUE, "G_APPLICATION_NON_UNIQUE", "non-unique" },
+        { G_APPLICATION_CAN_OVERRIDE_APP_ID, "G_APPLICATION_CAN_OVERRIDE_APP_ID", "can-override-app-id" },
         { 0, NULL, NULL }
       };
       GType g_define_type_id =
@@ -1342,7 +1288,6 @@ g_application_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_error_get_type (void)
 {
@@ -1367,7 +1312,6 @@ g_tls_error_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_certificate_flags_get_type (void)
 {
@@ -1393,7 +1337,6 @@ g_tls_certificate_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_authentication_mode_get_type (void)
 {
@@ -1414,7 +1357,6 @@ g_tls_authentication_mode_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_rehandshake_mode_get_type (void)
 {
@@ -1435,7 +1377,6 @@ g_tls_rehandshake_mode_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_password_flags_get_type (void)
 {
@@ -1457,7 +1398,6 @@ g_tls_password_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_interaction_result_get_type (void)
 {
@@ -1478,7 +1418,6 @@ g_tls_interaction_result_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_interface_skeleton_flags_get_type (void)
 {
@@ -1498,7 +1437,6 @@ g_dbus_interface_skeleton_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_dbus_object_manager_client_flags_get_type (void)
 {
@@ -1518,7 +1456,6 @@ g_dbus_object_manager_client_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_database_verify_flags_get_type (void)
 {
@@ -1537,7 +1474,6 @@ g_tls_database_verify_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_database_lookup_flags_get_type (void)
 {
@@ -1557,7 +1493,6 @@ g_tls_database_lookup_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_tls_certificate_request_flags_get_type (void)
 {
@@ -1576,7 +1511,6 @@ g_tls_certificate_request_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_io_module_scope_flags_get_type (void)
 {
@@ -1596,7 +1530,6 @@ g_io_module_scope_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_socket_client_event_get_type (void)
 {
@@ -1623,7 +1556,6 @@ g_socket_client_event_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_socket_listener_event_get_type (void)
 {
@@ -1645,7 +1577,6 @@ g_socket_listener_event_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_test_dbus_flags_get_type (void)
 {
@@ -1664,7 +1595,6 @@ g_test_dbus_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_subprocess_flags_get_type (void)
 {
@@ -1691,7 +1621,6 @@ g_subprocess_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_notification_priority_get_type (void)
 {
@@ -1713,7 +1642,6 @@ g_notification_priority_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 GType
 g_network_connectivity_get_type (void)
 {
@@ -1735,7 +1663,6 @@ g_network_connectivity_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 /* enumerations from "gsettings.h" */
 GType
 g_settings_bind_flags_get_type (void)
@@ -1760,7 +1687,6 @@ g_settings_bind_flags_get_type (void)
 
   return g_define_type_id__volatile;
 }
-
 
 /* Generated data ends here */
 

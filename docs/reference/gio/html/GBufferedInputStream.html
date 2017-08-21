@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GBufferedInputStream: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="streaming.html" title="Streaming I/O">
 <link rel="prev" href="GMemoryOutputStream.html" title="GMemoryOutputStream">
 <link rel="next" href="GBufferedOutputStream.html" title="GBufferedOutputStream">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GBufferedInputStream.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -134,7 +134,7 @@
 </div>
 <div class="refsect1">
 <a name="GBufferedInputStream.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -149,7 +149,7 @@
 </div>
 <div class="refsect1">
 <a name="GBufferedInputStream.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -204,8 +204,8 @@ g_buffered_input_stream_new (<em class="parameter"><code><a class="link" href="G
 , with
 a buffer set to the default size (4 kilobytes).</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -219,7 +219,7 @@ a buffer set to the default size (4 kilobytes).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.2.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-new.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> for the given <em class="parameter"><code>base_stream</code></em>
 .</p>
 </div>
@@ -235,8 +235,8 @@ g_buffered_input_stream_new_sized (<em class="parameter"><code><a class="link" h
 with a buffer set to <em class="parameter"><code>size</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-new-sized.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -257,7 +257,7 @@ with a buffer set to <em class="parameter"><code>size</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.3.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-new-sized.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a>.</p>
 </div>
 </div>
@@ -269,8 +269,8 @@ g_buffered_input_stream_get_buffer_size
                                (<em class="parameter"><code><a class="link" href="GBufferedInputStream.html" title="GBufferedInputStream"><span class="type">GBufferedInputStream</span></a> *stream</code></em>);</pre>
 <p>Gets the size of the input buffer.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-get-buffer-size.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -284,7 +284,7 @@ g_buffered_input_stream_get_buffer_size
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.4.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-get-buffer-size.returns"></a><h4>Returns</h4>
 <p> the current buffer size.</p>
 </div>
 </div>
@@ -301,8 +301,8 @@ g_buffered_input_stream_set_buffer_size
 size of the contents of the buffer. The buffer can never be resized
 smaller than its current contents.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-set-buffer-size.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -330,8 +330,8 @@ smaller than its current contents.</p>
 g_buffered_input_stream_get_available (<em class="parameter"><code><a class="link" href="GBufferedInputStream.html" title="GBufferedInputStream"><span class="type">GBufferedInputStream</span></a> *stream</code></em>);</pre>
 <p>Gets the size of the available data within the stream.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-get-available.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -345,7 +345,7 @@ g_buffered_input_stream_get_available (<em class="parameter"><code><a class="lin
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.6.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-get-available.returns"></a><h4>Returns</h4>
 <p> size of the available stream.</p>
 </div>
 </div>
@@ -359,8 +359,8 @@ g_buffered_input_stream_peek_buffer (<em class="parameter"><code><a class="link"
 buffer must not be modified and will become invalid when reading from
 the stream or filling the buffer.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-peek-buffer.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -381,7 +381,7 @@ the stream or filling the buffer.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.7.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-peek-buffer.returns"></a><h4>Returns</h4>
 <p>         read-only buffer. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=count][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> guint8][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -400,8 +400,8 @@ g_buffered_input_stream_peek (<em class="parameter"><code><a class="link" href="
 offset <em class="parameter"><code>offset</code></em>
  bytes.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-peek.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -433,7 +433,7 @@ an allocated chunk of memory. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.8.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-peek.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> of the number of bytes peeked, or -1 on error.</p>
 </div>
 </div>
@@ -471,8 +471,8 @@ partial result will be returned, without an error.</p>
 <p>For the asynchronous, non-blocking, version of this function, see
 <a class="link" href="GBufferedInputStream.html#g-buffered-input-stream-fill-async" title="g_buffered_input_stream_fill_async ()"><code class="function">g_buffered_input_stream_fill_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.9.11"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-fill.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -492,7 +492,7 @@ partial result will be returned, without an error.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -503,7 +503,7 @@ partial result will be returned, without an error.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.9.12"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-fill.returns"></a><h4>Returns</h4>
 <p> the number of bytes read into <em class="parameter"><code>stream</code></em>
 's buffer, up to <em class="parameter"><code>count</code></em>
 ,
@@ -530,8 +530,8 @@ version of this function, see <a class="link" href="GBufferedInputStream.html#g-
  is -1 then the attempted read size is equal to the number
 of bytes that are required to fill the buffer.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.10.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-fill-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -556,7 +556,7 @@ of bytes that are required to fill the buffer.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -581,8 +581,8 @@ g_buffered_input_stream_fill_finish (<em class="parameter"><code><a class="link"
                                      <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an asynchronous read.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-fill-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -608,7 +608,7 @@ g_buffered_input_stream_fill_finish (<em class="parameter"><code><a class="link"
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.11.6"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-fill-finish.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Basic-Types.html#gssize"><span class="type">gssize</span></a> of the read stream, or <code class="literal">-1</code> on an error.</p>
 </div>
 </div>
@@ -633,8 +633,8 @@ partial result will be returned, without an error.</p>
 <p>On error -1 is returned and <em class="parameter"><code>error</code></em>
  is set accordingly.</p>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.12.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-buffered-input-stream-read-byte.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -649,7 +649,7 @@ partial result will be returned, without an error.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -660,7 +660,7 @@ partial result will be returned, without an error.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.15.10.12.9"></a><h4>Returns</h4>
+<a name="g-buffered-input-stream-read-byte.returns"></a><h4>Returns</h4>
 <p> the byte read from the <em class="parameter"><code>stream</code></em>
 , or -1 on end of stream or error.</p>
 </div>
@@ -691,6 +691,6 @@ partial result will be returned, without an error.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

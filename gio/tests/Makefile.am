@@ -27,11 +27,11 @@ test_programs = \
 	buffered-output-stream			\
 	cancellable				\
 	contexts				\
+	contenttype				\
 	converter-stream			\
 	credentials				\
 	data-input-stream			\
 	data-output-stream			\
-	defaultvalue				\
 	fileattributematcher			\
 	filter-streams				\
 	giomodule				\
@@ -76,7 +76,6 @@ dist_test_data = \
 	$(NULL)
 
 test_data = \
-	test.gresource				\
 	$(NULL)
 
 uninstalled_test_extra_programs = \
@@ -243,10 +242,8 @@ gdbus_daemon_SOURCES = \
 
 if OS_UNIX
 test_programs += \
-	contenttype				\
 	file					\
 	gdbus-peer-object-manager		\
-	gdbus-unix-addresses			\
 	live-g-file				\
 	socket-address				\
 	stream-rw_all				\
@@ -259,11 +256,13 @@ test_extra_programs += \
 	dbus-launch				\
 	$(NULL)
 
+if !OS_COCOA
 # Uninstalled because of the check-for-executable logic in DesktopAppInfo unable to find the installed executable
 uninstalled_test_programs += \
 	appinfo					\
 	desktop-app-info			\
 	$(NULL)
+endif
 
 home_desktop_files = \
 	epiphany-weather-for-toronto-island-9c6a4e022b17686306243dada811d550d25eb1fb.desktop	\
@@ -319,17 +318,19 @@ dist_test_data += \
 
 test_extra_programs += \
 	appinfo-test				\
-	apps					\
 	$(NULL)
 
 uninstalled_test_extra_programs += \
 	gdbus-example-unix-fd-client		\
 	$(NULL)
 
+if !OS_COCOA
+test_extra_programs += apps
 test_programs += mimeapps
 clean-local: clean-mimeapps
 clean-mimeapps:
 	rm -rf xdgdatadir xdgdatahome xdgconfighome
+endif
 
 uninstalled_test_programs += gsettings gschema-compile
 gsettings_DEPENDENCIES = test.mo
@@ -375,13 +376,15 @@ gdbus_non_socket_SOURCES = \
 uninstalled_test_extra_programs += gdbus-example-objectmanager-client
 gdbus_example_objectmanager_client_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
 
+uninstalled_test_extra_programs += gdbus-example-objectmanager-server
+gdbus_example_objectmanager_server_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
+
 test_extra_programs += gsubprocess-testprog
 
 uninstalled_test_extra_programs += gdbus-test-fixture
 gdbus_test_fixture_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
 
 # This is peer to peer so it doesn't need a session bus (so we can run it normally)
-test_programs += gdbus-peer
 gdbus_peer_LDADD = gdbus-object-manager-example/libgdbus-example-objectmanager.la $(LDADD)
 
 # This test is currently unreliable
@@ -395,7 +398,7 @@ gdbus_sessionbus_sources = gdbus-sessionbus.c gdbus-sessionbus.h gdbus-tests.h g
 
 test_programs += \
 	actions					\
-	dbus-appinfo				\
+	defaultvalue				\
 	gapplication				\
 	gdbus-auth				\
 	gdbus-bz627724				\
@@ -408,6 +411,7 @@ test_programs += \
 	gdbus-export				\
 	gdbus-introspection			\
 	gdbus-names				\
+	gdbus-peer				\
 	gdbus-proxy				\
 	gdbus-proxy-threads			\
 	gdbus-proxy-well-known-name		\
@@ -417,6 +421,15 @@ test_programs += \
 	gmenumodel				\
 	gnotification				\
 	$(NULL)
+
+if OS_UNIX
+test_programs += gdbus-unix-addresses
+
+if !OS_COCOA
+test_programs += dbus-appinfo
+endif
+
+endif
 
 gdbus_proxy_threads_CFLAGS = $(AM_CFLAGS) $(DBUS1_CFLAGS)
 actions_SOURCES                          = $(gdbus_sessionbus_sources) actions.c
@@ -517,6 +530,8 @@ libresourceplugin_la_SOURCES = resourceplugin.c plugin_resources.c
 libresourceplugin_la_LDFLAGS = -avoid-version -module -export-dynamic $(no_undefined)
 libresourceplugin_la_LIBADD = $(LDADD)
 
+test_data += test.gresource
+
 # libtool contains a bug whereby the created .la file doesn't contain the correct dlname='' in the case that
 # you're building a library but not installing it.  This is apparently because the only considered use for an
 # uninstalled library is as a convenience library for linking (despite the fact that we give -module).  The lack
@@ -530,6 +545,10 @@ endif
 
 glib_compile_resources=$(top_builddir)/gio/glib-compile-resources
 
+test-generated.txt: test1.txt
+	$(AM_V_GEN) echo "Generated" > $@ && \
+	  cat $< >> $@
+
 resources.o: test_resources2.h
 test_resources.c: test2.gresource.xml Makefile $(shell $(glib_compile_resources) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/test2.gresource.xml)
 	$(AM_V_GEN) $(glib_compile_resources) --target=$@ --sourcedir=$(srcdir) --generate-source --c-name _g_test1 $<
@@ -540,26 +559,26 @@ test_resources2.h test_resources2.c: test3.gresource.xml Makefile $(shell $(glib
 plugin_resources.c: test4.gresource.xml Makefile $(shell $(glib_compile_resources) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/test4.gresource.xml)
 	$(AM_V_GEN) $(glib_compile_resources) --target=$@ --sourcedir=$(srcdir) --generate-source --c-name _g_plugin $<
 
-test.gresource: test.gresource.xml Makefile $(shell $(glib_compile_resources) --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/test.gresource.xml)
-	$(AM_V_GEN) $(glib_compile_resources) --target=$@ --sourcedir=$(srcdir) $<
+test.gresource: test.gresource.xml Makefile $(shell $(glib_compile_resources) --sourcedir=. --sourcedir=$(srcdir) --generate-dependencies $(srcdir)/test.gresource.xml)
+	$(AM_V_GEN) $(glib_compile_resources) --target=$@ --sourcedir=. --sourcedir=$(srcdir) $<
 
 EXTRA_DIST += test.gresource.xml test1.txt test2.gresource.xml test2.txt test3.gresource.xml test3.txt test4.gresource.xml
-CLEANFILES += test_resources.c test_resources2.[ch] plugin_resources.c test.gresource
+CLEANFILES += test-generated.txt test_resources.c test_resources2.[ch] plugin_resources.c test.gresource
 endif # !CROSS_COMPILING
 
-BUILT_SOURCES += giotypefuncs.c
+BUILT_SOURCES += giotypefuncs.inc
 
-giotypefuncs.c: Makefile
+giotypefuncs.inc: Makefile
 	$(AM_V_GEN) echo '#include <gio/gio.h>' > xgen-giosrc.c && \
 	  echo "G_GNUC_BEGIN_IGNORE_DEPRECATIONS" > xgen-gio && \
 	  ${CPP} $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) xgen-giosrc.c | \
 	  $(GREP) -o '\bg_[A-Za-z0-9_]*_get_type\b' | \
 	  $(GREP) -v 'g_io_extension_get_type\|g_variant_get_type' | \
-	  sort | uniq | \
+	  LC_ALL=C sort | uniq | \
 	  $(SED) -e 's/^/*tp++ = /' -e 's/$$/ ();/' >> xgen-gio && \
 	  cp xgen-gio $@ # && rm -f xgen-gio xgen-giosrc.c
 
-CLEANFILES += xgen-giosrc.c xgen-gio giotypefuncs.c
+CLEANFILES += xgen-giosrc.c xgen-gio giotypefuncs.inc
 
 if ENABLE_INSTALLED_TESTS
 if OS_UNIX

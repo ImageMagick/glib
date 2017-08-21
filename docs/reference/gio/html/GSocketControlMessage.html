@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSocketControlMessage: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="networking.html" title="Low-level network support">
 <link rel="prev" href="GUnixSocketAddress.html" title="GUnixSocketAddress">
 <link rel="next" href="GUnixFDList.html" title="GUnixFDList">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -34,7 +34,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSocketControlMessage.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -85,7 +85,7 @@
 </div>
 <div class="refsect1">
 <a name="GSocketControlMessage.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -146,8 +146,8 @@ of message and if so deserialize it into a <a class="link" href="GSocketControlM
 <p>If there is no implementation for this kind of control message, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-control-message-deserialize.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -179,7 +179,7 @@ will be returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.2.7"></a><h4>Returns</h4>
+<a name="g-socket-control-message-deserialize.returns"></a><h4>Returns</h4>
 <p> the deserialized message or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -193,8 +193,8 @@ g_socket_control_message_get_level (<em class="parameter"><code><a class="link" 
 <p>Returns the "level" (i.e. the originating protocol) of the control message.
 This is often SOL_SOCKET.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-control-message-get-level.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -208,7 +208,7 @@ This is often SOL_SOCKET.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.3.6"></a><h4>Returns</h4>
+<a name="g-socket-control-message-get-level.returns"></a><h4>Returns</h4>
 <p> an integer describing the level</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -221,8 +221,8 @@ g_socket_control_message_get_msg_type (<em class="parameter"><code><a class="lin
 <p>Returns the protocol specific type of the control message.
 For instance, for UNIX fd passing this would be SCM_RIGHTS.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-control-message-get-msg-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -236,7 +236,7 @@ For instance, for UNIX fd passing this would be SCM_RIGHTS.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.4.6"></a><h4>Returns</h4>
+<a name="g-socket-control-message-get-msg-type.returns"></a><h4>Returns</h4>
 <p> an integer describing the type of control message</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -249,8 +249,8 @@ g_socket_control_message_get_size (<em class="parameter"><code><a class="link" h
 <p>Returns the space required for the control message, not including
 headers or alignment.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-control-message-get-size.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -264,7 +264,7 @@ headers or alignment.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.5.6"></a><h4>Returns</h4>
+<a name="g-socket-control-message-get-size.returns"></a><h4>Returns</h4>
 <p> The number of bytes required.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -282,8 +282,8 @@ message.</p>
 returned by <a class="link" href="GSocketControlMessage.html#g-socket-control-message-get-size" title="g_socket_control_message_get_size ()"><code class="function">g_socket_control_message_get_size()</code></a> on this
 object.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.8.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-control-message-serialize.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -297,8 +297,8 @@ object.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>data</p></td>
-<td class="parameter_description"><p>A buffer to write data to</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> A buffer to write data to. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -321,6 +321,6 @@ received over <a class="link" href="GSocket.html" title="GSocket"><span class="t
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

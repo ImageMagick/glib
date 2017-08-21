@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GUnixFDMessage: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="networking.html" title="Low-level network support">
 <link rel="prev" href="GUnixFDList.html" title="GUnixFDList">
 <link rel="next" href="GCredentials.html" title="GCredentials">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GUnixFDMessage.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -86,7 +86,7 @@
 </div>
 <div class="refsect1">
 <a name="GUnixFDMessage.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -102,7 +102,7 @@
 </div>
 <div class="refsect1">
 <a name="GUnixFDMessage.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -148,8 +148,8 @@ g_unix_fd_message_new_with_fd_list (<em class="parameter"><code><a class="link" 
 <p>Creates a new <a class="link" href="GUnixFDMessage.html" title="GUnixFDMessage"><span class="type">GUnixFDMessage</span></a> containing <em class="parameter"><code>list</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-message-new-with-fd-list.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -163,7 +163,7 @@ g_unix_fd_message_new_with_fd_list (<em class="parameter"><code><a class="link" 
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.2.6"></a><h4>Returns</h4>
+<a name="g-unix-fd-message-new-with-fd-list.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GUnixFDMessage.html" title="GUnixFDMessage"><span class="type">GUnixFDMessage</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-24.html#api-index-2.24">2.24</a></p>
@@ -176,7 +176,7 @@ g_unix_fd_message_new (<em class="parameter"><code><span class="type">void</span
 <p>Creates a new <a class="link" href="GUnixFDMessage.html" title="GUnixFDMessage"><span class="type">GUnixFDMessage</span></a> containing an empty file descriptor
 list.</p>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.3.5"></a><h4>Returns</h4>
+<a name="g-unix-fd-message-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GUnixFDMessage.html" title="GUnixFDMessage"><span class="type">GUnixFDMessage</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -192,8 +192,8 @@ return a reference to the caller, but the returned list is valid for
 the lifetime of <em class="parameter"><code>message</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-message-get-fd-list.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -207,7 +207,7 @@ the lifetime of <em class="parameter"><code>message</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.4.6"></a><h4>Returns</h4>
+<a name="g-unix-fd-message-get-fd-list.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> from <em class="parameter"><code>message</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -231,8 +231,8 @@ when <em class="parameter"><code>message</code></em>
 <p>A possible cause of failure is exceeding the per-process or
 system-wide file descriptor limit.</p>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.5.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-message-append-fd.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -258,7 +258,7 @@ system-wide file descriptor limit.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.5.8"></a><h4>Returns</h4>
+<a name="g-unix-fd-message-append-fd.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> in case of success, else <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> (and <em class="parameter"><code>error</code></em>
 is set)</p>
 </div>
@@ -287,8 +287,8 @@ terminated with -1.</p>
 descriptors contained in <em class="parameter"><code>message</code></em>
 , an empty array is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.6.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-message-steal-fds.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -304,13 +304,13 @@ descriptors contained in <em class="parameter"><code>message</code></em>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> pointer to the length of the returned
 array, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.10.9.6.10"></a><h4>Returns</h4>
+<a name="g-unix-fd-message-steal-fds.returns"></a><h4>Returns</h4>
 <p> an array of file
 descriptors. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -342,6 +342,6 @@ using the following functions.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

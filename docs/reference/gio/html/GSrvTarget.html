@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSrvTarget: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="resolver.html" title="DNS resolution">
 <link rel="prev" href="GNetworkService.html" title="GNetworkService">
 <link rel="next" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -34,7 +34,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSrvTarget.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -108,7 +108,7 @@
 </div>
 <div class="refsect1">
 <a name="GSrvTarget.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -121,7 +121,7 @@
 </div>
 <div class="refsect1">
 <a name="GSrvTarget.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-Boxed-Types.html">GBoxed</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-Boxed-Types.html">GBoxed</a>
     <span class="lineart">╰──</span> GSrvTarget
 </pre>
 </div>
@@ -159,8 +159,8 @@ g_srv_target_new (<em class="parameter"><code>const <a href="../glib-Basic-Types
 <p>You should not need to use this; normally <a href="GSrvTarget.html#GSrvTarget-struct"><span class="type">GSrvTargets</span></a> are
 created by <a class="link" href="GResolver.html" title="GResolver"><span class="type">GResolver</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -191,7 +191,7 @@ created by <a class="link" href="GResolver.html" title="GResolver"><span class="
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.2.7"></a><h4>Returns</h4>
+<a name="g-srv-target-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GSrvTarget.html" title="GSrvTarget"><span class="type">GSrvTarget</span></a>.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -204,8 +204,8 @@ g_srv_target_copy (<em class="parameter"><code><a class="link" href="GSrvTarget.
 <p>Copies <em class="parameter"><code>target</code></em>
 </p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-copy.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -219,7 +219,7 @@ g_srv_target_copy (<em class="parameter"><code><a class="link" href="GSrvTarget.
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.3.6"></a><h4>Returns</h4>
+<a name="g-srv-target-copy.returns"></a><h4>Returns</h4>
 <p> a copy of <em class="parameter"><code>target</code></em>
 </p>
 </div>
@@ -233,8 +233,8 @@ g_srv_target_free (<em class="parameter"><code><a class="link" href="GSrvTarget.
 <p>Frees <em class="parameter"><code>target</code></em>
 </p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-free.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -260,8 +260,8 @@ this to the user, you should use <a href="../glib-Hostname-Utilities.html#g-host
 check if it contains encoded Unicode segments, and use
 <a href="../glib-Hostname-Utilities.html#g-hostname-to-unicode"><code class="function">g_hostname_to_unicode()</code></a> to convert it if it does.)</p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-get-hostname.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -275,7 +275,7 @@ check if it contains encoded Unicode segments, and use
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.5.6"></a><h4>Returns</h4>
+<a name="g-srv-target-get-hostname.returns"></a><h4>Returns</h4>
 <p> <em class="parameter"><code>target</code></em>
 's hostname</p>
 </div>
@@ -289,8 +289,8 @@ g_srv_target_get_port (<em class="parameter"><code><a class="link" href="GSrvTar
 <p>Gets <em class="parameter"><code>target</code></em>
 's port</p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-get-port.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -304,7 +304,7 @@ g_srv_target_get_port (<em class="parameter"><code><a class="link" href="GSrvTar
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.6.6"></a><h4>Returns</h4>
+<a name="g-srv-target-get-port.returns"></a><h4>Returns</h4>
 <p> <em class="parameter"><code>target</code></em>
 's port</p>
 </div>
@@ -320,8 +320,8 @@ g_srv_target_get_priority (<em class="parameter"><code><a class="link" href="GSr
 <a class="link" href="GResolver.html" title="GResolver"><span class="type">GResolver</span></a> already sorts the targets according to the algorithm in
 RFC 2782.</p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-get-priority.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -335,7 +335,7 @@ RFC 2782.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.7.6"></a><h4>Returns</h4>
+<a name="g-srv-target-get-priority.returns"></a><h4>Returns</h4>
 <p> <em class="parameter"><code>target</code></em>
 's priority</p>
 </div>
@@ -351,8 +351,8 @@ g_srv_target_get_weight (<em class="parameter"><code><a class="link" href="GSrvT
 <a class="link" href="GResolver.html" title="GResolver"><span class="type">GResolver</span></a> already sorts the targets according to the algorithm in
 RFC 2782.</p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-get-weight.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -366,7 +366,7 @@ RFC 2782.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.8.6"></a><h4>Returns</h4>
+<a name="g-srv-target-get-weight.returns"></a><h4>Returns</h4>
 <p> <em class="parameter"><code>target</code></em>
 's weight</p>
 </div>
@@ -381,8 +381,8 @@ g_srv_target_list_sort (<em class="parameter"><code><a href="../glib-Doubly-Link
  in place according to the algorithm in RFC 2782.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-srv-target-list-sort.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -396,7 +396,7 @@ g_srv_target_list_sort (<em class="parameter"><code><a href="../glib-Doubly-Link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.8.8.9.7"></a><h4>Returns</h4>
+<a name="g-srv-target-list-sort.returns"></a><h4>Returns</h4>
 <p> the head of the sorted list. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -413,6 +413,6 @@ g_srv_target_list_sort (<em class="parameter"><code><a href="../glib-Doubly-Link
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

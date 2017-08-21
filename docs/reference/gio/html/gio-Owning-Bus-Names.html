@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Owning Bus Names: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="gdbus-convenience.html" title="High-level D-Bus Support">
 <link rel="prev" href="gdbus-convenience.html" title="High-level D-Bus Support">
 <link rel="next" href="gio-Watching-Bus-Names.html" title="Watching Bus Names">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-Owning-Bus-Names.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -108,7 +108,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-Owning-Bus-Names.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -140,8 +140,8 @@
                          <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>Invoked when a connection to a message bus has been obtained.</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusAcquiredCallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -177,8 +177,8 @@
                              <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>Invoked when the name is acquired.</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusNameAcquiredCallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -215,8 +215,8 @@
 <p>Invoked when the name is lost or <em class="parameter"><code>connection</code></em>
  has been closed.</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusNameLostCallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -319,8 +319,8 @@ Simply register objects to be exported in <em class="parameter"><code>bus_acquir
 unregister the objects (if any) in <em class="parameter"><code>name_lost_handler</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.5.13"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-own-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -346,19 +346,19 @@ unregister the objects (if any) in <em class="parameter"><code>name_lost_handler
 <td class="parameter_name"><p>bus_acquired_handler</p></td>
 <td class="parameter_description"><p> handler to invoke when connected to the bus of type <em class="parameter"><code>bus_type</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_acquired_handler</p></td>
 <td class="parameter_description"><p> handler to invoke when <em class="parameter"><code>name</code></em>
 is acquired or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_lost_handler</p></td>
 <td class="parameter_description"><p> handler to invoke when <em class="parameter"><code>name</code></em>
 is lost or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -369,13 +369,13 @@ is lost or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal
 <td class="parameter_name"><p>user_data_free_func</p></td>
 <td class="parameter_description"><p> function for freeing <em class="parameter"><code>user_data</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.5.14"></a><h4>Returns</h4>
+<a name="g-bus-own-name.returns"></a><h4>Returns</h4>
 <p> an identifier (never 0) that an be used with
 <a class="link" href="gio-Owning-Bus-Names.html#g-bus-unown-name" title="g_bus_unown_name ()"><code class="function">g_bus_unown_name()</code></a> to stop owning the name.</p>
 </div>
@@ -395,8 +395,8 @@ g_bus_own_name_on_connection (<em class="parameter"><code><a class="link" href="
 <p>Like <a class="link" href="gio-Owning-Bus-Names.html#g-bus-own-name" title="g_bus_own_name ()"><code class="function">g_bus_own_name()</code></a> but takes a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> instead of a
 <a class="link" href="GDBusConnection.html#GBusType" title="enum GBusType"><span class="type">GBusType</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-own-name-on-connection.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -422,13 +422,13 @@ g_bus_own_name_on_connection (<em class="parameter"><code><a class="link" href="
 <td class="parameter_name"><p>name_acquired_handler</p></td>
 <td class="parameter_description"><p> handler to invoke when <em class="parameter"><code>name</code></em>
 is acquired or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_lost_handler</p></td>
 <td class="parameter_description"><p> handler to invoke when <em class="parameter"><code>name</code></em>
 is lost or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -439,13 +439,13 @@ is lost or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal
 <td class="parameter_name"><p>user_data_free_func</p></td>
 <td class="parameter_description"><p> function for freeing <em class="parameter"><code>user_data</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.6.6"></a><h4>Returns</h4>
+<a name="g-bus-own-name-on-connection.returns"></a><h4>Returns</h4>
 <p> an identifier (never 0) that an be used with
 <a class="link" href="gio-Owning-Bus-Names.html#g-bus-unown-name" title="g_bus_unown_name ()"><code class="function">g_bus_unown_name()</code></a> to stop owning the name</p>
 </div>
@@ -458,8 +458,8 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 g_bus_unown_name (<em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> owner_id</code></em>);</pre>
 <p>Stops owning a name.</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-unown-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -488,8 +488,8 @@ g_bus_own_name_with_closures (<em class="parameter"><code><a class="link" href="
 easier binding in other languages.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_bus_own_name]</span></p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-own-name-with-closures.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -516,27 +516,27 @@ easier binding in other languages.</p>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when connected to
 the bus of type <em class="parameter"><code>bus_type</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_acquired_closure</p></td>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is
 acquired or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_lost_closure</p></td>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is lost or
 <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.8.7"></a><h4>Returns</h4>
+<a name="g-bus-own-name-with-closures.returns"></a><h4>Returns</h4>
 <p> an identifier (never 0) that an be used with
 <a class="link" href="gio-Owning-Bus-Names.html#g-bus-unown-name" title="g_bus_unown_name ()"><code class="function">g_bus_unown_name()</code></a> to stop owning the name.</p>
 </div>
@@ -556,8 +556,8 @@ g_bus_own_name_on_connection_with_closures
 callbacks for easier binding in other languages.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_bus_own_name_on_connection]</span></p>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-own-name-on-connection-with-closures.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -584,20 +584,20 @@ callbacks for easier binding in other languages.</p>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is
 acquired or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_lost_closure</p></td>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is lost
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.2.7.9.7"></a><h4>Returns</h4>
+<a name="g-bus-own-name-on-connection-with-closures.returns"></a><h4>Returns</h4>
 <p> an identifier (never 0) that an be used with
 <a class="link" href="gio-Owning-Bus-Names.html#g-bus-unown-name" title="g_bus_unown_name ()"><code class="function">g_bus_unown_name()</code></a> to stop owning the name.</p>
 </div>
@@ -610,8 +610,8 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 <a name="GBusNameOwnerFlags"></a><h3>enum GBusNameOwnerFlags</h3>
 <p>Flags used in <a class="link" href="gio-Owning-Bus-Names.html#g-bus-own-name" title="g_bus_own_name ()"><code class="function">g_bus_own_name()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.2.8.2.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusNameOwnerFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -640,6 +640,14 @@ specified <a class="link" href="gio-Owning-Bus-Names.html#G-BUS-NAME-OWNER-FLAGS
 </td>
 <td class="enum_member_annotations"> </td>
 </tr>
+<tr>
+<td class="enum_member_name"><p><a name="G-BUS-NAME-OWNER-FLAGS-DO-NOT-QUEUE:CAPS"></a>G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE</p></td>
+<td class="enum_member_description">
+<p>If another message bus connection owns the name, immediately
+return an error from <a class="link" href="gio-Owning-Bus-Names.html#g-bus-own-name" title="g_bus_own_name ()"><code class="function">g_bus_own_name()</code></a> rather than entering the waiting queue for that name. (Since 2.54)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
 </tbody>
 </table></div>
 </div>
@@ -648,6 +656,6 @@ specified <a class="link" href="gio-Owning-Bus-Names.html#G-BUS-NAME-OWNER-FLAGS
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

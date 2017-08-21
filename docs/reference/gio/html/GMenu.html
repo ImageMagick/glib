@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GMenu: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GMenuModel.html" title="GMenuModel">
 <link rel="next" href="gio-GMenuModel-exporter.html" title="GMenuModel exporter">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -34,7 +34,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GMenu.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -309,7 +309,7 @@
 </div>
 <a name="GMenuItem"></a><div class="refsect1">
 <a name="GMenu.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -358,7 +358,7 @@ g_menu_new (<em class="parameter"><code><span class="type">void</span></code></e
 <p>Creates a new <a class="link" href="GMenu.html" title="GMenu"><span class="type">GMenu</span></a>.</p>
 <p>The new menu has no items.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.2.6"></a><h4>Returns</h4>
+<a name="g-menu-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenu.html" title="GMenu"><span class="type">GMenu</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -376,8 +376,8 @@ longer be used.</p>
 <p>This function causes <a class="link" href="GMenuModel.html#g-menu-model-is-mutable" title="g_menu_model_is_mutable ()"><code class="function">g_menu_model_is_mutable()</code></a> to begin returning
 <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>, which has some positive performance implications.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.3.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-freeze.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -405,8 +405,8 @@ g_menu_insert (<em class="parameter"><code><a class="link" href="GMenu.html" tit
 Combine <a class="link" href="GMenu.html#g-menu-item-new" title="g_menu_item_new ()"><code class="function">g_menu_item_new()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a more flexible
 alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-insert.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -426,12 +426,12 @@ alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>detailed_action</p></td>
 <td class="parameter_description"><p> the detailed action string, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -450,8 +450,8 @@ of <em class="parameter"><code>menu</code></em>
 .  Combine <a class="link" href="GMenu.html#g-menu-item-new" title="g_menu_item_new ()"><code class="function">g_menu_item_new()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a more
 flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-prepend.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -466,12 +466,12 @@ flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>detailed_action</p></td>
 <td class="parameter_description"><p> the detailed action string, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -490,8 +490,8 @@ g_menu_append (<em class="parameter"><code><a class="link" href="GMenu.html" tit
 .  Combine <a class="link" href="GMenu.html#g-menu-item-new" title="g_menu_item_new ()"><code class="function">g_menu_item_new()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a more
 flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-append.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -506,12 +506,12 @@ flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>detailed_action</p></td>
 <td class="parameter_description"><p> the detailed action string, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -547,8 +547,8 @@ See <a class="link" href="GMenu.html#g-menu-insert" title="g_menu_insert ()"><c
 <a class="link" href="GMenu.html#g-menu-insert-submenu" title="g_menu_insert_submenu ()"><code class="function">g_menu_insert_submenu()</code></a> as well as "prepend" and "append" variants of
 each of these functions.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.7.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-insert-item.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -586,8 +586,8 @@ g_menu_append_item (<em class="parameter"><code><a class="link" href="GMenu.html
 .</p>
 <p>See <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for more information.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-append-item.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -620,8 +620,8 @@ g_menu_prepend_item (<em class="parameter"><code><a class="link" href="GMenu.htm
 .</p>
 <p>See <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for more information.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-prepend-item.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -656,8 +656,8 @@ g_menu_insert_section (<em class="parameter"><code><a class="link" href="GMenu.h
 Combine <a class="link" href="GMenu.html#g-menu-item-new-section" title="g_menu_item_new_section ()"><code class="function">g_menu_item_new_section()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a more
 flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-insert-section.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -677,7 +677,7 @@ flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>section</p></td>
@@ -701,8 +701,8 @@ of <em class="parameter"><code>menu</code></em>
 .  Combine <a class="link" href="GMenu.html#g-menu-item-new-section" title="g_menu_item_new_section ()"><code class="function">g_menu_item_new_section()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for
 a more flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-prepend-section.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -717,7 +717,7 @@ a more flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>section</p></td>
@@ -741,8 +741,8 @@ g_menu_append_section (<em class="parameter"><code><a class="link" href="GMenu.h
 .  Combine <a class="link" href="GMenu.html#g-menu-item-new-section" title="g_menu_item_new_section ()"><code class="function">g_menu_item_new_section()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a
 more flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-append-section.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -757,7 +757,7 @@ more flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>section</p></td>
@@ -781,8 +781,8 @@ g_menu_append_submenu (<em class="parameter"><code><a class="link" href="GMenu.h
 .  Combine <a class="link" href="GMenu.html#g-menu-item-new-submenu" title="g_menu_item_new_submenu ()"><code class="function">g_menu_item_new_submenu()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a
 more flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-append-submenu.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -797,7 +797,7 @@ more flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>submenu</p></td>
@@ -822,8 +822,8 @@ g_menu_insert_submenu (<em class="parameter"><code><a class="link" href="GMenu.h
 Combine <a class="link" href="GMenu.html#g-menu-item-new-submenu" title="g_menu_item_new_submenu ()"><code class="function">g_menu_item_new_submenu()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for a more
 flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.14.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-insert-submenu.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -843,7 +843,7 @@ flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>submenu</p></td>
@@ -867,8 +867,8 @@ of <em class="parameter"><code>menu</code></em>
 .  Combine <a class="link" href="GMenu.html#g-menu-item-new-submenu" title="g_menu_item_new_submenu ()"><code class="function">g_menu_item_new_submenu()</code></a> and <a class="link" href="GMenu.html#g-menu-insert-item" title="g_menu_insert_item ()"><code class="function">g_menu_insert_item()</code></a> for
 a more flexible alternative.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.15.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-prepend-submenu.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -883,7 +883,7 @@ a more flexible alternative.</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>submenu</p></td>
@@ -910,8 +910,8 @@ less than the number of items in the menu.</p>
 to the menu simply by copying their links and attributes (ie:
 identity of the item itself is not preserved).</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.16.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-remove.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -940,8 +940,8 @@ identity of the item itself is not preserved).</p>
 g_menu_remove_all (<em class="parameter"><code><a class="link" href="GMenu.html" title="GMenu"><span class="type">GMenu</span></a> *menu</code></em>);</pre>
 <p>Removes all items in the menu.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-remove-all.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -971,8 +971,8 @@ new item.</p>
 possibly the "target" attribute of the new item.  See
 <a class="link" href="GMenu.html#g-menu-item-set-detailed-action" title="g_menu_item_set_detailed_action ()"><code class="function">g_menu_item_set_detailed_action()</code></a> for more information.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.18.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -982,18 +982,18 @@ possibly the "target" attribute of the new item.  See
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>detailed_action</p></td>
 <td class="parameter_description"><p> the detailed action string, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.18.8"></a><h4>Returns</h4>
+<a name="g-menu-item-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenu.html#GMenuItem"><span class="type">GMenuItem</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -1040,17 +1040,17 @@ format, this would look something like the following:</p>
 9
 10
 11</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="symbol">&lt;</span><span class="usertype">menu</span><span class="normal"> id</span><span class="symbol">=</span><span class="string">'edit-menu'</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;</span><span class="normal">section</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Undo'</span><span class="symbol">/&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Redo'</span><span class="symbol">/&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;/</span><span class="normal">section</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;</span><span class="normal">section</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Cut'</span><span class="symbol">/&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Copy'</span><span class="symbol">/&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Paste'</span><span class="symbol">/&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;/</span><span class="normal">section</span><span class="symbol">&gt;</span>
-<span class="symbol">&lt;/</span><span class="normal">menu</span><span class="symbol">&gt;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">&lt;</span>menu id<span class="gtkdoc opt">=</span><span class="string">&apos;edit-menu&apos;</span><span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;</span>section<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Undo&apos;</span><span class="gtkdoc opt">/&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Redo&apos;</span><span class="gtkdoc opt">/&gt;</span>
+  <span class="gtkdoc opt">&lt;/</span>section<span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;</span>section<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Cut&apos;</span><span class="gtkdoc opt">/&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Copy&apos;</span><span class="gtkdoc opt">/&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Paste&apos;</span><span class="gtkdoc opt">/&gt;</span>
+  <span class="gtkdoc opt">&lt;/</span>section<span class="gtkdoc opt">&gt;</span>
+<span class="gtkdoc opt">&lt;/</span>menu<span class="gtkdoc opt">&gt;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1082,21 +1082,21 @@ purpose of understanding what is really going on).</p>
 13
 14
 15</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="symbol">&lt;</span><span class="usertype">menu</span><span class="normal"> id</span><span class="symbol">=</span><span class="string">'edit-menu'</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;</span><span class="normal">item</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">link</span><span class="normal"> name</span><span class="symbol">=</span><span class="string">'section'</span><span class="symbol">&gt;</span>
-<span class="normal">      </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Undo'</span><span class="symbol">/&gt;</span>
-<span class="normal">      </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Redo'</span><span class="symbol">/&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;/</span><span class="normal">link</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;/</span><span class="normal">item</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;</span><span class="normal">item</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">link</span><span class="normal"> name</span><span class="symbol">=</span><span class="string">'section'</span><span class="symbol">&gt;</span>
-<span class="normal">      </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Cut'</span><span class="symbol">/&gt;</span>
-<span class="normal">      </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Copy'</span><span class="symbol">/&gt;</span>
-<span class="normal">      </span><span class="symbol">&lt;</span><span class="usertype">item</span><span class="normal"> label</span><span class="symbol">=</span><span class="string">'Paste'</span><span class="symbol">/&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;/</span><span class="normal">link</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;/</span><span class="normal">item</span><span class="symbol">&gt;</span>
-<span class="symbol">&lt;/</span><span class="normal">menu</span><span class="symbol">&gt;</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">&lt;</span>menu id<span class="gtkdoc opt">=</span><span class="string">&apos;edit-menu&apos;</span><span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;</span>item<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>link name<span class="gtkdoc opt">=</span><span class="string">&apos;section&apos;</span><span class="gtkdoc opt">&gt;</span>
+      <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Undo&apos;</span><span class="gtkdoc opt">/&gt;</span>
+      <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Redo&apos;</span><span class="gtkdoc opt">/&gt;</span>
+    <span class="gtkdoc opt">&lt;/</span>link<span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;/</span>item<span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;</span>item<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>link name<span class="gtkdoc opt">=</span><span class="string">&apos;section&apos;</span><span class="gtkdoc opt">&gt;</span>
+      <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Cut&apos;</span><span class="gtkdoc opt">/&gt;</span>
+      <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Copy&apos;</span><span class="gtkdoc opt">/&gt;</span>
+      <span class="gtkdoc opt">&lt;</span>item label<span class="gtkdoc opt">=</span><span class="string">&apos;Paste&apos;</span><span class="gtkdoc opt">/&gt;</span>
+    <span class="gtkdoc opt">&lt;/</span>link<span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;/</span>item<span class="gtkdoc opt">&gt;</span>
+<span class="gtkdoc opt">&lt;/</span>menu<span class="gtkdoc opt">&gt;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1104,8 +1104,8 @@ purpose of understanding what is really going on).</p>
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.19.15"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-new-section.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1115,7 +1115,7 @@ purpose of understanding what is really going on).</p>
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>section</p></td>
@@ -1126,7 +1126,7 @@ purpose of understanding what is really going on).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.19.16"></a><h4>Returns</h4>
+<a name="g-menu-item-new-section.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenu.html#GMenuItem"><span class="type">GMenuItem</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -1141,8 +1141,8 @@ g_menu_item_new_submenu (<em class="parameter"><code>const <a href="../glib-Basi
 <p>This is a convenience API around <a class="link" href="GMenu.html#g-menu-item-new" title="g_menu_item_new ()"><code class="function">g_menu_item_new()</code></a> and
 <a class="link" href="GMenu.html#g-menu-item-set-submenu" title="g_menu_item_set_submenu ()"><code class="function">g_menu_item_set_submenu()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.20.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-new-submenu.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1152,7 +1152,7 @@ g_menu_item_new_submenu (<em class="parameter"><code>const <a href="../glib-Basi
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the section label, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>submenu</p></td>
@@ -1163,7 +1163,7 @@ g_menu_item_new_submenu (<em class="parameter"><code>const <a href="../glib-Basi
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.20.7"></a><h4>Returns</h4>
+<a name="g-menu-item-new-submenu.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenu.html#GMenuItem"><span class="type">GMenuItem</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -1180,8 +1180,8 @@ g_menu_item_new_from_model (<em class="parameter"><code><a class="link" href="GM
  must be valid (ie: be sure to call
 <a class="link" href="GMenuModel.html#g-menu-model-get-n-items" title="g_menu_model_get_n_items ()"><code class="function">g_menu_model_get_n_items()</code></a> first).</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.21.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-new-from-model.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1203,7 +1203,7 @@ g_menu_item_new_from_model (<em class="parameter"><code><a class="link" href="GM
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.21.7"></a><h4>Returns</h4>
+<a name="g-menu-item-new-from-model.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenu.html#GMenuItem"><span class="type">GMenuItem</span></a>.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-34.html#api-index-2.34">2.34</a></p>
@@ -1220,8 +1220,8 @@ g_menu_item_set_label (<em class="parameter"><code><a class="link" href="GMenu.h
  is non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> it is used as the label for the menu item.  If
 it is <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> then the label attribute is unset.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.22.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-label.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1236,7 +1236,7 @@ it is <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NUL
 <tr>
 <td class="parameter_name"><p>label</p></td>
 <td class="parameter_description"><p> the label to set, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to unset. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1261,8 +1261,8 @@ menu items corresponding to verbs (eg: stock icons for 'Save' or
 <p>If <em class="parameter"><code>icon</code></em>
  is <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> then the icon is unset.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.23.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-icon.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1327,8 +1327,8 @@ state is equal to the value of the <em class="parameter"><code>target</code></em
 <a class="link" href="GMenu.html#g-menu-item-set-detailed-action" title="g_menu_item_set_detailed_action ()"><code class="function">g_menu_item_set_detailed_action()</code></a> for two equivalent calls that are
 probably more convenient for most uses.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.24.13"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-action-and-target-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1343,12 +1343,12 @@ probably more convenient for most uses.</p>
 <tr>
 <td class="parameter_name"><p>action</p></td>
 <td class="parameter_description"><p> the name of the action for this item. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>target_value</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> to use as the action target. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1384,8 +1384,8 @@ works with string-typed targets.</p>
 <p>See also <a class="link" href="GMenu.html#g-menu-item-set-action-and-target-value" title="g_menu_item_set_action_and_target_value ()"><code class="function">g_menu_item_set_action_and_target_value()</code></a> for a
 description of the semantics of the action and target attributes.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.25.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-action-and-target.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1400,12 +1400,12 @@ description of the semantics of the action and target attributes.</p>
 <tr>
 <td class="parameter_name"><p>action</p></td>
 <td class="parameter_description"><p> the name of the action for this item. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>format_string</p></td>
 <td class="parameter_description"><p> a GVariant format string. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>...</p></td>
@@ -1435,8 +1435,8 @@ slightly less convenient) alternatives.</p>
 <p>See also <a class="link" href="GMenu.html#g-menu-item-set-action-and-target-value" title="g_menu_item_set_action_and_target_value ()"><code class="function">g_menu_item_set_action_and_target_value()</code></a> for a description of
 the semantics of the action and target attributes.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.26.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-detailed-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1475,8 +1475,8 @@ the menu that <em class="parameter"><code>menu_item</code></em>
 for more information about what it means for a menu item to be a
 section.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.27.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-section.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1491,7 +1491,7 @@ section.</p>
 <tr>
 <td class="parameter_name"><p>section</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1513,8 +1513,8 @@ link is unset.</p>
 <p>The effect of having one menu appear as a submenu of another is
 exactly as it sounds.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.28.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-submenu.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1529,7 +1529,7 @@ exactly as it sounds.</p>
 <tr>
 <td class="parameter_name"><p>submenu</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1551,8 +1551,8 @@ g_menu_item_get_attribute_value (<em class="parameter"><code><a class="link" hre
 type, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned.  <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is also returned if the attribute
 simply does not exist.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.29.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-get-attribute-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1572,13 +1572,13 @@ simply does not exist.</p>
 <tr>
 <td class="parameter_name"><p>expected_type</p></td>
 <td class="parameter_description"><p> the expected type of the attribute. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.29.7"></a><h4>Returns</h4>
+<a name="g-menu-item-get-attribute-value.returns"></a><h4>Returns</h4>
 <p> the attribute value, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1604,8 +1604,8 @@ value into the positional parameters and <a href="../glib-Standard-Macros.html#T
 type, then the positional parameters are ignored and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> is
 returned.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.30.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-get-attribute.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1637,7 +1637,7 @@ returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.30.8"></a><h4>Returns</h4>
+<a name="g-menu-item-get-attribute.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the named attribute was found with the expected
 type</p>
 </div>
@@ -1653,8 +1653,8 @@ g_menu_item_get_link (<em class="parameter"><code><a class="link" href="GMenu.ht
  on <em class="parameter"><code>menu_item</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.31.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-get-link.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1675,7 +1675,7 @@ g_menu_item_get_link (<em class="parameter"><code><a class="link" href="GMenu.ht
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.31.6"></a><h4>Returns</h4>
+<a name="g-menu-item-get-link.returns"></a><h4>Returns</h4>
 <p> the link, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1709,8 +1709,8 @@ the <em class="parameter"><code>value</code></em>
 <p>See also <a class="link" href="GMenu.html#g-menu-item-set-attribute" title="g_menu_item_set_attribute ()"><code class="function">g_menu_item_set_attribute()</code></a> for a more convenient way to do
 the same.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.32.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-attribute-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1730,7 +1730,7 @@ the same.</p>
 <tr>
 <td class="parameter_name"><p>value</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> to use as the value, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1763,8 +1763,8 @@ and the named attribute is unset.</p>
 <p>See also <a class="link" href="GMenu.html#g-menu-item-set-attribute-value" title="g_menu_item_set_attribute_value ()"><code class="function">g_menu_item_set_attribute_value()</code></a> for an equivalent call
 that directly accepts a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.33.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-attribute.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1784,7 +1784,7 @@ that directly accepts a <a href="../glib-GVariant.html#GVariant"><span class="ty
 <tr>
 <td class="parameter_name"><p>format_string</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> format string, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>...</p></td>
@@ -1816,8 +1816,8 @@ Link types are restricted to lowercase characters, numbers
 and '-'. Furthermore, the names must begin with a lowercase character,
 must not end with a '-', and must not contain consecutive dashes.</p>
 <div class="refsect3">
-<a name="id-1.4.24.14.9.34.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-item-set-link.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1837,7 +1837,7 @@ must not end with a '-', and must not contain consecutive dashes.</p>
 <tr>
 <td class="parameter_name"><p>model</p></td>
 <td class="parameter_description"><p> the <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a> to link to (or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to unset). </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1865,6 +1865,6 @@ functions below.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

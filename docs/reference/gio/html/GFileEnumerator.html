@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GFileEnumerator: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="file_ops.html" title="File Operations">
 <link rel="prev" href="GFileInfo.html" title="GFileInfo">
 <link rel="next" href="gio-GIOError.html" title="GIOError">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GFileEnumerator.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -142,7 +142,7 @@
 </div>
 <div class="refsect1">
 <a name="GFileEnumerator.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -158,7 +158,7 @@
 </div>
 <div class="refsect1">
 <a name="GFileEnumerator.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -220,7 +220,7 @@ use correctly from C programs.  With <a class="link" href="GFileEnumerator.html#
 the gboolean return value signifies "end of iteration or error", which
 requires allocation of a temporary <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>.</p>
 <p>In contrast, with this function, a <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> return from
-<code class="function">gs_file_enumerator_iterate()</code> *always* means
+<a class="link" href="GFileEnumerator.html#g-file-enumerator-iterate" title="g_file_enumerator_iterate ()"><code class="function">g_file_enumerator_iterate()</code></a> *always* means
 "error".  End of iteration is signaled by <em class="parameter"><code>out_info</code></em>
  or <em class="parameter"><code>out_child</code></em>
  being <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
@@ -256,19 +256,19 @@ is:</p>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="normal">direnum </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-enumerate-children">g_file_enumerate_children</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">file</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">...);</span>
-<span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">)</span>
-<span class="normal">  </span><span class="cbracket">{</span>
-<span class="normal">    </span><span class="usertype">GFileInfo</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">info</span><span class="symbol">;</span>
-<span class="normal">    </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-iterate">g_file_enumerator_iterate</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">direnum</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">info</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> cancellable</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">))</span>
-<span class="normal">      </span><span class="keyword">goto</span><span class="normal"> out</span><span class="symbol">;</span>
-<span class="normal">    </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="normal">info</span><span class="symbol">)</span>
-<span class="normal">      </span><span class="keyword">break</span><span class="symbol">;</span>
-<span class="normal">    </span><span class="symbol">...</span><span class="normal"> </span><span class="keyword">do</span><span class="normal"> </span><span class="usertype">stuff</span><span class="normal"> with </span><span class="string">"info"</span><span class="symbol">;</span><span class="normal"> </span><span class="keyword">do</span><span class="normal"> not </span><span class="usertype">unref</span><span class="normal"> it</span><span class="symbol">!</span><span class="normal"> </span><span class="symbol">...</span>
-<span class="normal">  </span><span class="cbracket">}</span>
+        <td class="listing_code"><pre class="programlisting">direnum <span class="gtkdoc opt">=</span> <span class="function"><a href="GFile.html#g-file-enumerate-children">g_file_enumerate_children</a></span> <span class="gtkdoc opt">(</span>file<span class="gtkdoc opt">, ...);</span>
+<span class="keyword">while</span> <span class="gtkdoc opt">(</span>TRUE<span class="gtkdoc opt">)</span>
+  <span class="gtkdoc opt">{</span>
+    GFileInfo <span class="gtkdoc opt">*</span>info<span class="gtkdoc opt">;</span>
+    <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-iterate">g_file_enumerator_iterate</a></span> <span class="gtkdoc opt">(</span>direnum<span class="gtkdoc opt">, &amp;</span>info<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> cancellable<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">))</span>
+      <span class="keyword">goto</span> out<span class="gtkdoc opt">;</span>
+    <span class="keyword">if</span> <span class="gtkdoc opt">(!</span>info<span class="gtkdoc opt">)</span>
+      <span class="keyword">break</span><span class="gtkdoc opt">;</span>
+    <span class="gtkdoc opt">...</span> <span class="keyword">do</span> stuff with <span class="string">&quot;info&quot;</span><span class="gtkdoc opt">;</span> <span class="keyword">do not</span> unref it<span class="gtkdoc opt">! ...</span>
+  <span class="gtkdoc opt">}</span>
 
-<span class="label">out:</span>
-<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">direnum</span><span class="symbol">);</span><span class="normal"> </span><span class="comment">// Note: frees the last @info</span></pre></td>
+out<span class="gtkdoc opt">:</span>
+  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>direnum<span class="gtkdoc opt">);</span> <span class="gtkdoc slc">// Note: frees the last &#64;info</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -276,8 +276,8 @@ is:</p>
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.2.12"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-iterate.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -292,12 +292,12 @@ is:</p>
 <tr>
 <td class="parameter_name"><p>out_info</p></td>
 <td class="parameter_description"><p> Output location for the next <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>out_child</p></td>
 <td class="parameter_description"><p> Output location for the next <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
@@ -333,8 +333,8 @@ enumerator is at the end, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code
  will
 be unset.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.3.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-next-file.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -349,7 +349,7 @@ be unset.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -360,7 +360,7 @@ be unset.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.3.8"></a><h4>Returns</h4>
+<a name="g-file-enumerator-next-file.returns"></a><h4>Returns</h4>
 <p> A <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error
 or end of enumerator.  Free the returned object with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when no longer needed. </p>
@@ -380,8 +380,8 @@ enumerator return <a class="link" href="gio-GIOError.html#G-IO-ERROR-CLOSED:CAPS
 is dropped, but you might want to call this function to make 
 sure resources are released as early as possible.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-close.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -396,7 +396,7 @@ sure resources are released as early as possible.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -407,7 +407,7 @@ sure resources are released as early as possible.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.4.7"></a><h4>Returns</h4>
+<a name="g-file-enumerator-close.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><span class="type">TRUE</span></a> on success or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><span class="type">FALSE</span></a> on error.</p>
 </div>
 </div>
@@ -439,8 +439,8 @@ result in <a class="link" href="gio-GIOError.html#G-IO-ERROR-PENDING:CAPS"><code
 be executed before an outstanding request with lower priority. Default
 priority is <a href="../glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><code class="literal">G_PRIORITY_DEFAULT</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.5.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-next-files-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -459,13 +459,13 @@ priority is <a href="../glib-The-Main-Event-Loop.html#G-PRIORITY-DEFAULT:CAPS"><
 </tr>
 <tr>
 <td class="parameter_name"><p>io_priority</p></td>
-<td class="parameter_description"><p>the <a class="link" href="GAsyncResult.html#io-priority" title="I/O Priority">I/O priority</a> of the request </p></td>
+<td class="parameter_description"><p>the <a class="link" href="GAsyncResult.html#io-priority" title="I/O Priority">I/O priority</a> of the request</p></td>
 <td class="parameter_annotations"> </td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -490,8 +490,8 @@ g_file_enumerator_next_files_finish (<em class="parameter"><code><a class="link"
                                      <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes the asynchronous operation started with <a class="link" href="GFileEnumerator.html#g-file-enumerator-next-files-async" title="g_file_enumerator_next_files_async ()"><code class="function">g_file_enumerator_next_files_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-next-files-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -518,7 +518,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.6.6"></a><h4>Returns</h4>
+<a name="g-file-enumerator-next-files-finish.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a href="GFileInfo.html#GFileInfo-struct"><span class="type">GFileInfos</span></a>. You must free the list with
 <a href="../glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a> and unref the infos with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when you're
 done with them. </p>
@@ -541,8 +541,8 @@ triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned in 
 <a class="link" href="GFileEnumerator.html#g-file-enumerator-close-finish" title="g_file_enumerator_close_finish ()"><code class="function">g_file_enumerator_close_finish()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.7.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-close-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -562,7 +562,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -597,8 +597,8 @@ cancelled by triggering the cancellable object from another thread. If the opera
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be set, and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> will be 
 returned.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-close-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -625,7 +625,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.8.7"></a><h4>Returns</h4>
+<a name="g-file-enumerator-close-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the close operation has finished successfully.</p>
 </div>
 </div>
@@ -636,8 +636,8 @@ ignore.</p></td>
 g_file_enumerator_is_closed (<em class="parameter"><code><a class="link" href="GFileEnumerator.html" title="GFileEnumerator"><span class="type">GFileEnumerator</span></a> *enumerator</code></em>);</pre>
 <p>Checks if the file enumerator has been closed.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-is-closed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -651,7 +651,7 @@ g_file_enumerator_is_closed (<em class="parameter"><code><a class="link" href="G
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.9.6"></a><h4>Returns</h4>
+<a name="g-file-enumerator-is-closed.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the <em class="parameter"><code>enumerator</code></em>
 is closed.</p>
 </div>
@@ -663,8 +663,8 @@ is closed.</p>
 g_file_enumerator_has_pending (<em class="parameter"><code><a class="link" href="GFileEnumerator.html" title="GFileEnumerator"><span class="type">GFileEnumerator</span></a> *enumerator</code></em>);</pre>
 <p>Checks if the file enumerator has pending operations.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-has-pending.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -678,7 +678,7 @@ g_file_enumerator_has_pending (<em class="parameter"><code><a class="link" href=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.10.6"></a><h4>Returns</h4>
+<a name="g-file-enumerator-has-pending.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the <em class="parameter"><code>enumerator</code></em>
 has pending operations.</p>
 </div>
@@ -691,8 +691,8 @@ g_file_enumerator_set_pending (<em class="parameter"><code><a class="link" href=
                                <em class="parameter"><code><a href="../glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> pending</code></em>);</pre>
 <p>Sets the file enumerator as having pending operations.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-set-pending.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -720,8 +720,8 @@ g_file_enumerator_set_pending (<em class="parameter"><code><a class="link" href=
 g_file_enumerator_get_container (<em class="parameter"><code><a class="link" href="GFileEnumerator.html" title="GFileEnumerator"><span class="type">GFileEnumerator</span></a> *enumerator</code></em>);</pre>
 <p>Get the <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a> container which is being enumerated.</p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-get-container.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -735,7 +735,7 @@ g_file_enumerator_get_container (<em class="parameter"><code><a class="link" hre
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.12.6"></a><h4>Returns</h4>
+<a name="g-file-enumerator-get-container.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a> which is being enumerated. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -760,9 +760,9 @@ inside loops with <a class="link" href="GFileEnumerator.html#g-file-enumerator-n
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">name </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFileInfo.html#g-file-info-get-name">g_file_info_get_name</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">info</span><span class="symbol">);</span>
-<span class="usertype">GFile</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">child </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GFile.html#g-file-get-child">g_file_get_child</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-get-container">g_file_enumerator_get_container</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">enumr</span><span class="symbol">),</span>
-<span class="normal">                                 name</span><span class="symbol">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">gchar <span class="gtkdoc opt">*</span>name <span class="gtkdoc opt">=</span> <span class="function"><a href="GFileInfo.html#g-file-info-get-name">g_file_info_get_name</a></span> <span class="gtkdoc opt">(</span>info<span class="gtkdoc opt">);</span>
+GFile <span class="gtkdoc opt">*</span>child <span class="gtkdoc opt">=</span> <span class="function"><a href="GFile.html#g-file-get-child">g_file_get_child</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GFileEnumerator.html#g-file-enumerator-get-container">g_file_enumerator_get_container</a></span> <span class="gtkdoc opt">(</span>enumr<span class="gtkdoc opt">),</span>
+                                 name<span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -770,8 +770,8 @@ inside loops with <a class="link" href="GFileEnumerator.html#g-file-enumerator-n
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.13.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-file-enumerator-get-child.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -793,7 +793,7 @@ or the async equivalents.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.2.5.9.13.9"></a><h4>Returns</h4>
+<a name="g-file-enumerator-get-child.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a> for the <a class="link" href="GFileInfo.html" title="GFileInfo"><span class="type">GFileInfo</span></a> passed it. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -819,6 +819,6 @@ or the async equivalents.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

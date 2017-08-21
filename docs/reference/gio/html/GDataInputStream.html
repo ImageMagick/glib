@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GDataInputStream: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="streaming.html" title="Streaming I/O">
 <link rel="prev" href="GBufferedOutputStream.html" title="GBufferedOutputStream">
 <link rel="next" href="GDataOutputStream.html" title="GDataOutputStream">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GDataInputStream.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -231,7 +231,7 @@
 </div>
 <div class="refsect1">
 <a name="GDataInputStream.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -253,7 +253,7 @@
 </div>
 <div class="refsect1">
 <a name="GDataInputStream.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -308,8 +308,8 @@ g_data_input_stream_new (<em class="parameter"><code><a class="link" href="GInpu
 <p>Creates a new data input stream for the <em class="parameter"><code>base_stream</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -323,7 +323,7 @@ g_data_input_stream_new (<em class="parameter"><code><a class="link" href="GInpu
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.2.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GDataInputStream.html" title="GDataInputStream"><span class="type">GDataInputStream</span></a>.</p>
 </div>
 </div>
@@ -339,8 +339,8 @@ reads from the <em class="parameter"><code>stream</code></em>
  will be read in the given <em class="parameter"><code>order</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-set-byte-order.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -368,8 +368,8 @@ reads from the <em class="parameter"><code>stream</code></em>
 g_data_input_stream_get_byte_order (<em class="parameter"><code><a class="link" href="GDataInputStream.html" title="GDataInputStream"><span class="type">GDataInputStream</span></a> *stream</code></em>);</pre>
 <p>Gets the byte order for the data input stream.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-get-byte-order.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -383,7 +383,7 @@ g_data_input_stream_get_byte_order (<em class="parameter"><code><a class="link" 
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.4.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-get-byte-order.returns"></a><h4>Returns</h4>
 <p> the <em class="parameter"><code>stream</code></em>
 's current <a class="link" href="GDataInputStream.html#GDataStreamByteOrder" title="enum GDataStreamByteOrder"><span class="type">GDataStreamByteOrder</span></a>. </p>
 </div>
@@ -400,8 +400,8 @@ g_data_input_stream_set_newline_type (<em class="parameter"><code><a class="link
 chunk ends in "CR" we must read an additional byte to know if this is "CR" or
 "CR LF", and this might block if there is no more data available.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-set-newline-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -430,8 +430,8 @@ g_data_input_stream_get_newline_type (<em class="parameter"><code><a class="link
 <p>Gets the current newline type for the <em class="parameter"><code>stream</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-get-newline-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -445,7 +445,7 @@ g_data_input_stream_get_newline_type (<em class="parameter"><code><a class="link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.6.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-get-newline-type.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="GDataInputStream.html#GDataStreamNewlineType" title="enum GDataStreamNewlineType"><span class="type">GDataStreamNewlineType</span></a> for the given <em class="parameter"><code>stream</code></em>
 .</p>
 </div>
@@ -460,8 +460,8 @@ g_data_input_stream_read_byte (<em class="parameter"><code><a class="link" href=
 <p>Reads an unsigned 8-bit/1-byte value from <em class="parameter"><code>stream</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-byte.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -476,7 +476,7 @@ g_data_input_stream_read_byte (<em class="parameter"><code><a class="link" href=
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -487,7 +487,7 @@ g_data_input_stream_read_byte (<em class="parameter"><code><a class="link" href=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.7.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-byte.returns"></a><h4>Returns</h4>
 <p> an unsigned 8-bit/1-byte value read from the <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code>
 if an error occurred.</p>
@@ -505,8 +505,8 @@ g_data_input_stream_read_int16 (<em class="parameter"><code><a class="link" href
 <p>In order to get the correct byte order for this read operation, 
 see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-order" title="g_data_input_stream_get_byte_order ()"><code class="function">g_data_input_stream_get_byte_order()</code></a> and <a class="link" href="GDataInputStream.html#g-data-input-stream-set-byte-order" title="g_data_input_stream_set_byte_order ()"><code class="function">g_data_input_stream_set_byte_order()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-int16.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -521,7 +521,7 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -532,7 +532,7 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.8.7"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-int16.returns"></a><h4>Returns</h4>
 <p> a signed 16-bit/2-byte value read from <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code> if
 an error occurred.</p>
@@ -550,8 +550,8 @@ g_data_input_stream_read_uint16 (<em class="parameter"><code><a class="link" hre
 <p>In order to get the correct byte order for this read operation, 
 see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-order" title="g_data_input_stream_get_byte_order ()"><code class="function">g_data_input_stream_get_byte_order()</code></a> and <a class="link" href="GDataInputStream.html#g-data-input-stream-set-byte-order" title="g_data_input_stream_set_byte_order ()"><code class="function">g_data_input_stream_set_byte_order()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-uint16.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -566,7 +566,7 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -577,7 +577,7 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.9.7"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-uint16.returns"></a><h4>Returns</h4>
 <p> an unsigned 16-bit/2-byte value read from the <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code> if
 an error occurred. </p>
@@ -599,8 +599,8 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.10.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-int32.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -615,7 +615,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -626,7 +626,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.10.8"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-int32.returns"></a><h4>Returns</h4>
 <p> a signed 32-bit/4-byte value read from the <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code> if
 an error occurred. </p>
@@ -648,8 +648,8 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.11.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-uint32.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -664,7 +664,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -675,7 +675,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.11.8"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-uint32.returns"></a><h4>Returns</h4>
 <p> an unsigned 32-bit/4-byte value read from the <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code> if
 an error occurred. </p>
@@ -697,8 +697,8 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.12.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-int64.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -713,7 +713,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -724,7 +724,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.12.8"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-int64.returns"></a><h4>Returns</h4>
 <p> a signed 64-bit/8-byte value read from <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code> if
 an error occurred.  </p>
@@ -746,8 +746,8 @@ see <a class="link" href="GDataInputStream.html#g-data-input-stream-get-byte-ord
 triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.13.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-uint64.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -762,7 +762,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -773,7 +773,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.13.8"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-uint64.returns"></a><h4>Returns</h4>
 <p> an unsigned 64-bit/8-byte read from <em class="parameter"><code>stream</code></em>
 or <code class="literal">0</code> if
 an error occurred. </p>
@@ -795,8 +795,8 @@ be UTF-8, and may in fact have embedded NUL characters.</p>
 triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-line.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -811,12 +811,12 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -827,7 +827,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.14.7"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-line.returns"></a><h4>Returns</h4>
 <p> a NUL terminated byte array with the line that was read in
 (without the newlines).  Set <em class="parameter"><code>length</code></em>
 to a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length
@@ -852,8 +852,8 @@ g_data_input_stream_read_line_utf8 (<em class="parameter"><code><a class="link" 
 triggering the cancellable object from another thread. If the operation
 was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANCELLED:CAPS"><code class="literal">G_IO_ERROR_CANCELLED</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.15.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-line-utf8.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -868,12 +868,12 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -884,7 +884,7 @@ was cancelled, the error <a class="link" href="gio-GIOError.html#G-IO-ERROR-CANC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.15.7"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-line-utf8.returns"></a><h4>Returns</h4>
 <p> a NUL terminated UTF-8 string
 with the line that was read in (without the newlines).  Set
 <em class="parameter"><code>length</code></em>
@@ -914,8 +914,8 @@ an error to have two outstanding calls to this function.</p>
 can then call <a class="link" href="GDataInputStream.html#g-data-input-stream-read-line-finish" title="g_data_input_stream_read_line_finish ()"><code class="function">g_data_input_stream_read_line_finish()</code></a> to get
 the result of the operation.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.16.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-line-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -935,7 +935,7 @@ the result of the operation.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -965,8 +965,8 @@ g_data_input_stream_read_line_finish (<em class="parameter"><code><a class="link
 string encoding in <a class="link" href="GDataInputStream.html#g-data-input-stream-read-line" title="g_data_input_stream_read_line ()"><code class="function">g_data_input_stream_read_line()</code></a> applies here as
 well.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-line-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -986,7 +986,7 @@ well.</p>
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -997,7 +997,7 @@ well.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.17.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-line-finish.returns"></a><h4>Returns</h4>
 <p> a NUL-terminated byte array with the line that was read in
 (without the newlines).  Set <em class="parameter"><code>length</code></em>
 to a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length
@@ -1021,8 +1021,8 @@ g_data_input_stream_read_line_finish_utf8
 <p>Finish an asynchronous call started by
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-line-async" title="g_data_input_stream_read_line_async ()"><code class="function">g_data_input_stream_read_line_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.18.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-line-finish-utf8.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1042,7 +1042,7 @@ g_data_input_stream_read_line_finish_utf8
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1053,7 +1053,7 @@ g_data_input_stream_read_line_finish_utf8
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.18.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-line-finish-utf8.returns"></a><h4>Returns</h4>
 <p> a string with the line that
 was read in (without the newlines).  Set <em class="parameter"><code>length</code></em>
 to a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to
@@ -1088,8 +1088,8 @@ does not consume the stop character. You have to use
  is
 specified.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.19.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-upto.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1117,12 +1117,12 @@ nul-terminated</p></td>
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1133,7 +1133,7 @@ nul-terminated</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.19.8"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-upto.returns"></a><h4>Returns</h4>
 <p> a string with the data that was read
 before encountering any of the stop characters. Set <em class="parameter"><code>length</code></em>
 to
@@ -1169,8 +1169,8 @@ specified.</p>
 can then call <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto-finish" title="g_data_input_stream_read_upto_finish ()"><code class="function">g_data_input_stream_read_upto_finish()</code></a> to get
 the result of the operation.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.20.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-upto-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1203,7 +1203,7 @@ nul-terminated</p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1234,8 +1234,8 @@ g_data_input_stream_read_upto_finish (<em class="parameter"><code><a class="link
 have to use <a class="link" href="GDataInputStream.html#g-data-input-stream-read-byte" title="g_data_input_stream_read_byte ()"><code class="function">g_data_input_stream_read_byte()</code></a> to get it before calling
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto-async" title="g_data_input_stream_read_upto_async ()"><code class="function">g_data_input_stream_read_upto_async()</code></a> again.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.21.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-upto-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1255,7 +1255,7 @@ have to use <a class="link" href="GDataInputStream.html#g-data-input-stream-read
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1266,7 +1266,7 @@ have to use <a class="link" href="GDataInputStream.html#g-data-input-stream-read
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.21.7"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-upto-finish.returns"></a><h4>Returns</h4>
 <p> a string with the data that was read
 before encountering any of the stop characters. Set <em class="parameter"><code>length</code></em>
 to
@@ -1295,8 +1295,8 @@ functions will be marked as deprecated in a future release.  Use
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto" title="g_data_input_stream_read_upto ()"><code class="function">g_data_input_stream_read_upto()</code></a> instead, but note that that function
 does not consume the stop character.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.22.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-until.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1316,12 +1316,12 @@ does not consume the stop character.</p>
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1332,7 +1332,7 @@ does not consume the stop character.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.22.8"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-until.returns"></a><h4>Returns</h4>
 <p> a string with the data that was read
 before encountering any of the stop characters. Set <em class="parameter"><code>length</code></em>
 to
@@ -1365,8 +1365,8 @@ inconsistent with <a class="link" href="GDataInputStream.html#g-data-input-strea
 will be marked as deprecated in a future release.  Use
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-upto-async" title="g_data_input_stream_read_upto_async ()"><code class="function">g_data_input_stream_read_upto_async()</code></a> instead.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.23.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-until-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1391,7 +1391,7 @@ will be marked as deprecated in a future release.  Use
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1419,8 +1419,8 @@ g_data_input_stream_read_until_finish (<em class="parameter"><code><a class="lin
 <p>Finish an asynchronous call started by
 <a class="link" href="GDataInputStream.html#g-data-input-stream-read-until-async" title="g_data_input_stream_read_until_async ()"><code class="function">g_data_input_stream_read_until_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.24.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-data-input-stream-read-until-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1440,7 +1440,7 @@ g_data_input_stream_read_until_finish (<em class="parameter"><code><a class="lin
 <tr>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Basic-Types.html#gsize"><span class="type">gsize</span></a> to get the length of the data read in. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1451,7 +1451,7 @@ g_data_input_stream_read_until_finish (<em class="parameter"><code><a class="lin
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.17.10.24.6"></a><h4>Returns</h4>
+<a name="g-data-input-stream-read-until-finish.returns"></a><h4>Returns</h4>
 <p> a string with the data that was read
 before encountering any of the stop characters. Set <em class="parameter"><code>length</code></em>
 to
@@ -1476,8 +1476,8 @@ data manipulation of arbitrary data (including binary operations).</p>
 <p><a class="link" href="GDataInputStream.html#GDataStreamByteOrder" title="enum GDataStreamByteOrder"><span class="type">GDataStreamByteOrder</span></a> is used to ensure proper endianness of streaming data sources
 across various machine architectures.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.11.3.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDataStreamByteOrder.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1514,8 +1514,8 @@ across various machine architectures.</p>
 <a name="GDataStreamNewlineType"></a><h3>enum GDataStreamNewlineType</h3>
 <p><a class="link" href="GDataInputStream.html#GDataStreamNewlineType" title="enum GDataStreamNewlineType"><span class="type">GDataStreamNewlineType</span></a> is used when checking for or setting the line endings for a given file.</p>
 <div class="refsect3">
-<a name="id-1.4.7.17.11.4.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDataStreamNewlineType.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1579,6 +1579,6 @@ across various machine architectures.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

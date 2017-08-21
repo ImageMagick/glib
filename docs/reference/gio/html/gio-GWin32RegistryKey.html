@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GWin32RegistryKey: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="registry.html" title="Win32 registry support">
 <link rel="prev" href="registry.html" title="Win32 registry support">
 <link rel="next" href="application.html" title="Application support">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-GWin32RegistryKey.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -306,7 +306,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-GWin32RegistryKey.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -377,8 +377,8 @@ g_win32_registry_subkey_iter_copy (<em class="parameter"><code>const <a class="l
 <p>Creates a dynamically-allocated copy of an iterator. Dynamically-allocated
 state of the iterator is duplicated too.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-copy.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -392,7 +392,7 @@ state of the iterator is duplicated too.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.2.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-subkey-iter-copy.returns"></a><h4>Returns</h4>
 <p> a copy of the <em class="parameter"><code>iter</code></em>
 ,
 free with <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-free" title="g_win32_registry_subkey_iter_free ()"><code class="function">g_win32_registry_subkey_iter_free()</code></a>. </p>
@@ -408,8 +408,8 @@ g_win32_registry_subkey_iter_free (<em class="parameter"><code><a class="link" h
 <p>Free an iterator allocated on the heap. For iterators that are allocated
 on the stack use <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-clear" title="g_win32_registry_subkey_iter_clear ()"><code class="function">g_win32_registry_subkey_iter_clear()</code></a> instead.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-free.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -437,8 +437,8 @@ is not useful in applications, because iterators can be assigned
 with <code class="literal">GWin32RegistrySubkeyIter i = j;</code>. The
 function is used by language bindings.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-assign.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -468,8 +468,8 @@ g_win32_registry_value_iter_copy (<em class="parameter"><code>const <a class="li
 <p>Creates a dynamically-allocated copy of an iterator. Dynamically-allocated
 state of the iterator is duplicated too.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-copy.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -483,7 +483,7 @@ state of the iterator is duplicated too.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.5.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-copy.returns"></a><h4>Returns</h4>
 <p> a copy of the <em class="parameter"><code>iter</code></em>
 ,
 free with <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-free" title="g_win32_registry_value_iter_free ()"><code class="function">g_win32_registry_value_iter_free()</code></a>. </p>
@@ -499,8 +499,8 @@ g_win32_registry_value_iter_free (<em class="parameter"><code><a class="link" hr
 <p>Free an iterator allocated on the heap. For iterators that are allocated
 on the stack use <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-clear" title="g_win32_registry_value_iter_clear ()"><code class="function">g_win32_registry_value_iter_clear()</code></a> instead.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-free.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -528,8 +528,8 @@ is not useful in applications, because iterators can be assigned
 with <code class="literal">GWin32RegistryValueIter i = j;</code>. The
 function is used by language bindings.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-assign.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -575,8 +575,8 @@ g_win32_registry_key_new (<em class="parameter"><code>const <a href="../glib-Bas
  must not end with '\'.</p></li>
 </ul></div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -597,7 +597,7 @@ g_win32_registry_key_new (<em class="parameter"><code>const <a href="../glib-Bas
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.8.7"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-new.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryKey" title="struct GWin32RegistryKey"><span class="type">GWin32RegistryKey</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if can't
 be opened. Free with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -627,8 +627,8 @@ g_win32_registry_key_new_w (<em class="parameter"><code>const <a href="../glib-U
  must not end with L'\'.</p></li>
 </ul></div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-new-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -643,13 +643,13 @@ g_win32_registry_key_new_w (<em class="parameter"><code>const <a href="../glib-U
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> a pointer to a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.9.7"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-new-w.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryKey" title="struct GWin32RegistryKey"><span class="type">GWin32RegistryKey</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if can't
 be opened. Free with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -666,8 +666,8 @@ g_win32_registry_key_get_child (<em class="parameter"><code><a class="link" href
  of the <em class="parameter"><code>key</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-get-child.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -688,13 +688,13 @@ g_win32_registry_key_get_child (<em class="parameter"><code><a class="link" href
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> a pointer to a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.10.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-get-child.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryKey" title="struct GWin32RegistryKey"><span class="type">GWin32RegistryKey</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if can't be opened. Free
 with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
@@ -711,8 +711,8 @@ g_win32_registry_key_get_child_w (<em class="parameter"><code><a class="link" hr
  of the <em class="parameter"><code>key</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-get-child-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -733,13 +733,13 @@ g_win32_registry_key_get_child_w (<em class="parameter"><code><a class="link" hr
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> a pointer to a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.11.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-get-child-w.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryKey" title="struct GWin32RegistryKey"><span class="type">GWin32RegistryKey</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if can't be opened. Free
 with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
@@ -761,8 +761,8 @@ ignored.</p>
 Clean up its internal buffers with a call to
 <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-clear" title="g_win32_registry_subkey_iter_clear ()"><code class="function">g_win32_registry_subkey_iter_clear()</code></a> when done.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-init.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -782,13 +782,13 @@ Clean up its internal buffers with a call to
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> a pointer to <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for input and for returning results. Default is transfer full."><span class="acronym">inout</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.12.7"></a><h4>Returns</h4>
+<a name="g-win32-registry-subkey-iter-init.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if iterator was initialized successfully, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on error.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -800,8 +800,8 @@ Clean up its internal buffers with a call to
 g_win32_registry_subkey_iter_clear (<em class="parameter"><code><a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistrySubkeyIter" title="struct GWin32RegistrySubkeyIter"><span class="type">GWin32RegistrySubkeyIter</span></a> *iter</code></em>);</pre>
 <p>Frees internal buffers of a <a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistrySubkeyIter" title="struct GWin32RegistrySubkeyIter"><span class="type">GWin32RegistrySubkeyIter</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-clear.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -828,8 +828,8 @@ of items remaining.</p>
 <p>This information is accurate at the point of iterator initialization,
 and may go out of sync with reality even while subkeys are enumerated.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-n-subkeys.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -843,7 +843,7 @@ and may go out of sync with reality even while subkeys are enumerated.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.14.7"></a><h4>Returns</h4>
+<a name="g-win32-registry-subkey-iter-n-subkeys.returns"></a><h4>Returns</h4>
 <p> the number of subkeys in the key</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -888,31 +888,31 @@ Enumeration errors can be ignored if <em class="parameter"><code>skip_errors</co
 23
 24
 25</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="comment">// recursively iterate a key</span>
-<span class="type">void</span>
-<span class="function">iterate_key_recursive</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GWin32RegistryKey</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">key</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GWin32RegistrySubkeyIter</span><span class="normal"> iter</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">name</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">GWin32RegistryKey</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">child</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// recursively iterate a key</span>
+<span class="gtkdoc kwb">void</span>
+<span class="function">iterate_key_recursive</span> <span class="gtkdoc opt">(</span>GWin32RegistryKey <span class="gtkdoc opt">*</span>key<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GWin32RegistrySubkeyIter iter<span class="gtkdoc opt">;</span>
+  gchar <span class="gtkdoc opt">*</span>name<span class="gtkdoc opt">;</span>
+  GWin32RegistryKey <span class="gtkdoc opt">*</span>child<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-init">g_win32_registry_subkey_iter_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> key</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
-<span class="normal">    </span><span class="keyword">return</span><span class="symbol">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-init">g_win32_registry_subkey_iter_init</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> key<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
+    <span class="keyword">return</span><span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-next">g_win32_registry_subkey_iter_next</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-get-name">g_win32_registry_subkey_iter_get_name</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">name</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
-<span class="normal">        </span><span class="keyword">continue</span><span class="symbol">;</span>
+  <span class="keyword">while</span> <span class="gtkdoc opt">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-next">g_win32_registry_subkey_iter_next</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-get-name">g_win32_registry_subkey_iter_get_name</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">, &amp;</span>name<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
+        <span class="keyword">continue</span><span class="gtkdoc opt">;</span>
 
-<span class="normal">      </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"subkey '%s'</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> name</span><span class="symbol">);</span>
-<span class="normal">      child </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-key-get-child">g_win32_registry_key_get_child</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">key</span><span class="symbol">,</span><span class="normal"> name</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+      <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;subkey &apos;%s&apos;</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> name<span class="gtkdoc opt">);</span>
+      child <span class="gtkdoc opt">=</span> <span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-key-get-child">g_win32_registry_key_get_child</a></span> <span class="gtkdoc opt">(</span>key<span class="gtkdoc opt">,</span> name<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
 
-<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child</span><span class="symbol">)</span>
-<span class="normal">        </span><span class="function">iterate_key_recursive</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">child</span><span class="symbol">);</span>
-<span class="normal">    </span><span class="cbracket">}</span>
+      <span class="keyword">if</span> <span class="gtkdoc opt">(</span>child<span class="gtkdoc opt">)</span>
+        <span class="function">iterate_key_recursive</span> <span class="gtkdoc opt">(</span>child<span class="gtkdoc opt">);</span>
+    <span class="gtkdoc opt">}</span>
 
-<span class="normal">  </span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-clear">g_win32_registry_subkey_iter_clear</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-subkey-iter-clear">g_win32_registry_subkey_iter_clear</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -920,8 +920,8 @@ Enumeration errors can be ignored if <em class="parameter"><code>skip_errors</co
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.15.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-next.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -949,7 +949,7 @@ proceed forward. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.15.9"></a><h4>Returns</h4>
+<a name="g-win32-registry-subkey-iter-next.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if next subkey info was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -965,8 +965,8 @@ g_win32_registry_subkey_iter_get_name (<em class="parameter"><code><a class="lin
 <p>Gets the name of the subkey at the <em class="parameter"><code>iter</code></em>
  potision.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.16.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1001,7 +1001,7 @@ length of <em class="parameter"><code>subkey_name</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.16.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-subkey-iter-get-name.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the name was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1018,8 +1018,8 @@ g_win32_registry_subkey_iter_get_name_w
 <p>Same as <code class="function">g_win32_registry_subkey_iter_get_next()</code>, but outputs UTF-16-encoded
 data, without converting it to UTF-8 first.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-subkey-iter-get-name-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1055,7 +1055,7 @@ NUL-terminator.
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.17.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-subkey-iter-get-name-w.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the name was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1076,8 +1076,8 @@ ignored.</p>
 Clean up its internal buffers with a call to
 <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-clear" title="g_win32_registry_value_iter_clear ()"><code class="function">g_win32_registry_value_iter_clear()</code></a> when done.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.18.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-init.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1103,7 +1103,7 @@ Clean up its internal buffers with a call to
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.18.7"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-init.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if iterator was initialized successfully, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on error.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1115,8 +1115,8 @@ Clean up its internal buffers with a call to
 g_win32_registry_value_iter_clear (<em class="parameter"><code><a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryValueIter" title="struct GWin32RegistryValueIter"><span class="type">GWin32RegistryValueIter</span></a> *iter</code></em>);</pre>
 <p>Frees internal buffers of a <a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryValueIter" title="struct GWin32RegistryValueIter"><span class="type">GWin32RegistryValueIter</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.19.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-clear.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1142,8 +1142,8 @@ of items remaining.</p>
 <p>This information is accurate at the point of iterator initialization,
 and may go out of sync with reality even while values are enumerated.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.20.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-n-values.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1157,7 +1157,7 @@ and may go out of sync with reality even while values are enumerated.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.20.7"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-n-values.returns"></a><h4>Returns</h4>
 <p> the number of values in the key</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1204,32 +1204,32 @@ Enumeration errors can be ignored if <em class="parameter"><code>skip_errors</co
 24
 25
 26</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="comment">// iterate values of a key</span>
-<span class="type">void</span>
-<span class="function">iterate_values_recursive</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GWin32RegistryKey</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">key</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GWin32RegistryValueIter</span><span class="normal"> iter</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">name</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">GWin32RegistryValueType</span><span class="normal"> val_type</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">val_data</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc slc">// iterate values of a key</span>
+<span class="gtkdoc kwb">void</span>
+<span class="function">iterate_values_recursive</span> <span class="gtkdoc opt">(</span>GWin32RegistryKey <span class="gtkdoc opt">*</span>key<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GWin32RegistryValueIter iter<span class="gtkdoc opt">;</span>
+  gchar <span class="gtkdoc opt">*</span>name<span class="gtkdoc opt">;</span>
+  GWin32RegistryValueType val_type<span class="gtkdoc opt">;</span>
+  gchar <span class="gtkdoc opt">*</span>val_data<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-init">g_win32_registry_value_iter_init</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> key</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
-<span class="normal">    </span><span class="keyword">return</span><span class="symbol">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-init">g_win32_registry_value_iter_init</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> key<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
+    <span class="keyword">return</span><span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">while</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-next">g_win32_registry_value_iter_next</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">((!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-get-value-type">g_win32_registry_value_iter_get_value_type</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">value</span><span class="symbol">))</span><span class="normal"> </span><span class="symbol">||</span>
-<span class="normal">          </span><span class="symbol">((</span><span class="normal">val_type </span><span class="symbol">!=</span><span class="normal"> <a href="gio-GWin32RegistryKey.html#G-WIN32-REGISTRY-VALUE-STR:CAPS">G_WIN32_REGISTRY_VALUE_STR</a></span><span class="symbol">)</span><span class="normal"> </span><span class="symbol">&amp;&amp;</span>
-<span class="normal">           </span><span class="symbol">(</span><span class="normal">val_type </span><span class="symbol">!=</span><span class="normal"> <a href="gio-GWin32RegistryKey.html#G-WIN32-REGISTRY-VALUE-EXPAND-STR:CAPS">G_WIN32_REGISTRY_VALUE_EXPAND_STR</a></span><span class="symbol">)))</span>
-<span class="normal">        </span><span class="keyword">continue</span><span class="symbol">;</span>
+  <span class="keyword">while</span> <span class="gtkdoc opt">(</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-next">g_win32_registry_value_iter_next</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="keyword">if</span> <span class="gtkdoc opt">((!</span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-get-value-type">g_win32_registry_value_iter_get_value_type</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">, &amp;</span>value<span class="gtkdoc opt">)) ||</span>
+          <span class="gtkdoc opt">((</span>val_type <span class="gtkdoc opt">!=</span> G_WIN32_REGISTRY_VALUE_STR<span class="gtkdoc opt">) &amp;&amp;</span>
+           <span class="gtkdoc opt">(</span>val_type <span class="gtkdoc opt">!=</span> G_WIN32_REGISTRY_VALUE_EXPAND_STR<span class="gtkdoc opt">)))</span>
+        <span class="keyword">continue</span><span class="gtkdoc opt">;</span>
 
-<span class="normal">      </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function">g_win32_registry_value_iter_get_value</span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#TRUE:CAPS">TRUE</a></span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">name</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
-<span class="normal">                                                 </span><span class="symbol">&amp;</span><span class="normal">val_data</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">))</span>
-<span class="normal">        </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"value '%s' = '%s'</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> name</span><span class="symbol">,</span><span class="normal"> val_data</span><span class="symbol">);</span>
-<span class="normal">    </span><span class="cbracket">}</span>
+      <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function">g_win32_registry_value_iter_get_value</span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">,</span> TRUE<span class="gtkdoc opt">, &amp;</span>name<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span>
+                                                 <span class="gtkdoc opt">&amp;</span>val_data<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">))</span>
+        <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;value &apos;%s&apos; = &apos;%s&apos;</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> name<span class="gtkdoc opt">,</span> val_data<span class="gtkdoc opt">);</span>
+    <span class="gtkdoc opt">}</span>
 
-<span class="normal">  </span><span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-clear">g_win32_registry_value_iter_clear</a></span><span class="normal"> </span><span class="symbol">(&amp;</span><span class="normal">iter</span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="function"><a href="gio-GWin32RegistryKey.html#g-win32-registry-value-iter-clear">g_win32_registry_value_iter_clear</a></span> <span class="gtkdoc opt">(&amp;</span>iter<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1237,8 +1237,8 @@ Enumeration errors can be ignored if <em class="parameter"><code>skip_errors</co
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.21.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-next.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1266,7 +1266,7 @@ proceed forward. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.21.9"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-next.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if next value info was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1282,8 +1282,8 @@ g_win32_registry_value_iter_get_value_type
 <p>Stores the type of the value currently being iterated over in <em class="parameter"><code>value_type</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.22.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-get-value-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1310,7 +1310,7 @@ the value. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.22.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-get-value-type.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if value type was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1328,8 +1328,8 @@ g_win32_registry_value_iter_get_name (<em class="parameter"><code><a class="link
 and its length - in <em class="parameter"><code>value_name_len</code></em>
  (if not <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>).</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.23.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1364,7 +1364,7 @@ of <em class="parameter"><code>value_name</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.23.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-get-name.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if value name was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1383,8 +1383,8 @@ g_win32_registry_value_iter_get_name_w
 and its length - in <em class="parameter"><code>value_name</code></em>
  (if not <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>).</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.24.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-get-name-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1419,7 +1419,7 @@ of <em class="parameter"><code>value_name</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.24.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-get-name-w.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if value name was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1438,8 +1438,8 @@ g_win32_registry_value_iter_get_data (<em class="parameter"><code><a class="link
 and its length - in <em class="parameter"><code>value_data_len</code></em>
  (if not <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>).</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.25.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-get-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1480,7 +1480,7 @@ of <em class="parameter"><code>value_data</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.25.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-get-data.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if value data was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1500,8 +1500,8 @@ g_win32_registry_value_iter_get_data_w
 and its length - in <em class="parameter"><code>value_data_len</code></em>
  (if not <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>).</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.26.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-value-iter-get-data-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1542,7 +1542,7 @@ of <em class="parameter"><code>value_data</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.26.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-value-iter-get-data-w.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if value data was retrieved, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1561,8 +1561,8 @@ g_win32_registry_key_get_value (<em class="parameter"><code><a class="link" href
 <p>Get data from a value of a key. String data is guaranteed to be
 appropriately terminated and will be in UTF-8.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.27.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-get-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1612,7 +1612,7 @@ by <em class="parameter"><code>value_data</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.27.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-get-value.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on failure.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1637,8 +1637,8 @@ unterminated string data (if value is some kind of string), because
 termination cannot be checked and fixed unless the data is retreived
 too.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.28.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-get-value-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1688,7 +1688,7 @@ by <em class="parameter"><code>value_data</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.28.8"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-get-value-w.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on failure.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1700,8 +1700,8 @@ by <em class="parameter"><code>value_data</code></em>
 g_win32_registry_key_get_path (<em class="parameter"><code><a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryKey" title="struct GWin32RegistryKey"><span class="type">GWin32RegistryKey</span></a> *key</code></em>);</pre>
 <p>Get full path to the key</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.29.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-get-path.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1715,7 +1715,7 @@ g_win32_registry_key_get_path (<em class="parameter"><code><a class="link" href=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.29.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-get-path.returns"></a><h4>Returns</h4>
 <p> a full path to the key (in UTF-8),
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if it can't be converted to UTF-8. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -1729,8 +1729,8 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 g_win32_registry_key_get_path_w (<em class="parameter"><code><a class="link" href="gio-GWin32RegistryKey.html#GWin32RegistryKey" title="struct GWin32RegistryKey"><span class="type">GWin32RegistryKey</span></a> *key</code></em>);</pre>
 <p>Get full path to the key</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.30.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-get-path-w.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1744,7 +1744,7 @@ g_win32_registry_key_get_path_w (<em class="parameter"><code><a class="link" hre
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.30.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-get-path-w.returns"></a><h4>Returns</h4>
 <p> a full path to the key (in UTF-16). </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -1761,8 +1761,8 @@ g_win32_registry_key_get_path_w (<em class="parameter"><code><a class="link" hre
 occurs. If the children of the key were watched also, there is no way to know
 which one of them triggered the callback.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.31.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GWin32RegistryKeyWatchCallbackFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1814,8 +1814,8 @@ being watched is allowed and affects nothing.</p>
 <p>The fact that the key is being watched will be used internally to update
 key path (if it changes).</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.32.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-watch.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1859,7 +1859,7 @@ on invocation. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.32.9"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-watch.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on failure.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-46.html#api-index-2.46">2.46</a></p>
@@ -1872,8 +1872,8 @@ g_win32_registry_key_has_changed (<em class="parameter"><code><a class="link" hr
 <p>Check the <em class="parameter"><code>key</code></em>
 's status indicator.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.33.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-has-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1887,7 +1887,7 @@ g_win32_registry_key_has_changed (<em class="parameter"><code><a class="link" hr
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.33.6"></a><h4>Returns</h4>
+<a name="g-win32-registry-key-has-changed.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the <em class="parameter"><code>key</code></em>
 was put under watch at some point and has changed
 since then, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if it either wasn't changed or wasn't watched at all.</p>
@@ -1906,8 +1906,8 @@ g_win32_registry_key_erase_change_indicator
 until the key is put on watch again by calling
 <a class="link" href="gio-GWin32RegistryKey.html#g-win32-registry-key-watch" title="g_win32_registry_key_watch ()"><code class="function">g_win32_registry_key_watch()</code></a> again.</p>
 <div class="refsect3">
-<a name="id-1.4.23.2.7.34.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-registry-key-erase-change-indicator.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1950,8 +1950,8 @@ until the key is put on watch again by calling
 <div class="refsect2">
 <a name="GWin32RegistryValueType"></a><h3>enum GWin32RegistryValueType</h3>
 <div class="refsect3">
-<a name="id-1.4.23.2.8.5.3"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GWin32RegistryValueType.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -2026,8 +2026,8 @@ until the key is put on watch again by calling
 <div class="refsect2">
 <a name="GWin32RegistryKeyWatcherFlags"></a><h3>enum GWin32RegistryKeyWatcherFlags</h3>
 <div class="refsect3">
-<a name="id-1.4.23.2.8.6.3"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GWin32RegistryKeyWatcherFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -2061,6 +2061,6 @@ until the key is put on watch again by calling
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

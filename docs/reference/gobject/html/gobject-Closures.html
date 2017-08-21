@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Closures: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gobject-Signals.html" title="Signals">
 <link rel="next" href="gobject-Value-arrays.html" title="Value arrays">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gobject-Closures.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -70,10 +70,6 @@
 <td class="function_name">
 <span class="c_punctuation">(</span><a class="link" href="gobject-Closures.html#GCallback" title="GCallback ()">*GCallback</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
 </td>
-</tr>
-<tr>
-<td class="define_keyword">#define</td>
-<td class="function_name"><a class="link" href="gobject-Closures.html#G-TYPE-CLOSURE:CAPS" title="G_TYPE_CLOSURE">G_TYPE_CLOSURE</a></td>
 </tr>
 <tr>
 <td class="function_type">
@@ -632,7 +628,7 @@
 </div>
 <div class="refsect1">
 <a name="gobject-Closures.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -641,6 +637,10 @@
 <tr>
 <td class="datatype_keyword">struct</td>
 <td class="function_name"><a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure">GClosure</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="gobject-Closures.html#G-TYPE-CLOSURE:CAPS" title="G_TYPE_CLOSURE">G_TYPE_CLOSURE</a></td>
 </tr>
 <tr>
 <td class="datatype_keyword">struct</td>
@@ -711,8 +711,8 @@ automatically removed when the objects they point to go away.</p></li>
 </pre>
 <p>Check if the closure still needs a marshaller. See <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-CLOSURE-NEEDS-MARSHAL.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -726,7 +726,7 @@ automatically removed when the objects they point to go away.</p></li>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.2.6"></a><h4>Returns</h4>
+<a name="G-CLOSURE-NEEDS-MARSHAL.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if a <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> marshaller has not yet been set on
 <em class="parameter"><code>closure</code></em>
 .</p>
@@ -743,8 +743,8 @@ and the marshal guards. Note that each guard counts as two notifiers.
 See <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>, <a class="link" href="gobject-Closures.html#g-closure-add-finalize-notifier" title="g_closure_add_finalize_notifier ()"><code class="function">g_closure_add_finalize_notifier()</code></a>,
 <a class="link" href="gobject-Closures.html#g-closure-add-invalidate-notifier" title="g_closure_add_invalidate_notifier ()"><code class="function">g_closure_add_invalidate_notifier()</code></a> and <a class="link" href="gobject-Closures.html#g-closure-add-marshal-guards" title="g_closure_add_marshal_guards ()"><code class="function">g_closure_add_marshal_guards()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-CLOSURE-N-NOTIFIERS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -758,7 +758,7 @@ See <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" titl
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.3.6"></a><h4>Returns</h4>
+<a name="G-CLOSURE-N-NOTIFIERS.returns"></a><h4>Returns</h4>
 <p> number of notifiers</p>
 </div>
 </div>
@@ -770,8 +770,8 @@ See <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" titl
 <p>Checks whether the user data of the <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a> should be passed as the
 first parameter to the callback. See <a class="link" href="gobject-Closures.html#g-cclosure-new-swap" title="g_cclosure_new_swap ()"><code class="function">g_cclosure_new_swap()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-CCLOSURE-SWAP-DATA.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -785,7 +785,7 @@ first parameter to the callback. See <a class="link" href="gobject-Closures.html
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.4.6"></a><h4>Returns</h4>
+<a name="G-CCLOSURE-SWAP-DATA.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if data has to be swapped.</p>
 </div>
 </div>
@@ -796,8 +796,8 @@ first parameter to the callback. See <a class="link" href="gobject-Closures.html
 </pre>
 <p>Cast a function pointer to a <a class="link" href="gobject-Closures.html#GCallback" title="GCallback ()"><span class="type">GCallback</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-CALLBACK.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -824,13 +824,6 @@ is connected). Use <a class="link" href="gobject-Closures.html#G-CALLBACK:CAPS" 
 </div>
 <hr>
 <div class="refsect2">
-<a name="G-TYPE-CLOSURE:CAPS"></a><h3>G_TYPE_CLOSURE</h3>
-<pre class="programlisting">#define G_TYPE_CLOSURE (g_closure_get_type ())
-</pre>
-<p>The <a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> for <a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a>.</p>
-</div>
-<hr>
-<div class="refsect2">
 <a name="GClosureMarshal"></a><h3>GClosureMarshal ()</h3>
 <pre class="programlisting"><span class="returnvalue">void</span>
 <span class="c_punctuation">(</span>*GClosureMarshal<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a> *closure</code></em>,
@@ -841,8 +834,8 @@ is connected). Use <a class="link" href="gobject-Closures.html#G-CALLBACK:CAPS" 
                     <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> marshal_data</code></em>);</pre>
 <p>The type used for marshaller functions.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GClosureMarshal.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -860,7 +853,7 @@ is connected). Use <a class="link" href="gobject-Closures.html#G-CALLBACK:CAPS" 
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_param_values</p></td>
@@ -880,14 +873,14 @@ callback of <em class="parameter"><code>closure</code></em>
 <td class="parameter_name"><p>invocation_hint</p></td>
 <td class="parameter_description"><p> the invocation hint given as the
 last argument to <a class="link" href="gobject-Closures.html#g-closure-invoke" title="g_closure_invoke ()"><code class="function">g_closure_invoke()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>marshal_data</p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -908,8 +901,8 @@ registering the marshaller, see <a class="link" href="gobject-Closures.html#g-cl
 marshaller that can be used in some situations to avoid
 marshalling the signal argument into GValues.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVaClosureMarshal.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -927,12 +920,13 @@ marshalling the signal argument into GValues.</p>
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is
+invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -944,7 +938,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -972,8 +966,8 @@ array</p></td>
 <p>The type used for the various notification callbacks which can be registered
 on closures.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GClosureNotify.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1007,8 +1001,8 @@ g_cclosure_new (<em class="parameter"><code><a class="link" href="gobject-Closur
 the last parameter.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.11.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1022,9 +1016,9 @@ the last parameter.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
-<td class="parameter_description"><p>user data to pass to <em class="parameter"><code>callback_func</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> user data to pass to <em class="parameter"><code>callback_func</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> callback_func]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>destroy_data</p></td>
@@ -1036,7 +1030,7 @@ is no longer used</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.11.7"></a><h4>Returns</h4>
+<a name="g-cclosure-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a></p>
 </div>
 </div>
@@ -1053,8 +1047,8 @@ g_cclosure_new_swap (<em class="parameter"><code><a class="link" href="gobject-C
 the first parameter.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-new-swap.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1068,9 +1062,9 @@ the first parameter.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
-<td class="parameter_description"><p>user data to pass to <em class="parameter"><code>callback_func</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> user data to pass to <em class="parameter"><code>callback_func</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> callback_func]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>destroy_data</p></td>
@@ -1082,7 +1076,7 @@ is no longer used</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.12.7"></a><h4>Returns</h4>
+<a name="g-cclosure-new-swap.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1103,8 +1097,8 @@ associated with a <a class="link" href="gobject-The-Base-Object-Type.html#GObjec
 after the object is is freed.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.13.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-new-object.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1126,7 +1120,7 @@ after the object is is freed.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.13.7"></a><h4>Returns</h4>
+<a name="g-cclosure-new-object.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a></p>
 </div>
 </div>
@@ -1146,8 +1140,8 @@ associated with a <a class="link" href="gobject-The-Base-Object-Type.html#GObjec
 after the object is is freed.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-new-object-swap.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1169,7 +1163,7 @@ after the object is is freed.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.14.7"></a><h4>Returns</h4>
+<a name="g-cclosure-new-object-swap.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a></p>
 </div>
 </div>
@@ -1188,8 +1182,8 @@ g_cclosure_marshal_generic (<em class="parameter"><code><a class="link" href="go
 <p>Normally this function is not passed explicitly to <a class="link" href="gobject-Signals.html#g-signal-new" title="g_signal_new ()"><code class="function">g_signal_new()</code></a>,
 but used automatically by GLib when specifying a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> marshaller.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.15.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-generic.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1251,8 +1245,8 @@ g_closure_new_object (<em class="parameter"><code><a href="../glib-Basic-Types.h
  and the created closure. This function is mainly useful
 when implementing new types of closures.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.16.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-new-object.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1276,7 +1270,7 @@ allocated <a class="link" href="gobject-Closures.html#GClosure" title="struct GC
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.16.6"></a><h4>Returns</h4>
+<a name="g-closure-new-object.returns"></a><h4>Returns</h4>
 <p> a newly allocated <a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1289,8 +1283,8 @@ g_closure_ref (<em class="parameter"><code><a class="link" href="gobject-Closure
 <p>Increments the reference count on a closure to force it staying
 alive while the caller holds a pointer to it.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-ref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1304,7 +1298,7 @@ alive while the caller holds a pointer to it.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.17.6"></a><h4>Returns</h4>
+<a name="g-closure-ref.returns"></a><h4>Returns</h4>
 <p> The <em class="parameter"><code>closure</code></em>
 passed in, for convenience. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -1330,9 +1324,9 @@ sequences like:</p>
         <td class="listing_lines" align="right"><pre>1
 2
 3</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="normal"><a href="chapter-signal.html#closure">closure</a> </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Closures.html#g-cclosure-new">g_cclosure_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cb_func</span><span class="symbol">,</span><span class="normal"> cb_data</span><span class="symbol">);</span>
-<span class="function"><a href="gobject-Closures.html#g-source-set-closure">g_source_set_closure</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">source</span><span class="symbol">,</span><span class="normal"> <a href="chapter-signal.html#closure">closure</a></span><span class="symbol">);</span>
-<span class="function"><a href="gobject-Closures.html#g-closure-unref">g_closure_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">);</span><span class="normal"> </span><span class="comment">// GObject doesn't really need this</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">closure <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Closures.html#g-cclosure-new">g_cclosure_new</a></span> <span class="gtkdoc opt">(</span>cb_func<span class="gtkdoc opt">,</span> cb_data<span class="gtkdoc opt">);</span>
+<span class="function"><a href="gobject-Closures.html#g-source-set-closure">g_source_set_closure</a></span> <span class="gtkdoc opt">(</span>source<span class="gtkdoc opt">,</span> closure<span class="gtkdoc opt">);</span>
+<span class="function"><a href="gobject-Closures.html#g-closure-unref">g_closure_unref</a></span> <span class="gtkdoc opt">(</span>closure<span class="gtkdoc opt">);</span> <span class="gtkdoc slc">// GObject doesn&apos;t really need this</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1346,7 +1340,7 @@ initial reference count, if it is unowned, we instead can write:</p>
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Closures.html#g-source-set-closure">g_source_set_closure</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">source</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="gobject-Closures.html#g-cclosure-new">g_cclosure_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cb_func</span><span class="symbol">,</span><span class="normal"> cb_data</span><span class="symbol">));</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="gobject-Closures.html#g-source-set-closure">g_source_set_closure</a></span> <span class="gtkdoc opt">(</span>source<span class="gtkdoc opt">,</span> <span class="function"><a href="gobject-Closures.html#g-cclosure-new">g_cclosure_new</a></span> <span class="gtkdoc opt">(</span>cb_func<span class="gtkdoc opt">,</span> cb_data<span class="gtkdoc opt">));</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1372,19 +1366,19 @@ of storing a closure for later notification looks like:</p>
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="usertype">GClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">notify_closure </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
-<span class="type">void</span>
-<span class="function">foo_notify_set_closure</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">notify_closure</span><span class="symbol">)</span>
-<span class="normal">    </span><span class="function"><a href="gobject-Closures.html#g-closure-unref">g_closure_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">notify_closure</span><span class="symbol">);</span>
-<span class="normal">  notify_closure </span><span class="symbol">=</span><span class="normal"> <a href="chapter-signal.html#closure">closure</a></span><span class="symbol">;</span>
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">notify_closure</span><span class="symbol">)</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="function"><a href="gobject-Closures.html#g-closure-ref">g_closure_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">notify_closure</span><span class="symbol">);</span>
-<span class="normal">      </span><span class="function"><a href="gobject-Closures.html#g-closure-sink">g_closure_sink</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">notify_closure</span><span class="symbol">);</span>
-<span class="normal">    </span><span class="cbracket">}</span>
-<span class="cbracket">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GClosure <span class="gtkdoc opt">*</span>notify_closure <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">void</span>
+<span class="function">foo_notify_set_closure</span> <span class="gtkdoc opt">(</span>GClosure <span class="gtkdoc opt">*</span>closure<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>notify_closure<span class="gtkdoc opt">)</span>
+    <span class="function"><a href="gobject-Closures.html#g-closure-unref">g_closure_unref</a></span> <span class="gtkdoc opt">(</span>notify_closure<span class="gtkdoc opt">);</span>
+  notify_closure <span class="gtkdoc opt">=</span> closure<span class="gtkdoc opt">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>notify_closure<span class="gtkdoc opt">)</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="function"><a href="gobject-Closures.html#g-closure-ref">g_closure_ref</a></span> <span class="gtkdoc opt">(</span>notify_closure<span class="gtkdoc opt">);</span>
+      <span class="function"><a href="gobject-Closures.html#g-closure-sink">g_closure_sink</a></span> <span class="gtkdoc opt">(</span>notify_closure<span class="gtkdoc opt">);</span>
+    <span class="gtkdoc opt">}</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1396,8 +1390,8 @@ of storing a closure for later notification looks like:</p>
  yet) just like <a class="link" href="gobject-Closures.html#g-closure-unref" title="g_closure_unref ()"><code class="function">g_closure_unref()</code></a>,
 <a class="link" href="gobject-Closures.html#g-closure-ref" title="g_closure_ref ()"><code class="function">g_closure_ref()</code></a> should be called prior to this function.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.18.13"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-sink.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1421,8 +1415,8 @@ g_closure_unref (<em class="parameter"><code><a class="link" href="gobject-Closu
 incremented by the same caller. If no other callers are using the
 closure, then the closure will be destroyed and freed.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.19.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-unref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1448,8 +1442,8 @@ g_closure_invoke (<em class="parameter"><code><a class="link" href="gobject-Clos
 <p>Invokes the closure, i.e. executes the callback represented by the <em class="parameter"><code>closure</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.20.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-invoke.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1466,7 +1460,7 @@ g_closure_invoke (<em class="parameter"><code><a class="link" href="gobject-Clos
 <td class="parameter_description"><p> a <a class="link" href="gobject-Generic-values.html#GValue" title="GValue"><span class="type">GValue</span></a> to store the return
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_param_values</p></td>
@@ -1485,7 +1479,7 @@ invoke the callback of <em class="parameter"><code>closure</code></em>
 <tr>
 <td class="parameter_name"><p>invocation_hint</p></td>
 <td class="parameter_description"><p> a context-dependent invocation hint. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1510,8 +1504,8 @@ that you've previously called <a class="link" href="gobject-Closures.html#g-clos
 reference count of a closure drops to zero (unless it has already
 been invalidated before).</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.21.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-invalidate.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1541,8 +1535,8 @@ both invalidated and finalized, then the invalidate notifiers will
 be run before the finalize notifiers.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.22.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-add-finalize-notifier.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1556,9 +1550,9 @@ be run before the finalize notifiers.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>notify_data</p></td>
-<td class="parameter_description"><p>data to pass to <em class="parameter"><code>notify_func</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> data to pass to <em class="parameter"><code>notify_func</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> notify_func]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>notify_func</p></td>
@@ -1583,8 +1577,8 @@ notifiers are invoked before finalization notifiers, in an
 unspecified order.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.23.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-add-invalidate-notifier.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1598,9 +1592,9 @@ unspecified order.</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>notify_data</p></td>
-<td class="parameter_description"><p>data to pass to <em class="parameter"><code>notify_func</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> data to pass to <em class="parameter"><code>notify_func</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> notify_func]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>notify_func</p></td>
@@ -1622,8 +1616,8 @@ g_closure_remove_finalize_notifier (<em class="parameter"><code><a class="link" 
 <p>Notice that notifiers are automatically removed after they are run.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.24.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-remove-finalize-notifier.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1662,8 +1656,8 @@ g_closure_remove_invalidate_notifier (<em class="parameter"><code><a class="link
 <p>Notice that notifiers are automatically removed after they are run.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.25.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-remove-invalidate-notifier.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1734,36 +1728,36 @@ implementing new types of closures.</p>
 28
 29
 30</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span><span class="normal"> </span><span class="classname">_MyClosure</span><span class="normal"> MyClosure</span><span class="symbol">;</span>
-<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_MyClosure</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GClosure</span><span class="normal"> <a href="chapter-signal.html#closure">closure</a></span><span class="symbol">;</span>
-<span class="normal">  </span><span class="comment">// extra data goes here</span>
-<span class="cbracket">}</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span> _MyClosure MyClosure<span class="gtkdoc opt">;</span>
+<span class="gtkdoc kwb">struct</span> _MyClosure
+<span class="gtkdoc opt">{</span>
+  GClosure closure<span class="gtkdoc opt">;</span>
+  <span class="gtkdoc slc">// extra data goes here</span>
+<span class="gtkdoc opt">};</span>
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">my_closure_finalize</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">gpointer</span><span class="normal">  notify_data</span><span class="symbol">,</span>
-<span class="normal">                     </span><span class="usertype">GClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">MyClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">my_closure </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MyClosure </span><span class="symbol">*)</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">;</span>
+<span class="gtkdoc kwb">static void</span>
+<span class="function">my_closure_finalize</span> <span class="gtkdoc opt">(</span>gpointer  notify_data<span class="gtkdoc opt">,</span>
+                     GClosure <span class="gtkdoc opt">*</span>closure<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  MyClosure <span class="gtkdoc opt">*</span>my_closure <span class="gtkdoc opt">= (</span>MyClosure <span class="gtkdoc opt">*)</span>closure<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="comment">// free extra data here</span>
-<span class="cbracket">}</span>
+  <span class="gtkdoc slc">// free extra data here</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="usertype">MyClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="function">my_closure_new</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">gpointer</span><span class="normal"> data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">MyClosure</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">my_closure</span><span class="symbol">;</span>
+MyClosure <span class="gtkdoc opt">*</span><span class="function">my_closure_new</span> <span class="gtkdoc opt">(</span>gpointer data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GClosure <span class="gtkdoc opt">*</span>closure<span class="gtkdoc opt">;</span>
+  MyClosure <span class="gtkdoc opt">*</span>my_closure<span class="gtkdoc opt">;</span>
 
-<span class="normal">  <a href="chapter-signal.html#closure">closure</a> </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Closures.html#g-closure-new-simple">g_closure_new_simple</a></span><span class="normal"> </span><span class="symbol">(</span><span class="keyword">sizeof</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MyClosure</span><span class="symbol">),</span><span class="normal"> data</span><span class="symbol">);</span>
-<span class="normal">  my_closure </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MyClosure </span><span class="symbol">*)</span><span class="normal"> <a href="chapter-signal.html#closure">closure</a></span><span class="symbol">;</span>
+  closure <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Closures.html#g-closure-new-simple">g_closure_new_simple</a></span> <span class="gtkdoc opt">(</span><span class="keyword">sizeof</span> <span class="gtkdoc opt">(</span>MyClosure<span class="gtkdoc opt">),</span> data<span class="gtkdoc opt">);</span>
+  my_closure <span class="gtkdoc opt">= (</span>MyClosure <span class="gtkdoc opt">*)</span> closure<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="comment">// initialize extra data here</span>
+  <span class="gtkdoc slc">// initialize extra data here</span>
 
-<span class="normal">  </span><span class="function"><a href="gobject-Closures.html#g-closure-add-finalize-notifier">g_closure_add_finalize_notifier</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="chapter-signal.html#closure">closure</a></span><span class="symbol">,</span><span class="normal"> notify_data</span><span class="symbol">,</span>
-<span class="normal">                                   my_closure_finalize</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> my_closure</span><span class="symbol">;</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="function"><a href="gobject-Closures.html#g-closure-add-finalize-notifier">g_closure_add_finalize_notifier</a></span> <span class="gtkdoc opt">(</span>closure<span class="gtkdoc opt">,</span> notify_data<span class="gtkdoc opt">,</span>
+                                   my_closure_finalize<span class="gtkdoc opt">);</span>
+  <span class="keyword">return</span> my_closure<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1771,8 +1765,8 @@ implementing new types of closures.</p>
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.26.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-new-simple.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1795,7 +1789,7 @@ field of the newly allocated <a class="link" href="gobject-Closures.html#GClosur
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.7.26.8"></a><h4>Returns</h4>
+<a name="g-closure-new-simple.returns"></a><h4>Returns</h4>
 <p> a newly allocated <a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1817,8 +1811,8 @@ functions), what it provides is a callback function to use instead of
 .</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.27.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-set-marshal.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1854,8 +1848,8 @@ the extra arguments for the duration of the callback. See
 <a class="link" href="gobject-The-Base-Object-Type.html#g-object-watch-closure" title="g_object_watch_closure ()"><code class="function">g_object_watch_closure()</code></a> for an example of marshal guards.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.28.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-add-marshal-guards.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1869,9 +1863,10 @@ the extra arguments for the duration of the callback. See
 </tr>
 <tr>
 <td class="parameter_name"><p>pre_marshal_data</p></td>
-<td class="parameter_description"><p>data to pass to <em class="parameter"><code>pre_marshal_notify</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> data to pass
+to <em class="parameter"><code>pre_marshal_notify</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> pre_marshal_notify]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>pre_marshal_notify</p></td>
@@ -1880,9 +1875,10 @@ the extra arguments for the duration of the callback. See
 </tr>
 <tr>
 <td class="parameter_name"><p>post_marshal_data</p></td>
-<td class="parameter_description"><p>data to pass to <em class="parameter"><code>post_marshal_notify</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> data to pass
+to <em class="parameter"><code>post_marshal_notify</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> post_marshal_notify]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>post_marshal_notify</p></td>
@@ -1919,8 +1915,8 @@ the right callback and passes it to the marshaller as the
  argument.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.13.7.29.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-closure-set-meta-marshal.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1934,9 +1930,10 @@ the right callback and passes it to the marshaller as the
 </tr>
 <tr>
 <td class="parameter_name"><p>marshal_data</p></td>
-<td class="parameter_description"><p>context-dependent data to pass to <em class="parameter"><code>meta_marshal</code></em>
-</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> context-dependent data to pass
+to <em class="parameter"><code>meta_marshal</code></em>
+. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="This parameter is a 'user_data', for callbacks; many bindings can pass NULL here."><span class="acronym">closure</span></acronym> meta_marshal]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>meta_marshal</p></td>
@@ -1960,8 +1957,8 @@ and <em class="parameter"><code>closure_marshal</code></em>
  fields of the <a href="../glib-The-Main-Event-Loop.html#GSourceFuncs"><span class="type">GSourceFuncs</span></a> structure must have been
 filled in with pointers to appropriate functions.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.30.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-source-set-closure.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2000,8 +1997,8 @@ that type.)</p>
 structure must have been filled in with pointers to appropriate
 functions.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.31.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-source-set-dummy-callback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2027,8 +2024,8 @@ g_cclosure_marshal_VOID__VOID (<em class="parameter"><code><a class="link" href=
                                <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> marshal_data</code></em>);</pre>
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with no arguments.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.32.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--VOID.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2088,8 +2085,8 @@ g_cclosure_marshal_VOID__BOOLEAN (<em class="parameter"><code><a class="link" hr
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 boolean argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.33.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--BOOLEAN.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2149,8 +2146,8 @@ g_cclosure_marshal_VOID__CHAR (<em class="parameter"><code><a class="link" href=
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 character argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.34.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--CHAR.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2210,8 +2207,8 @@ g_cclosure_marshal_VOID__UCHAR (<em class="parameter"><code><a class="link" href
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 unsigned character argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.35.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--UCHAR.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2271,8 +2268,8 @@ g_cclosure_marshal_VOID__INT (<em class="parameter"><code><a class="link" href="
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 integer argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.36.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--INT.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2332,8 +2329,8 @@ g_cclosure_marshal_VOID__UINT (<em class="parameter"><code><a class="link" href=
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with with a single
 unsigned integer argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.37.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--UINT.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2393,8 +2390,8 @@ g_cclosure_marshal_VOID__LONG (<em class="parameter"><code><a class="link" href=
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with with a single
 long integer argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.38.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--LONG.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2454,8 +2451,8 @@ g_cclosure_marshal_VOID__ULONG (<em class="parameter"><code><a class="link" href
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 unsigned long integer argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.39.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--ULONG.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2515,8 +2512,8 @@ g_cclosure_marshal_VOID__ENUM (<em class="parameter"><code><a class="link" href=
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 argument with an enumerated type.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.40.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--ENUM.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2576,8 +2573,8 @@ g_cclosure_marshal_VOID__FLAGS (<em class="parameter"><code><a class="link" href
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 argument with a flags types.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.41.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--FLAGS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2637,8 +2634,8 @@ g_cclosure_marshal_VOID__FLOAT (<em class="parameter"><code><a class="link" href
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with one
 single-precision floating point argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.42.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--FLOAT.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2698,8 +2695,8 @@ g_cclosure_marshal_VOID__DOUBLE (<em class="parameter"><code><a class="link" hre
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with one
 double-precision floating point argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.43.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--DOUBLE.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2759,8 +2756,8 @@ g_cclosure_marshal_VOID__STRING (<em class="parameter"><code><a class="link" hre
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single string
 argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.44.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--STRING.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2820,8 +2817,8 @@ g_cclosure_marshal_VOID__PARAM (<em class="parameter"><code><a class="link" href
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 argument of type <a class="link" href="gobject-GParamSpec.html#GParamSpec" title="struct GParamSpec"><span class="type">GParamSpec</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.45.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--PARAM.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2881,8 +2878,8 @@ g_cclosure_marshal_VOID__BOXED (<em class="parameter"><code><a class="link" href
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 argument which is any boxed pointer type.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.46.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--BOXED.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2945,8 +2942,8 @@ pointer argument type.</p>
 functions such as <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--OBJECT" title="g_cclosure_marshal_VOID__OBJECT ()"><code class="function">g_cclosure_marshal_VOID__OBJECT()</code></a> or
 <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--OBJECT" title="g_cclosure_marshal_VOID__OBJECT ()"><code class="function">g_cclosure_marshal_VOID__OBJECT()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.47.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--POINTER.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3006,8 +3003,8 @@ g_cclosure_marshal_VOID__OBJECT (<em class="parameter"><code><a class="link" hre
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.48.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--OBJECT.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3067,8 +3064,8 @@ g_cclosure_marshal_VOID__VARIANT (<em class="parameter"><code><a class="link" hr
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a single
 <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> argument.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.49.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--VARIANT.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3131,8 +3128,8 @@ g_cclosure_marshal_STRING__OBJECT_POINTER
 take a <a class="link" href="gobject-The-Base-Object-Type.html#GObject"><span class="type">GObject</span></a> and a pointer and produce a string.  It is highly
 unlikely that your signal handler fits this description.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.50.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-STRING--OBJECT-POINTER.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3192,8 +3189,8 @@ g_cclosure_marshal_VOID__UINT_POINTER (<em class="parameter"><code><a class="lin
 <p>A <a class="link" href="gobject-Closures.html#GClosureMarshal" title="GClosureMarshal ()"><span class="type">GClosureMarshal</span></a> function for use with signals with a unsigned int
 and a pointer as arguments.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.51.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--UINT-POINTER.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3255,8 +3252,8 @@ take a flags type as an argument and return a boolean.  If you have
 such a signal, you will probably also need to use an accumulator,
 such as <a class="link" href="gobject-Signals.html#g-signal-accumulator-true-handled" title="g_signal_accumulator_true_handled ()"><code class="function">g_signal_accumulator_true_handled()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.52.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-BOOLEAN--FLAGS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3319,8 +3316,8 @@ take two boxed pointers as arguments and return a boolean.  If you
 have such a signal, you will probably also need to use an
 accumulator, such as <a class="link" href="gobject-Signals.html#g-signal-accumulator-true-handled" title="g_signal_accumulator_true_handled ()"><code class="function">g_signal_accumulator_true_handled()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.53.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-BOOLEAN--BOXED-BOXED.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3381,8 +3378,8 @@ g_cclosure_marshal_generic_va (<em class="parameter"><code><a class="link" href=
 <p>A generic <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> function implemented via
 <a class="ulink" href="http://sourceware.org/libffi/" target="_top">libffi</a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.54.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-generic-va.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3400,12 +3397,13 @@ g_cclosure_marshal_generic_va (<em class="parameter"><code><a class="link" href=
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is
+invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args_list</p></td>
@@ -3417,7 +3415,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3450,8 +3448,8 @@ g_cclosure_marshal_VOID__VOIDv (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--VOID" title="g_cclosure_marshal_VOID__VOID ()"><code class="function">g_cclosure_marshal_VOID__VOID()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.55.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--VOIDv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3469,12 +3467,12 @@ g_cclosure_marshal_VOID__VOIDv (<em class="parameter"><code><a class="link" href
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3486,7 +3484,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3518,8 +3516,8 @@ g_cclosure_marshal_VOID__BOOLEANv (<em class="parameter"><code><a class="link" h
                                    <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--BOOLEAN" title="g_cclosure_marshal_VOID__BOOLEAN ()"><code class="function">g_cclosure_marshal_VOID__BOOLEAN()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.56.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--BOOLEANv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3537,12 +3535,12 @@ g_cclosure_marshal_VOID__BOOLEANv (<em class="parameter"><code><a class="link" h
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3554,7 +3552,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3586,8 +3584,8 @@ g_cclosure_marshal_VOID__CHARv (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--CHAR" title="g_cclosure_marshal_VOID__CHAR ()"><code class="function">g_cclosure_marshal_VOID__CHAR()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.57.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--CHARv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3605,12 +3603,12 @@ g_cclosure_marshal_VOID__CHARv (<em class="parameter"><code><a class="link" href
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3622,7 +3620,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3654,8 +3652,8 @@ g_cclosure_marshal_VOID__UCHARv (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--UCHAR" title="g_cclosure_marshal_VOID__UCHAR ()"><code class="function">g_cclosure_marshal_VOID__UCHAR()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.58.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--UCHARv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3673,12 +3671,12 @@ g_cclosure_marshal_VOID__UCHARv (<em class="parameter"><code><a class="link" hre
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3690,7 +3688,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3722,8 +3720,8 @@ g_cclosure_marshal_VOID__INTv (<em class="parameter"><code><a class="link" href=
                                <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--INT" title="g_cclosure_marshal_VOID__INT ()"><code class="function">g_cclosure_marshal_VOID__INT()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.59.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--INTv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3741,12 +3739,12 @@ g_cclosure_marshal_VOID__INTv (<em class="parameter"><code><a class="link" href=
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3758,7 +3756,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3790,8 +3788,8 @@ g_cclosure_marshal_VOID__UINTv (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--UINT" title="g_cclosure_marshal_VOID__UINT ()"><code class="function">g_cclosure_marshal_VOID__UINT()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.60.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--UINTv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3809,12 +3807,12 @@ g_cclosure_marshal_VOID__UINTv (<em class="parameter"><code><a class="link" href
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3826,7 +3824,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3858,8 +3856,8 @@ g_cclosure_marshal_VOID__LONGv (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--LONG" title="g_cclosure_marshal_VOID__LONG ()"><code class="function">g_cclosure_marshal_VOID__LONG()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.61.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--LONGv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3877,12 +3875,12 @@ g_cclosure_marshal_VOID__LONGv (<em class="parameter"><code><a class="link" href
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3894,7 +3892,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3926,8 +3924,8 @@ g_cclosure_marshal_VOID__ULONGv (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--ULONG" title="g_cclosure_marshal_VOID__ULONG ()"><code class="function">g_cclosure_marshal_VOID__ULONG()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.62.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--ULONGv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3945,12 +3943,12 @@ g_cclosure_marshal_VOID__ULONGv (<em class="parameter"><code><a class="link" hre
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -3962,7 +3960,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -3994,8 +3992,8 @@ g_cclosure_marshal_VOID__ENUMv (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--ENUM" title="g_cclosure_marshal_VOID__ENUM ()"><code class="function">g_cclosure_marshal_VOID__ENUM()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.63.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--ENUMv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4013,12 +4011,12 @@ g_cclosure_marshal_VOID__ENUMv (<em class="parameter"><code><a class="link" href
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4030,7 +4028,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4062,8 +4060,8 @@ g_cclosure_marshal_VOID__FLAGSv (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--FLAGS" title="g_cclosure_marshal_VOID__FLAGS ()"><code class="function">g_cclosure_marshal_VOID__FLAGS()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.64.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--FLAGSv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4081,12 +4079,12 @@ g_cclosure_marshal_VOID__FLAGSv (<em class="parameter"><code><a class="link" hre
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4098,7 +4096,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4130,8 +4128,8 @@ g_cclosure_marshal_VOID__FLOATv (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--FLOAT" title="g_cclosure_marshal_VOID__FLOAT ()"><code class="function">g_cclosure_marshal_VOID__FLOAT()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.65.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--FLOATv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4149,12 +4147,12 @@ g_cclosure_marshal_VOID__FLOATv (<em class="parameter"><code><a class="link" hre
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4166,7 +4164,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4198,8 +4196,8 @@ g_cclosure_marshal_VOID__DOUBLEv (<em class="parameter"><code><a class="link" hr
                                   <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--DOUBLE" title="g_cclosure_marshal_VOID__DOUBLE ()"><code class="function">g_cclosure_marshal_VOID__DOUBLE()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.66.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--DOUBLEv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4217,12 +4215,12 @@ g_cclosure_marshal_VOID__DOUBLEv (<em class="parameter"><code><a class="link" hr
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4234,7 +4232,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4266,8 +4264,8 @@ g_cclosure_marshal_VOID__STRINGv (<em class="parameter"><code><a class="link" hr
                                   <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--STRING" title="g_cclosure_marshal_VOID__STRING ()"><code class="function">g_cclosure_marshal_VOID__STRING()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.67.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--STRINGv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4285,12 +4283,12 @@ g_cclosure_marshal_VOID__STRINGv (<em class="parameter"><code><a class="link" hr
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4302,7 +4300,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4334,8 +4332,8 @@ g_cclosure_marshal_VOID__PARAMv (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--PARAM" title="g_cclosure_marshal_VOID__PARAM ()"><code class="function">g_cclosure_marshal_VOID__PARAM()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.68.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--PARAMv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4353,12 +4351,12 @@ g_cclosure_marshal_VOID__PARAMv (<em class="parameter"><code><a class="link" hre
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4370,7 +4368,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4402,8 +4400,8 @@ g_cclosure_marshal_VOID__BOXEDv (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--BOXED" title="g_cclosure_marshal_VOID__BOXED ()"><code class="function">g_cclosure_marshal_VOID__BOXED()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.69.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--BOXEDv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4421,12 +4419,12 @@ g_cclosure_marshal_VOID__BOXEDv (<em class="parameter"><code><a class="link" hre
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4438,7 +4436,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4470,8 +4468,8 @@ g_cclosure_marshal_VOID__POINTERv (<em class="parameter"><code><a class="link" h
                                    <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--POINTER" title="g_cclosure_marshal_VOID__POINTER ()"><code class="function">g_cclosure_marshal_VOID__POINTER()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.70.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--POINTERv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4489,12 +4487,12 @@ g_cclosure_marshal_VOID__POINTERv (<em class="parameter"><code><a class="link" h
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4506,7 +4504,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4538,8 +4536,8 @@ g_cclosure_marshal_VOID__OBJECTv (<em class="parameter"><code><a class="link" hr
                                   <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--OBJECT" title="g_cclosure_marshal_VOID__OBJECT ()"><code class="function">g_cclosure_marshal_VOID__OBJECT()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.71.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--OBJECTv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4557,12 +4555,12 @@ g_cclosure_marshal_VOID__OBJECTv (<em class="parameter"><code><a class="link" hr
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4574,7 +4572,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4606,8 +4604,8 @@ g_cclosure_marshal_VOID__VARIANTv (<em class="parameter"><code><a class="link" h
                                    <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--VARIANT" title="g_cclosure_marshal_VOID__VARIANT ()"><code class="function">g_cclosure_marshal_VOID__VARIANT()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.72.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--VARIANTv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4625,12 +4623,12 @@ g_cclosure_marshal_VOID__VARIANTv (<em class="parameter"><code><a class="link" h
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4642,7 +4640,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4675,8 +4673,8 @@ g_cclosure_marshal_STRING__OBJECT_POINTERv
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-STRING--OBJECT-POINTER" title="g_cclosure_marshal_STRING__OBJECT_POINTER ()"><code class="function">g_cclosure_marshal_STRING__OBJECT_POINTER()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.73.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-STRING--OBJECT-POINTERv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4694,12 +4692,12 @@ g_cclosure_marshal_STRING__OBJECT_POINTERv
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4711,7 +4709,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4744,8 +4742,8 @@ g_cclosure_marshal_VOID__UINT_POINTERv
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-VOID--UINT-POINTER" title="g_cclosure_marshal_VOID__UINT_POINTER ()"><code class="function">g_cclosure_marshal_VOID__UINT_POINTER()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.74.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-VOID--UINT-POINTERv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4763,12 +4761,12 @@ g_cclosure_marshal_VOID__UINT_POINTERv
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4780,7 +4778,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4812,8 +4810,8 @@ g_cclosure_marshal_BOOLEAN__FLAGSv (<em class="parameter"><code><a class="link" 
                                     <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-BOOLEAN--FLAGS" title="g_cclosure_marshal_BOOLEAN__FLAGS ()"><code class="function">g_cclosure_marshal_BOOLEAN__FLAGS()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.75.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-BOOLEAN--FLAGSv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4831,12 +4829,12 @@ g_cclosure_marshal_BOOLEAN__FLAGSv (<em class="parameter"><code><a class="link" 
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4848,7 +4846,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4881,8 +4879,8 @@ g_cclosure_marshal_BOOLEAN__BOXED_BOXEDv
                                 <em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> *param_types</code></em>);</pre>
 <p>The <a class="link" href="gobject-Closures.html#GVaClosureMarshal" title="GVaClosureMarshal ()"><span class="type">GVaClosureMarshal</span></a> equivalent to <a class="link" href="gobject-Closures.html#g-cclosure-marshal-BOOLEAN--BOXED-BOXED" title="g_cclosure_marshal_BOOLEAN__BOXED_BOXED ()"><code class="function">g_cclosure_marshal_BOOLEAN__BOXED_BOXED()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.7.76.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-BOOLEAN--BOXED-BOXEDv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4900,12 +4898,12 @@ g_cclosure_marshal_BOOLEAN__BOXED_BOXEDv
 value. May be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the callback of <em class="parameter"><code>closure</code></em>
 doesn't return a
 value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>instance</p></td>
-<td class="parameter_description"><p>the instance on which the closure is invoked.</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the instance on which the closure is invoked. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject.TypeInstance]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>args</p></td>
@@ -4917,7 +4915,7 @@ value. </p></td>
 <td class="parameter_description"><p> additional data specified when
 registering the marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marshal" title="g_closure_set_marshal ()"><code class="function">g_closure_set_marshal()</code></a> and
 <a class="link" href="gobject-Closures.html#g-closure-set-meta-marshal" title="g_closure_set_meta_marshal ()"><code class="function">g_closure_set_meta_marshal()</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>n_params</p></td>
@@ -4948,8 +4946,8 @@ array</p></td>
 </pre>
 <p>A <a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a> represents a callback supplied by the programmer.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.2.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GClosure.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -4974,6 +4972,13 @@ array</p></td>
 </div>
 <hr>
 <div class="refsect2">
+<a name="G-TYPE-CLOSURE:CAPS"></a><h3>G_TYPE_CLOSURE</h3>
+<pre class="programlisting">#define G_TYPE_CLOSURE (g_closure_get_type ())
+</pre>
+<p>The <a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> for <a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a>.</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="GCClosure"></a><h3>struct GCClosure</h3>
 <pre class="programlisting">struct GCClosure {
   GClosure closure;
@@ -4982,8 +4987,8 @@ array</p></td>
 </pre>
 <p>A <a class="link" href="gobject-Closures.html#GCClosure" title="struct GCClosure"><span class="type">GCClosure</span></a> is a specialization of <a class="link" href="gobject-Closures.html#GClosure" title="struct GClosure"><span class="type">GClosure</span></a> for C function callbacks.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GCClosure.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -5010,8 +5015,8 @@ array</p></td>
 <pre class="programlisting">#define             g_cclosure_marshal_BOOL__FLAGS</pre>
 <p>An old alias for <a class="link" href="gobject-Closures.html#g-cclosure-marshal-BOOLEAN--FLAGS" title="g_cclosure_marshal_BOOLEAN__FLAGS ()"><code class="function">g_cclosure_marshal_BOOLEAN__FLAGS()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-BOOL--FLAGS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -5064,8 +5069,8 @@ marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marsha
 <pre class="programlisting">#define             g_cclosure_marshal_BOOL__BOXED_BOXED</pre>
 <p>An old alias for <a class="link" href="gobject-Closures.html#g-cclosure-marshal-BOOLEAN--BOXED-BOXED" title="g_cclosure_marshal_BOOLEAN__BOXED_BOXED ()"><code class="function">g_cclosure_marshal_BOOLEAN__BOXED_BOXED()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.8.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-cclosure-marshal-BOOL--BOXED-BOXED.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -5115,6 +5120,6 @@ marshaller, see <a class="link" href="gobject-Closures.html#g-closure-set-marsha
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

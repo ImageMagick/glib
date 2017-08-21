@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GMount: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="volume_mon.html" title="Volumes and Drives">
 <link rel="prev" href="GVolume.html" title="GVolume">
 <link rel="next" href="GDrive.html" title="GDrive">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GMount.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -262,7 +262,7 @@
 </div>
 <div class="refsect1">
 <a name="GMount.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -289,7 +289,7 @@
 </div>
 <div class="refsect1">
 <a name="GMount.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -316,7 +316,7 @@
 </div>
 <div class="refsect1">
 <a name="GMount.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GMount
 </pre>
 </div>
@@ -361,8 +361,8 @@ g_mount_get_name (<em class="parameter"><code><a class="link" href="GMount.html"
 <p>Gets the name of <em class="parameter"><code>mount</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -376,7 +376,7 @@ g_mount_get_name (<em class="parameter"><code><a class="link" href="GMount.html"
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.2.6"></a><h4>Returns</h4>
+<a name="g-mount-get-name.returns"></a><h4>Returns</h4>
 <p> the name for the given <em class="parameter"><code>mount</code></em>
 .
 The returned string should be freed with <a href="../glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>
@@ -394,8 +394,8 @@ the file system UUID for the mount in question and should be
 considered an opaque string. Returns <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if there is no UUID
 available.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-uuid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -409,7 +409,7 @@ available.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.3.6"></a><h4>Returns</h4>
+<a name="g-mount-get-uuid.returns"></a><h4>Returns</h4>
 <p> the UUID for <em class="parameter"><code>mount</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no UUID can be computed.
 The returned string should be freed with <a href="../glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>
@@ -424,8 +424,8 @@ g_mount_get_icon (<em class="parameter"><code><a class="link" href="GMount.html"
 <p>Gets the icon for <em class="parameter"><code>mount</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-icon.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -439,7 +439,7 @@ g_mount_get_icon (<em class="parameter"><code><a class="link" href="GMount.html"
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.4.6"></a><h4>Returns</h4>
+<a name="g-mount-get-icon.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GIcon.html" title="GIcon"><span class="type">GIcon</span></a>.
 The returned object should be unreffed with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when no longer needed. </p>
@@ -454,8 +454,8 @@ g_mount_get_symbolic_icon (<em class="parameter"><code><a class="link" href="GMo
 <p>Gets the symbolic icon for <em class="parameter"><code>mount</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-symbolic-icon.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -469,7 +469,7 @@ g_mount_get_symbolic_icon (<em class="parameter"><code><a class="link" href="GMo
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.5.6"></a><h4>Returns</h4>
+<a name="g-mount-get-symbolic-icon.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GIcon.html" title="GIcon"><span class="type">GIcon</span></a>.
 The returned object should be unreffed with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when no longer needed. </p>
@@ -487,8 +487,8 @@ g_mount_get_drive (<em class="parameter"><code><a class="link" href="GMount.html
 <p>This is a convenience method for getting the <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> and then
 using that object to get the <a class="link" href="GDrive.html" title="GDrive"><span class="type">GDrive</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-drive.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -502,7 +502,7 @@ using that object to get the <a class="link" href="GDrive.html" title="GDrive"><
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.6.7"></a><h4>Returns</h4>
+<a name="g-mount-get-drive.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDrive.html" title="GDrive"><span class="type">GDrive</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>mount</code></em>
 is not associated with a volume or a drive.
 The returned object should be unreffed with
@@ -518,8 +518,8 @@ g_mount_get_root (<em class="parameter"><code><a class="link" href="GMount.html"
 <p>Gets the root directory on <em class="parameter"><code>mount</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-root.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -533,7 +533,7 @@ g_mount_get_root (<em class="parameter"><code><a class="link" href="GMount.html"
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.7.6"></a><h4>Returns</h4>
+<a name="g-mount-get-root.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a>.
 The returned object should be unreffed with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when no longer needed. </p>
@@ -548,8 +548,8 @@ g_mount_get_volume (<em class="parameter"><code><a class="link" href="GMount.htm
 <p>Gets the volume for the <em class="parameter"><code>mount</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-volume.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -563,7 +563,7 @@ g_mount_get_volume (<em class="parameter"><code><a class="link" href="GMount.htm
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.8.6"></a><h4>Returns</h4>
+<a name="g-mount-get-volume.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>mount</code></em>
 is not associated with a volume.
 The returned object should be unreffed with
@@ -582,8 +582,8 @@ g_mount_get_default_location (<em class="parameter"><code><a class="link" href="
  is a path that reflects the main entry point for the user (e.g.
 the home directory, or the root of the volume).</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-default-location.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -597,7 +597,7 @@ the home directory, or the root of the volume).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.9.6"></a><h4>Returns</h4>
+<a name="g-mount-get-default-location.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a>.
 The returned object should be unreffed with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when no longer needed. </p>
@@ -610,10 +610,10 @@ The returned object should be unreffed with
 <pre class="programlisting"><a href="../glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
 g_mount_can_unmount (<em class="parameter"><code><a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> *mount</code></em>);</pre>
 <p>Checks if <em class="parameter"><code>mount</code></em>
- can be mounted.</p>
+ can be unmounted.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-can-unmount.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -627,7 +627,7 @@ g_mount_can_unmount (<em class="parameter"><code><a class="link" href="GMount.ht
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.10.6"></a><h4>Returns</h4>
+<a name="g-mount-can-unmount.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the <em class="parameter"><code>mount</code></em>
 can be unmounted.</p>
 </div>
@@ -651,8 +651,8 @@ finished by calling <a class="link" href="GMount.html#g-mount-unmount-finish" ti
 and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> data returned in the <em class="parameter"><code>callback</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.11.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-unmount.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -672,12 +672,12 @@ and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="t
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -704,8 +704,8 @@ g_mount_unmount_finish (<em class="parameter"><code><a class="link" href="GMount
 <em class="parameter"><code>error</code></em>
  will be set to contain the errors and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-unmount-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -732,7 +732,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.12.7"></a><h4>Returns</h4>
+<a name="g-mount-unmount-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the mount was successfully unmounted. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 </div>
@@ -752,8 +752,8 @@ finished by calling <a class="link" href="GMount.html#g-mount-unmount-with-opera
 and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> data returned in the <em class="parameter"><code>callback</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-unmount-with-operation.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -774,17 +774,17 @@ and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="t
 <td class="parameter_name"><p>mount_operation</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GMountOperation.html" title="GMountOperation"><span class="type">GMountOperation</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to avoid
 user interaction. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -808,8 +808,8 @@ g_mount_unmount_with_operation_finish (<em class="parameter"><code><a class="lin
 <em class="parameter"><code>error</code></em>
  will be set to contain the errors and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.14.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-unmount-with-operation-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -836,7 +836,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.14.6"></a><h4>Returns</h4>
+<a name="g-mount-unmount-with-operation-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the mount was successfully unmounted. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -862,8 +862,8 @@ take affect. While this is semantically equivalent with unmounting
 and then remounting not all backends might need to actually be
 unmounted.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.15.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-remount.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -884,17 +884,17 @@ unmounted.</p>
 <td class="parameter_name"><p>mount_operation</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GMountOperation.html" title="GMountOperation"><span class="type">GMountOperation</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to avoid
 user interaction. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -917,8 +917,8 @@ g_mount_remount_finish (<em class="parameter"><code><a class="link" href="GMount
 <em class="parameter"><code>error</code></em>
  will be set to contain the errors and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.16.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-remount-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -945,7 +945,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.16.6"></a><h4>Returns</h4>
+<a name="g-mount-remount-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the mount was successfully remounted. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 </div>
@@ -955,10 +955,10 @@ ignore.</p></td>
 <pre class="programlisting"><a href="../glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
 g_mount_can_eject (<em class="parameter"><code><a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> *mount</code></em>);</pre>
 <p>Checks if <em class="parameter"><code>mount</code></em>
- can be eject.</p>
+ can be ejected.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-can-eject.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -972,7 +972,7 @@ g_mount_can_eject (<em class="parameter"><code><a class="link" href="GMount.html
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.17.6"></a><h4>Returns</h4>
+<a name="g-mount-can-eject.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the <em class="parameter"><code>mount</code></em>
 can be ejected.</p>
 </div>
@@ -996,8 +996,8 @@ finished by calling <a class="link" href="GMount.html#g-mount-eject-finish" titl
 and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> data returned in the <em class="parameter"><code>callback</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.18.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-eject.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1017,12 +1017,12 @@ and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="t
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -1049,8 +1049,8 @@ g_mount_eject_finish (<em class="parameter"><code><a class="link" href="GMount.h
 <em class="parameter"><code>error</code></em>
  will be set to contain the errors and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.19.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-eject-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1077,7 +1077,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.19.7"></a><h4>Returns</h4>
+<a name="g-mount-eject-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the mount was successfully ejected. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 </div>
@@ -1097,8 +1097,8 @@ finished by calling <a class="link" href="GMount.html#g-mount-eject-with-operati
 and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> data returned in the <em class="parameter"><code>callback</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.20.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-eject-with-operation.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1119,17 +1119,17 @@ and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="t
 <td class="parameter_name"><p>mount_operation</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GMountOperation.html" title="GMountOperation"><span class="type">GMountOperation</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to avoid
 user interaction. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -1153,8 +1153,8 @@ g_mount_eject_with_operation_finish (<em class="parameter"><code><a class="link"
 <em class="parameter"><code>error</code></em>
  will be set to contain the errors and <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> will be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.21.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-eject-with-operation-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1181,7 +1181,7 @@ ignore.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.21.6"></a><h4>Returns</h4>
+<a name="g-mount-eject-with-operation-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the mount was successfully ejected. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-22.html#api-index-2.22">2.22</a></p>
@@ -1209,8 +1209,8 @@ is finished by calling <a class="link" href="GMount.html#g-mount-guess-content-t
  and <a class="link" href="GAsyncResult.html" title="GAsyncResult"><span class="type">GAsyncResult</span></a> data returned in the <em class="parameter"><code>callback</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.22.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-guess-content-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1231,7 +1231,7 @@ Otherwise a cached result will be used if available</p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1264,8 +1264,8 @@ during the operation, <em class="parameter"><code>error</code></em>
 <a class="link" href="gio-GIOError.html#G-IO-ERROR-NOT-SUPPORTED:CAPS"><code class="literal">G_IO_ERROR_NOT_SUPPORTED</code></a> if the mount does not support content 
 guessing.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.23.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-guess-content-type-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1292,7 +1292,7 @@ ignore</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.23.6"></a><h4>Returns</h4>
+<a name="g-mount-guess-content-type-finish.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated array of content types or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Caller should free this array with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a> when done with it. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8]</span></p>
@@ -1317,8 +1317,8 @@ specification for more on x-content types.</p>
 <p>This is an synchronous operation and as such may block doing IO;
 see <a class="link" href="GMount.html#g-mount-guess-content-type" title="g_mount_guess_content_type ()"><code class="function">g_mount_guess_content_type()</code></a> for the asynchronous version.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.24.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-guess-content-type-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1339,7 +1339,7 @@ Otherwise a cached result will be used if available</p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1351,7 +1351,7 @@ ignore</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.24.7"></a><h4>Returns</h4>
+<a name="g-mount-guess-content-type-sync.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated array of content types or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Caller should free this array with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a> when done with it. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8]</span></p>
@@ -1387,8 +1387,8 @@ root) that would shadow the original mount.</p>
 manage shadow mounts (and shadows the underlying mount) if the
 activation root on a <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> is set.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.25.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-is-shadowed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1402,7 +1402,7 @@ activation root on a <a class="link" href="GVolume.html" title="GVolume"><span c
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.25.9"></a><h4>Returns</h4>
+<a name="g-mount-is-shadowed.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>mount</code></em>
 is shadowed.</p>
 </div>
@@ -1421,8 +1421,8 @@ g_mount_shadow (<em class="parameter"><code><a class="link" href="GMount.html" t
 will need to emit the <a class="link" href="GMount.html#GMount-changed" title="The “changed” signal"><span class="type">“changed”</span></a> signal on <em class="parameter"><code>mount</code></em>
  manually.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.26.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-shadow.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1450,8 +1450,8 @@ g_mount_unshadow (<em class="parameter"><code><a class="link" href="GMount.html"
 will need to emit the <a class="link" href="GMount.html#GMount-changed" title="The “changed” signal"><span class="type">“changed”</span></a> signal on <em class="parameter"><code>mount</code></em>
  manually.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.27.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-unshadow.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1474,8 +1474,8 @@ g_mount_get_sort_key (<em class="parameter"><code><a class="link" href="GMount.h
 <p>Gets the sort key for <em class="parameter"><code>mount</code></em>
 , if any.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.28.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-mount-get-sort-key.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1489,7 +1489,7 @@ g_mount_get_sort_key (<em class="parameter"><code><a class="link" href="GMount.h
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.4.10.28.6"></a><h4>Returns</h4>
+<a name="g-mount-get-sort-key.returns"></a><h4>Returns</h4>
 <p> Sorting key for <em class="parameter"><code>mount</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no such key is available.</p>
 </div>
@@ -1596,19 +1596,14 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 </pre>
 <p>Interface for implementing operations for mounts.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.11.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMountIface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GMountIface.g-iface"></a>g_iface</code></em>;</p></td>
-<td class="struct_member_description"><p>The parent interface.</p></td>
-<td class="struct_member_annotations"> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GMountIface.changed"></a>changed</code></em> ()</p></td>
 <td class="struct_member_description"><p>Changed signal that is emitted when the mount's state has changed.</p></td>
@@ -1756,8 +1751,8 @@ type guessing. This operation was added in 2.18.</p></td>
 <a name="GMountMountFlags"></a><h3>enum GMountMountFlags</h3>
 <p>Flags used when mounting a mount.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.11.4.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMountMountFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1778,8 +1773,8 @@ type guessing. This operation was added in 2.18.</p></td>
 <a name="GMountUnmountFlags"></a><h3>enum GMountUnmountFlags</h3>
 <p>Flags used when an unmounting a mount.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.11.5.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMountUnmountFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1815,8 +1810,8 @@ user_function (<a class="link" href="GMount.html" title="GMount"><span class="ty
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data)</pre>
 <p>Emitted when the mount has been changed.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.12.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMount-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1847,8 +1842,8 @@ user_function (<a class="link" href="GMount.html" title="GMount"><span class="ty
 <p>This signal is emitted when the <a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> is about to be
 unmounted.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.12.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMount-pre-unmount.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1882,8 +1877,8 @@ unmounted. If the recipient is holding references to the
 object they should release them so the object can be
 finalized.</p>
 <div class="refsect3">
-<a name="id-1.4.9.4.12.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMount-unmounted.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1912,6 +1907,6 @@ finalized.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSimpleAsyncResult: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="async.html" title="Asynchronous I/O">
 <link rel="prev" href="gio-GIOScheduler.html" title="GIOScheduler">
 <link rel="next" href="conversion.html" title="Data conversion">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSimpleAsyncResult.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -254,7 +254,7 @@
 </div>
 <div class="refsect1">
 <a name="GSimpleAsyncResult.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -439,98 +439,98 @@ using GSimpleAsyncResult looks something like this:</p>
 90
 91
 92</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">baked_cb</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Cake</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">,</span>
-<span class="normal">          </span><span class="usertype">gpointer</span><span class="normal"> user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="comment">// In this example, this callback is not given a reference to the cake,</span>
-<span class="normal">  </span><span class="comment">// so the GSimpleAsyncResult has to take a reference to it.</span>
-<span class="normal">  </span><span class="usertype">GSimpleAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">result </span><span class="symbol">=</span><span class="normal"> user_data</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
+<span class="function">baked_cb</span> <span class="gtkdoc opt">(</span>Cake    <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">,</span>
+          gpointer user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="gtkdoc slc">// In this example, this callback is not given a reference to the cake,</span>
+  <span class="gtkdoc slc">// so the GSimpleAsyncResult has to take a reference to it.</span>
+  GSimpleAsyncResult <span class="gtkdoc opt">*</span>result <span class="gtkdoc opt">=</span> user_data<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
-<span class="normal">    </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-error">g_simple_async_result_set_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span>
-<span class="normal">                                     BAKER_ERRORS</span><span class="symbol">,</span>
-<span class="normal">                                     BAKER_ERROR_NO_FLOUR</span><span class="symbol">,</span>
-<span class="normal">                                     </span><span class="string">"Go to the supermarket"</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="keyword">else</span>
-<span class="normal">    </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span>
-<span class="normal">                                               </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">),</span>
-<span class="normal">                                               <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
+    <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-error">g_simple_async_result_set_error</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span>
+                                     BAKER_ERRORS<span class="gtkdoc opt">,</span>
+                                     BAKER_ERROR_NO_FLOUR<span class="gtkdoc opt">,</span>
+                                     <span class="string">&quot;Go to the supermarket&quot;</span><span class="gtkdoc opt">);</span>
+  <span class="keyword">else</span>
+    <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span>
+                                               <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">),</span>
+                                               g_object_unref<span class="gtkdoc opt">);</span>
 
 
-<span class="normal">  </span><span class="comment">// In this example, we assume that baked_cb is called as a callback from</span>
-<span class="normal">  </span><span class="comment">// the mainloop, so it's safe to complete the operation synchronously here.</span>
-<span class="normal">  </span><span class="comment">// If, however, _baker_prepare_cake () might call its callback without</span>
-<span class="normal">  </span><span class="comment">// first returning to the mainloop — inadvisable, but some APIs do so —</span>
-<span class="normal">  </span><span class="comment">// we would need to use g_simple_async_result_complete_in_idle().</span>
-<span class="normal">  </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete">g_simple_async_result_complete</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  <span class="gtkdoc slc">// In this example, we assume that baked_cb is called as a callback from</span>
+  <span class="gtkdoc slc">// the mainloop, so it&apos;s safe to complete the operation synchronously here.</span>
+  <span class="gtkdoc slc">// If, however, _baker_prepare_cake () might call its callback without</span>
+  <span class="gtkdoc slc">// first returning to the mainloop — inadvisable, but some APIs do so —</span>
+  <span class="gtkdoc slc">// we would need to use g_simple_async_result_complete_in_idle().</span>
+  <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete">g_simple_async_result_complete</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">);</span>
+  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="type">void</span>
-<span class="function">baker_bake_cake_async</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">              </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
-<span class="normal">                       </span><span class="usertype">guint</span><span class="normal">               radius</span><span class="symbol">,</span>
-<span class="normal">                       </span><span class="usertype">GAsyncReadyCallback</span><span class="normal"> callback</span><span class="symbol">,</span>
-<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">            user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GSimpleAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">Cake</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
+<span class="gtkdoc kwb">void</span>
+<span class="function">baker_bake_cake_async</span> <span class="gtkdoc opt">(</span>Baker              <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
+                       guint               radius<span class="gtkdoc opt">,</span>
+                       GAsyncReadyCallback callback<span class="gtkdoc opt">,</span>
+                       gpointer            user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GSimpleAsyncResult <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">;</span>
+  Cake               <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">radius </span><span class="symbol">&lt;</span><span class="normal"> </span><span class="number">3</span><span class="symbol">)</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-report-error-in-idle">g_simple_async_report_error_in_idle</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">),</span>
-<span class="normal">                                           callback</span><span class="symbol">,</span>
-<span class="normal">                                           user_data</span><span class="symbol">,</span>
-<span class="normal">                                           BAKER_ERRORS</span><span class="symbol">,</span>
-<span class="normal">                                           BAKER_ERROR_TOO_SMALL</span><span class="symbol">,</span>
-<span class="normal">                                           </span><span class="string">"%ucm radius cakes are silly"</span><span class="symbol">,</span>
-<span class="normal">                                           radius</span><span class="symbol">);</span>
-<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
-<span class="normal">    </span><span class="cbracket">}</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>radius <span class="gtkdoc opt">&lt;</span> <span class="number">3</span><span class="gtkdoc opt">)</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-report-error-in-idle">g_simple_async_report_error_in_idle</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">),</span>
+                                           callback<span class="gtkdoc opt">,</span>
+                                           user_data<span class="gtkdoc opt">,</span>
+                                           BAKER_ERRORS<span class="gtkdoc opt">,</span>
+                                           BAKER_ERROR_TOO_SMALL<span class="gtkdoc opt">,</span>
+                                           <span class="string">&quot;%ucm radius cakes are silly&quot;</span><span class="gtkdoc opt">,</span>
+                                           radius<span class="gtkdoc opt">);</span>
+      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
+    <span class="gtkdoc opt">}</span>
 
-<span class="normal">  simple </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-new">g_simple_async_result_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">),</span>
-<span class="normal">                                      callback</span><span class="symbol">,</span>
-<span class="normal">                                      user_data</span><span class="symbol">,</span>
-<span class="normal">                                      baker_bake_cake_async</span><span class="symbol">);</span>
-<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">_baker_get_cached_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">);</span>
+  simple <span class="gtkdoc opt">=</span> <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-new">g_simple_async_result_new</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">),</span>
+                                      callback<span class="gtkdoc opt">,</span>
+                                      user_data<span class="gtkdoc opt">,</span>
+                                      baker_bake_cake_async<span class="gtkdoc opt">);</span>
+  cake <span class="gtkdoc opt">=</span> <span class="function">_baker_get_cached_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake </span><span class="symbol">!=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">,</span>
-<span class="normal">                                                 </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">),</span>
-<span class="normal">                                                 <a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="symbol">);</span>
-<span class="normal">      </span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete-in-idle">g_simple_async_result_complete_in_idle</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">);</span>
-<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">);</span>
-<span class="normal">      </span><span class="comment">// Drop the reference returned by _baker_get_cached_cake();</span>
-<span class="normal">      </span><span class="comment">// the GSimpleAsyncResult has taken its own reference.</span>
-<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
-<span class="normal">      </span><span class="keyword">return</span><span class="symbol">;</span>
-<span class="normal">    </span><span class="cbracket">}</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>cake <span class="gtkdoc opt">!=</span> NULL<span class="gtkdoc opt">)</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-set-op-res-gpointer">g_simple_async_result_set_op_res_gpointer</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">,</span>
+                                                 <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">),</span>
+                                                 g_object_unref<span class="gtkdoc opt">);</span>
+      <span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-complete-in-idle">g_simple_async_result_complete_in_idle</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">);</span>
+      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">);</span>
+      <span class="gtkdoc slc">// Drop the reference returned by _baker_get_cached_cake();</span>
+      <span class="gtkdoc slc">// the GSimpleAsyncResult has taken its own reference.</span>
+      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
+      <span class="keyword">return</span><span class="gtkdoc opt">;</span>
+    <span class="gtkdoc opt">}</span>
 
-<span class="normal">  </span><span class="function">_baker_prepare_cake</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> radius</span><span class="symbol">,</span><span class="normal"> baked_cb</span><span class="symbol">,</span><span class="normal"> simple</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  <span class="function">_baker_prepare_cake</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> radius<span class="gtkdoc opt">,</span> baked_cb<span class="gtkdoc opt">,</span> simple<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="normal">Cake </span><span class="symbol">*</span>
-<span class="function">baker_bake_cake_finish</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Baker</span><span class="normal">        </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="usertype">GAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">result</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="usertype">GError</span><span class="normal">      </span><span class="symbol">**</span><span class="normal">error</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GSimpleAsyncResult</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">Cake</span><span class="normal">               </span><span class="symbol">*</span><span class="normal">cake</span><span class="symbol">;</span>
+Cake <span class="gtkdoc opt">*</span>
+<span class="function">baker_bake_cake_finish</span> <span class="gtkdoc opt">(</span>Baker        <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">,</span>
+                        GAsyncResult <span class="gtkdoc opt">*</span>result<span class="gtkdoc opt">,</span>
+                        GError      <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GSimpleAsyncResult <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">;</span>
+  Cake               <span class="gtkdoc opt">*</span>cake<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-is-valid">g_simple_async_result_is_valid</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">result</span><span class="symbol">,</span>
-<span class="normal">                                                        </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">),</span>
-<span class="normal">                                                        baker_bake_cake_async</span><span class="symbol">),</span>
-<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-return-val-if-fail">g_return_val_if_fail</a></span> <span class="gtkdoc opt">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-is-valid">g_simple_async_result_is_valid</a></span> <span class="gtkdoc opt">(</span>result<span class="gtkdoc opt">,</span>
+                                                        <span class="function"><a href="../gobject-The-Base-Object-Type.html#G-OBJECT:CAPS">G_OBJECT</a></span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">),</span>
+                                                        baker_bake_cake_async<span class="gtkdoc opt">),</span>
+                        NULL<span class="gtkdoc opt">);</span>
 
-<span class="normal">  simple </span><span class="symbol">=</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GSimpleAsyncResult.html#GSimpleAsyncResult-struct">GSimpleAsyncResult</a> </span><span class="symbol">*)</span><span class="normal"> result</span><span class="symbol">;</span>
+  simple <span class="gtkdoc opt">= (</span>GSimpleAsyncResult <span class="gtkdoc opt">*)</span> result<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-propagate-error">g_simple_async_result_propagate_error</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">,</span><span class="normal"> error</span><span class="symbol">))</span>
-<span class="normal">    </span><span class="keyword">return</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-propagate-error">g_simple_async_result_propagate_error</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">,</span> error<span class="gtkdoc opt">))</span>
+    <span class="keyword">return</span> NULL<span class="gtkdoc opt">;</span>
 
-<span class="normal">  cake </span><span class="symbol">=</span><span class="normal"> </span><span class="function">CAKE</span><span class="normal"> </span><span class="symbol">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-get-op-res-gpointer">g_simple_async_result_get_op_res_gpointer</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">simple</span><span class="symbol">));</span>
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">cake</span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  cake <span class="gtkdoc opt">=</span> <span class="function">CAKE</span> <span class="gtkdoc opt">(</span><span class="function"><a href="GSimpleAsyncResult.html#g-simple-async-result-get-op-res-gpointer">g_simple_async_result_get_op_res_gpointer</a></span> <span class="gtkdoc opt">(</span>simple<span class="gtkdoc opt">));</span>
+  <span class="keyword">return</span> <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-ref">g_object_ref</a></span> <span class="gtkdoc opt">(</span>cake<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -549,8 +549,8 @@ using GSimpleAsyncResult looks something like this:</p>
 <p>Simple thread function that runs an asynchronous operation and
 checks for cancellation.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GSimpleAsyncThreadFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -598,8 +598,8 @@ probably should) then you should provide the user's cancellable to
 <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-set-check-cancellable" title="g_simple_async_result_set_check_cancellable ()"><code class="function">g_simple_async_result_set_check_cancellable()</code></a> immediately after
 this function returns.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.3.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -609,7 +609,7 @@ this function returns.</p>
 <tr>
 <td class="parameter_name"><p>source_object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -631,7 +631,7 @@ this function returns.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.3.9"></a><h4>Returns</h4>
+<a name="g-simple-async-result-new.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a>.</p>
 </div>
 </div>
@@ -652,8 +652,8 @@ g_simple_async_result_new_error (<em class="parameter"><code><a href="../gobject
 </div>
 <p>Creates a new <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a> with a set error.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-new-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -663,7 +663,7 @@ g_simple_async_result_new_error (<em class="parameter"><code><a href="../gobject
 <tr>
 <td class="parameter_name"><p>source_object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -701,7 +701,7 @@ g_simple_async_result_new_error (<em class="parameter"><code><a href="../gobject
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.4.7"></a><h4>Returns</h4>
+<a name="g-simple-async-result-new-error.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a>.</p>
 </div>
 </div>
@@ -719,8 +719,8 @@ g_simple_async_result_new_from_error (<em class="parameter"><code><a href="../go
 </div>
 <p>Creates a <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a> from an error condition.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-new-from-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -730,7 +730,7 @@ g_simple_async_result_new_from_error (<em class="parameter"><code><a href="../go
 <tr>
 <td class="parameter_name"><p>source_object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -752,7 +752,7 @@ g_simple_async_result_new_from_error (<em class="parameter"><code><a href="../go
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.5.7"></a><h4>Returns</h4>
+<a name="g-simple-async-result-new-from-error.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a>.</p>
 </div>
 </div>
@@ -773,8 +773,8 @@ caller's ownership of <em class="parameter"><code>error</code></em>
 , so the caller does not need to free it anymore.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.6.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-new-take-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -784,7 +784,7 @@ caller's ownership of <em class="parameter"><code>error</code></em>
 <tr>
 <td class="parameter_name"><p>source_object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -806,7 +806,7 @@ caller's ownership of <em class="parameter"><code>error</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.6.9"></a><h4>Returns</h4>
+<a name="g-simple-async-result-new-take-error.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -835,8 +835,8 @@ already been sent as an idle to the main context to be dispatched).</p>
 <p>The checking described above is done regardless of any call to the
 unrelated <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-set-handle-cancellation" title="g_simple_async_result_set_handle_cancellation ()"><code class="function">g_simple_async_result_set_handle_cancellation()</code></a> function.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.7.10"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-check-cancellable.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -851,7 +851,7 @@ unrelated <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-se
 <tr>
 <td class="parameter_name"><p>check_cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> to check, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to unset. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -873,8 +873,8 @@ g_simple_async_result_set_op_res_gpointer
 <p>Sets the operation result within the asynchronous result to a pointer.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.8.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-op-res-gpointer.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -913,8 +913,8 @@ g_simple_async_result_get_op_res_gpointer
 <p>Gets a pointer result as returned by the asynchronous function.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.9.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-get-op-res-gpointer.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -928,7 +928,7 @@ g_simple_async_result_get_op_res_gpointer
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.9.8"></a><h4>Returns</h4>
+<a name="g-simple-async-result-get-op-res-gpointer.returns"></a><h4>Returns</h4>
 <p> a pointer from the result.</p>
 </div>
 </div>
@@ -947,8 +947,8 @@ g_simple_async_result_set_op_res_gssize
 the given <em class="parameter"><code>op_res</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.10.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-op-res-gssize.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -981,8 +981,8 @@ g_simple_async_result_get_op_res_gssize
 </div>
 <p>Gets a gssize from the asynchronous result.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.11.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-get-op-res-gssize.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -996,7 +996,7 @@ g_simple_async_result_get_op_res_gssize
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.11.7"></a><h4>Returns</h4>
+<a name="g-simple-async-result-get-op-res-gssize.returns"></a><h4>Returns</h4>
 <p> a gssize returned from the asynchronous function.</p>
 </div>
 </div>
@@ -1013,8 +1013,8 @@ g_simple_async_result_set_op_res_gboolean
 </div>
 <p>Sets the operation result to a boolean within the asynchronous result.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-op-res-gboolean.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1047,8 +1047,8 @@ g_simple_async_result_get_op_res_gboolean
 </div>
 <p>Gets the operation result boolean from within the asynchronous result.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.13.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-get-op-res-gboolean.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1062,7 +1062,7 @@ g_simple_async_result_get_op_res_gboolean
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.13.7"></a><h4>Returns</h4>
+<a name="g-simple-async-result-get-op-res-gboolean.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the operation's result was <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>
 if the operation's result was <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>.</p>
 </div>
@@ -1079,8 +1079,8 @@ g_simple_async_result_get_source_tag (<em class="parameter"><code><a class="link
 <p>Gets the source tag for the <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a>.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.14.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-get-source-tag.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1094,7 +1094,7 @@ g_simple_async_result_get_source_tag (<em class="parameter"><code><a class="link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.14.8"></a><h4>Returns</h4>
+<a name="g-simple-async-result-get-source-tag.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> to the source object for the <a class="link" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult"><span class="type">GSimpleAsyncResult</span></a>.</p>
 </div>
 </div>
@@ -1128,8 +1128,8 @@ which this function is called).  (Alternatively, if either
 's source tag is <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, then the source tag
 check is skipped.)</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.15.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-is-valid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1144,18 +1144,18 @@ check is skipped.)</p>
 <tr>
 <td class="parameter_name"><p>source</p></td>
 <td class="parameter_description"><p> the <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a> passed to the _finish function. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>source_tag</p></td>
 <td class="parameter_description"><p> the asynchronous function. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.15.9"></a><h4>Returns</h4>
+<a name="g-simple-async-result-is-valid.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><span class="type">TRUE</span></a> if all checks passed or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><span class="type">FALSE</span></a> if any failed.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-20.html#api-index-2.20">2.20</a></p>
@@ -1173,8 +1173,8 @@ g_simple_async_result_set_handle_cancellation
 <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-set-check-cancellable" title="g_simple_async_result_set_check_cancellable ()"><code class="function">g_simple_async_result_set_check_cancellable()</code></a>.  It only refers to the
 <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> passed to <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-run-in-thread" title="g_simple_async_result_run_in_thread ()"><code class="function">g_simple_async_result_run_in_thread()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.16.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-handle-cancellation.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1212,8 +1212,8 @@ invokes the callback directly. If you are in a different thread use
  for as long as
 is needed to complete the call.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.17.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-complete.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1246,8 +1246,8 @@ of the thread that <em class="parameter"><code>simple</code></em>
  for as long as
 is needed to complete the call.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.18.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-complete-in-idle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1282,8 +1282,8 @@ the result to the appropriate main loop.</p>
 is needed to run the job and report its completion.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.19.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-run-in-thread.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1308,7 +1308,7 @@ is needed to run the job and report its completion.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -1326,8 +1326,8 @@ g_simple_async_result_set_from_error (<em class="parameter"><code><a class="link
 </div>
 <p>Sets the result from a <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.20.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-from-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1364,8 +1364,8 @@ of <em class="parameter"><code>error</code></em>
 , so the caller does not need to free it any more.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.21.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-take-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1404,8 +1404,8 @@ a given destination.</p>
 function will return <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> with <em class="parameter"><code>dest</code></em>
  set appropriately.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.22.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-propagate-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1426,7 +1426,7 @@ function will return <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code clas
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.22.8"></a><h4>Returns</h4>
+<a name="g-simple-async-result-propagate-error.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the error was propagated to <em class="parameter"><code>dest</code></em>
 . <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
@@ -1447,8 +1447,8 @@ g_simple_async_result_set_error (<em class="parameter"><code><a class="link" hre
 <p>Sets an error within the asynchronous result without a <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a>.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.23.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-error.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1502,8 +1502,8 @@ g_simple_async_result_set_error_va (<em class="parameter"><code><a class="link" 
 Unless writing a binding, see <a class="link" href="GSimpleAsyncResult.html#g-simple-async-result-set-error" title="g_simple_async_result_set_error ()"><code class="function">g_simple_async_result_set_error()</code></a>.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.24.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-result-set-error-va.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1559,8 +1559,8 @@ directly setting the contents of the <a class="link" href="GAsyncResult.html" ti
 information.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.25.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-report-error-in-idle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1570,7 +1570,7 @@ information.</p>
 <tr>
 <td class="parameter_name"><p>object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1624,8 +1624,8 @@ g_simple_async_report_gerror_in_idle (<em class="parameter"><code><a href="../go
 <a class="link" href="GSimpleAsyncResult.html#g-simple-async-report-error-in-idle" title="g_simple_async_report_error_in_idle ()"><code class="function">g_simple_async_report_error_in_idle()</code></a>, but takes a <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> rather
 than building a new one.</p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.26.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-report-gerror-in-idle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1635,7 +1635,7 @@ than building a new one.</p>
 <tr>
 <td class="parameter_name"><p>object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1676,8 +1676,8 @@ ownership of <em class="parameter"><code>error</code></em>
 , so the caller does not have to free it any more.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.5.6.9.27.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-simple-async-report-take-gerror-in-idle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1687,7 +1687,7 @@ ownership of <em class="parameter"><code>error</code></em>
 <tr>
 <td class="parameter_name"><p>object</p></td>
 <td class="parameter_description"><p> a <a href="../gobject-The-Base-Object-Type.html#GObject-struct"><span class="type">GObject</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1725,6 +1725,6 @@ ownership of <em class="parameter"><code>error</code></em>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

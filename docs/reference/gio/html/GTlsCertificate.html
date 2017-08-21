@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GTlsCertificate: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="tls.html" title="TLS (SSL) support">
 <link rel="prev" href="gio-TLS-Overview.html" title="TLS Overview">
 <link rel="next" href="GTlsConnection.html" title="GTlsConnection">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GTlsCertificate.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -102,7 +102,7 @@
 </div>
 <div class="refsect1">
 <a name="GTlsCertificate.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -144,7 +144,7 @@
 </div>
 <div class="refsect1">
 <a name="GTlsCertificate.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -200,8 +200,8 @@ will be set accordingly if the verification succeeds. If any
 certificate in the chain cannot be verified, the first certificate in
 the file will still be returned.</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-new-from-pem.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -228,7 +228,7 @@ the file will still be returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.2.7"></a><h4>Returns</h4>
+<a name="g-tls-certificate-new-from-pem.returns"></a><h4>Returns</h4>
 <p> the new certificate, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>data</code></em>
 is invalid</p>
 </div>
@@ -258,8 +258,8 @@ set <em class="parameter"><code>error</code></em>
 . Otherwise, this behaves like
 <a class="link" href="GTlsCertificate.html#g-tls-certificate-new-from-pem" title="g_tls_certificate_new_from_pem ()"><code class="function">g_tls_certificate_new_from_pem()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-new-from-file.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -268,8 +268,8 @@ set <em class="parameter"><code>error</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>file</p></td>
-<td class="parameter_description"><p>file containing a PEM-encoded certificate to import</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> file containing a PEM-encoded certificate to import. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -280,7 +280,7 @@ set <em class="parameter"><code>error</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.3.7"></a><h4>Returns</h4>
+<a name="g-tls-certificate-new-from-file.returns"></a><h4>Returns</h4>
 <p> the new certificate, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -311,8 +311,8 @@ still be returned.</p>
 . Otherwise, this behaves like
 <a class="link" href="GTlsCertificate.html#g-tls-certificate-new-from-pem" title="g_tls_certificate_new_from_pem ()"><code class="function">g_tls_certificate_new_from_pem()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-new-from-files.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -321,14 +321,15 @@ still be returned.</p>
 <tbody>
 <tr>
 <td class="parameter_name"><p>cert_file</p></td>
-<td class="parameter_description"><p>file containing one or more PEM-encoded certificates to
-import</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> file containing one or more PEM-encoded
+certificates to import. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>key_file</p></td>
-<td class="parameter_description"><p>file containing a PEM-encoded private key to import</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> file containing a PEM-encoded private key
+to import. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -339,7 +340,7 @@ import</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.4.7"></a><h4>Returns</h4>
+<a name="g-tls-certificate-new-from-files.returns"></a><h4>Returns</h4>
 <p> the new certificate, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -361,8 +362,8 @@ PEM-encoded certificates, this will return an empty list and not
 set <em class="parameter"><code>error</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-list-new-from-file.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -371,8 +372,8 @@ set <em class="parameter"><code>error</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>file</p></td>
-<td class="parameter_description"><p>file containing PEM-encoded certificates to import</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> file containing PEM-encoded certificates to import. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -383,7 +384,7 @@ set <em class="parameter"><code>error</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.5.6"></a><h4>Returns</h4>
+<a name="g-tls-certificate-list-new-from-file.returns"></a><h4>Returns</h4>
 <p> a
 <a href="../glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> containing <a class="link" href="GTlsCertificate.html" title="GTlsCertificate"><span class="type">GTlsCertificate</span></a> objects. You must free the list
 and its contents when you are done with it. </p>
@@ -399,8 +400,8 @@ g_tls_certificate_get_issuer (<em class="parameter"><code><a class="link" href="
 <p>Gets the <a class="link" href="GTlsCertificate.html" title="GTlsCertificate"><span class="type">GTlsCertificate</span></a> representing <em class="parameter"><code>cert</code></em>
 's issuer, if known</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-get-issuer.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -414,7 +415,7 @@ g_tls_certificate_get_issuer (<em class="parameter"><code><a class="link" href="
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.6.6"></a><h4>Returns</h4>
+<a name="g-tls-certificate-get-issuer.returns"></a><h4>Returns</h4>
 <p> The certificate of <em class="parameter"><code>cert</code></em>
 's issuer,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>cert</code></em>
@@ -455,8 +456,8 @@ value.</p>
 <p>(All other <a class="link" href="gio-TLS-Overview.html#GTlsCertificateFlags" title="enum GTlsCertificateFlags"><span class="type">GTlsCertificateFlags</span></a> values will always be set or unset
 as appropriate.)</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.7.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-verify.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -471,18 +472,18 @@ as appropriate.)</p>
 <tr>
 <td class="parameter_name"><p>identity</p></td>
 <td class="parameter_description"><p> the expected peer identity. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>trusted_ca</p></td>
 <td class="parameter_description"><p> the certificate of a trusted authority. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.7.9"></a><h4>Returns</h4>
+<a name="g-tls-certificate-verify.returns"></a><h4>Returns</h4>
 <p> the appropriate <a class="link" href="gio-TLS-Overview.html#GTlsCertificateFlags" title="enum GTlsCertificateFlags"><span class="type">GTlsCertificateFlags</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -499,8 +500,8 @@ This has the effect that two certificates may compare equal even if
 their <a class="link" href="GTlsCertificate.html#GTlsCertificate--issuer" title="The “issuer” property"><span class="type">“issuer”</span></a>, <a class="link" href="GTlsCertificate.html#GTlsCertificate--private-key" title="The “private-key” property"><span class="type">“private-key”</span></a>, or
 <a class="link" href="GTlsCertificate.html#GTlsCertificate--private-key-pem" title="The “private-key-pem” property"><span class="type">“private-key-pem”</span></a> properties differ.</p>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-tls-certificate-is-same.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -521,7 +522,7 @@ their <a class="link" href="GTlsCertificate.html#GTlsCertificate--issuer" title=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.15.3.9.8.6"></a><h4>Returns</h4>
+<a name="g-tls-certificate-is-same.returns"></a><h4>Returns</h4>
 <p> whether the same or not</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-34.html#api-index-2.34">2.34</a></p>
@@ -608,6 +609,6 @@ tool to convert PKCS#8 keys to PKCS#1.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

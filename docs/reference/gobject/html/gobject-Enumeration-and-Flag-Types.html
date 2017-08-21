@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Enumeration and Flag Types: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="rn01.html" title="API Reference">
 <link rel="prev" href="gobject-The-Base-Object-Type.html" title="GObject">
 <link rel="next" href="gobject-Boxed-Types.html" title="Boxed Types">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gobject-Enumeration-and-Flag-Types.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -125,6 +125,14 @@
 </tr>
 <tr>
 <td class="function_type">
+<a href="../glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="gobject-Enumeration-and-Flag-Types.html#g-enum-to-string" title="g_enum_to_string ()">g_enum_to_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
 <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="returnvalue">GFlagsValue</span></a> *
 </td>
 <td class="function_name">
@@ -145,6 +153,14 @@
 </td>
 <td class="function_name">
 <a class="link" href="gobject-Enumeration-and-Flag-Types.html#g-flags-get-value-by-nick" title="g_flags_get_value_by_nick ()">g_flags_get_value_by_nick</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="../glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="gobject-Enumeration-and-Flag-Types.html#g-flags-to-string" title="g_flags_to_string ()">g_flags_to_string</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -184,7 +200,7 @@
 </div>
 <div class="refsect1">
 <a name="gobject-Enumeration-and-Flag-Types.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -243,15 +259,15 @@ definitions.</p>
 7
 8
 9</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="usertype">GEnumClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">enum_class</span><span class="symbol">;</span>
-<span class="usertype">GEnumValue</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">enum_value</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting">GEnumClass <span class="gtkdoc opt">*</span>enum_class<span class="gtkdoc opt">;</span>
+GEnumValue <span class="gtkdoc opt">*</span>enum_value<span class="gtkdoc opt">;</span>
 
-<span class="normal">enum_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Type-Information.html#g-type-class-ref">g_type_class_ref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MAMAN_TYPE_MY_ENUM</span><span class="symbol">);</span>
-<span class="normal">enum_value </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-Enumeration-and-Flag-Types.html#g-enum-get-value">g_enum_get_value</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">enum_class</span><span class="symbol">,</span><span class="normal"> MAMAN_MY_ENUM_FOO</span><span class="symbol">);</span>
+enum_class <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Type-Information.html#g-type-class-ref">g_type_class_ref</a></span> <span class="gtkdoc opt">(</span>MAMAN_TYPE_MY_ENUM<span class="gtkdoc opt">);</span>
+enum_value <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-Enumeration-and-Flag-Types.html#g-enum-get-value">g_enum_get_value</a></span> <span class="gtkdoc opt">(</span>enum_class<span class="gtkdoc opt">,</span> MAMAN_MY_ENUM_FOO<span class="gtkdoc opt">);</span>
 
-<span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"Name: %s</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> enum_value</span><span class="symbol">-&gt;</span><span class="normal">value_name</span><span class="symbol">);</span>
+<span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;Name: %s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> enum_value<span class="gtkdoc opt">-&gt;</span>value_name<span class="gtkdoc opt">);</span>
 
-<span class="function"><a href="gobject-Type-Information.html#g-type-class-unref">g_type_class_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">enum_class</span><span class="symbol">);</span></pre></td>
+<span class="function"><a href="gobject-Type-Information.html#g-type-class-unref">g_type_class_unref</a></span> <span class="gtkdoc opt">(</span>enum_class<span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -267,8 +283,8 @@ definitions.</p>
 </pre>
 <p>Get the type identifier from a given <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumClass" title="struct GEnumClass"><span class="type">GEnumClass</span></a> structure.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-ENUM-CLASS-TYPE.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -282,7 +298,7 @@ definitions.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.2.6"></a><h4>Returns</h4>
+<a name="G-ENUM-CLASS-TYPE.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a></p>
 </div>
 </div>
@@ -293,8 +309,8 @@ definitions.</p>
 </pre>
 <p>Get the static type name from a given <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumClass" title="struct GEnumClass"><span class="type">GEnumClass</span></a> structure.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-ENUM-CLASS-TYPE-NAME.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -308,7 +324,7 @@ definitions.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.3.6"></a><h4>Returns</h4>
+<a name="G-ENUM-CLASS-TYPE-NAME.returns"></a><h4>Returns</h4>
 <p> the type name.</p>
 </div>
 </div>
@@ -320,8 +336,8 @@ definitions.</p>
 <p>Checks whether <em class="parameter"><code>type</code></em>
  "is a" <a class="link" href="gobject-Type-Information.html#G-TYPE-ENUM:CAPS" title="G_TYPE_ENUM"><code class="literal">G_TYPE_ENUM</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-TYPE-IS-ENUM.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -335,7 +351,7 @@ definitions.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.4.6"></a><h4>Returns</h4>
+<a name="G-TYPE-IS-ENUM.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>type</code></em>
 "is a" <a class="link" href="gobject-Type-Information.html#G-TYPE-ENUM:CAPS" title="G_TYPE_ENUM"><code class="literal">G_TYPE_ENUM</code></a>.</p>
 </div>
@@ -347,8 +363,8 @@ definitions.</p>
 </pre>
 <p>Casts a derived <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumClass" title="struct GEnumClass"><span class="type">GEnumClass</span></a> structure into a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumClass" title="struct GEnumClass"><span class="type">GEnumClass</span></a> structure.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-ENUM-CLASS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -371,8 +387,8 @@ definitions.</p>
  "is a" valid <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumClass" title="struct GEnumClass"><span class="type">GEnumClass</span></a> structure of type <a class="link" href="gobject-Type-Information.html#G-TYPE-ENUM:CAPS" title="G_TYPE_ENUM"><code class="literal">G_TYPE_ENUM</code></a>
 or derived.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-IS-ENUM-CLASS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -394,8 +410,8 @@ or derived.</p>
 <p>Checks whether <em class="parameter"><code>type</code></em>
  "is a" <a class="link" href="gobject-Type-Information.html#G-TYPE-FLAGS:CAPS" title="G_TYPE_FLAGS"><code class="literal">G_TYPE_FLAGS</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-TYPE-IS-FLAGS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -409,7 +425,7 @@ or derived.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.7.6"></a><h4>Returns</h4>
+<a name="G-TYPE-IS-FLAGS.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>type</code></em>
 "is a" <a class="link" href="gobject-Type-Information.html#G-TYPE-FLAGS:CAPS" title="G_TYPE_FLAGS"><code class="literal">G_TYPE_FLAGS</code></a>.</p>
 </div>
@@ -421,8 +437,8 @@ or derived.</p>
 </pre>
 <p>Casts a derived <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsClass" title="struct GFlagsClass"><span class="type">GFlagsClass</span></a> structure into a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsClass" title="struct GFlagsClass"><span class="type">GFlagsClass</span></a> structure.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-FLAGS-CLASS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -445,8 +461,8 @@ or derived.</p>
  "is a" valid <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsClass" title="struct GFlagsClass"><span class="type">GFlagsClass</span></a> structure of type <a class="link" href="gobject-Type-Information.html#G-TYPE-FLAGS:CAPS" title="G_TYPE_FLAGS"><code class="literal">G_TYPE_FLAGS</code></a>
 or derived.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-IS-FLAGS-CLASS.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -467,8 +483,8 @@ or derived.</p>
 </pre>
 <p>Get the type identifier from a given <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsClass" title="struct GFlagsClass"><span class="type">GFlagsClass</span></a> structure.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-FLAGS-CLASS-TYPE.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -482,7 +498,7 @@ or derived.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.10.6"></a><h4>Returns</h4>
+<a name="G-FLAGS-CLASS-TYPE.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a></p>
 </div>
 </div>
@@ -493,8 +509,8 @@ or derived.</p>
 </pre>
 <p>Get the static type name from a given <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsClass" title="struct GFlagsClass"><span class="type">GFlagsClass</span></a> structure.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="G-FLAGS-CLASS-TYPE-NAME.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -508,7 +524,7 @@ or derived.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.11.6"></a><h4>Returns</h4>
+<a name="G-FLAGS-CLASS-TYPE-NAME.returns"></a><h4>Returns</h4>
 <p> the type name.</p>
 </div>
 </div>
@@ -520,8 +536,8 @@ g_enum_get_value (<em class="parameter"><code><a class="link" href="gobject-Enum
                   <em class="parameter"><code><a href="../glib-Basic-Types.html#gint"><span class="type">gint</span></a> value</code></em>);</pre>
 <p>Returns the <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumValue" title="struct GEnumValue"><span class="type">GEnumValue</span></a> for a value.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-enum-get-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -542,7 +558,7 @@ g_enum_get_value (<em class="parameter"><code><a class="link" href="gobject-Enum
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.12.6"></a><h4>Returns</h4>
+<a name="g-enum-get-value.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumValue" title="struct GEnumValue"><span class="type">GEnumValue</span></a> for <em class="parameter"><code>value</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 if <em class="parameter"><code>value</code></em>
@@ -558,8 +574,8 @@ g_enum_get_value_by_name (<em class="parameter"><code><a class="link" href="gobj
                           <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>Looks up a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumValue" title="struct GEnumValue"><span class="type">GEnumValue</span></a> by name.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-enum-get-value-by-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -580,7 +596,7 @@ g_enum_get_value_by_name (<em class="parameter"><code><a class="link" href="gobj
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.13.6"></a><h4>Returns</h4>
+<a name="g-enum-get-value-by-name.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumValue" title="struct GEnumValue"><span class="type">GEnumValue</span></a> with name <em class="parameter"><code>name</code></em>
 ,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the enumeration doesn't have a member
@@ -596,8 +612,8 @@ g_enum_get_value_by_nick (<em class="parameter"><code><a class="link" href="gobj
                           <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>);</pre>
 <p>Looks up a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumValue" title="struct GEnumValue"><span class="type">GEnumValue</span></a> by nickname.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.14.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-enum-get-value-by-nick.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -618,13 +634,52 @@ g_enum_get_value_by_nick (<em class="parameter"><code><a class="link" href="gobj
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.14.6"></a><h4>Returns</h4>
+<a name="g-enum-get-value-by-nick.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumValue" title="struct GEnumValue"><span class="type">GEnumValue</span></a> with nickname <em class="parameter"><code>nick</code></em>
 ,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the enumeration doesn't have a member
 with that nickname. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-enum-to-string"></a><h3>g_enum_to_string ()</h3>
+<pre class="programlisting"><a href="../glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+g_enum_to_string (<em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> g_enum_type</code></em>,
+                  <em class="parameter"><code><a href="../glib-Basic-Types.html#gint"><span class="type">gint</span></a> value</code></em>);</pre>
+<p>Pretty-prints <em class="parameter"><code>value</code></em>
+ in the form of the enum’s name.</p>
+<p>This is intended to be used for debugging purposes. The format of the output
+may change in the future.</p>
+<div class="refsect3">
+<a name="g-enum-to-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>g_enum_type</p></td>
+<td class="parameter_description"><p>the type identifier of a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GEnumClass" title="struct GEnumClass"><span class="type">GEnumClass</span></a> type</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="g-enum-to-string.returns"></a><h4>Returns</h4>
+<p> a newly-allocated text string. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: 2.54</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -635,8 +690,8 @@ g_flags_get_first_value (<em class="parameter"><code><a class="link" href="gobje
 <p>Returns the first <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="type">GFlagsValue</span></a> which is set in <em class="parameter"><code>value</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.15.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-flags-get-first-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -657,7 +712,7 @@ g_flags_get_first_value (<em class="parameter"><code><a class="link" href="gobje
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.15.6"></a><h4>Returns</h4>
+<a name="g-flags-get-first-value.returns"></a><h4>Returns</h4>
 <p> the first <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="type">GFlagsValue</span></a> which is set in
 <em class="parameter"><code>value</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none is set. </p>
@@ -672,8 +727,8 @@ g_flags_get_value_by_name (<em class="parameter"><code><a class="link" href="gob
                            <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *name</code></em>);</pre>
 <p>Looks up a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="type">GFlagsValue</span></a> by name.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.16.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-flags-get-value-by-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -694,7 +749,7 @@ g_flags_get_value_by_name (<em class="parameter"><code><a class="link" href="gob
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.16.6"></a><h4>Returns</h4>
+<a name="g-flags-get-value-by-name.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="type">GFlagsValue</span></a> with name <em class="parameter"><code>name</code></em>
 ,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if there is no flag with that name. </p>
@@ -709,8 +764,8 @@ g_flags_get_value_by_nick (<em class="parameter"><code><a class="link" href="gob
                            <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *nick</code></em>);</pre>
 <p>Looks up a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="type">GFlagsValue</span></a> by nickname.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-flags-get-value-by-nick.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -731,12 +786,52 @@ g_flags_get_value_by_nick (<em class="parameter"><code><a class="link" href="gob
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.17.6"></a><h4>Returns</h4>
+<a name="g-flags-get-value-by-nick.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsValue" title="struct GFlagsValue"><span class="type">GFlagsValue</span></a> with nickname <em class="parameter"><code>nick</code></em>
 ,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if there is no flag with that nickname. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="g-flags-to-string"></a><h3>g_flags_to_string ()</h3>
+<pre class="programlisting"><a href="../glib-Basic-Types.html#gchar"><span class="returnvalue">gchar</span></a> *
+g_flags_to_string (<em class="parameter"><code><a class="link" href="gobject-Type-Information.html#GType" title="GType"><span class="type">GType</span></a> flags_type</code></em>,
+                   <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> value</code></em>);</pre>
+<p>Pretty-prints <em class="parameter"><code>value</code></em>
+ in the form of the flag names separated by <code class="literal"> | </code> and
+sorted. Any extra bits will be shown at the end as a hexadecimal number.</p>
+<p>This is intended to be used for debugging purposes. The format of the output
+may change in the future.</p>
+<div class="refsect3">
+<a name="g-flags-to-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>flags_type</p></td>
+<td class="parameter_description"><p>the type identifier of a <a class="link" href="gobject-Enumeration-and-Flag-Types.html#GFlagsClass" title="struct GFlagsClass"><span class="type">GFlagsClass</span></a> type</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>the value</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="g-flags-to-string.returns"></a><h4>Returns</h4>
+<p> a newly-allocated text string. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: 2.54</p>
 </div>
 <hr>
 <div class="refsect2">
@@ -750,8 +845,8 @@ g_enum_register_static (<em class="parameter"><code>const <a href="../glib-Basic
 generate a <code class="function">my_enum_get_type()</code> function from a usual C enumeration
 definition  than to write one yourself using <a class="link" href="gobject-Enumeration-and-Flag-Types.html#g-enum-register-static" title="g_enum_register_static ()"><code class="function">g_enum_register_static()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.18.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-enum-register-static.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -775,7 +870,7 @@ be stack-allocated.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.18.7"></a><h4>Returns</h4>
+<a name="g-enum-register-static.returns"></a><h4>Returns</h4>
 <p> The new type identifier.</p>
 </div>
 </div>
@@ -791,8 +886,8 @@ g_flags_register_static (<em class="parameter"><code>const <a href="../glib-Basi
 generate a <code class="function">my_flags_get_type()</code> function from a usual C enumeration
 definition than to write one yourself using <a class="link" href="gobject-Enumeration-and-Flag-Types.html#g-flags-register-static" title="g_flags_register_static ()"><code class="function">g_flags_register_static()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.19.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-flags-register-static.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -815,7 +910,7 @@ GObject keeps a reference to the data, so it cannot be stack-allocated.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.7.19.7"></a><h4>Returns</h4>
+<a name="g-flags-register-static.returns"></a><h4>Returns</h4>
 <p> The new type identifier.</p>
 </div>
 </div>
@@ -847,20 +942,20 @@ example:</p>
 12
 13
 14</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">my_enum_complete_type_info</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GTypePlugin</span><span class="normal">     </span><span class="symbol">*</span><span class="normal">plugin</span><span class="symbol">,</span>
-<span class="normal">                            </span><span class="usertype">GType</span><span class="normal">            g_type</span><span class="symbol">,</span>
-<span class="normal">                            </span><span class="usertype">GTypeInfo</span><span class="normal">       </span><span class="symbol">*</span><span class="normal">info</span><span class="symbol">,</span>
-<span class="normal">                            </span><span class="usertype">GTypeValueTable</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">value_table</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="keyword">static</span><span class="normal"> </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GEnumValue</span><span class="normal"> values</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
-<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> MY_ENUM_FOO</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"MY_ENUM_FOO"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"foo"</span><span class="normal"> </span><span class="cbracket">}</span><span class="symbol">,</span>
-<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> MY_ENUM_BAR</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"MY_ENUM_BAR"</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"bar"</span><span class="normal"> </span><span class="cbracket">}</span><span class="symbol">,</span>
-<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> </span><span class="number">0</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a> </span><span class="cbracket">}</span>
-<span class="normal">  </span><span class="cbracket">}</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
+<span class="function">my_enum_complete_type_info</span> <span class="gtkdoc opt">(</span>GTypePlugin     <span class="gtkdoc opt">*</span>plugin<span class="gtkdoc opt">,</span>
+                            GType            g_type<span class="gtkdoc opt">,</span>
+                            GTypeInfo       <span class="gtkdoc opt">*</span>info<span class="gtkdoc opt">,</span>
+                            GTypeValueTable <span class="gtkdoc opt">*</span>value_table<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="gtkdoc kwb">static const</span> GEnumValue values<span class="gtkdoc opt">[] = {</span>
+    <span class="gtkdoc opt">{</span> MY_ENUM_FOO<span class="gtkdoc opt">,</span> <span class="string">&quot;MY_ENUM_FOO&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;foo&quot;</span> <span class="gtkdoc opt">},</span>
+    <span class="gtkdoc opt">{</span> MY_ENUM_BAR<span class="gtkdoc opt">,</span> <span class="string">&quot;MY_ENUM_BAR&quot;</span><span class="gtkdoc opt">,</span> <span class="string">&quot;bar&quot;</span> <span class="gtkdoc opt">},</span>
+    <span class="gtkdoc opt">{</span> <span class="number">0</span><span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL <span class="gtkdoc opt">}</span>
+  <span class="gtkdoc opt">};</span>
 
-<span class="normal">  </span><span class="function"><a href="gobject-Enumeration-and-Flag-Types.html#g-enum-complete-type-info">g_enum_complete_type_info</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">type</span><span class="symbol">,</span><span class="normal"> info</span><span class="symbol">,</span><span class="normal"> values</span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="function"><a href="gobject-Enumeration-and-Flag-Types.html#g-enum-complete-type-info">g_enum_complete_type_info</a></span> <span class="gtkdoc opt">(</span>type<span class="gtkdoc opt">,</span> info<span class="gtkdoc opt">,</span> values<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -868,8 +963,8 @@ example:</p>
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.6.7.20.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-enum-complete-type-info.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -908,8 +1003,8 @@ g_flags_complete_type_info (<em class="parameter"><code><a class="link" href="go
 function of a <a class="link" href="GTypePlugin.html" title="GTypePlugin"><span class="type">GTypePlugin</span></a> implementation, see the example for
 <a class="link" href="gobject-Enumeration-and-Flag-Types.html#g-enum-complete-type-info" title="g_enum_complete_type_info ()"><code class="function">g_enum_complete_type_info()</code></a> above.</p>
 <div class="refsect3">
-<a name="id-1.4.6.7.21.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-flags-complete-type-info.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -954,8 +1049,8 @@ members being 0.</p></td>
 <p>The class of an enumeration type holds information about its 
 possible values.</p>
 <div class="refsect3">
-<a name="id-1.4.6.8.2.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GEnumClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -1006,8 +1101,8 @@ individual values.</p></td>
 <p>The class of a flags type holds information about its 
 possible values.</p>
 <div class="refsect3">
-<a name="id-1.4.6.8.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GFlagsClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -1051,8 +1146,8 @@ individual values.</p></td>
 <p>A structure which contains a single enum value, its name, and its
 nickname.</p>
 <div class="refsect3">
-<a name="id-1.4.6.8.4.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GEnumValue.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -1090,8 +1185,8 @@ nickname.</p>
 <p>A structure which contains a single flags value, its name, and its
 nickname.</p>
 <div class="refsect3">
-<a name="id-1.4.6.8.5.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GFlagsValue.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -1125,6 +1220,6 @@ nickname.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

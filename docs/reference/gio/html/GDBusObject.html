@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GDBusObject: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="gdbus-convenience.html" title="High-level D-Bus Support">
 <link rel="prev" href="GDBusProxy.html" title="GDBusProxy">
 <link rel="next" href="GDBusObjectSkeleton.html" title="GDBusObjectSkeleton">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -37,7 +37,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GDBusObject.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -71,7 +71,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusObject.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -93,7 +93,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusObject.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -112,7 +112,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusObject.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GDBusObject
 </pre>
 </div>
@@ -149,8 +149,8 @@ g_dbus_object_get_object_path (<em class="parameter"><code><a class="link" href=
 <p>Gets the object path for <em class="parameter"><code>object</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.7.11.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-get-object-path.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -164,7 +164,7 @@ g_dbus_object_get_object_path (<em class="parameter"><code><a class="link" href=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.7.11.2.6"></a><h4>Returns</h4>
+<a name="g-dbus-object-get-object-path.returns"></a><h4>Returns</h4>
 <p> A string owned by <em class="parameter"><code>object</code></em>
 . Do not free.</p>
 </div>
@@ -178,8 +178,8 @@ g_dbus_object_get_interfaces (<em class="parameter"><code><a class="link" href="
 <p>Gets the D-Bus interfaces associated with <em class="parameter"><code>object</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.7.11.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-get-interfaces.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -193,10 +193,11 @@ g_dbus_object_get_interfaces (<em class="parameter"><code><a class="link" href="
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.7.11.3.6"></a><h4>Returns</h4>
-<p> (element-type GDBusInterface) (transfer full) : A list of <a class="link" href="GDBusInterface.html" title="GDBusInterface"><span class="type">GDBusInterface</span></a> instances.
+<a name="g-dbus-object-get-interfaces.returns"></a><h4>Returns</h4>
+<p> A list of <a class="link" href="GDBusInterface.html" title="GDBusInterface"><span class="type">GDBusInterface</span></a> instances.
 The returned list must be freed by <a href="../glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a> after each element has been freed
-with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
+with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
+<p><span class="annotation">[<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> GDBusInterface][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-30.html#api-index-2.30">2.30</a></p>
 </div>
@@ -211,8 +212,8 @@ g_dbus_object_get_interface (<em class="parameter"><code><a class="link" href="G
 <em class="parameter"><code>object</code></em>
 , if any.</p>
 <div class="refsect3">
-<a name="id-1.4.18.7.11.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-get-interface.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -233,7 +234,7 @@ g_dbus_object_get_interface (<em class="parameter"><code><a class="link" href="G
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.7.11.4.6"></a><h4>Returns</h4>
+<a name="g-dbus-object-get-interface.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not found, otherwise a
 <a class="link" href="GDBusInterface.html" title="GDBusInterface"><span class="type">GDBusInterface</span></a> that must be freed with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -270,8 +271,8 @@ using the following functions.</p>
 </pre>
 <p>Base object type for D-Bus objects.</p>
 <div class="refsect3">
-<a name="id-1.4.18.7.12.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusObjectIface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -326,8 +327,8 @@ user_function (<a class="link" href="GDBusObject.html" title="GDBusObject"><span
  is added to <em class="parameter"><code>object</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.7.13.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusObject-interface-added.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -366,8 +367,8 @@ user_function (<a class="link" href="GDBusObject.html" title="GDBusObject"><span
  is removed from <em class="parameter"><code>object</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.7.13.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusObject-interface-removed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -398,6 +399,6 @@ user_function (<a class="link" href="GDBusObject.html" title="GDBusObject"><span
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

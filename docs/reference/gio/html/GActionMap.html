@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GActionMap: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GActionGroup.html" title="GActionGroup">
 <link rel="next" href="GSimpleActionGroup.html" title="GSimpleActionGroup">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GActionMap.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -79,7 +79,7 @@
 </div>
 <div class="refsect1">
 <a name="GActionMap.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -102,7 +102,7 @@
 </div>
 <div class="refsect1">
 <a name="GActionMap.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GActionMap
 </pre>
 </div>
@@ -146,8 +146,8 @@ g_action_map_lookup_action (<em class="parameter"><code><a class="link" href="GA
 .</p>
 <p>If no such action exists, returns <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.5.10.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-map-lookup-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -168,7 +168,7 @@ g_action_map_lookup_action (<em class="parameter"><code><a class="link" href="GA
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.5.10.2.7"></a><h4>Returns</h4>
+<a name="g-action-map-lookup-action.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GAction.html" title="GAction"><span class="type">GAction</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -219,36 +219,36 @@ and adding them to a <a class="link" href="GActionMap.html" title="GActionMap"><
 28
 29
 30</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">activate_quit</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GSimpleAction</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">,</span>
-<span class="normal">               </span><span class="usertype">GVariant</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">parameter</span><span class="symbol">,</span>
-<span class="normal">               </span><span class="usertype">gpointer</span><span class="normal">       user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="function">exit</span><span class="normal"> </span><span class="symbol">(</span><span class="number">0</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static void</span>
+<span class="function">activate_quit</span> <span class="gtkdoc opt">(</span>GSimpleAction <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">,</span>
+               GVariant      <span class="gtkdoc opt">*</span>parameter<span class="gtkdoc opt">,</span>
+               gpointer       user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="function">exit</span> <span class="gtkdoc opt">(</span><span class="number">0</span><span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">activate_print_string</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GSimpleAction</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">simple</span><span class="symbol">,</span>
-<span class="normal">                       </span><span class="usertype">GVariant</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">parameter</span><span class="symbol">,</span>
-<span class="normal">                       </span><span class="usertype">gpointer</span><span class="normal">       user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"%s</span><span class="specialchar">\n</span><span class="string">"</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="../glib-GVariant.html#g-variant-get-string">g_variant_get_string</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">parameter</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">));</span>
-<span class="cbracket">}</span>
+<span class="gtkdoc kwb">static void</span>
+<span class="function">activate_print_string</span> <span class="gtkdoc opt">(</span>GSimpleAction <span class="gtkdoc opt">*</span>simple<span class="gtkdoc opt">,</span>
+                       GVariant      <span class="gtkdoc opt">*</span>parameter<span class="gtkdoc opt">,</span>
+                       gpointer       user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="function"><a href="../glib-Warnings-and-Assertions.html#g-print">g_print</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;%s</span><span class="gtkdoc esc">\n</span><span class="string">&quot;</span><span class="gtkdoc opt">,</span> <span class="function"><a href="../glib-GVariant.html#g-variant-get-string">g_variant_get_string</a></span> <span class="gtkdoc opt">(</span>parameter<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">));</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="keyword">static</span><span class="normal"> <a href="GActionGroup.html#GActionGroup-struct">GActionGroup</a> </span><span class="symbol">*</span>
-<span class="function">create_action_group</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">GActionEntry</span><span class="normal"> entries</span><span class="symbol">[]</span><span class="normal"> </span><span class="symbol">=</span><span class="normal"> </span><span class="cbracket">{</span>
-<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> </span><span class="string">"quit"</span><span class="symbol">,</span><span class="normal">         activate_quit              </span><span class="cbracket">}</span><span class="symbol">,</span>
-<span class="normal">    </span><span class="cbracket">{</span><span class="normal"> </span><span class="string">"print-string"</span><span class="symbol">,</span><span class="normal"> activate_print_string</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"s"</span><span class="normal"> </span><span class="cbracket">}</span>
-<span class="normal">  </span><span class="cbracket">}</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">GSimpleActionGroup</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">group</span><span class="symbol">;</span>
+<span class="gtkdoc kwb">static</span> GActionGroup <span class="gtkdoc opt">*</span>
+<span class="function">create_action_group</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="gtkdoc kwb">const</span> GActionEntry entries<span class="gtkdoc opt">[] = {</span>
+    <span class="gtkdoc opt">{</span> <span class="string">&quot;quit&quot;</span><span class="gtkdoc opt">,</span>         activate_quit              <span class="gtkdoc opt">},</span>
+    <span class="gtkdoc opt">{</span> <span class="string">&quot;print-string&quot;</span><span class="gtkdoc opt">,</span> activate_print_string<span class="gtkdoc opt">,</span> <span class="string">&quot;s&quot;</span> <span class="gtkdoc opt">}</span>
+  <span class="gtkdoc opt">};</span>
+  GSimpleActionGroup <span class="gtkdoc opt">*</span>group<span class="gtkdoc opt">;</span>
 
-<span class="normal">  group </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GSimpleActionGroup.html#g-simple-action-group-new">g_simple_action_group_new</a></span><span class="normal"> </span><span class="symbol">();</span>
-<span class="normal">  </span><span class="function"><a href="GActionMap.html#g-action-map-add-action-entries">g_action_map_add_action_entries</a></span><span class="normal"> </span><span class="symbol">(</span><span class="function">G_ACTION_MAP</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">group</span><span class="symbol">),</span><span class="normal"> entries</span><span class="symbol">,</span><span class="normal"> </span><span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">entries</span><span class="symbol">),</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+  group <span class="gtkdoc opt">=</span> <span class="function"><a href="GSimpleActionGroup.html#g-simple-action-group-new">g_simple_action_group_new</a></span> <span class="gtkdoc opt">();</span>
+  <span class="function"><a href="GActionMap.html#g-action-map-add-action-entries">g_action_map_add_action_entries</a></span> <span class="gtkdoc opt">(</span><span class="function">G_ACTION_MAP</span> <span class="gtkdoc opt">(</span>group<span class="gtkdoc opt">),</span> entries<span class="gtkdoc opt">,</span> <span class="function"><a href="../glib-Standard-Macros.html#G-N-ELEMENTS:CAPS">G_N_ELEMENTS</a></span> <span class="gtkdoc opt">(</span>entries<span class="gtkdoc opt">),</span> NULL<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function">G_ACTION_GROUP</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">group</span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="keyword">return</span> <span class="function">G_ACTION_GROUP</span> <span class="gtkdoc opt">(</span>group<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -256,8 +256,8 @@ and adding them to a <a class="link" href="GActionMap.html" title="GActionMap"><
 
 <p></p>
 <div class="refsect3">
-<a name="id-1.4.24.5.10.3.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-map-add-action-entries.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -306,8 +306,8 @@ as <em class="parameter"><code>action</code></em>
 <p>The action map takes its own reference on <em class="parameter"><code>action</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.24.5.10.4.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-map-add-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -338,8 +338,8 @@ g_action_map_remove_action (<em class="parameter"><code><a class="link" href="GA
 <p>Removes the named action from the action map.</p>
 <p>If no action of this name is in the map then nothing happens.</p>
 <div class="refsect3">
-<a name="id-1.4.24.5.10.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-map-remove-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -386,19 +386,14 @@ using the following functions.</p>
 </pre>
 <p>The virtual function table for <a class="link" href="GActionMap.html" title="GActionMap"><span class="type">GActionMap</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.5.11.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionMapInterface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GActionMapInterface.g-iface"></a>g_iface</code></em>;</p></td>
-<td> </td>
-<td> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GActionMapInterface.lookup-action"></a>lookup_action</code></em> ()</p></td>
 <td class="struct_member_description"><p>the virtual function pointer for <a class="link" href="GActionMap.html#g-action-map-lookup-action" title="g_action_map_lookup_action ()"><code class="function">g_action_map_lookup_action()</code></a></p></td>
@@ -448,8 +443,8 @@ after <em class="parameter"><code>name</code></em>
 the future.</p>
 <p>See <a class="link" href="GActionMap.html#g-action-map-add-action-entries" title="g_action_map_add_action_entries ()"><code class="function">g_action_map_add_action_entries()</code></a> for an example.</p>
 <div class="refsect3">
-<a name="id-1.4.24.5.11.4.7"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionEntry.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -503,6 +498,6 @@ handler here; stateless actions should not.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

@@ -96,6 +96,7 @@
       </sub>
       <sub name="Low-level network support" link="networking.html">
         <sub name="GSocket" link="GSocket.html"/>
+        <sub name="GDatagramBased" link="GDatagramBased.html"/>
         <sub name="GInetAddress" link="GInetAddress.html"/>
         <sub name="GInetAddressMask" link="GInetAddressMask.html"/>
         <sub name="GSocketAddress" link="GSocketAddress.html"/>
@@ -127,6 +128,9 @@
         <sub name="GTlsConnection" link="GTlsConnection.html"/>
         <sub name="GTlsClientConnection" link="GTlsClientConnection.html"/>
         <sub name="GTlsServerConnection" link="GTlsServerConnection.html"/>
+        <sub name="GDtlsConnection" link="GDtlsConnection.html"/>
+        <sub name="GDtlsClientConnection" link="GDtlsClientConnection.html"/>
+        <sub name="GDtlsServerConnection" link="GDtlsServerConnection.html"/>
         <sub name="GTlsBackend" link="GTlsBackend.html"/>
         <sub name="GTlsDatabase" link="GTlsDatabase.html"/>
         <sub name="GTlsFileDatabase" link="GTlsFileDatabase.html"/>
@@ -217,6 +221,7 @@
         <sub name="gdbus-codegen" link="gdbus-codegen.html"/>
         <sub name="gresource" link="gresource-tool.html"/>
         <sub name="gapplication" link="gapplication-tool.html"/>
+        <sub name="gio" link="gio.html"/>
       </sub>
       <sub name="GIO Testing" link="testing.html">
         <sub name="GTestDBus" link="GTestDBus.html"/>
@@ -245,15 +250,7 @@
         <sub name="API comparison" link="ch35s02.html"/>
         <sub name="Owning bus names" link="ch35s03.html"/>
         <sub name="Creating proxies for well-known names" link="ch35s04.html"/>
-        <sub name="Generating code and docs" link="ch35s05.html">
-          <sub name="Using gdbus-codegen" link="ch35s05.html#gdbus-example-gdbus-codegen"/>
-          <sub name="org.gtk.GDBus.Example.ObjectManager.Animal" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Animal.html"/>
-          <sub name="org.gtk.GDBus.Example.ObjectManager.Cat" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Cat.html"/>
-          <sub name="ExampleAnimal" link="ExampleAnimal.html"/>
-          <sub name="ExampleCat" link="ExampleCat.html"/>
-          <sub name="ExampleObject" link="ExampleObject.html"/>
-          <sub name="ExampleObjectManagerClient" link="ExampleObjectManagerClient.html"/>
-        </sub>
+        <sub name="Using gdbus-codegen" link="gdbus-example-gdbus-codegen.html"/>
       </sub>
     </sub>
     <sub name="Object Hierarchy" link="gio-hierarchy.html"/>
@@ -274,6 +271,9 @@
     <sub name="Index of new symbols in 2.42" link="api-index-2-42.html"/>
     <sub name="Index of new symbols in 2.44" link="api-index-2-44.html"/>
     <sub name="Index of new symbols in 2.46" link="api-index-2-46.html"/>
+    <sub name="Index of new symbols in 2.48" link="api-index-2-48.html"/>
+    <sub name="Index of new symbols in 2.50" link="api-index-2-50.html"/>
+    <sub name="Index of new symbols in 2.52" link="api-index-2-52.html"/>
     <sub name="Annotation Glossary" link="annotation-glossary.html"/>
   </chapters>
   <functions>
@@ -508,6 +508,7 @@
     <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-DISPLAY-NAME:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_EDIT_NAME" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-EDIT-NAME:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_COPY_NAME" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-COPY-NAME:CAPS"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_DESCRIPTION" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-DESCRIPTION:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_ICON" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-ICON:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_SYMBOLIC_ICON" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-SYMBOLIC-ICON:CAPS" since="2.34"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-CONTENT-TYPE:CAPS"/>
@@ -532,12 +533,12 @@
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-UNIX-DEVICE:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_UNIX_DEVICE_FILE" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-UNIX-DEVICE-FILE:CAPS" since="2.22"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_HAL_UDI" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-HAL-UDI:CAPS"/>
-    <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_CAN_POLL" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-CAN-POLL:CAPS" since="2.22"/>
-    <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_IS_MEDIA_CHECK_AUTOMATIC" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-IS-MEDIA-CHECK-AUTOMATIC:CAPS" since="2.22"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_CAN_START" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-CAN-START:CAPS" since="2.22"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_CAN_START_DEGRADED" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-CAN-START-DEGRADED:CAPS" since="2.22"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_CAN_STOP" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-CAN-STOP:CAPS" since="2.22"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_START_STOP_TYPE" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-START-STOP-TYPE:CAPS" since="2.22"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_CAN_POLL" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-CAN-POLL:CAPS" since="2.22"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_MOUNTABLE_IS_MEDIA_CHECK_AUTOMATIC" link="GFileInfo.html#G-FILE-ATTRIBUTE-MOUNTABLE-IS-MEDIA-CHECK-AUTOMATIC:CAPS" since="2.22"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_TIME_MODIFIED" link="GFileInfo.html#G-FILE-ATTRIBUTE-TIME-MODIFIED:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_TIME_MODIFIED_USEC" link="GFileInfo.html#G-FILE-ATTRIBUTE-TIME-MODIFIED-USEC:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_TIME_ACCESS" link="GFileInfo.html#G-FILE-ATTRIBUTE-TIME-ACCESS:CAPS"/>
@@ -570,13 +571,14 @@
     <keyword type="macro" name="G_FILE_ATTRIBUTE_FILESYSTEM_USED" link="GFileInfo.html#G-FILE-ATTRIBUTE-FILESYSTEM-USED:CAPS" since="2.32"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_FILESYSTEM_TYPE" link="GFileInfo.html#G-FILE-ATTRIBUTE-FILESYSTEM-TYPE:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_FILESYSTEM_READONLY" link="GFileInfo.html#G-FILE-ATTRIBUTE-FILESYSTEM-READONLY:CAPS"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW" link="GFileInfo.html#G-FILE-ATTRIBUTE-FILESYSTEM-USE-PREVIEW:CAPS"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_FILESYSTEM_REMOTE" link="GFileInfo.html#G-FILE-ATTRIBUTE-FILESYSTEM-REMOTE:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_GVFS_BACKEND" link="GFileInfo.html#G-FILE-ATTRIBUTE-GVFS-BACKEND:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_SELINUX_CONTEXT" link="GFileInfo.html#G-FILE-ATTRIBUTE-SELINUX-CONTEXT:CAPS"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_TRASH_ITEM_COUNT" link="GFileInfo.html#G-FILE-ATTRIBUTE-TRASH-ITEM-COUNT:CAPS"/>
-    <keyword type="macro" name="G_FILE_ATTRIBUTE_TRASH_DELETION_DATE" link="GFileInfo.html#G-FILE-ATTRIBUTE-TRASH-DELETION-DATE:CAPS" since="2.24"/>
     <keyword type="macro" name="G_FILE_ATTRIBUTE_TRASH_ORIG_PATH" link="GFileInfo.html#G-FILE-ATTRIBUTE-TRASH-ORIG-PATH:CAPS" since="2.24"/>
-    <keyword type="macro" name="G_FILE_ATTRIBUTE_FILESYSTEM_USE_PREVIEW" link="GFileInfo.html#G-FILE-ATTRIBUTE-FILESYSTEM-USE-PREVIEW:CAPS"/>
-    <keyword type="macro" name="G_FILE_ATTRIBUTE_STANDARD_DESCRIPTION" link="GFileInfo.html#G-FILE-ATTRIBUTE-STANDARD-DESCRIPTION:CAPS"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_TRASH_DELETION_DATE" link="GFileInfo.html#G-FILE-ATTRIBUTE-TRASH-DELETION-DATE:CAPS" since="2.24"/>
+    <keyword type="macro" name="G_FILE_ATTRIBUTE_RECENT_MODIFIED" link="GFileInfo.html#G-FILE-ATTRIBUTE-RECENT-MODIFIED:CAPS" since="2.52"/>
     <keyword type="function" name="g_file_enumerator_iterate ()" link="GFileEnumerator.html#g-file-enumerator-iterate" since="2.44"/>
     <keyword type="function" name="g_file_enumerator_next_file ()" link="GFileEnumerator.html#g-file-enumerator-next-file"/>
     <keyword type="function" name="g_file_enumerator_close ()" link="GFileEnumerator.html#g-file-enumerator-close"/>
@@ -996,6 +998,7 @@
     <keyword type="function" name="g_pollable_stream_write_all ()" link="gio-gpollableutils.html#g-pollable-stream-write-all" since="2.34"/>
     <keyword type="function" name="g_content_type_equals ()" link="gio-GContentType.html#g-content-type-equals"/>
     <keyword type="function" name="g_content_type_is_a ()" link="gio-GContentType.html#g-content-type-is-a"/>
+    <keyword type="function" name="g_content_type_is_mime_type ()" link="gio-GContentType.html#g-content-type-is-mime-type" since="2.52"/>
     <keyword type="function" name="g_content_type_is_unknown ()" link="gio-GContentType.html#g-content-type-is-unknown"/>
     <keyword type="function" name="g_content_type_get_description ()" link="gio-GContentType.html#g-content-type-get-description"/>
     <keyword type="function" name="g_content_type_get_mime_type ()" link="gio-GContentType.html#g-content-type-get-mime-type"/>
@@ -1039,6 +1042,8 @@
     <keyword type="function" name="g_app_info_get_fallback_for_type ()" link="GAppInfo.html#g-app-info-get-fallback-for-type" since="2.28"/>
     <keyword type="function" name="g_app_info_get_recommended_for_type ()" link="GAppInfo.html#g-app-info-get-recommended-for-type" since="2.28"/>
     <keyword type="function" name="g_app_info_launch_default_for_uri ()" link="GAppInfo.html#g-app-info-launch-default-for-uri"/>
+    <keyword type="function" name="g_app_info_launch_default_for_uri_async ()" link="GAppInfo.html#g-app-info-launch-default-for-uri-async" since="2.50"/>
+    <keyword type="function" name="g_app_info_launch_default_for_uri_finish ()" link="GAppInfo.html#g-app-info-launch-default-for-uri-finish" since="2.50"/>
     <keyword type="function" name="g_app_launch_context_setenv ()" link="GAppInfo.html#g-app-launch-context-setenv" since="2.32"/>
     <keyword type="function" name="g_app_launch_context_unsetenv ()" link="GAppInfo.html#g-app-launch-context-unsetenv" since="2.32"/>
     <keyword type="function" name="g_app_launch_context_get_environment ()" link="GAppInfo.html#g-app-launch-context-get-environment" since="2.32"/>
@@ -1180,6 +1185,7 @@
     <keyword type="function" name="g_drive_poll_for_media_finish ()" link="GDrive.html#g-drive-poll-for-media-finish"/>
     <keyword type="function" name="g_drive_has_media ()" link="GDrive.html#g-drive-has-media"/>
     <keyword type="function" name="g_drive_is_media_check_automatic ()" link="GDrive.html#g-drive-is-media-check-automatic"/>
+    <keyword type="function" name="g_drive_is_removable ()" link="GDrive.html#g-drive-is-removable" since="2.50"/>
     <keyword type="function" name="g_drive_is_media_removable ()" link="GDrive.html#g-drive-is-media-removable"/>
     <keyword type="function" name="g_drive_eject ()" link="GDrive.html#g-drive-eject" deprecated="2.22: Use g_drive_eject_with_operation() instead."/>
     <keyword type="function" name="g_drive_eject_finish ()" link="GDrive.html#g-drive-eject-finish" deprecated="2.22: Use g_drive_eject_with_operation_finish() instead."/>
@@ -1202,6 +1208,7 @@
     <keyword type="signal" name="The “stop-button” signal" link="GDrive.html#GDrive-stop-button"/>
     <keyword type="function" name="g_unix_mount_free ()" link="gio-Unix-Mounts.html#g-unix-mount-free"/>
     <keyword type="function" name="g_unix_mount_compare ()" link="gio-Unix-Mounts.html#g-unix-mount-compare"/>
+    <keyword type="function" name="g_unix_mount_copy ()" link="gio-Unix-Mounts.html#g-unix-mount-copy" since="2.54"/>
     <keyword type="function" name="g_unix_mount_get_mount_path ()" link="gio-Unix-Mounts.html#g-unix-mount-get-mount-path"/>
     <keyword type="function" name="g_unix_mount_get_device_path ()" link="gio-Unix-Mounts.html#g-unix-mount-get-device-path"/>
     <keyword type="function" name="g_unix_mount_get_fs_type ()" link="gio-Unix-Mounts.html#g-unix-mount-get-fs-type"/>
@@ -1214,6 +1221,7 @@
     <keyword type="function" name="g_unix_mount_guess_should_display ()" link="gio-Unix-Mounts.html#g-unix-mount-guess-should-display"/>
     <keyword type="function" name="g_unix_mount_point_free ()" link="gio-Unix-Mounts.html#g-unix-mount-point-free"/>
     <keyword type="function" name="g_unix_mount_point_compare ()" link="gio-Unix-Mounts.html#g-unix-mount-point-compare"/>
+    <keyword type="function" name="g_unix_mount_point_copy ()" link="gio-Unix-Mounts.html#g-unix-mount-point-copy" since="2.54"/>
     <keyword type="function" name="g_unix_mount_point_get_mount_path ()" link="gio-Unix-Mounts.html#g-unix-mount-point-get-mount-path"/>
     <keyword type="function" name="g_unix_mount_point_get_device_path ()" link="gio-Unix-Mounts.html#g-unix-mount-point-get-device-path"/>
     <keyword type="function" name="g_unix_mount_point_get_fs_type ()" link="gio-Unix-Mounts.html#g-unix-mount-point-get-fs-type"/>
@@ -1234,8 +1242,8 @@
     <keyword type="function" name="g_unix_mount_monitor_new ()" link="gio-Unix-Mounts.html#g-unix-mount-monitor-new" deprecated="2.44:Use g_unix_mount_monitor_get() instead."/>
     <keyword type="function" name="g_unix_mount_monitor_set_rate_limit ()" link="gio-Unix-Mounts.html#g-unix-mount-monitor-set-rate-limit" deprecated="2.44:This function does nothing.  Don't call it." since="2.18"/>
     <keyword type="function" name="g_unix_is_mount_path_system_internal ()" link="gio-Unix-Mounts.html#g-unix-is-mount-path-system-internal"/>
-    <keyword type="struct" name="GUnixMountPoint" link="gio-Unix-Mounts.html#GUnixMountPoint"/>
-    <keyword type="struct" name="GUnixMountEntry" link="gio-Unix-Mounts.html#GUnixMountEntry"/>
+    <keyword type="struct" name="GUnixMountPoint" link="gio-Unix-Mounts.html#GUnixMountPoint-struct"/>
+    <keyword type="struct" name="GUnixMountEntry" link="gio-Unix-Mounts.html#GUnixMountEntry-struct"/>
     <keyword type="struct" name="GUnixMountMonitor" link="gio-Unix-Mounts.html#GUnixMountMonitor-struct"/>
     <keyword type="signal" name="The “mountpoints-changed” signal" link="gio-Unix-Mounts.html#GUnixMountMonitor-mountpoints-changed"/>
     <keyword type="signal" name="The “mounts-changed” signal" link="gio-Unix-Mounts.html#GUnixMountMonitor-mounts-changed"/>
@@ -1288,7 +1296,7 @@
     <keyword type="function" name="g_initable_init ()" link="GInitable.html#g-initable-init" since="2.22"/>
     <keyword type="function" name="g_initable_new ()" link="GInitable.html#g-initable-new" since="2.22"/>
     <keyword type="function" name="g_initable_new_valist ()" link="GInitable.html#g-initable-new-valist" since="2.22"/>
-    <keyword type="function" name="g_initable_newv ()" link="GInitable.html#g-initable-newv" since="2.22"/>
+    <keyword type="function" name="g_initable_newv ()" link="GInitable.html#g-initable-newv" deprecated="" since="2.22"/>
     <keyword type="struct" name="GInitable" link="GInitable.html#GInitable-struct"/>
     <keyword type="struct" name="struct GInitableIface" link="GInitable.html#GInitableIface" since="2.22"/>
     <keyword type="function" name="g_async_initable_init_async ()" link="GAsyncInitable.html#g-async-initable-init-async" since="2.22"/>
@@ -1296,7 +1304,7 @@
     <keyword type="function" name="g_async_initable_new_async ()" link="GAsyncInitable.html#g-async-initable-new-async" since="2.22"/>
     <keyword type="function" name="g_async_initable_new_finish ()" link="GAsyncInitable.html#g-async-initable-new-finish" since="2.22"/>
     <keyword type="function" name="g_async_initable_new_valist_async ()" link="GAsyncInitable.html#g-async-initable-new-valist-async" since="2.22"/>
-    <keyword type="function" name="g_async_initable_newv_async ()" link="GAsyncInitable.html#g-async-initable-newv-async" since="2.22"/>
+    <keyword type="function" name="g_async_initable_newv_async ()" link="GAsyncInitable.html#g-async-initable-newv-async" deprecated="" since="2.22"/>
     <keyword type="struct" name="GAsyncInitable" link="GAsyncInitable.html#GAsyncInitable-struct"/>
     <keyword type="struct" name="struct GAsyncInitableIface" link="GAsyncInitable.html#GAsyncInitableIface" since="2.22"/>
     <keyword type="function" name="g_subprocess_new ()" link="GSubprocess.html#g-subprocess-new" since="2.40"/>
@@ -1359,6 +1367,7 @@
     <keyword type="function" name="g_socket_receive ()" link="GSocket.html#g-socket-receive" since="2.22"/>
     <keyword type="function" name="g_socket_receive_from ()" link="GSocket.html#g-socket-receive-from" since="2.22"/>
     <keyword type="function" name="g_socket_receive_message ()" link="GSocket.html#g-socket-receive-message" since="2.22"/>
+    <keyword type="function" name="g_socket_receive_messages ()" link="GSocket.html#g-socket-receive-messages" since="2.48"/>
     <keyword type="function" name="g_socket_receive_with_blocking ()" link="GSocket.html#g-socket-receive-with-blocking" since="2.26"/>
     <keyword type="function" name="g_socket_send ()" link="GSocket.html#g-socket-send" since="2.22"/>
     <keyword type="function" name="g_socket_send_to ()" link="GSocket.html#g-socket-send-to" since="2.22"/>
@@ -1407,6 +1416,7 @@
     <keyword type="enum" name="enum GSocketProtocol" link="GSocket.html#GSocketProtocol" since="2.22"/>
     <keyword type="enum" name="enum GSocketMsgFlags" link="GSocket.html#GSocketMsgFlags" since="2.22"/>
     <keyword type="struct" name="struct GInputVector" link="GSocket.html#GInputVector" since="2.22"/>
+    <keyword type="struct" name="struct GInputMessage" link="GSocket.html#GInputMessage" since="2.48"/>
     <keyword type="struct" name="struct GOutputVector" link="GSocket.html#GOutputVector" since="2.22"/>
     <keyword type="struct" name="struct GOutputMessage" link="GSocket.html#GOutputMessage" since="2.44"/>
     <keyword type="property" name="The “blocking” property" link="GSocket.html#GSocket--blocking"/>
@@ -1423,6 +1433,14 @@
     <keyword type="property" name="The “timeout” property" link="GSocket.html#GSocket--timeout"/>
     <keyword type="property" name="The “ttl” property" link="GSocket.html#GSocket--ttl"/>
     <keyword type="property" name="The “type” property" link="GSocket.html#GSocket--type"/>
+    <keyword type="function" name="GDatagramBasedSourceFunc ()" link="GDatagramBased.html#GDatagramBasedSourceFunc" since="2.48"/>
+    <keyword type="function" name="g_datagram_based_receive_messages ()" link="GDatagramBased.html#g-datagram-based-receive-messages" since="2.48"/>
+    <keyword type="function" name="g_datagram_based_send_messages ()" link="GDatagramBased.html#g-datagram-based-send-messages" since="2.48"/>
+    <keyword type="function" name="g_datagram_based_create_source ()" link="GDatagramBased.html#g-datagram-based-create-source" since="2.48"/>
+    <keyword type="function" name="g_datagram_based_condition_check ()" link="GDatagramBased.html#g-datagram-based-condition-check" since="2.48"/>
+    <keyword type="function" name="g_datagram_based_condition_wait ()" link="GDatagramBased.html#g-datagram-based-condition-wait" since="2.48"/>
+    <keyword type="struct" name="GDatagramBased" link="GDatagramBased.html#GDatagramBased-struct"/>
+    <keyword type="struct" name="struct GDatagramBasedInterface" link="GDatagramBased.html#GDatagramBasedInterface" since="2.48"/>
     <keyword type="function" name="g_inet_address_new_from_string ()" link="GInetAddress.html#g-inet-address-new-from-string" since="2.22"/>
     <keyword type="function" name="g_inet_address_new_from_bytes ()" link="GInetAddress.html#g-inet-address-new-from-bytes" since="2.22"/>
     <keyword type="function" name="g_inet_address_new_any ()" link="GInetAddress.html#g-inet-address-new-any" since="2.22"/>
@@ -1745,12 +1763,62 @@
     <keyword type="struct" name="GTlsServerConnection" link="GTlsServerConnection.html#GTlsServerConnection-struct"/>
     <keyword type="struct" name="struct GTlsServerConnectionInterface" link="GTlsServerConnection.html#GTlsServerConnectionInterface" since="2.26"/>
     <keyword type="property" name="The “authentication-mode” property" link="GTlsServerConnection.html#GTlsServerConnection--authentication-mode"/>
+    <keyword type="function" name="g_dtls_connection_set_certificate ()" link="GDtlsConnection.html#g-dtls-connection-set-certificate" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_certificate ()" link="GDtlsConnection.html#g-dtls-connection-get-certificate" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_peer_certificate ()" link="GDtlsConnection.html#g-dtls-connection-get-peer-certificate" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_peer_certificate_errors ()" link="GDtlsConnection.html#g-dtls-connection-get-peer-certificate-errors" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_set_require_close_notify ()" link="GDtlsConnection.html#g-dtls-connection-set-require-close-notify" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_require_close_notify ()" link="GDtlsConnection.html#g-dtls-connection-get-require-close-notify" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_set_rehandshake_mode ()" link="GDtlsConnection.html#g-dtls-connection-set-rehandshake-mode" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_rehandshake_mode ()" link="GDtlsConnection.html#g-dtls-connection-get-rehandshake-mode" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_database ()" link="GDtlsConnection.html#g-dtls-connection-get-database" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_set_database ()" link="GDtlsConnection.html#g-dtls-connection-set-database" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_get_interaction ()" link="GDtlsConnection.html#g-dtls-connection-get-interaction" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_set_interaction ()" link="GDtlsConnection.html#g-dtls-connection-set-interaction" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_handshake ()" link="GDtlsConnection.html#g-dtls-connection-handshake" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_handshake_async ()" link="GDtlsConnection.html#g-dtls-connection-handshake-async" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_handshake_finish ()" link="GDtlsConnection.html#g-dtls-connection-handshake-finish" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_shutdown ()" link="GDtlsConnection.html#g-dtls-connection-shutdown" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_shutdown_async ()" link="GDtlsConnection.html#g-dtls-connection-shutdown-async" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_shutdown_finish ()" link="GDtlsConnection.html#g-dtls-connection-shutdown-finish" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_close ()" link="GDtlsConnection.html#g-dtls-connection-close" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_close_async ()" link="GDtlsConnection.html#g-dtls-connection-close-async" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_close_finish ()" link="GDtlsConnection.html#g-dtls-connection-close-finish" since="2.48"/>
+    <keyword type="function" name="g_dtls_connection_emit_accept_certificate ()" link="GDtlsConnection.html#g-dtls-connection-emit-accept-certificate" since="2.48"/>
+    <keyword type="struct" name="GDtlsConnection" link="GDtlsConnection.html#GDtlsConnection-struct"/>
+    <keyword type="property" name="The “base-socket” property" link="GDtlsConnection.html#GDtlsConnection--base-socket"/>
+    <keyword type="property" name="The “certificate” property" link="GDtlsConnection.html#GDtlsConnection--certificate"/>
+    <keyword type="property" name="The “database” property" link="GDtlsConnection.html#GDtlsConnection--database"/>
+    <keyword type="property" name="The “interaction” property" link="GDtlsConnection.html#GDtlsConnection--interaction"/>
+    <keyword type="property" name="The “peer-certificate” property" link="GDtlsConnection.html#GDtlsConnection--peer-certificate"/>
+    <keyword type="property" name="The “peer-certificate-errors” property" link="GDtlsConnection.html#GDtlsConnection--peer-certificate-errors"/>
+    <keyword type="property" name="The “rehandshake-mode” property" link="GDtlsConnection.html#GDtlsConnection--rehandshake-mode"/>
+    <keyword type="property" name="The “require-close-notify” property" link="GDtlsConnection.html#GDtlsConnection--require-close-notify"/>
+    <keyword type="signal" name="The “accept-certificate” signal" link="GDtlsConnection.html#GDtlsConnection-accept-certificate"/>
+    <keyword type="function" name="g_dtls_client_connection_new ()" link="GDtlsClientConnection.html#g-dtls-client-connection-new" since="2.48"/>
+    <keyword type="function" name="g_dtls_client_connection_set_server_identity ()" link="GDtlsClientConnection.html#g-dtls-client-connection-set-server-identity" since="2.48"/>
+    <keyword type="function" name="g_dtls_client_connection_get_server_identity ()" link="GDtlsClientConnection.html#g-dtls-client-connection-get-server-identity" since="2.48"/>
+    <keyword type="function" name="g_dtls_client_connection_set_validation_flags ()" link="GDtlsClientConnection.html#g-dtls-client-connection-set-validation-flags" since="2.48"/>
+    <keyword type="function" name="g_dtls_client_connection_get_validation_flags ()" link="GDtlsClientConnection.html#g-dtls-client-connection-get-validation-flags" since="2.48"/>
+    <keyword type="function" name="g_dtls_client_connection_get_accepted_cas ()" link="GDtlsClientConnection.html#g-dtls-client-connection-get-accepted-cas" since="2.48"/>
+    <keyword type="struct" name="GDtlsClientConnection" link="GDtlsClientConnection.html#GDtlsClientConnection-struct"/>
+    <keyword type="struct" name="struct GDtlsClientConnectionInterface" link="GDtlsClientConnection.html#GDtlsClientConnectionInterface" since="2.48"/>
+    <keyword type="property" name="The “accepted-cas” property" link="GDtlsClientConnection.html#GDtlsClientConnection--accepted-cas"/>
+    <keyword type="property" name="The “server-identity” property" link="GDtlsClientConnection.html#GDtlsClientConnection--server-identity"/>
+    <keyword type="property" name="The “validation-flags” property" link="GDtlsClientConnection.html#GDtlsClientConnection--validation-flags"/>
+    <keyword type="function" name="g_dtls_server_connection_new ()" link="GDtlsServerConnection.html#g-dtls-server-connection-new" since="2.48"/>
+    <keyword type="struct" name="GDtlsServerConnection" link="GDtlsServerConnection.html#GDtlsServerConnection-struct"/>
+    <keyword type="struct" name="struct GDtlsServerConnectionInterface" link="GDtlsServerConnection.html#GDtlsServerConnectionInterface" since="2.48"/>
+    <keyword type="property" name="The “authentication-mode” property" link="GDtlsServerConnection.html#GDtlsServerConnection--authentication-mode"/>
     <keyword type="function" name="g_tls_backend_get_default ()" link="GTlsBackend.html#g-tls-backend-get-default" since="2.28"/>
     <keyword type="function" name="g_tls_backend_supports_tls ()" link="GTlsBackend.html#g-tls-backend-supports-tls" since="2.28"/>
+    <keyword type="function" name="g_tls_backend_supports_dtls ()" link="GTlsBackend.html#g-tls-backend-supports-dtls" since="2.48"/>
     <keyword type="function" name="g_tls_backend_get_default_database ()" link="GTlsBackend.html#g-tls-backend-get-default-database" since="2.30"/>
     <keyword type="function" name="g_tls_backend_get_certificate_type ()" link="GTlsBackend.html#g-tls-backend-get-certificate-type" since="2.28"/>
     <keyword type="function" name="g_tls_backend_get_client_connection_type ()" link="GTlsBackend.html#g-tls-backend-get-client-connection-type" since="2.28"/>
     <keyword type="function" name="g_tls_backend_get_server_connection_type ()" link="GTlsBackend.html#g-tls-backend-get-server-connection-type" since="2.28"/>
+    <keyword type="function" name="g_tls_backend_get_dtls_client_connection_type ()" link="GTlsBackend.html#g-tls-backend-get-dtls-client-connection-type" since="2.48"/>
+    <keyword type="function" name="g_tls_backend_get_dtls_server_connection_type ()" link="GTlsBackend.html#g-tls-backend-get-dtls-server-connection-type" since="2.48"/>
     <keyword type="function" name="g_tls_backend_get_file_database_type ()" link="GTlsBackend.html#g-tls-backend-get-file-database-type" since="2.30"/>
     <keyword type="macro" name="G_TLS_BACKEND_EXTENSION_POINT_NAME" link="GTlsBackend.html#G-TLS-BACKEND-EXTENSION-POINT-NAME:CAPS"/>
     <keyword type="struct" name="GTlsBackend" link="GTlsBackend.html#GTlsBackend-struct"/>
@@ -1822,9 +1890,9 @@
     <keyword type="function" name="g_resolver_lookup_records ()" link="GResolver.html#g-resolver-lookup-records" since="2.34"/>
     <keyword type="function" name="g_resolver_lookup_records_async ()" link="GResolver.html#g-resolver-lookup-records-async" since="2.34"/>
     <keyword type="function" name="g_resolver_lookup_records_finish ()" link="GResolver.html#g-resolver-lookup-records-finish" since="2.34"/>
-    <keyword type="macro" name="G_RESOLVER_ERROR" link="GResolver.html#G-RESOLVER-ERROR:CAPS"/>
     <keyword type="struct" name="GResolver" link="GResolver.html#GResolver-struct"/>
     <keyword type="enum" name="enum GResolverRecordType" link="GResolver.html#GResolverRecordType" since="2.34"/>
+    <keyword type="macro" name="G_RESOLVER_ERROR" link="GResolver.html#G-RESOLVER-ERROR:CAPS"/>
     <keyword type="enum" name="enum GResolverError" link="GResolver.html#GResolverError" since="2.22"/>
     <keyword type="signal" name="The “reload” signal" link="GResolver.html#GResolver-reload"/>
     <keyword type="function" name="g_proxy_resolver_get_default ()" link="GProxyResolver.html#g-proxy-resolver-get-default" since="2.26"/>
@@ -1844,6 +1912,7 @@
     <keyword type="property" name="The “ignore-hosts” property" link="GSimpleProxyResolver.html#GSimpleProxyResolver--ignore-hosts"/>
     <keyword type="function" name="g_socket_connectable_enumerate ()" link="GSocketConnectable.html#g-socket-connectable-enumerate" since="2.22"/>
     <keyword type="function" name="g_socket_connectable_proxy_enumerate ()" link="GSocketConnectable.html#g-socket-connectable-proxy-enumerate" since="2.26"/>
+    <keyword type="function" name="g_socket_connectable_to_string ()" link="GSocketConnectable.html#g-socket-connectable-to-string" since="2.48"/>
     <keyword type="function" name="g_socket_address_enumerator_next ()" link="GSocketConnectable.html#g-socket-address-enumerator-next"/>
     <keyword type="function" name="g_socket_address_enumerator_next_async ()" link="GSocketConnectable.html#g-socket-address-enumerator-next-async"/>
     <keyword type="function" name="g_socket_address_enumerator_next_finish ()" link="GSocketConnectable.html#g-socket-address-enumerator-next-finish"/>
@@ -1911,13 +1980,6 @@
     <keyword type="function" name="g_dbus_node_info_new_for_xml ()" link="gio-D-Bus-Introspection-Data.html#g-dbus-node-info-new-for-xml" since="2.26"/>
     <keyword type="function" name="g_dbus_node_info_lookup_interface ()" link="gio-D-Bus-Introspection-Data.html#g-dbus-node-info-lookup-interface" since="2.26"/>
     <keyword type="function" name="g_dbus_node_info_generate_xml ()" link="gio-D-Bus-Introspection-Data.html#g-dbus-node-info-generate-xml" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_NODE_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-NODE-INFO:CAPS" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_INTERFACE_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-INTERFACE-INFO:CAPS" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_METHOD_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-METHOD-INFO:CAPS" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_SIGNAL_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-SIGNAL-INFO:CAPS" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_PROPERTY_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-PROPERTY-INFO:CAPS" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_ARG_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-ARG-INFO:CAPS" since="2.26"/>
-    <keyword type="macro" name="G_TYPE_DBUS_ANNOTATION_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-ANNOTATION-INFO:CAPS" since="2.26"/>
     <keyword type="function" name="g_dbus_node_info_ref ()" link="gio-D-Bus-Introspection-Data.html#g-dbus-node-info-ref" since="2.26"/>
     <keyword type="function" name="g_dbus_interface_info_ref ()" link="gio-D-Bus-Introspection-Data.html#g-dbus-interface-info-ref" since="2.26"/>
     <keyword type="function" name="g_dbus_method_info_ref ()" link="gio-D-Bus-Introspection-Data.html#g-dbus-method-info-ref" since="2.26"/>
@@ -1940,6 +2002,13 @@
     <keyword type="struct" name="GDBusPropertyInfo" link="gio-D-Bus-Introspection-Data.html#GDBusPropertyInfo-struct"/>
     <keyword type="struct" name="GDBusInterfaceInfo" link="gio-D-Bus-Introspection-Data.html#GDBusInterfaceInfo-struct"/>
     <keyword type="struct" name="GDBusNodeInfo" link="gio-D-Bus-Introspection-Data.html#GDBusNodeInfo-struct"/>
+    <keyword type="macro" name="G_TYPE_DBUS_NODE_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-NODE-INFO:CAPS" since="2.26"/>
+    <keyword type="macro" name="G_TYPE_DBUS_INTERFACE_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-INTERFACE-INFO:CAPS" since="2.26"/>
+    <keyword type="macro" name="G_TYPE_DBUS_METHOD_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-METHOD-INFO:CAPS" since="2.26"/>
+    <keyword type="macro" name="G_TYPE_DBUS_SIGNAL_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-SIGNAL-INFO:CAPS" since="2.26"/>
+    <keyword type="macro" name="G_TYPE_DBUS_PROPERTY_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-PROPERTY-INFO:CAPS" since="2.26"/>
+    <keyword type="macro" name="G_TYPE_DBUS_ARG_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-ARG-INFO:CAPS" since="2.26"/>
+    <keyword type="macro" name="G_TYPE_DBUS_ANNOTATION_INFO" link="gio-D-Bus-Introspection-Data.html#G-TYPE-DBUS-ANNOTATION-INFO:CAPS" since="2.26"/>
     <keyword type="function" name="g_dbus_error_is_remote_error ()" link="gio-GDBusError.html#g-dbus-error-is-remote-error" since="2.26"/>
     <keyword type="function" name="g_dbus_error_get_remote_error ()" link="gio-GDBusError.html#g-dbus-error-get-remote-error" since="2.26"/>
     <keyword type="function" name="g_dbus_error_strip_remote_error ()" link="gio-GDBusError.html#g-dbus-error-strip-remote-error" since="2.26"/>
@@ -2300,8 +2369,12 @@
     <keyword type="function" name="g_settings_set_boolean ()" link="GSettings.html#g-settings-set-boolean" since="2.26"/>
     <keyword type="function" name="g_settings_get_int ()" link="GSettings.html#g-settings-get-int" since="2.26"/>
     <keyword type="function" name="g_settings_set_int ()" link="GSettings.html#g-settings-set-int" since="2.26"/>
+    <keyword type="function" name="g_settings_get_int64 ()" link="GSettings.html#g-settings-get-int64" since="2.50"/>
+    <keyword type="function" name="g_settings_set_int64 ()" link="GSettings.html#g-settings-set-int64" since="2.50"/>
     <keyword type="function" name="g_settings_get_uint ()" link="GSettings.html#g-settings-get-uint" since="2.30"/>
     <keyword type="function" name="g_settings_set_uint ()" link="GSettings.html#g-settings-set-uint" since="2.30"/>
+    <keyword type="function" name="g_settings_get_uint64 ()" link="GSettings.html#g-settings-get-uint64" since="2.50"/>
+    <keyword type="function" name="g_settings_set_uint64 ()" link="GSettings.html#g-settings-set-uint64" since="2.50"/>
     <keyword type="function" name="g_settings_get_double ()" link="GSettings.html#g-settings-get-double" since="2.26"/>
     <keyword type="function" name="g_settings_set_double ()" link="GSettings.html#g-settings-set-double" since="2.26"/>
     <keyword type="function" name="g_settings_get_string ()" link="GSettings.html#g-settings-get-string" since="2.26"/>
@@ -2391,11 +2464,11 @@
     <keyword type="function" name="g_resources_open_stream ()" link="GResource.html#g-resources-open-stream" since="2.32"/>
     <keyword type="function" name="g_resources_enumerate_children ()" link="GResource.html#g-resources-enumerate-children" since="2.32"/>
     <keyword type="function" name="g_resources_get_info ()" link="GResource.html#g-resources-get-info" since="2.32"/>
-    <keyword type="macro" name="G_RESOURCE_ERROR" link="GResource.html#G-RESOURCE-ERROR:CAPS"/>
     <keyword type="struct" name="GResource" link="GResource.html#GResource-struct"/>
     <keyword type="enum" name="enum GResourceFlags" link="GResource.html#GResourceFlags" since="2.32"/>
     <keyword type="enum" name="enum GResourceLookupFlags" link="GResource.html#GResourceLookupFlags" since="2.32"/>
     <keyword type="struct" name="struct GStaticResource" link="GResource.html#GStaticResource"/>
+    <keyword type="macro" name="G_RESOURCE_ERROR" link="GResource.html#G-RESOURCE-ERROR:CAPS"/>
     <keyword type="enum" name="enum GResourceError" link="GResource.html#GResourceError" since="2.32"/>
     <keyword type="function" name="g_permission_get_allowed ()" link="GPermission.html#g-permission-get-allowed" since="2.26"/>
     <keyword type="function" name="g_permission_get_can_acquire ()" link="GPermission.html#g-permission-get-can-acquire" since="2.26"/>
@@ -2701,6 +2774,7 @@
     <keyword type="function" name="g_notification_add_button_with_target_value ()" link="GNotification.html#g-notification-add-button-with-target-value" since="2.40"/>
     <keyword type="struct" name="GNotification" link="GNotification.html#GNotification-struct"/>
     <keyword type="enum" name="enum GNotificationPriority" link="GNotification.html#GNotificationPriority" since="2.42"/>
+    <keyword type="function" name="GVfsFileLookupFunc ()" link="GVfs.html#GVfsFileLookupFunc" since="2.50"/>
     <keyword type="function" name="g_vfs_get_file_for_path ()" link="GVfs.html#g-vfs-get-file-for-path"/>
     <keyword type="function" name="g_vfs_get_file_for_uri ()" link="GVfs.html#g-vfs-get-file-for-uri"/>
     <keyword type="function" name="g_vfs_parse_name ()" link="GVfs.html#g-vfs-parse-name"/>
@@ -2708,6 +2782,8 @@
     <keyword type="function" name="g_vfs_get_local ()" link="GVfs.html#g-vfs-get-local"/>
     <keyword type="function" name="g_vfs_is_active ()" link="GVfs.html#g-vfs-is-active"/>
     <keyword type="function" name="g_vfs_get_supported_uri_schemes ()" link="GVfs.html#g-vfs-get-supported-uri-schemes"/>
+    <keyword type="function" name="g_vfs_register_uri_scheme ()" link="GVfs.html#g-vfs-register-uri-scheme" since="2.50"/>
+    <keyword type="function" name="g_vfs_unregister_uri_scheme ()" link="GVfs.html#g-vfs-unregister-uri-scheme" since="2.50"/>
     <keyword type="struct" name="GVfs" link="GVfs.html#GVfs-struct"/>
     <keyword type="macro" name="G_VFS_EXTENSION_POINT_NAME" link="GVfs.html#G-VFS-EXTENSION-POINT-NAME:CAPS"/>
     <keyword type="function" name="g_io_module_new ()" link="GIOModule.html#g-io-module-new"/>
@@ -2748,85 +2824,6 @@
     <keyword type="struct" name="GTestDBus" link="GTestDBus.html#GTestDBus-struct"/>
     <keyword type="enum" name="enum GTestDBusFlags" link="GTestDBus.html#GTestDBusFlags" since="2.34"/>
     <keyword type="property" name="The “flags” property" link="GTestDBus.html#GTestDBus--flags"/>
-    <keyword type="method" name="The Poke() method" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Animal.html#gdbus-method-org-gtk-GDBus-Example-ObjectManager-Animal.Poke"/>
-    <keyword type="signal" name="The &quot;Jumped&quot; signal" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Animal.html#gdbus-signal-org-gtk-GDBus-Example-ObjectManager-Animal.Jumped"/>
-    <keyword type="property" name="The &quot;Mood&quot; property" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Animal.html#gdbus-property-org-gtk-GDBus-Example-ObjectManager-Animal.Mood"/>
-    <keyword type="property" name="The &quot;Foo&quot; property" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Animal.html#gdbus-property-org-gtk-GDBus-Example-ObjectManager-Animal.Foo"/>
-    <keyword type="property" name="The &quot;Bar&quot; property" link="gdbus-org.gtk.GDBus.Example.ObjectManager.Animal.html#gdbus-property-org-gtk-GDBus-Example-ObjectManager-Animal.Bar"/>
-    <keyword type="function" name="example_animal_interface_info ()" link="ExampleAnimal.html#example-animal-interface-info" since="2.30"/>
-    <keyword type="function" name="example_animal_override_properties ()" link="ExampleAnimal.html#example-animal-override-properties" since="2.30"/>
-    <keyword type="function" name="example_animal_call_poke ()" link="ExampleAnimal.html#example-animal-call-poke" since="2.30"/>
-    <keyword type="function" name="example_animal_call_poke_finish ()" link="ExampleAnimal.html#example-animal-call-poke-finish" since="2.30"/>
-    <keyword type="function" name="example_animal_call_poke_sync ()" link="ExampleAnimal.html#example-animal-call-poke-sync" since="2.30"/>
-    <keyword type="function" name="example_animal_complete_poke ()" link="ExampleAnimal.html#example-animal-complete-poke" since="2.30"/>
-    <keyword type="function" name="example_animal_emit_jumped ()" link="ExampleAnimal.html#example-animal-emit-jumped" since="2.30"/>
-    <keyword type="function" name="example_animal_get_mood ()" link="ExampleAnimal.html#example-animal-get-mood" since="2.30"/>
-    <keyword type="function" name="example_animal_get_foo ()" link="ExampleAnimal.html#example-animal-get-foo" since="2.30"/>
-    <keyword type="function" name="example_animal_get_bar ()" link="ExampleAnimal.html#example-animal-get-bar" since="2.36"/>
-    <keyword type="function" name="example_animal_dup_mood ()" link="ExampleAnimal.html#example-animal-dup-mood" since="2.30"/>
-    <keyword type="function" name="example_animal_dup_foo ()" link="ExampleAnimal.html#example-animal-dup-foo" since="2.30"/>
-    <keyword type="function" name="example_animal_dup_bar ()" link="ExampleAnimal.html#example-animal-dup-bar" since="2.36"/>
-    <keyword type="function" name="example_animal_set_mood ()" link="ExampleAnimal.html#example-animal-set-mood" since="2.30"/>
-    <keyword type="function" name="example_animal_set_foo ()" link="ExampleAnimal.html#example-animal-set-foo" since="2.30"/>
-    <keyword type="function" name="example_animal_set_bar ()" link="ExampleAnimal.html#example-animal-set-bar" since="2.36"/>
-    <keyword type="function" name="example_animal_proxy_new ()" link="ExampleAnimal.html#example-animal-proxy-new" since="2.30"/>
-    <keyword type="function" name="example_animal_proxy_new_finish ()" link="ExampleAnimal.html#example-animal-proxy-new-finish" since="2.30"/>
-    <keyword type="function" name="example_animal_proxy_new_sync ()" link="ExampleAnimal.html#example-animal-proxy-new-sync" since="2.30"/>
-    <keyword type="function" name="example_animal_proxy_new_for_bus ()" link="ExampleAnimal.html#example-animal-proxy-new-for-bus" since="2.30"/>
-    <keyword type="function" name="example_animal_proxy_new_for_bus_finish ()" link="ExampleAnimal.html#example-animal-proxy-new-for-bus-finish" since="2.30"/>
-    <keyword type="function" name="example_animal_proxy_new_for_bus_sync ()" link="ExampleAnimal.html#example-animal-proxy-new-for-bus-sync" since="2.30"/>
-    <keyword type="function" name="example_animal_skeleton_new ()" link="ExampleAnimal.html#example-animal-skeleton-new" since="2.30"/>
-    <keyword type="struct" name="ExampleAnimal" link="ExampleAnimal.html#ExampleAnimal-struct"/>
-    <keyword type="struct" name="struct ExampleAnimalIface" link="ExampleAnimal.html#ExampleAnimalIface" since="2.30"/>
-    <keyword type="struct" name="struct ExampleAnimalProxy" link="ExampleAnimal.html#ExampleAnimalProxy-struct"/>
-    <keyword type="struct" name="struct ExampleAnimalProxyClass" link="ExampleAnimal.html#ExampleAnimalProxyClass" since="2.30"/>
-    <keyword type="struct" name="struct ExampleAnimalSkeleton" link="ExampleAnimal.html#ExampleAnimalSkeleton-struct"/>
-    <keyword type="struct" name="struct ExampleAnimalSkeletonClass" link="ExampleAnimal.html#ExampleAnimalSkeletonClass" since="2.30"/>
-    <keyword type="property" name="The “bar” property" link="ExampleAnimal.html#ExampleAnimal--bar"/>
-    <keyword type="property" name="The “foo” property" link="ExampleAnimal.html#ExampleAnimal--foo"/>
-    <keyword type="property" name="The “mood” property" link="ExampleAnimal.html#ExampleAnimal--mood"/>
-    <keyword type="signal" name="The “handle-poke” signal" link="ExampleAnimal.html#ExampleAnimal-handle-poke"/>
-    <keyword type="signal" name="The “jumped” signal" link="ExampleAnimal.html#ExampleAnimal-jumped"/>
-    <keyword type="function" name="example_cat_interface_info ()" link="ExampleCat.html#example-cat-interface-info"/>
-    <keyword type="function" name="example_cat_override_properties ()" link="ExampleCat.html#example-cat-override-properties"/>
-    <keyword type="function" name="example_cat_proxy_new ()" link="ExampleCat.html#example-cat-proxy-new"/>
-    <keyword type="function" name="example_cat_proxy_new_finish ()" link="ExampleCat.html#example-cat-proxy-new-finish"/>
-    <keyword type="function" name="example_cat_proxy_new_sync ()" link="ExampleCat.html#example-cat-proxy-new-sync"/>
-    <keyword type="function" name="example_cat_proxy_new_for_bus ()" link="ExampleCat.html#example-cat-proxy-new-for-bus"/>
-    <keyword type="function" name="example_cat_proxy_new_for_bus_finish ()" link="ExampleCat.html#example-cat-proxy-new-for-bus-finish"/>
-    <keyword type="function" name="example_cat_proxy_new_for_bus_sync ()" link="ExampleCat.html#example-cat-proxy-new-for-bus-sync"/>
-    <keyword type="function" name="example_cat_skeleton_new ()" link="ExampleCat.html#example-cat-skeleton-new"/>
-    <keyword type="struct" name="ExampleCat" link="ExampleCat.html#ExampleCat-struct"/>
-    <keyword type="struct" name="struct ExampleCatIface" link="ExampleCat.html#ExampleCatIface"/>
-    <keyword type="struct" name="struct ExampleCatProxy" link="ExampleCat.html#ExampleCatProxy-struct"/>
-    <keyword type="struct" name="struct ExampleCatProxyClass" link="ExampleCat.html#ExampleCatProxyClass"/>
-    <keyword type="struct" name="struct ExampleCatSkeleton" link="ExampleCat.html#ExampleCatSkeleton-struct"/>
-    <keyword type="struct" name="struct ExampleCatSkeletonClass" link="ExampleCat.html#ExampleCatSkeletonClass"/>
-    <keyword type="function" name="example_object_get_animal ()" link="ExampleObject.html#example-object-get-animal" since="2.30"/>
-    <keyword type="function" name="example_object_get_cat ()" link="ExampleObject.html#example-object-get-cat"/>
-    <keyword type="function" name="example_object_peek_animal ()" link="ExampleObject.html#example-object-peek-animal" since="2.30"/>
-    <keyword type="function" name="example_object_peek_cat ()" link="ExampleObject.html#example-object-peek-cat"/>
-    <keyword type="function" name="example_object_proxy_new ()" link="ExampleObject.html#example-object-proxy-new"/>
-    <keyword type="function" name="example_object_skeleton_new ()" link="ExampleObject.html#example-object-skeleton-new"/>
-    <keyword type="function" name="example_object_skeleton_set_animal ()" link="ExampleObject.html#example-object-skeleton-set-animal" since="2.30"/>
-    <keyword type="function" name="example_object_skeleton_set_cat ()" link="ExampleObject.html#example-object-skeleton-set-cat"/>
-    <keyword type="struct" name="ExampleObject" link="ExampleObject.html#ExampleObject-struct"/>
-    <keyword type="struct" name="struct ExampleObjectIface" link="ExampleObject.html#ExampleObjectIface"/>
-    <keyword type="struct" name="struct ExampleObjectProxy" link="ExampleObject.html#ExampleObjectProxy-struct"/>
-    <keyword type="struct" name="struct ExampleObjectProxyClass" link="ExampleObject.html#ExampleObjectProxyClass"/>
-    <keyword type="struct" name="struct ExampleObjectSkeleton" link="ExampleObject.html#ExampleObjectSkeleton-struct"/>
-    <keyword type="struct" name="struct ExampleObjectSkeletonClass" link="ExampleObject.html#ExampleObjectSkeletonClass"/>
-    <keyword type="property" name="The “animal” property" link="ExampleObject.html#ExampleObject--animal"/>
-    <keyword type="property" name="The “cat” property" link="ExampleObject.html#ExampleObject--cat"/>
-    <keyword type="function" name="example_object_manager_client_get_proxy_type ()" link="ExampleObjectManagerClient.html#example-object-manager-client-get-proxy-type"/>
-    <keyword type="function" name="example_object_manager_client_new ()" link="ExampleObjectManagerClient.html#example-object-manager-client-new"/>
-    <keyword type="function" name="example_object_manager_client_new_finish ()" link="ExampleObjectManagerClient.html#example-object-manager-client-new-finish"/>
-    <keyword type="function" name="example_object_manager_client_new_sync ()" link="ExampleObjectManagerClient.html#example-object-manager-client-new-sync"/>
-    <keyword type="function" name="example_object_manager_client_new_for_bus ()" link="ExampleObjectManagerClient.html#example-object-manager-client-new-for-bus"/>
-    <keyword type="function" name="example_object_manager_client_new_for_bus_finish ()" link="ExampleObjectManagerClient.html#example-object-manager-client-new-for-bus-finish"/>
-    <keyword type="function" name="example_object_manager_client_new_for_bus_sync ()" link="ExampleObjectManagerClient.html#example-object-manager-client-new-for-bus-sync"/>
-    <keyword type="struct" name="struct ExampleObjectManagerClient" link="ExampleObjectManagerClient.html#ExampleObjectManagerClient-struct"/>
-    <keyword type="struct" name="struct ExampleObjectManagerClientClass" link="ExampleObjectManagerClient.html#ExampleObjectManagerClientClass"/>
     <keyword type="constant" name="G_FILE_QUERY_INFO_NONE" link="GFile.html#G-FILE-QUERY-INFO-NONE:CAPS"/>
     <keyword type="constant" name="G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS" link="GFile.html#G-FILE-QUERY-INFO-NOFOLLOW-SYMLINKS:CAPS"/>
     <keyword type="constant" name="G_FILE_CREATE_NONE" link="GFile.html#G-FILE-CREATE-NONE:CAPS"/>
@@ -2921,6 +2918,7 @@
     <keyword type="constant" name="G_IO_ERROR_BROKEN_PIPE" link="gio-GIOError.html#G-IO-ERROR-BROKEN-PIPE:CAPS"/>
     <keyword type="constant" name="G_IO_ERROR_CONNECTION_CLOSED" link="gio-GIOError.html#G-IO-ERROR-CONNECTION-CLOSED:CAPS"/>
     <keyword type="constant" name="G_IO_ERROR_NOT_CONNECTED" link="gio-GIOError.html#G-IO-ERROR-NOT-CONNECTED:CAPS"/>
+    <keyword type="constant" name="G_IO_ERROR_MESSAGE_TOO_LARGE" link="gio-GIOError.html#G-IO-ERROR-MESSAGE-TOO-LARGE:CAPS"/>
     <keyword type="constant" name="G_ASK_PASSWORD_NEED_PASSWORD" link="GMountOperation.html#G-ASK-PASSWORD-NEED-PASSWORD:CAPS"/>
     <keyword type="constant" name="G_ASK_PASSWORD_NEED_USERNAME" link="GMountOperation.html#G-ASK-PASSWORD-NEED-USERNAME:CAPS"/>
     <keyword type="constant" name="G_ASK_PASSWORD_NEED_DOMAIN" link="GMountOperation.html#G-ASK-PASSWORD-NEED-DOMAIN:CAPS"/>
@@ -3176,6 +3174,7 @@
     <keyword type="constant" name="G_BUS_NAME_OWNER_FLAGS_NONE" link="gio-Owning-Bus-Names.html#G-BUS-NAME-OWNER-FLAGS-NONE:CAPS"/>
     <keyword type="constant" name="G_BUS_NAME_OWNER_FLAGS_ALLOW_REPLACEMENT" link="gio-Owning-Bus-Names.html#G-BUS-NAME-OWNER-FLAGS-ALLOW-REPLACEMENT:CAPS"/>
     <keyword type="constant" name="G_BUS_NAME_OWNER_FLAGS_REPLACE" link="gio-Owning-Bus-Names.html#G-BUS-NAME-OWNER-FLAGS-REPLACE:CAPS"/>
+    <keyword type="constant" name="G_BUS_NAME_OWNER_FLAGS_DO_NOT_QUEUE" link="gio-Owning-Bus-Names.html#G-BUS-NAME-OWNER-FLAGS-DO-NOT-QUEUE:CAPS"/>
     <keyword type="constant" name="G_BUS_NAME_WATCHER_FLAGS_NONE" link="gio-Watching-Bus-Names.html#G-BUS-NAME-WATCHER-FLAGS-NONE:CAPS"/>
     <keyword type="constant" name="G_BUS_NAME_WATCHER_FLAGS_AUTO_START" link="gio-Watching-Bus-Names.html#G-BUS-NAME-WATCHER-FLAGS-AUTO-START:CAPS"/>
     <keyword type="constant" name="G_DBUS_INTERFACE_SKELETON_FLAGS_NONE" link="GDBusInterfaceSkeleton.html#G-DBUS-INTERFACE-SKELETON-FLAGS-NONE:CAPS"/>
@@ -3222,6 +3221,7 @@
     <keyword type="constant" name="G_APPLICATION_HANDLES_COMMAND_LINE" link="GApplication.html#G-APPLICATION-HANDLES-COMMAND-LINE:CAPS"/>
     <keyword type="constant" name="G_APPLICATION_SEND_ENVIRONMENT" link="GApplication.html#G-APPLICATION-SEND-ENVIRONMENT:CAPS"/>
     <keyword type="constant" name="G_APPLICATION_NON_UNIQUE" link="GApplication.html#G-APPLICATION-NON-UNIQUE:CAPS"/>
+    <keyword type="constant" name="G_APPLICATION_CAN_OVERRIDE_APP_ID" link="GApplication.html#G-APPLICATION-CAN-OVERRIDE-APP-ID:CAPS"/>
     <keyword type="constant" name="G_NOTIFICATION_PRIORITY_NORMAL" link="GNotification.html#G-NOTIFICATION-PRIORITY-NORMAL:CAPS"/>
     <keyword type="constant" name="G_NOTIFICATION_PRIORITY_LOW" link="GNotification.html#G-NOTIFICATION-PRIORITY-LOW:CAPS"/>
     <keyword type="constant" name="G_NOTIFICATION_PRIORITY_HIGH" link="GNotification.html#G-NOTIFICATION-PRIORITY-HIGH:CAPS"/>
@@ -3229,7 +3229,6 @@
     <keyword type="constant" name="G_IO_MODULE_SCOPE_NONE" link="GIOModule.html#G-IO-MODULE-SCOPE-NONE:CAPS"/>
     <keyword type="constant" name="G_IO_MODULE_SCOPE_BLOCK_DUPLICATES" link="GIOModule.html#G-IO-MODULE-SCOPE-BLOCK-DUPLICATES:CAPS"/>
     <keyword type="constant" name="G_TEST_DBUS_NONE" link="GTestDBus.html#G-TEST-DBUS-NONE:CAPS"/>
-    <keyword type="member" name="GFileIface.g-iface" link="GFile.html#GFileIface.g-iface"/>
     <keyword type="member" name="GFileIface.dup" link="GFile.html#GFileIface.dup"/>
     <keyword type="member" name="GFileIface.hash" link="GFile.html#GFileIface.hash"/>
     <keyword type="member" name="GFileIface.equal" link="GFile.html#GFileIface.equal"/>
@@ -3338,32 +3337,25 @@
     <keyword type="member" name="GFileAttributeInfo.flags" link="gio-GFileAttribute.html#GFileAttributeInfo.flags"/>
     <keyword type="member" name="GFileAttributeInfoList-struct.infos" link="gio-GFileAttribute.html#GFileAttributeInfoList-struct.infos"/>
     <keyword type="member" name="GFileAttributeInfoList-struct.n-infos" link="gio-GFileAttribute.html#GFileAttributeInfoList-struct.n-infos"/>
-    <keyword type="member" name="GAsyncResultIface.g-iface" link="GAsyncResult.html#GAsyncResultIface.g-iface"/>
     <keyword type="member" name="GAsyncResultIface.get-user-data" link="GAsyncResult.html#GAsyncResultIface.get-user-data"/>
     <keyword type="member" name="GAsyncResultIface.get-source-object" link="GAsyncResult.html#GAsyncResultIface.get-source-object"/>
     <keyword type="member" name="GAsyncResultIface.is-tagged" link="GAsyncResult.html#GAsyncResultIface.is-tagged"/>
-    <keyword type="member" name="GConverterIface.g-iface" link="GConverter.html#GConverterIface.g-iface"/>
     <keyword type="member" name="GConverterIface.convert" link="GConverter.html#GConverterIface.convert"/>
     <keyword type="member" name="GConverterIface.reset" link="GConverter.html#GConverterIface.reset"/>
-    <keyword type="member" name="GSeekableIface.g-iface" link="GSeekable.html#GSeekableIface.g-iface"/>
     <keyword type="member" name="GSeekableIface.tell" link="GSeekable.html#GSeekableIface.tell"/>
     <keyword type="member" name="GSeekableIface.can-seek" link="GSeekable.html#GSeekableIface.can-seek"/>
     <keyword type="member" name="GSeekableIface.seek" link="GSeekable.html#GSeekableIface.seek"/>
     <keyword type="member" name="GSeekableIface.can-truncate" link="GSeekable.html#GSeekableIface.can-truncate"/>
     <keyword type="member" name="GSeekableIface.truncate-fn" link="GSeekable.html#GSeekableIface.truncate-fn"/>
-    <keyword type="member" name="GFileDescriptorBasedIface.g-iface" link="GFileDescriptorBased.html#GFileDescriptorBasedIface.g-iface"/>
     <keyword type="member" name="GFileDescriptorBasedIface.get-fd" link="GFileDescriptorBased.html#GFileDescriptorBasedIface.get-fd"/>
-    <keyword type="member" name="GPollableInputStreamInterface.g-iface" link="GPollableInputStream.html#GPollableInputStreamInterface.g-iface"/>
     <keyword type="member" name="GPollableInputStreamInterface.can-poll" link="GPollableInputStream.html#GPollableInputStreamInterface.can-poll"/>
     <keyword type="member" name="GPollableInputStreamInterface.is-readable" link="GPollableInputStream.html#GPollableInputStreamInterface.is-readable"/>
     <keyword type="member" name="GPollableInputStreamInterface.create-source" link="GPollableInputStream.html#GPollableInputStreamInterface.create-source"/>
     <keyword type="member" name="GPollableInputStreamInterface.read-nonblocking" link="GPollableInputStream.html#GPollableInputStreamInterface.read-nonblocking"/>
-    <keyword type="member" name="GPollableOutputStreamInterface.g-iface" link="GPollableOutputStream.html#GPollableOutputStreamInterface.g-iface"/>
     <keyword type="member" name="GPollableOutputStreamInterface.can-poll" link="GPollableOutputStream.html#GPollableOutputStreamInterface.can-poll"/>
     <keyword type="member" name="GPollableOutputStreamInterface.is-writable" link="GPollableOutputStream.html#GPollableOutputStreamInterface.is-writable"/>
     <keyword type="member" name="GPollableOutputStreamInterface.create-source" link="GPollableOutputStream.html#GPollableOutputStreamInterface.create-source"/>
     <keyword type="member" name="GPollableOutputStreamInterface.write-nonblocking" link="GPollableOutputStream.html#GPollableOutputStreamInterface.write-nonblocking"/>
-    <keyword type="member" name="GAppInfoIface.g-iface" link="GAppInfo.html#GAppInfoIface.g-iface"/>
     <keyword type="member" name="GAppInfoIface.dup" link="GAppInfo.html#GAppInfoIface.dup"/>
     <keyword type="member" name="GAppInfoIface.equal" link="GAppInfo.html#GAppInfoIface.equal"/>
     <keyword type="member" name="GAppInfoIface.get-id" link="GAppInfo.html#GAppInfoIface.get-id"/>
@@ -3387,9 +3379,7 @@
     <keyword type="member" name="GAppInfoIface.get-display-name" link="GAppInfo.html#GAppInfoIface.get-display-name"/>
     <keyword type="member" name="GAppInfoIface.set-as-last-used-for-type" link="GAppInfo.html#GAppInfoIface.set-as-last-used-for-type"/>
     <keyword type="member" name="GAppInfoIface.get-supported-types" link="GAppInfo.html#GAppInfoIface.get-supported-types"/>
-    <keyword type="member" name="GDesktopAppInfoLookupIface.g-iface" link="gio-Desktop-file-based-GAppInfo.html#GDesktopAppInfoLookupIface.g-iface"/>
     <keyword type="member" name="GDesktopAppInfoLookupIface.get-default-for-uri-scheme" link="gio-Desktop-file-based-GAppInfo.html#GDesktopAppInfoLookupIface.get-default-for-uri-scheme"/>
-    <keyword type="member" name="GVolumeIface.g-iface" link="GVolume.html#GVolumeIface.g-iface"/>
     <keyword type="member" name="GVolumeIface.changed" link="GVolume.html#GVolumeIface.changed"/>
     <keyword type="member" name="GVolumeIface.removed" link="GVolume.html#GVolumeIface.removed"/>
     <keyword type="member" name="GVolumeIface.get-name" link="GVolume.html#GVolumeIface.get-name"/>
@@ -3411,7 +3401,6 @@
     <keyword type="member" name="GVolumeIface.eject-with-operation-finish" link="GVolume.html#GVolumeIface.eject-with-operation-finish"/>
     <keyword type="member" name="GVolumeIface.get-sort-key" link="GVolume.html#GVolumeIface.get-sort-key"/>
     <keyword type="member" name="GVolumeIface.get-symbolic-icon" link="GVolume.html#GVolumeIface.get-symbolic-icon"/>
-    <keyword type="member" name="GMountIface.g-iface" link="GMount.html#GMountIface.g-iface"/>
     <keyword type="member" name="GMountIface.changed" link="GMount.html#GMountIface.changed"/>
     <keyword type="member" name="GMountIface.unmounted" link="GMount.html#GMountIface.unmounted"/>
     <keyword type="member" name="GMountIface.get-root" link="GMount.html#GMountIface.get-root"/>
@@ -3439,7 +3428,6 @@
     <keyword type="member" name="GMountIface.get-default-location" link="GMount.html#GMountIface.get-default-location"/>
     <keyword type="member" name="GMountIface.get-sort-key" link="GMount.html#GMountIface.get-sort-key"/>
     <keyword type="member" name="GMountIface.get-symbolic-icon" link="GMount.html#GMountIface.get-symbolic-icon"/>
-    <keyword type="member" name="GDriveIface.g-iface" link="GDrive.html#GDriveIface.g-iface"/>
     <keyword type="member" name="GDriveIface.changed" link="GDrive.html#GDriveIface.changed"/>
     <keyword type="member" name="GDriveIface.disconnected" link="GDrive.html#GDriveIface.disconnected"/>
     <keyword type="member" name="GDriveIface.eject-button" link="GDrive.html#GDriveIface.eject-button"/>
@@ -3471,23 +3459,27 @@
     <keyword type="member" name="GDriveIface.eject-with-operation-finish" link="GDrive.html#GDriveIface.eject-with-operation-finish"/>
     <keyword type="member" name="GDriveIface.get-sort-key" link="GDrive.html#GDriveIface.get-sort-key"/>
     <keyword type="member" name="GDriveIface.get-symbolic-icon" link="GDrive.html#GDriveIface.get-symbolic-icon"/>
-    <keyword type="member" name="GIconIface.g-iface" link="GIcon.html#GIconIface.g-iface"/>
+    <keyword type="member" name="GDriveIface.is-removable" link="GDrive.html#GDriveIface.is-removable"/>
     <keyword type="member" name="GIconIface.hash" link="GIcon.html#GIconIface.hash"/>
     <keyword type="member" name="GIconIface.equal" link="GIcon.html#GIconIface.equal"/>
     <keyword type="member" name="GIconIface.to-tokens" link="GIcon.html#GIconIface.to-tokens"/>
     <keyword type="member" name="GIconIface.from-tokens" link="GIcon.html#GIconIface.from-tokens"/>
     <keyword type="member" name="GIconIface.serialize" link="GIcon.html#GIconIface.serialize"/>
-    <keyword type="member" name="GLoadableIconIface.g-iface" link="GLoadableIcon.html#GLoadableIconIface.g-iface"/>
     <keyword type="member" name="GLoadableIconIface.load" link="GLoadableIcon.html#GLoadableIconIface.load"/>
     <keyword type="member" name="GLoadableIconIface.load-async" link="GLoadableIcon.html#GLoadableIconIface.load-async"/>
     <keyword type="member" name="GLoadableIconIface.load-finish" link="GLoadableIcon.html#GLoadableIconIface.load-finish"/>
-    <keyword type="member" name="GInitableIface.g-iface" link="GInitable.html#GInitableIface.g-iface"/>
     <keyword type="member" name="GInitableIface.init" link="GInitable.html#GInitableIface.init"/>
-    <keyword type="member" name="GAsyncInitableIface.g-iface" link="GAsyncInitable.html#GAsyncInitableIface.g-iface"/>
     <keyword type="member" name="GAsyncInitableIface.init-async" link="GAsyncInitable.html#GAsyncInitableIface.init-async"/>
     <keyword type="member" name="GAsyncInitableIface.init-finish" link="GAsyncInitable.html#GAsyncInitableIface.init-finish"/>
     <keyword type="member" name="GInputVector.buffer" link="GSocket.html#GInputVector.buffer"/>
     <keyword type="member" name="GInputVector.size" link="GSocket.html#GInputVector.size"/>
+    <keyword type="member" name="GInputMessage.address" link="GSocket.html#GInputMessage.address"/>
+    <keyword type="member" name="GInputMessage.vectors" link="GSocket.html#GInputMessage.vectors"/>
+    <keyword type="member" name="GInputMessage.num-vectors" link="GSocket.html#GInputMessage.num-vectors"/>
+    <keyword type="member" name="GInputMessage.bytes-received" link="GSocket.html#GInputMessage.bytes-received"/>
+    <keyword type="member" name="GInputMessage.flags" link="GSocket.html#GInputMessage.flags"/>
+    <keyword type="member" name="GInputMessage.control-messages" link="GSocket.html#GInputMessage.control-messages"/>
+    <keyword type="member" name="GInputMessage.num-control-messages" link="GSocket.html#GInputMessage.num-control-messages"/>
     <keyword type="member" name="GOutputVector.buffer" link="GSocket.html#GOutputVector.buffer"/>
     <keyword type="member" name="GOutputVector.size" link="GSocket.html#GOutputVector.size"/>
     <keyword type="member" name="GOutputMessage.address" link="GSocket.html#GOutputMessage.address"/>
@@ -3496,27 +3488,29 @@
     <keyword type="member" name="GOutputMessage.bytes-sent" link="GSocket.html#GOutputMessage.bytes-sent"/>
     <keyword type="member" name="GOutputMessage.control-messages" link="GSocket.html#GOutputMessage.control-messages"/>
     <keyword type="member" name="GOutputMessage.num-control-messages" link="GSocket.html#GOutputMessage.num-control-messages"/>
-    <keyword type="member" name="GProxyInterface.g-iface" link="GProxy.html#GProxyInterface.g-iface"/>
+    <keyword type="member" name="GDatagramBasedInterface.receive-messages" link="GDatagramBased.html#GDatagramBasedInterface.receive-messages"/>
+    <keyword type="member" name="GDatagramBasedInterface.send-messages" link="GDatagramBased.html#GDatagramBasedInterface.send-messages"/>
+    <keyword type="member" name="GDatagramBasedInterface.create-source" link="GDatagramBased.html#GDatagramBasedInterface.create-source"/>
+    <keyword type="member" name="GDatagramBasedInterface.condition-check" link="GDatagramBased.html#GDatagramBasedInterface.condition-check"/>
+    <keyword type="member" name="GDatagramBasedInterface.condition-wait" link="GDatagramBased.html#GDatagramBasedInterface.condition-wait"/>
     <keyword type="member" name="GProxyInterface.connect" link="GProxy.html#GProxyInterface.connect"/>
     <keyword type="member" name="GProxyInterface.connect-async" link="GProxy.html#GProxyInterface.connect-async"/>
     <keyword type="member" name="GProxyInterface.connect-finish" link="GProxy.html#GProxyInterface.connect-finish"/>
     <keyword type="member" name="GProxyInterface.supports-hostname" link="GProxy.html#GProxyInterface.supports-hostname"/>
-    <keyword type="member" name="GNetworkMonitorInterface.g-iface" link="GNetworkMonitor.html#GNetworkMonitorInterface.g-iface"/>
     <keyword type="member" name="GNetworkMonitorInterface.network-changed" link="GNetworkMonitor.html#GNetworkMonitorInterface.network-changed"/>
     <keyword type="member" name="GNetworkMonitorInterface.can-reach" link="GNetworkMonitor.html#GNetworkMonitorInterface.can-reach"/>
     <keyword type="member" name="GNetworkMonitorInterface.can-reach-async" link="GNetworkMonitor.html#GNetworkMonitorInterface.can-reach-async"/>
     <keyword type="member" name="GNetworkMonitorInterface.can-reach-finish" link="GNetworkMonitor.html#GNetworkMonitorInterface.can-reach-finish"/>
-    <keyword type="member" name="GTlsClientConnectionInterface.g-iface" link="GTlsClientConnection.html#GTlsClientConnectionInterface.g-iface"/>
     <keyword type="member" name="GTlsClientConnectionInterface.copy-session-state" link="GTlsClientConnection.html#GTlsClientConnectionInterface.copy-session-state"/>
-    <keyword type="member" name="GTlsServerConnectionInterface.g-iface" link="GTlsServerConnection.html#GTlsServerConnectionInterface.g-iface"/>
-    <keyword type="member" name="GTlsBackendInterface.g-iface" link="GTlsBackend.html#GTlsBackendInterface.g-iface"/>
     <keyword type="member" name="GTlsBackendInterface.supports-tls" link="GTlsBackend.html#GTlsBackendInterface.supports-tls"/>
     <keyword type="member" name="GTlsBackendInterface.get-certificate-type" link="GTlsBackend.html#GTlsBackendInterface.get-certificate-type"/>
     <keyword type="member" name="GTlsBackendInterface.get-client-connection-type" link="GTlsBackend.html#GTlsBackendInterface.get-client-connection-type"/>
     <keyword type="member" name="GTlsBackendInterface.get-server-connection-type" link="GTlsBackend.html#GTlsBackendInterface.get-server-connection-type"/>
     <keyword type="member" name="GTlsBackendInterface.get-file-database-type" link="GTlsBackend.html#GTlsBackendInterface.get-file-database-type"/>
     <keyword type="member" name="GTlsBackendInterface.get-default-database" link="GTlsBackend.html#GTlsBackendInterface.get-default-database"/>
-    <keyword type="member" name="GTlsDatabaseClass.parent-class" link="GTlsDatabase.html#GTlsDatabaseClass.parent-class"/>
+    <keyword type="member" name="GTlsBackendInterface.supports-dtls" link="GTlsBackend.html#GTlsBackendInterface.supports-dtls"/>
+    <keyword type="member" name="GTlsBackendInterface.get-dtls-client-connection-type" link="GTlsBackend.html#GTlsBackendInterface.get-dtls-client-connection-type"/>
+    <keyword type="member" name="GTlsBackendInterface.get-dtls-server-connection-type" link="GTlsBackend.html#GTlsBackendInterface.get-dtls-server-connection-type"/>
     <keyword type="member" name="GTlsDatabaseClass.verify-chain" link="GTlsDatabase.html#GTlsDatabaseClass.verify-chain"/>
     <keyword type="member" name="GTlsDatabaseClass.verify-chain-async" link="GTlsDatabase.html#GTlsDatabaseClass.verify-chain-async"/>
     <keyword type="member" name="GTlsDatabaseClass.verify-chain-finish" link="GTlsDatabase.html#GTlsDatabaseClass.verify-chain-finish"/>
@@ -3530,25 +3524,22 @@
     <keyword type="member" name="GTlsDatabaseClass.lookup-certificates-issued-by" link="GTlsDatabase.html#GTlsDatabaseClass.lookup-certificates-issued-by"/>
     <keyword type="member" name="GTlsDatabaseClass.lookup-certificates-issued-by-async" link="GTlsDatabase.html#GTlsDatabaseClass.lookup-certificates-issued-by-async"/>
     <keyword type="member" name="GTlsDatabaseClass.lookup-certificates-issued-by-finish" link="GTlsDatabase.html#GTlsDatabaseClass.lookup-certificates-issued-by-finish"/>
-    <keyword type="member" name="GTlsFileDatabaseInterface.g-iface" link="GTlsFileDatabase.html#GTlsFileDatabaseInterface.g-iface"/>
     <keyword type="member" name="GTlsInteractionClass.ask-password" link="GTlsInteraction.html#GTlsInteractionClass.ask-password"/>
     <keyword type="member" name="GTlsInteractionClass.ask-password-async" link="GTlsInteraction.html#GTlsInteractionClass.ask-password-async"/>
     <keyword type="member" name="GTlsInteractionClass.ask-password-finish" link="GTlsInteraction.html#GTlsInteractionClass.ask-password-finish"/>
     <keyword type="member" name="GTlsInteractionClass.request-certificate" link="GTlsInteraction.html#GTlsInteractionClass.request-certificate"/>
     <keyword type="member" name="GTlsInteractionClass.request-certificate-async" link="GTlsInteraction.html#GTlsInteractionClass.request-certificate-async"/>
     <keyword type="member" name="GTlsInteractionClass.request-certificate-finish" link="GTlsInteraction.html#GTlsInteractionClass.request-certificate-finish"/>
-    <keyword type="member" name="GTlsPasswordClass.parent-class" link="GTlsPassword.html#GTlsPasswordClass.parent-class"/>
     <keyword type="member" name="GTlsPasswordClass.get-value" link="GTlsPassword.html#GTlsPasswordClass.get-value"/>
     <keyword type="member" name="GTlsPasswordClass.set-value" link="GTlsPassword.html#GTlsPasswordClass.set-value"/>
     <keyword type="member" name="GTlsPasswordClass.get-default-warning" link="GTlsPassword.html#GTlsPasswordClass.get-default-warning"/>
-    <keyword type="member" name="GProxyResolverInterface.g-iface" link="GProxyResolver.html#GProxyResolverInterface.g-iface"/>
     <keyword type="member" name="GProxyResolverInterface.is-supported" link="GProxyResolver.html#GProxyResolverInterface.is-supported"/>
     <keyword type="member" name="GProxyResolverInterface.lookup" link="GProxyResolver.html#GProxyResolverInterface.lookup"/>
     <keyword type="member" name="GProxyResolverInterface.lookup-async" link="GProxyResolver.html#GProxyResolverInterface.lookup-async"/>
     <keyword type="member" name="GProxyResolverInterface.lookup-finish" link="GProxyResolver.html#GProxyResolverInterface.lookup-finish"/>
-    <keyword type="member" name="GSocketConnectableIface.g-iface" link="GSocketConnectable.html#GSocketConnectableIface.g-iface"/>
     <keyword type="member" name="GSocketConnectableIface.enumerate" link="GSocketConnectable.html#GSocketConnectableIface.enumerate"/>
     <keyword type="member" name="GSocketConnectableIface.proxy-enumerate" link="GSocketConnectable.html#GSocketConnectableIface.proxy-enumerate"/>
+    <keyword type="member" name="GSocketConnectableIface.to-string" link="GSocketConnectable.html#GSocketConnectableIface.to-string"/>
     <keyword type="member" name="GDBusAnnotationInfo-struct.ref-count" link="gio-D-Bus-Introspection-Data.html#GDBusAnnotationInfo-struct.ref-count"/>
     <keyword type="member" name="GDBusAnnotationInfo-struct.key" link="gio-D-Bus-Introspection-Data.html#GDBusAnnotationInfo-struct.key"/>
     <keyword type="member" name="GDBusAnnotationInfo-struct.value" link="gio-D-Bus-Introspection-Data.html#GDBusAnnotationInfo-struct.value"/>
@@ -3595,7 +3586,6 @@
     <keyword type="member" name="GDBusInterfaceIface.get-object" link="GDBusInterface.html#GDBusInterfaceIface.get-object"/>
     <keyword type="member" name="GDBusInterfaceIface.set-object" link="GDBusInterface.html#GDBusInterfaceIface.set-object"/>
     <keyword type="member" name="GDBusInterfaceIface.dup-object" link="GDBusInterface.html#GDBusInterfaceIface.dup-object"/>
-    <keyword type="member" name="GDBusInterfaceSkeletonClass.parent-class" link="GDBusInterfaceSkeleton.html#GDBusInterfaceSkeletonClass.parent-class"/>
     <keyword type="member" name="GDBusInterfaceSkeletonClass.get-info" link="GDBusInterfaceSkeleton.html#GDBusInterfaceSkeletonClass.get-info"/>
     <keyword type="member" name="GDBusInterfaceSkeletonClass.get-vtable" link="GDBusInterfaceSkeleton.html#GDBusInterfaceSkeletonClass.get-vtable"/>
     <keyword type="member" name="GDBusInterfaceSkeletonClass.get-properties" link="GDBusInterfaceSkeleton.html#GDBusInterfaceSkeletonClass.get-properties"/>
@@ -3609,9 +3599,7 @@
     <keyword type="member" name="GDBusObjectIface.get-interface" link="GDBusObject.html#GDBusObjectIface.get-interface"/>
     <keyword type="member" name="GDBusObjectIface.interface-added" link="GDBusObject.html#GDBusObjectIface.interface-added"/>
     <keyword type="member" name="GDBusObjectIface.interface-removed" link="GDBusObject.html#GDBusObjectIface.interface-removed"/>
-    <keyword type="member" name="GDBusObjectSkeletonClass.parent-class" link="GDBusObjectSkeleton.html#GDBusObjectSkeletonClass.parent-class"/>
     <keyword type="member" name="GDBusObjectSkeletonClass.authorize-method" link="GDBusObjectSkeleton.html#GDBusObjectSkeletonClass.authorize-method"/>
-    <keyword type="member" name="GDBusObjectProxyClass.parent-class" link="GDBusObjectProxy.html#GDBusObjectProxyClass.parent-class"/>
     <keyword type="member" name="GDBusObjectManagerIface.parent-iface" link="GDBusObjectManager.html#GDBusObjectManagerIface.parent-iface"/>
     <keyword type="member" name="GDBusObjectManagerIface.get-object-path" link="GDBusObjectManager.html#GDBusObjectManagerIface.get-object-path"/>
     <keyword type="member" name="GDBusObjectManagerIface.get-objects" link="GDBusObjectManager.html#GDBusObjectManagerIface.get-objects"/>
@@ -3621,11 +3609,8 @@
     <keyword type="member" name="GDBusObjectManagerIface.object-removed" link="GDBusObjectManager.html#GDBusObjectManagerIface.object-removed"/>
     <keyword type="member" name="GDBusObjectManagerIface.interface-added" link="GDBusObjectManager.html#GDBusObjectManagerIface.interface-added"/>
     <keyword type="member" name="GDBusObjectManagerIface.interface-removed" link="GDBusObjectManager.html#GDBusObjectManagerIface.interface-removed"/>
-    <keyword type="member" name="GDBusObjectManagerServerClass.parent-class" link="GDBusObjectManagerServer.html#GDBusObjectManagerServerClass.parent-class"/>
-    <keyword type="member" name="GDBusObjectManagerClientClass.parent-class" link="GDBusObjectManagerClient.html#GDBusObjectManagerClientClass.parent-class"/>
     <keyword type="member" name="GDBusObjectManagerClientClass.interface-proxy-signal" link="GDBusObjectManagerClient.html#GDBusObjectManagerClientClass.interface-proxy-signal"/>
     <keyword type="member" name="GDBusObjectManagerClientClass.interface-proxy-properties-changed" link="GDBusObjectManagerClient.html#GDBusObjectManagerClientClass.interface-proxy-properties-changed"/>
-    <keyword type="member" name="GSettingsBackendClass.parent-class" link="GSettingsBackend.html#GSettingsBackendClass.parent-class"/>
     <keyword type="member" name="GSettingsBackendClass.read" link="GSettingsBackend.html#GSettingsBackendClass.read"/>
     <keyword type="member" name="GSettingsBackendClass.get-writable" link="GSettingsBackend.html#GSettingsBackendClass.get-writable"/>
     <keyword type="member" name="GSettingsBackendClass.write" link="GSettingsBackend.html#GSettingsBackendClass.write"/>
@@ -3636,7 +3621,6 @@
     <keyword type="member" name="GSettingsBackendClass.sync" link="GSettingsBackend.html#GSettingsBackendClass.sync"/>
     <keyword type="member" name="GSettingsBackendClass.get-permission" link="GSettingsBackend.html#GSettingsBackendClass.get-permission"/>
     <keyword type="member" name="GSettingsBackendClass.read-user-value" link="GSettingsBackend.html#GSettingsBackendClass.read-user-value"/>
-    <keyword type="member" name="GListModelInterface.g-iface" link="GListModel.html#GListModelInterface.g-iface"/>
     <keyword type="member" name="GListModelInterface.get-item-type" link="GListModel.html#GListModelInterface.get-item-type"/>
     <keyword type="member" name="GListModelInterface.get-n-items" link="GListModel.html#GListModelInterface.get-n-items"/>
     <keyword type="member" name="GListModelInterface.get-item" link="GListModel.html#GListModelInterface.get-item"/>
@@ -3654,7 +3638,6 @@
     <keyword type="member" name="GApplicationClass.dbus-register" link="GApplication.html#GApplicationClass.dbus-register"/>
     <keyword type="member" name="GApplicationClass.dbus-unregister" link="GApplication.html#GApplicationClass.dbus-unregister"/>
     <keyword type="member" name="GApplicationClass.handle-local-options" link="GApplication.html#GApplicationClass.handle-local-options"/>
-    <keyword type="member" name="GActionGroupInterface.g-iface" link="GActionGroup.html#GActionGroupInterface.g-iface"/>
     <keyword type="member" name="GActionGroupInterface.has-action" link="GActionGroup.html#GActionGroupInterface.has-action"/>
     <keyword type="member" name="GActionGroupInterface.list-actions" link="GActionGroup.html#GActionGroupInterface.list-actions"/>
     <keyword type="member" name="GActionGroupInterface.get-action-enabled" link="GActionGroup.html#GActionGroupInterface.get-action-enabled"/>
@@ -3669,7 +3652,6 @@
     <keyword type="member" name="GActionGroupInterface.action-enabled-changed" link="GActionGroup.html#GActionGroupInterface.action-enabled-changed"/>
     <keyword type="member" name="GActionGroupInterface.action-state-changed" link="GActionGroup.html#GActionGroupInterface.action-state-changed"/>
     <keyword type="member" name="GActionGroupInterface.query-action" link="GActionGroup.html#GActionGroupInterface.query-action"/>
-    <keyword type="member" name="GActionMapInterface.g-iface" link="GActionMap.html#GActionMapInterface.g-iface"/>
     <keyword type="member" name="GActionMapInterface.lookup-action" link="GActionMap.html#GActionMapInterface.lookup-action"/>
     <keyword type="member" name="GActionMapInterface.add-action" link="GActionMap.html#GActionMapInterface.add-action"/>
     <keyword type="member" name="GActionMapInterface.remove-action" link="GActionMap.html#GActionMapInterface.remove-action"/>
@@ -3678,7 +3660,6 @@
     <keyword type="member" name="GActionEntry.parameter-type" link="GActionMap.html#GActionEntry.parameter-type"/>
     <keyword type="member" name="GActionEntry.state" link="GActionMap.html#GActionEntry.state"/>
     <keyword type="member" name="GActionEntry.change-state" link="GActionMap.html#GActionEntry.change-state"/>
-    <keyword type="member" name="GActionInterface.g-iface" link="GAction.html#GActionInterface.g-iface"/>
     <keyword type="member" name="GActionInterface.get-name" link="GAction.html#GActionInterface.get-name"/>
     <keyword type="member" name="GActionInterface.get-parameter-type" link="GAction.html#GActionInterface.get-parameter-type"/>
     <keyword type="member" name="GActionInterface.get-state-type" link="GAction.html#GActionInterface.get-state-type"/>
@@ -3687,23 +3668,7 @@
     <keyword type="member" name="GActionInterface.get-state" link="GAction.html#GActionInterface.get-state"/>
     <keyword type="member" name="GActionInterface.change-state" link="GAction.html#GActionInterface.change-state"/>
     <keyword type="member" name="GActionInterface.activate" link="GAction.html#GActionInterface.activate"/>
-    <keyword type="member" name="GRemoteActionGroupInterface.g-iface" link="GRemoteActionGroup.html#GRemoteActionGroupInterface.g-iface"/>
     <keyword type="member" name="GRemoteActionGroupInterface.activate-action-full" link="GRemoteActionGroup.html#GRemoteActionGroupInterface.activate-action-full"/>
     <keyword type="member" name="GRemoteActionGroupInterface.change-action-state-full" link="GRemoteActionGroup.html#GRemoteActionGroupInterface.change-action-state-full"/>
-    <keyword type="member" name="ExampleAnimalIface.parent-iface" link="ExampleAnimal.html#ExampleAnimalIface.parent-iface"/>
-    <keyword type="member" name="ExampleAnimalIface.handle-poke" link="ExampleAnimal.html#ExampleAnimalIface.handle-poke"/>
-    <keyword type="member" name="ExampleAnimalIface.get-foo" link="ExampleAnimal.html#ExampleAnimalIface.get-foo"/>
-    <keyword type="member" name="ExampleAnimalIface.get-mood" link="ExampleAnimal.html#ExampleAnimalIface.get-mood"/>
-    <keyword type="member" name="ExampleAnimalIface.jumped" link="ExampleAnimal.html#ExampleAnimalIface.jumped"/>
-    <keyword type="member" name="ExampleAnimalIface.get-bar" link="ExampleAnimal.html#ExampleAnimalIface.get-bar"/>
-    <keyword type="member" name="ExampleAnimalProxyClass.parent-class" link="ExampleAnimal.html#ExampleAnimalProxyClass.parent-class"/>
-    <keyword type="member" name="ExampleAnimalSkeletonClass.parent-class" link="ExampleAnimal.html#ExampleAnimalSkeletonClass.parent-class"/>
-    <keyword type="member" name="ExampleCatIface.parent-iface" link="ExampleCat.html#ExampleCatIface.parent-iface"/>
-    <keyword type="member" name="ExampleCatProxyClass.parent-class" link="ExampleCat.html#ExampleCatProxyClass.parent-class"/>
-    <keyword type="member" name="ExampleCatSkeletonClass.parent-class" link="ExampleCat.html#ExampleCatSkeletonClass.parent-class"/>
-    <keyword type="member" name="ExampleObjectIface.parent-iface" link="ExampleObject.html#ExampleObjectIface.parent-iface"/>
-    <keyword type="member" name="ExampleObjectProxyClass.parent-class" link="ExampleObject.html#ExampleObjectProxyClass.parent-class"/>
-    <keyword type="member" name="ExampleObjectSkeletonClass.parent-class" link="ExampleObject.html#ExampleObjectSkeletonClass.parent-class"/>
-    <keyword type="member" name="ExampleObjectManagerClientClass.parent-class" link="ExampleObjectManagerClient.html#ExampleObjectManagerClientClass.parent-class"/>
   </functions>
 </book>

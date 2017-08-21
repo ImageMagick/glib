@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSocketAddress: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="networking.html" title="Low-level network support">
 <link rel="prev" href="GInetAddressMask.html" title="GInetAddressMask">
 <link rel="next" href="GInetSocketAddress.html" title="GInetSocketAddress">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -37,7 +37,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSocketAddress.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -80,7 +80,7 @@
 </div>
 <div class="refsect1">
 <a name="GSocketAddress.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -95,7 +95,7 @@
 </div>
 <div class="refsect1">
 <a name="GSocketAddress.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -148,8 +148,8 @@ g_socket_address_new_from_native (<em class="parameter"><code><a href="../glib-B
 struct sockaddr <em class="parameter"><code>native</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-address-new-from-native.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -158,8 +158,8 @@ struct sockaddr <em class="parameter"><code>native</code></em>
 <tbody>
 <tr>
 <td class="parameter_name"><p>native</p></td>
-<td class="parameter_description"><p>a pointer to a struct sockaddr</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> a pointer to a struct sockaddr. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL must not be passed as the value in, out, in-out; or as a return value."><span class="acronym">not nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>len</p></td>
@@ -171,7 +171,7 @@ struct sockaddr <em class="parameter"><code>native</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.2.6"></a><h4>Returns</h4>
+<a name="g-socket-address-new-from-native.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GSocketAddress.html" title="GSocketAddress"><span class="type">GSocketAddress</span></a> if <em class="parameter"><code>native</code></em>
 could successfully
 be converted, otherwise <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p>
@@ -186,8 +186,8 @@ g_socket_address_get_family (<em class="parameter"><code><a class="link" href="G
 <p>Gets the socket family type of <em class="parameter"><code>address</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-address-get-family.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -201,7 +201,7 @@ g_socket_address_get_family (<em class="parameter"><code><a class="link" href="G
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.3.6"></a><h4>Returns</h4>
+<a name="g-socket-address-get-family.returns"></a><h4>Returns</h4>
 <p> the socket family type of <em class="parameter"><code>address</code></em>
 </p>
 </div>
@@ -221,8 +221,8 @@ be passed to low-level functions like <code class="function">connect()</code> or
 is returned. If the address type is not known on the system
 then a <a class="link" href="gio-GIOError.html#G-IO-ERROR-NOT-SUPPORTED:CAPS"><code class="literal">G_IO_ERROR_NOT_SUPPORTED</code></a> error is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-address-to-native.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -256,7 +256,7 @@ struct sockaddr</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.4.7"></a><h4>Returns</h4>
+<a name="g-socket-address-to-native.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>dest</code></em>
 was filled in, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on error</p>
 </div>
@@ -272,8 +272,8 @@ g_socket_address_get_native_size (<em class="parameter"><code><a class="link" hr
 You can use this to allocate memory to pass to
 <a class="link" href="GSocketAddress.html#g-socket-address-to-native" title="g_socket_address_to_native ()"><code class="function">g_socket_address_to_native()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-socket-address-get-native-size.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -287,7 +287,7 @@ You can use this to allocate memory to pass to
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.5.10.5.6"></a><h4>Returns</h4>
+<a name="g-socket-address-get-native-size.returns"></a><h4>Returns</h4>
 <p> the size of the native struct sockaddr that
 <em class="parameter"><code>address</code></em>
 represents</p>
@@ -310,8 +310,8 @@ or one of its subtypes.</p>
 identical to the system defines <code class="literal">AF_INET</code>, <code class="literal">AF_INET6</code> and <code class="literal">AF_UNIX</code>,
 if available.)</p>
 <div class="refsect3">
-<a name="id-1.4.13.5.11.3.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GSocketFamily.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -364,6 +364,6 @@ if available.)</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

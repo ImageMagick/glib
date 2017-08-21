@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>How to define and implement a new GObject: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="pt02.html" title="Part IV. Tutorial">
 <link rel="prev" href="pt02.html" title="Part IV. Tutorial">
 <link rel="next" href="howto-gobject-code.html" title="Boilerplate code">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -39,6 +39,14 @@
     This chapter focuses on the implementation of a subtype of GObject, for
     example to create a custom class hierarchy, or to subclass a GTK+ widget.
   </p>
+<p>
+    Throughout the chapter, a running example of a file viewer program is used,
+    which has a <span class="type">ViewerFile</span> class to represent a single file being
+    viewed, and various derived classes for different types of files with
+    special functionality, such as audio files. The example application also
+    supports editing files (for example, to tweak a photo being viewed), using
+    a <span class="type">ViewerEditable</span> interface.
+  </p>
 <div class="sect1">
 <div class="titlepage"><div><div><h2 class="title" style="clear: both">
 <a name="howto-gobject-header"></a>Boilerplate header code</h2></div></div></div>
@@ -58,13 +66,13 @@
       </p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; ">
 <li class="listitem"><p>use a dash to separate the prefix from the typename:
-        <code class="filename">maman-bar.h</code> and <code class="filename">maman-bar.c</code>
+        <code class="filename">viewer-file.h</code> and <code class="filename">viewer-file.c</code>
         (this is the convention used by Nautilus and most GNOME libraries).</p></li>
 <li class="listitem"><p>use an underscore to separate the prefix from the
-        typename: <code class="filename">maman_bar.h</code> and
-        <code class="filename">maman_bar.c</code>.</p></li>
+        typename: <code class="filename">viewer_file.h</code> and
+        <code class="filename">viewer_file.c</code>.</p></li>
 <li class="listitem"><p>Do not separate the prefix from the typename:
-        <code class="filename">mamanbar.h</code> and <code class="filename">mamanbar.c</code>.
+        <code class="filename">viewerfile.h</code> and <code class="filename">viewerfile.c</code>.
         (this is the convention used by GTK+)</p></li>
 </ul></div>
 <p>
@@ -76,9 +84,9 @@
       in <a class="xref" href="gtype-conventions.html" title="Conventions">the section called “Conventions”</a>.
     </p>
 <p>
-      If you want to declare a type named ‘bar’ in namespace ‘maman’, name the
-      type instance <code class="function">MamanBar</code> and its class
-      <code class="function">MamanBarClass</code> (names are case sensitive). The
+      If you want to declare a type named ‘file’ in namespace ‘viewer’, name the
+      type instance <code class="function">ViewerFile</code> and its class
+      <code class="function">ViewerFileClass</code> (names are case sensitive). The
       recommended method of declaring a type differs based on whether the type
       is final or derivable.
     </p>
@@ -130,30 +138,30 @@
 <span class="comment"> */</span>
 
 <span class="comment">/* inclusion guard */</span>
-<span class="preproc">#ifndef</span><span class="normal"> __MAMAN_BAR_H__</span>
-<span class="preproc">#define</span><span class="normal"> __MAMAN_BAR_H__</span>
+<span class="gtkdoc ppc">#ifndef __VIEWER_FILE_H__</span>
+<span class="gtkdoc ppc">#define __VIEWER_FILE_H__</span>
 
-<span class="preproc">#include</span><span class="normal"> </span><span class="string">&lt;glib-object.h&gt;</span>
+<span class="gtkdoc ppc">#include &lt;glib-object.h&gt;</span>
 <span class="comment">/*</span>
 <span class="comment"> * Potentially, include other headers on which this header depends.</span>
 <span class="comment"> */</span>
 
-<span class="normal"><a href="../glib-Miscellaneous-Macros.html#G-BEGIN-DECLS:CAPS">G_BEGIN_DECLS</a></span>
+G_BEGIN_DECLS
 
 <span class="comment">/*</span>
 <span class="comment"> * Type declaration.</span>
 <span class="comment"> */</span>
-<span class="preproc">#define</span><span class="normal"> </span><span class="usertype">MAMAN_TYPE_BAR</span><span class="normal"> </span><span class="function">maman_bar_get_type</span><span class="normal"> </span><span class="symbol">()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MamanBar</span><span class="symbol">,</span><span class="normal"> maman_bar</span><span class="symbol">,</span><span class="normal"> MAMAN</span><span class="symbol">,</span><span class="normal"> BAR</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span>
+<span class="gtkdoc ppc">#define VIEWER_TYPE_FILE viewer_file_get_type ()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">FILE</span><span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span>
 
 <span class="comment">/*</span>
 <span class="comment"> * Method definitions.</span>
 <span class="comment"> */</span>
-<span class="usertype">MamanBar</span><span class="normal"> </span><span class="symbol">*</span><span class="function">maman_bar_new</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
+ViewerFile <span class="gtkdoc opt">*</span><span class="function">viewer_file_new</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
 
-<span class="normal"><a href="../glib-Miscellaneous-Macros.html#G-END-DECLS:CAPS">G_END_DECLS</a></span>
+G_END_DECLS
 
-<span class="preproc">#endif</span><span class="normal"> </span><span class="comment">/* __MAMAN_BAR_H__ */</span></pre></td>
+<span class="gtkdoc ppc">#endif</span> <span class="comment">/* __VIEWER_FILE_H__ */</span><span class="gtkdoc ppc"></span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -218,43 +226,43 @@
 <span class="comment"> */</span>
 
 <span class="comment">/* inclusion guard */</span>
-<span class="preproc">#ifndef</span><span class="normal"> __MAMAN_BAR_H__</span>
-<span class="preproc">#define</span><span class="normal"> __MAMAN_BAR_H__</span>
+<span class="gtkdoc ppc">#ifndef __VIEWER_FILE_H__</span>
+<span class="gtkdoc ppc">#define __VIEWER_FILE_H__</span>
 
-<span class="preproc">#include</span><span class="normal"> </span><span class="string">&lt;glib-object.h&gt;</span>
+<span class="gtkdoc ppc">#include &lt;glib-object.h&gt;</span>
 <span class="comment">/*</span>
 <span class="comment"> * Potentially, include other headers on which this header depends.</span>
 <span class="comment"> */</span>
 
-<span class="normal"><a href="../glib-Miscellaneous-Macros.html#G-BEGIN-DECLS:CAPS">G_BEGIN_DECLS</a></span>
+G_BEGIN_DECLS
 
 <span class="comment">/*</span>
 <span class="comment"> * Type declaration.</span>
 <span class="comment"> */</span>
-<span class="preproc">#define</span><span class="normal"> </span><span class="usertype">MAMAN_TYPE_BAR</span><span class="normal"> </span><span class="function">maman_bar_get_type</span><span class="normal"> </span><span class="symbol">()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-DERIVABLE-TYPE:CAPS">G_DECLARE_DERIVABLE_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MamanBar</span><span class="symbol">,</span><span class="normal"> maman_bar</span><span class="symbol">,</span><span class="normal"> MAMAN</span><span class="symbol">,</span><span class="normal"> BAR</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span>
+<span class="gtkdoc ppc">#define VIEWER_TYPE_FILE viewer_file_get_type ()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-DERIVABLE-TYPE:CAPS">G_DECLARE_DERIVABLE_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">FILE</span><span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span>
 
-<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_MamanBarClass</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> parent_class</span><span class="symbol">;</span>
+<span class="gtkdoc kwb">struct</span> _ViewerFileClass
+<span class="gtkdoc opt">{</span>
+  GObjectClass parent_class<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="comment">/* Class virtual function fields. */</span>
-<span class="normal">  </span><span class="type">void</span><span class="normal"> </span><span class="symbol">(*</span><span class="normal"> handle_frob</span><span class="symbol">)</span><span class="normal">  </span><span class="symbol">(</span><span class="usertype">MamanBar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">bar</span><span class="symbol">,</span>
-<span class="normal">                         </span><span class="usertype">guint</span><span class="normal">     n_frobs</span><span class="symbol">);</span>
+  <span class="comment">/* Class virtual function fields. */</span>
+  <span class="gtkdoc kwb">void</span> <span class="gtkdoc opt">(*</span> open<span class="gtkdoc opt">) (</span>ViewerFile  <span class="gtkdoc opt">*</span>file<span class="gtkdoc opt">,</span>
+                 GError     <span class="gtkdoc opt">**</span>error<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="comment">/* Padding to allow adding up to 12 new virtual functions without</span>
+  <span class="comment">/* Padding to allow adding up to 12 new virtual functions without</span>
 <span class="comment">   * breaking ABI. */</span>
-<span class="normal">  </span><span class="usertype">gpointer</span><span class="normal"> padding</span><span class="symbol">[</span><span class="number">12</span><span class="symbol">];</span>
-<span class="cbracket">}</span><span class="symbol">;</span>
+  gpointer padding<span class="gtkdoc opt">[</span><span class="number">12</span><span class="gtkdoc opt">];</span>
+<span class="gtkdoc opt">};</span>
 
 <span class="comment">/*</span>
 <span class="comment"> * Method definitions.</span>
 <span class="comment"> */</span>
-<span class="usertype">MamanBar</span><span class="normal"> </span><span class="symbol">*</span><span class="function">maman_bar_new</span><span class="normal"> </span><span class="symbol">(</span><span class="type">void</span><span class="symbol">);</span>
+ViewerFile <span class="gtkdoc opt">*</span><span class="function">viewer_file_new</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">void</span><span class="gtkdoc opt">);</span>
 
-<span class="normal"><a href="../glib-Miscellaneous-Macros.html#G-END-DECLS:CAPS">G_END_DECLS</a></span>
+G_END_DECLS
 
-<span class="preproc">#endif</span><span class="normal"> </span><span class="comment">/* __MAMAN_BAR_H__ */</span></pre></td>
+<span class="gtkdoc ppc">#endif</span> <span class="comment">/* __VIEWER_FILE_H__ */</span><span class="gtkdoc ppc"></span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -266,13 +274,13 @@
       The convention for header includes is to add the minimum number of
       <code class="function">#include</code> directives to the top of your headers needed
       to compile that header. This
-      allows client code to simply <code class="function">#include "maman-bar.h"</code>,
+      allows client code to simply <code class="function">#include "viewer-file.h"</code>,
       without needing to know the prerequisites for
-      <code class="filename">maman-bar.h</code>.
+      <code class="filename">viewer-file.h</code>.
     </p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

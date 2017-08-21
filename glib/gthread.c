@@ -8,7 +8,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -57,6 +57,7 @@
 #include "gslice.h"
 #include "gstrfuncs.h"
 #include "gtestutils.h"
+#include "glib_trace.h"
 
 /**
  * SECTION:threads
@@ -615,7 +616,8 @@ g_once_impl (GOnce       *once,
 
 /**
  * g_once_init_enter:
- * @location: location of a static initializable variable containing 0
+ * @location: (not nullable): location of a static initializable variable
+ *    containing 0
  *
  * Function to be called when starting a critical initialization
  * section. The argument @location must point to a static
@@ -669,7 +671,8 @@ gboolean
 
 /**
  * g_once_init_leave:
- * @location: location of a static initializable variable containing 0
+ * @location: (not nullable): location of a static initializable variable
+ *    containing 0
  * @result: new non-0 value for *@value_location
  *
  * Counterpart to g_once_init_enter(). Expects a location of a static
@@ -768,6 +771,9 @@ g_thread_proxy (gpointer data)
   G_LOCK (g_thread_new);
   G_UNLOCK (g_thread_new);
 
+  TRACE (GLIB_THREAD_SPAWNED (thread->thread.func, thread->thread.data,
+                              thread->name));
+
   if (thread->name)
     {
       g_system_thread_set_name (thread->name);
@@ -782,7 +788,7 @@ g_thread_proxy (gpointer data)
 
 /**
  * g_thread_new:
- * @name: (allow-none): an (optional) name for the new thread
+ * @name: (nullable): an (optional) name for the new thread
  * @func: a function to execute in the new thread
  * @data: an argument to supply to the new thread
  *
@@ -828,7 +834,7 @@ g_thread_new (const gchar *name,
 
 /**
  * g_thread_try_new:
- * @name: (allow-none): an (optional) name for the new thread
+ * @name: (nullable): an (optional) name for the new thread
  * @func: a function to execute in the new thread
  * @data: an argument to supply to the new thread
  * @error: return location for error, or %NULL
@@ -1006,21 +1012,31 @@ guint
 g_get_num_processors (void)
 {
 #ifdef G_OS_WIN32
+  unsigned int count;
+  SYSTEM_INFO sysinfo;
   DWORD_PTR process_cpus;
   DWORD_PTR system_cpus;
+
+  /* This *never* fails, use it as fallback */
+  GetNativeSystemInfo (&sysinfo);
+  count = (int) sysinfo.dwNumberOfProcessors;
 
   if (GetProcessAffinityMask (GetCurrentProcess (),
                               &process_cpus, &system_cpus))
     {
-      unsigned int count;
+      unsigned int af_count;
 
-      for (count = 0; process_cpus != 0; process_cpus >>= 1)
+      for (af_count = 0; process_cpus != 0; process_cpus >>= 1)
         if (process_cpus & 1)
-          count++;
+          af_count++;
 
-      if (count > 0)
-        return count;
+      /* Prefer affinity-based result, if available */
+      if (af_count > 0)
+        count = af_count;
     }
+
+  if (count > 0)
+    return count;
 #elif defined(_SC_NPROCESSORS_ONLN)
   {
     int count;

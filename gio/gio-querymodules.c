@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,6 +23,7 @@
 
 #include <gstdio.h>
 #include <errno.h>
+#include <locale.h>
 
 static gboolean
 is_valid_module_name (const gchar *basename)
@@ -115,9 +116,13 @@ query_dir (const char *dirname)
   else
     {
       if (g_unlink (cachename) != 0 && errno != ENOENT)
-        g_printerr ("Unable to unlink %s: %s\n", cachename, g_strerror (errno));
+        {
+          int errsv = errno;
+          g_printerr ("Unable to unlink %s: %s\n", cachename, g_strerror (errsv));
+        }
     }
 
+  g_free (cachename);
   g_string_free (data, TRUE);
 }
 
@@ -133,6 +138,8 @@ main (gint   argc,
       g_print ("Will update giomodule.cache in the listed directories\n");
       return 1;
     }
+
+  setlocale (LC_ALL, "");
 
   /* Be defensive and ensure we're linked to GObject */
   g_type_ensure (G_TYPE_OBJECT);

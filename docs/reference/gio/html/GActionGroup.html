@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GActionGroup: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GApplicationCommandLine.html" title="GApplicationCommandLine">
 <link rel="next" href="GActionMap.html" title="GActionMap">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -38,7 +38,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GActionGroup.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -159,7 +159,7 @@
 </div>
 <div class="refsect1">
 <a name="GActionGroup.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -191,7 +191,7 @@
 </div>
 <div class="refsect1">
 <a name="GActionGroup.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -210,7 +210,7 @@
 </div>
 <div class="refsect1">
 <a name="GActionGroup.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GActionGroup
 </pre>
 </div>
@@ -289,8 +289,8 @@ g_action_group_list_actions (<em class="parameter"><code><a class="link" href="G
 <p>The caller is responsible for freeing the list with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a> when
 it is no longer required.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-list-actions.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -304,9 +304,9 @@ it is no longer required.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.2.7"></a><h4>Returns</h4>
+<a name="g-action-group-list-actions.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated array of the names of the
-actions in the groupb. </p>
+actions in the group. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -346,8 +346,8 @@ fields (as indicated by having a non-<a href="../glib-Standard-Macros.html#NULL:
 filled.  If the action doesn't exist, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> is returned and the
 fields may or may not have been modified.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.3.10"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-query-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -372,28 +372,28 @@ fields may or may not have been modified.</p>
 <tr>
 <td class="parameter_name"><p>parameter_type</p></td>
 <td class="parameter_description"><p> the parameter type, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none needed. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state_type</p></td>
 <td class="parameter_description"><p> the state type, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if stateless. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state_hint</p></td>
 <td class="parameter_description"><p> the state hint, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if none. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>state</p></td>
 <td class="parameter_description"><p> the current state, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if stateless. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.3.11"></a><h4>Returns</h4>
+<a name="g-action-group-query-action.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the action exists, else <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -407,8 +407,8 @@ g_action_group_has_action (<em class="parameter"><code><a class="link" href="GAc
 <p>Checks if the named action exists within <em class="parameter"><code>action_group</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-has-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -429,7 +429,7 @@ g_action_group_has_action (<em class="parameter"><code><a class="link" href="GAc
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.4.6"></a><h4>Returns</h4>
+<a name="g-action-group-has-action.returns"></a><h4>Returns</h4>
 <p> whether the named action exists</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -445,8 +445,8 @@ g_action_group_get_action_enabled (<em class="parameter"><code><a class="link" h
 <p>An action must be enabled in order to be activated or in order to
 have its state changed from outside callers.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-get-action-enabled.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -467,7 +467,7 @@ have its state changed from outside callers.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.5.7"></a><h4>Returns</h4>
+<a name="g-action-group-get-action-enabled.returns"></a><h4>Returns</h4>
 <p> whether or not the action is currently enabled</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -491,8 +491,8 @@ by this function.</p>
 possible for an action to be removed and for a new action to be added
 with the same name but a different parameter type.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.6.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-get-action-parameter-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -513,7 +513,7 @@ with the same name but a different parameter type.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.6.9"></a><h4>Returns</h4>
+<a name="g-action-group-get-action-parameter-type.returns"></a><h4>Returns</h4>
 <p> the parameter type. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
@@ -540,8 +540,8 @@ and you must not call <a class="link" href="GActionGroup.html#g-action-group-cha
 possible for an action to be removed and for a new action to be added
 with the same name but a different state type.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.7.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-get-action-state-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -562,7 +562,7 @@ with the same name but a different state type.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.7.9"></a><h4>Returns</h4>
+<a name="g-action-group-get-action-state-type.returns"></a><h4>Returns</h4>
 <p> the state type, if the action is stateful. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
@@ -590,8 +590,8 @@ within the range may fail.</p>
 <p>The return value (if non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>) should be freed with
 <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a> when it is no longer required.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.8.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-get-action-state-hint.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -612,7 +612,7 @@ within the range may fail.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.8.10"></a><h4>Returns</h4>
+<a name="g-action-group-get-action-state-hint.returns"></a><h4>Returns</h4>
 <p> the state range hint. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -632,8 +632,8 @@ given by <a class="link" href="GActionGroup.html#g-action-group-get-action-state
 <p>The return value (if non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>) should be freed with
 <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a> when it is no longer required.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.9.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-get-action-state.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -654,7 +654,7 @@ given by <a class="link" href="GActionGroup.html#g-action-group-get-action-state
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.9.8"></a><h4>Returns</h4>
+<a name="g-action-group-get-action-state.returns"></a><h4>Returns</h4>
 <p> the current state of the action. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
@@ -681,8 +681,8 @@ See <a class="link" href="GActionGroup.html#g-action-group-get-action-state-hint
 <p>If the <em class="parameter"><code>value</code></em>
  GVariant is floating, it is consumed.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.10.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-change-action-state.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -725,8 +725,8 @@ parameters then <em class="parameter"><code>parameter</code></em>
  must be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.  See
 <a class="link" href="GActionGroup.html#g-action-group-get-action-parameter-type" title="g_action_group_get_action_parameter_type ()"><code class="function">g_action_group_get_action_parameter_type()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.11.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-activate-action.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -746,7 +746,7 @@ parameters then <em class="parameter"><code>parameter</code></em>
 <tr>
 <td class="parameter_name"><p>parameter</p></td>
 <td class="parameter_description"><p> parameters to the activation. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -763,8 +763,8 @@ g_action_group_action_added (<em class="parameter"><code><a class="link" href="G
 .</p>
 <p>This function should only be called by <a class="link" href="GActionGroup.html" title="GActionGroup"><span class="type">GActionGroup</span></a> implementations.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-action-added.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -796,8 +796,8 @@ g_action_group_action_removed (<em class="parameter"><code><a class="link" href=
 .</p>
 <p>This function should only be called by <a class="link" href="GActionGroup.html" title="GActionGroup"><span class="type">GActionGroup</span></a> implementations.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.13.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-action-removed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -830,8 +830,8 @@ g_action_group_action_enabled_changed (<em class="parameter"><code><a class="lin
 .</p>
 <p>This function should only be called by <a class="link" href="GActionGroup.html" title="GActionGroup"><span class="type">GActionGroup</span></a> implementations.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-action-enabled-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -869,8 +869,8 @@ g_action_group_action_state_changed (<em class="parameter"><code><a class="link"
 .</p>
 <p>This function should only be called by <a class="link" href="GActionGroup.html" title="GActionGroup"><span class="type">GActionGroup</span></a> implementations.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.12.15.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-action-group-action-state-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -965,19 +965,14 @@ using the following functions.</p>
 </pre>
 <p>The virtual function table for <a class="link" href="GActionGroup.html" title="GActionGroup"><span class="type">GActionGroup</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.13.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionGroupInterface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GActionGroupInterface.g-iface"></a>g_iface</code></em>;</p></td>
-<td> </td>
-<td> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GActionGroupInterface.has-action"></a>has_action</code></em> ()</p></td>
 <td class="struct_member_description"><p>the virtual function pointer for <a class="link" href="GActionGroup.html#g-action-group-has-action" title="g_action_group_has_action ()"><code class="function">g_action_group_has_action()</code></a></p></td>
@@ -1066,8 +1061,8 @@ user_function (<a class="link" href="GActionGroup.html" title="GActionGroup"><sp
 This signal is emitted after the action has been added
 and is now visible.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.14.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionGroup-action-added.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1106,8 +1101,8 @@ user_function (<a class="link" href="GActionGroup.html" title="GActionGroup"><sp
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>      user_data)</pre>
 <p>Signals that the enabled status of the named action has changed.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.14.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionGroup-action-enabled-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1152,8 +1147,8 @@ user_function (<a class="link" href="GActionGroup.html" title="GActionGroup"><sp
 This signal is emitted before the action is removed, so the action
 is still visible and can be queried from the signal handler.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.14.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionGroup-action-removed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1192,8 +1187,8 @@ user_function (<a class="link" href="GActionGroup.html" title="GActionGroup"><sp
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>      user_data)</pre>
 <p>Signals that the state of the named action has changed.</p>
 <div class="refsect3">
-<a name="id-1.4.24.4.14.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GActionGroup-action-state-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1234,6 +1229,6 @@ user_function (<a class="link" href="GActionGroup.html" title="GActionGroup"><sp
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

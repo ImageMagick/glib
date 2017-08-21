@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>gpollableutils: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="streaming.html" title="Streaming I/O">
 <link rel="prev" href="GPollableOutputStream.html" title="GPollableOutputStream">
 <link rel="next" href="types.html" title="File types and applications">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-gpollableutils.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -111,8 +111,8 @@
 returned by <a class="link" href="GPollableInputStream.html#g-pollable-input-stream-create-source" title="g_pollable_input_stream_create_source ()"><code class="function">g_pollable_input_stream_create_source()</code></a> and
 <a class="link" href="GPollableOutputStream.html#g-pollable-output-stream-create-source" title="g_pollable_output_stream_create_source ()"><code class="function">g_pollable_output_stream_create_source()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GPollableSourceFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -133,7 +133,7 @@ returned by <a class="link" href="GPollableInputStream.html#g-pollable-input-str
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.2.6"></a><h4>Returns</h4>
+<a name="GPollableSourceFunc.returns"></a><h4>Returns</h4>
 <p> it should return <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the source should be removed.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-28.html#api-index-2.28">2.28</a></p>
@@ -149,8 +149,8 @@ type <a class="link" href="gio-gpollableutils.html#GPollableSourceFunc" title="G
 anything on its own; use <a href="../glib-The-Main-Event-Loop.html#g-source-add-child-source"><code class="function">g_source_add_child_source()</code></a> to add other
 sources to it to cause it to trigger.</p>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-source-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -164,7 +164,7 @@ sources to it to cause it to trigger.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.3.6"></a><h4>Returns</h4>
+<a name="g-pollable-source-new.returns"></a><h4>Returns</h4>
 <p> the new <a href="../glib-The-Main-Event-Loop.html#GSource"><span class="type">GSource</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -184,8 +184,8 @@ implementations. Creates a new <a href="../glib-The-Main-Event-Loop.html#GSource
 dummy callback), and <em class="parameter"><code>cancellable</code></em>
 , if they are non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-source-new-full.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -201,18 +201,18 @@ new source. </p></td>
 <tr>
 <td class="parameter_name"><p>child_source</p></td>
 <td class="parameter_description"><p> optional child source to attach. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> to attach. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.4.6"></a><h4>Returns</h4>
+<a name="g-pollable-source-new-full.returns"></a><h4>Returns</h4>
 <p> the new <a href="../glib-The-Main-Event-Loop.html#GSource"><span class="type">GSource</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -244,8 +244,8 @@ returns <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">T
 <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, then <em class="parameter"><code>stream</code></em>
  does not need to be a <a class="link" href="GPollableInputStream.html" title="GPollableInputStream"><span class="type">GPollableInputStream</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-stream-read.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -276,7 +276,7 @@ read data into. </p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -287,7 +287,7 @@ read data into. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.5.7"></a><h4>Returns</h4>
+<a name="g-pollable-stream-read.returns"></a><h4>Returns</h4>
 <p> the number of bytes read, or -1 on error.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-34.html#api-index-2.34">2.34</a></p>
@@ -319,8 +319,8 @@ behavior is undefined. If <em class="parameter"><code>blocking</code></em>
  does not
 need to be a <a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-stream-write.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -351,7 +351,7 @@ containing the data to write. </p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -362,7 +362,7 @@ containing the data to write. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.6.7"></a><h4>Returns</h4>
+<a name="g-pollable-stream-write.returns"></a><h4>Returns</h4>
 <p> the number of bytes written, or -1 on error.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-34.html#api-index-2.34">2.34</a></p>
@@ -405,8 +405,8 @@ behavior is undefined. If <em class="parameter"><code>blocking</code></em>
  does not
 need to be a <a class="link" href="GPollableOutputStream.html" title="GPollableOutputStream"><span class="type">GPollableOutputStream</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.7.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-stream-write-all.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -443,7 +443,7 @@ written to the stream. </p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> optional <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> object, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to ignore. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -454,7 +454,7 @@ written to the stream. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.27.6.7.9"></a><h4>Returns</h4>
+<a name="g-pollable-stream-write-all.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if there was an error</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-34.html#api-index-2.34">2.34</a></p>
@@ -465,6 +465,6 @@ written to the stream. </p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

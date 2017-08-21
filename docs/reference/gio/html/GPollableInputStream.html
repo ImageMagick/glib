@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GPollableInputStream: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="streaming.html" title="Streaming I/O">
 <link rel="prev" href="gio-GConverterOutputstream.html" title="GConverterOutputstream">
 <link rel="next" href="GPollableOutputStream.html" title="GPollableOutputStream">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GPollableInputStream.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -79,7 +79,7 @@
 </div>
 <div class="refsect1">
 <a name="GPollableInputStream.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -98,7 +98,7 @@
 </div>
 <div class="refsect1">
 <a name="GPollableInputStream.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GPollableInputStream
 </pre>
 </div>
@@ -140,8 +140,8 @@ other <a class="link" href="GPollableInputStream.html" title="GPollableInputStre
 <p>For any given stream, the value returned by this method is constant;
 a stream cannot switch from pollable to non-pollable or vice versa.</p>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-input-stream-can-poll.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -155,7 +155,7 @@ a stream cannot switch from pollable to non-pollable or vice versa.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.2.7"></a><h4>Returns</h4>
+<a name="g-pollable-input-stream-can-poll.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>stream</code></em>
 is pollable, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if not.</p>
 </div>
@@ -175,8 +175,8 @@ non-blocking behavior, you should always use
 <a class="link" href="GPollableInputStream.html#g-pollable-input-stream-read-nonblocking" title="g_pollable_input_stream_read_nonblocking ()"><code class="function">g_pollable_input_stream_read_nonblocking()</code></a>, which will return a
 <a class="link" href="gio-GIOError.html#G-IO-ERROR-WOULD-BLOCK:CAPS"><code class="literal">G_IO_ERROR_WOULD_BLOCK</code></a> error rather than blocking.</p>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-input-stream-is-readable.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -190,7 +190,7 @@ non-blocking behavior, you should always use
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.3.7"></a><h4>Returns</h4>
+<a name="g-pollable-input-stream-is-readable.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>stream</code></em>
 is readable, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if not. If an error
 has occurred on <em class="parameter"><code>stream</code></em>
@@ -216,8 +216,8 @@ the stream may not actually be readable even after the source
 triggers, so you should use <a class="link" href="GPollableInputStream.html#g-pollable-input-stream-read-nonblocking" title="g_pollable_input_stream_read_nonblocking ()"><code class="function">g_pollable_input_stream_read_nonblocking()</code></a>
 rather than <a class="link" href="GInputStream.html#g-input-stream-read" title="g_input_stream_read ()"><code class="function">g_input_stream_read()</code></a> from the callback.</p>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-input-stream-create-source.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -232,13 +232,13 @@ rather than <a class="link" href="GInputStream.html#g-input-stream-read" title="
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.4.7"></a><h4>Returns</h4>
+<a name="g-pollable-input-stream-create-source.returns"></a><h4>Returns</h4>
 <p> a new <a href="../glib-The-Main-Event-Loop.html#GSource"><span class="type">GSource</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -273,8 +273,8 @@ may happen if you call this method after a source triggers due
 to having been cancelled.</p>
 <p>Virtual: read_nonblocking</p>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.5.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-pollable-input-stream-read-nonblocking.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -301,7 +301,7 @@ bytes long). </p></td>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -312,7 +312,7 @@ bytes long). </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.25.10.5.8"></a><h4>Returns</h4>
+<a name="g-pollable-input-stream-read-nonblocking.returns"></a><h4>Returns</h4>
 <p> the number of bytes read, or -1 on error (including
 <a class="link" href="gio-GIOError.html#G-IO-ERROR-WOULD-BLOCK:CAPS"><code class="literal">G_IO_ERROR_WOULD_BLOCK</code></a>).</p>
 </div>
@@ -356,19 +356,14 @@ to override it if it is possible that your <em class="parameter"><code>is_readab
 implementation may return <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> when the stream is not actually
 readable.</p>
 <div class="refsect3">
-<a name="id-1.4.7.25.11.3.7"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GPollableInputStreamInterface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GPollableInputStreamInterface.g-iface"></a>g_iface</code></em>;</p></td>
-<td class="struct_member_description"><p>The parent interface.</p></td>
-<td class="struct_member_annotations"> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GPollableInputStreamInterface.can-poll"></a>can_poll</code></em> ()</p></td>
 <td class="struct_member_description"><p>Checks if the <a class="link" href="GPollableInputStream.html" title="GPollableInputStream"><span class="type">GPollableInputStream</span></a> instance is actually pollable</p></td>
@@ -402,6 +397,6 @@ readable.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GProxyResolver: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="resolver.html" title="DNS resolution">
 <link rel="prev" href="GResolver.html" title="GResolver">
 <link rel="next" href="GSimpleProxyResolver.html" title="GSimpleProxyResolver">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GProxyResolver.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -87,7 +87,7 @@
 </div>
 <div class="refsect1">
 <a name="GProxyResolver.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -110,7 +110,7 @@
 </div>
 <div class="refsect1">
 <a name="GProxyResolver.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GProxyResolver
 </pre>
 </div>
@@ -136,6 +136,9 @@ GProxyResolver is implemented by
 <p><a class="link" href="GProxyResolver.html" title="GProxyResolver"><span class="type">GProxyResolver</span></a> provides synchronous and asynchronous network proxy
 resolution. <a class="link" href="GProxyResolver.html" title="GProxyResolver"><span class="type">GProxyResolver</span></a> is used within <a class="link" href="GSocketClient.html" title="GSocketClient"><span class="type">GSocketClient</span></a> through
 the method <a class="link" href="GSocketConnectable.html#g-socket-connectable-proxy-enumerate" title="g_socket_connectable_proxy_enumerate ()"><code class="function">g_socket_connectable_proxy_enumerate()</code></a>.</p>
+<p>Implementations of <a class="link" href="GProxyResolver.html" title="GProxyResolver"><span class="type">GProxyResolver</span></a> based on libproxy and GNOME settings can
+be found in glib-networking. GIO comes with an implementation for use inside
+Flatpak portals.</p>
 </div>
 <div class="refsect1">
 <a name="GProxyResolver.functions_details"></a><h2>Functions</h2>
@@ -145,7 +148,7 @@ the method <a class="link" href="GSocketConnectable.html#g-socket-connectable-pr
 g_proxy_resolver_get_default (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Gets the default <a class="link" href="GProxyResolver.html" title="GProxyResolver"><span class="type">GProxyResolver</span></a> for the system.</p>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.2.5"></a><h4>Returns</h4>
+<a name="g-proxy-resolver-get-default.returns"></a><h4>Returns</h4>
 <p> the default <a class="link" href="GProxyResolver.html" title="GProxyResolver"><span class="type">GProxyResolver</span></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -161,8 +164,8 @@ g_proxy_resolver_is_supported (<em class="parameter"><code><a class="link" href=
 internally; <a class="link" href="GProxyResolver.html#g-proxy-resolver-get-default" title="g_proxy_resolver_get_default ()"><code class="function">g_proxy_resolver_get_default()</code></a> will only return a proxy
 resolver that returns <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> for this method.)</p>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-proxy-resolver-is-supported.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -176,7 +179,7 @@ resolver that returns <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code cla
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.3.6"></a><h4>Returns</h4>
+<a name="g-proxy-resolver-is-supported.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>resolver</code></em>
 is supported.</p>
 </div>
@@ -205,8 +208,8 @@ In this case, the resolver might still return a generic proxy type
 Direct connection should not be attempted unless it is part of the
 returned array of proxies.</p>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.4.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-proxy-resolver-lookup.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -226,7 +229,7 @@ returned array of proxies.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -237,7 +240,7 @@ returned array of proxies.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.4.8"></a><h4>Returns</h4>
+<a name="g-proxy-resolver-lookup.returns"></a><h4>Returns</h4>
 <p> A
 NULL-terminated array of proxy URIs. Must be freed
 with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a>. </p>
@@ -257,8 +260,8 @@ g_proxy_resolver_lookup_async (<em class="parameter"><code><a class="link" href=
 <p>Asynchronous lookup of proxy. See <a class="link" href="GProxyResolver.html#g-proxy-resolver-lookup" title="g_proxy_resolver_lookup ()"><code class="function">g_proxy_resolver_lookup()</code></a> for more
 details.</p>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-proxy-resolver-lookup-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -278,7 +281,7 @@ details.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -307,8 +310,8 @@ g_proxy_resolver_lookup_finish (<em class="parameter"><code><a class="link" href
 <a class="link" href="GProxyResolver.html#g-proxy-resolver-lookup-async" title="g_proxy_resolver_lookup_async ()"><code class="function">g_proxy_resolver_lookup_async()</code></a> is complete. See
 <a class="link" href="GProxyResolver.html#g-proxy-resolver-lookup" title="g_proxy_resolver_lookup ()"><code class="function">g_proxy_resolver_lookup()</code></a> for more details.</p>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-proxy-resolver-lookup-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -334,7 +337,7 @@ g_proxy_resolver_lookup_finish (<em class="parameter"><code><a class="link" href
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.16.3.10.6.6"></a><h4>Returns</h4>
+<a name="g-proxy-resolver-lookup-finish.returns"></a><h4>Returns</h4>
 <p> A
 NULL-terminated array of proxy URIs. Must be freed
 with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a>. </p>
@@ -378,19 +381,14 @@ with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="fun
 </pre>
 <p>The virtual function table for <a class="link" href="GProxyResolver.html" title="GProxyResolver"><span class="type">GProxyResolver</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.16.3.11.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GProxyResolverInterface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GProxyResolverInterface.g-iface"></a>g_iface</code></em>;</p></td>
-<td class="struct_member_description"><p>The parent interface.</p></td>
-<td class="struct_member_annotations"> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GProxyResolverInterface.is-supported"></a>is_supported</code></em> ()</p></td>
 <td class="struct_member_description"><p>the virtual function pointer for <a class="link" href="GProxyResolver.html#g-proxy-resolver-is-supported" title="g_proxy_resolver_is_supported ()"><code class="function">g_proxy_resolver_is_supported()</code></a></p></td>
@@ -428,6 +426,6 @@ See Extending GIO.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

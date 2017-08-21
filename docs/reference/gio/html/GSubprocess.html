@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSubprocess: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="subprocesses.html" title="Subprocesses">
 <link rel="prev" href="subprocesses.html" title="Subprocesses">
 <link rel="next" href="GSubprocessLauncher.html" title="GSubprocess Launcher">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSubprocess.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -254,7 +254,7 @@
 </div>
 <div class="refsect1">
 <a name="GSubprocess.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -262,7 +262,7 @@
 </colgroup>
 <tbody>
 <tr>
-<td class="property_type"><a href="../gobject-Boxed-Types.html#GStrv"><span class="type">GStrv</span></a></td>
+<td class="property_type"><a href="../glib-String-Utility-Functions.html#GStrv"><span class="type">GStrv</span></a></td>
 <td class="property_name"><a class="link" href="GSubprocess.html#GSubprocess--argv" title="The “argv” property">argv</a></td>
 <td class="property_flags">Write / Construct Only</td>
 </tr>
@@ -276,7 +276,7 @@
 </div>
 <div class="refsect1">
 <a name="GSubprocess.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -376,8 +376,8 @@ stdout/stderr will be inherited from the parent.  You can use
 <p>The argument list must be terminated with <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -392,7 +392,7 @@ stdout/stderr will be inherited from the parent.  You can use
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> return location for an error, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>argv0</p></td>
@@ -408,7 +408,7 @@ stdout/stderr will be inherited from the parent.  You can use
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.2.8"></a><h4>Returns</h4>
+<a name="g-subprocess-new.returns"></a><h4>Returns</h4>
 <p> A newly created <a class="link" href="GSubprocess.html" title="GSubprocess"><span class="type">GSubprocess</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error (and <em class="parameter"><code>error</code></em>
 will be set)</p>
 </div>
@@ -425,8 +425,8 @@ g_subprocess_newv (<em class="parameter"><code>const <a href="../glib-Basic-Type
 <p>The argument list is expected to be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_subprocess_new]</span></p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.3.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-newv.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -446,13 +446,13 @@ g_subprocess_newv (<em class="parameter"><code>const <a href="../glib-Basic-Type
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> return location for an error, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.3.8"></a><h4>Returns</h4>
+<a name="g-subprocess-newv.returns"></a><h4>Returns</h4>
 <p> A newly created <a class="link" href="GSubprocess.html" title="GSubprocess"><span class="type">GSubprocess</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error (and <em class="parameter"><code>error</code></em>
 will be set)</p>
 </div>
@@ -466,8 +466,8 @@ g_subprocess_get_identifier (<em class="parameter"><code><a class="link" href="G
 <p>On UNIX, returns the process ID as a decimal string.
 On Windows, returns the result of <code class="function">GetProcessId()</code> also as a string.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-identifier.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -492,8 +492,8 @@ to the stdin of <em class="parameter"><code>subprocess</code></em>
 <p>The process must have been created with
 <a class="link" href="GSubprocess.html#G-SUBPROCESS-FLAGS-STDIN-PIPE:CAPS"><code class="literal">G_SUBPROCESS_FLAGS_STDIN_PIPE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-stdin-pipe.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -507,7 +507,7 @@ to the stdin of <em class="parameter"><code>subprocess</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.5.7"></a><h4>Returns</h4>
+<a name="g-subprocess-get-stdin-pipe.returns"></a><h4>Returns</h4>
 <p> the stdout pipe. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -524,8 +524,8 @@ g_subprocess_get_stdout_pipe (<em class="parameter"><code><a class="link" href="
 <p>The process must have been created with
 <a class="link" href="GSubprocess.html#G-SUBPROCESS-FLAGS-STDOUT-PIPE:CAPS"><code class="literal">G_SUBPROCESS_FLAGS_STDOUT_PIPE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-stdout-pipe.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -539,7 +539,7 @@ g_subprocess_get_stdout_pipe (<em class="parameter"><code><a class="link" href="
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.6.7"></a><h4>Returns</h4>
+<a name="g-subprocess-get-stdout-pipe.returns"></a><h4>Returns</h4>
 <p> the stdout pipe. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -556,8 +556,8 @@ g_subprocess_get_stderr_pipe (<em class="parameter"><code><a class="link" href="
 <p>The process must have been created with
 <a class="link" href="GSubprocess.html#G-SUBPROCESS-FLAGS-STDERR-PIPE:CAPS"><code class="literal">G_SUBPROCESS_FLAGS_STDERR_PIPE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.7.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-stderr-pipe.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -571,7 +571,7 @@ g_subprocess_get_stderr_pipe (<em class="parameter"><code><a class="link" href="
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.7.7"></a><h4>Returns</h4>
+<a name="g-subprocess-get-stderr-pipe.returns"></a><h4>Returns</h4>
 <p> the stderr pipe. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -594,8 +594,8 @@ abnormal termination.  See <a class="link" href="GSubprocess.html#g-subprocess-w
  doesn't kill the subprocess.  Call
 <a class="link" href="GSubprocess.html#g-subprocess-force-exit" title="g_subprocess_force_exit ()"><code class="function">g_subprocess_force_exit()</code></a> if it is desirable.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.8.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-wait.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -621,7 +621,7 @@ abnormal termination.  See <a class="link" href="GSubprocess.html#g-subprocess-w
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.8.9"></a><h4>Returns</h4>
+<a name="g-subprocess-wait.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>cancellable</code></em>
 was cancelled</p>
 </div>
@@ -638,8 +638,8 @@ g_subprocess_wait_async (<em class="parameter"><code><a class="link" href="GSubp
 <p>Wait for the subprocess to terminate.</p>
 <p>This is the asynchronous version of <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-wait-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -682,8 +682,8 @@ g_subprocess_wait_finish (<em class="parameter"><code><a class="link" href="GSub
 <p>Collects the result of a previous call to
 <a class="link" href="GSubprocess.html#g-subprocess-wait-async" title="g_subprocess_wait_async ()"><code class="function">g_subprocess_wait_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-wait-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -709,7 +709,7 @@ g_subprocess_wait_finish (<em class="parameter"><code><a class="link" href="GSub
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.10.6"></a><h4>Returns</h4>
+<a name="g-subprocess-wait-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if successful, or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> with <em class="parameter"><code>error</code></em>
 set</p>
 </div>
@@ -724,8 +724,8 @@ g_subprocess_wait_check (<em class="parameter"><code><a class="link" href="GSubp
                          <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Combines <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> with <a href="../glib-Spawning-Processes.html#g-spawn-check-exit-status"><code class="function">g_spawn_check_exit_status()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-wait-check.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -751,7 +751,7 @@ g_subprocess_wait_check (<em class="parameter"><code><a class="link" href="GSubp
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.11.6"></a><h4>Returns</h4>
+<a name="g-subprocess-wait-check.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if process exited abnormally, or
 <em class="parameter"><code>cancellable</code></em>
 was cancelled</p>
@@ -769,8 +769,8 @@ g_subprocess_wait_check_async (<em class="parameter"><code><a class="link" href=
 <p>Combines <a class="link" href="GSubprocess.html#g-subprocess-wait-async" title="g_subprocess_wait_async ()"><code class="function">g_subprocess_wait_async()</code></a> with <a href="../glib-Spawning-Processes.html#g-spawn-check-exit-status"><code class="function">g_spawn_check_exit_status()</code></a>.</p>
 <p>This is the asynchronous version of <a class="link" href="GSubprocess.html#g-subprocess-wait-check" title="g_subprocess_wait_check ()"><code class="function">g_subprocess_wait_check()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-wait-check-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -813,8 +813,8 @@ g_subprocess_wait_check_finish (<em class="parameter"><code><a class="link" href
 <p>Collects the result of a previous call to
 <a class="link" href="GSubprocess.html#g-subprocess-wait-check-async" title="g_subprocess_wait_check_async ()"><code class="function">g_subprocess_wait_check_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-wait-check-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -840,7 +840,7 @@ g_subprocess_wait_check_finish (<em class="parameter"><code><a class="link" href
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.13.6"></a><h4>Returns</h4>
+<a name="g-subprocess-wait-check-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if successful, or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> with <em class="parameter"><code>error</code></em>
 set</p>
 </div>
@@ -857,8 +857,8 @@ way of the <code class="function">exit()</code> system call or return from <code
 <p>It is an error to call this function before <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> has
 returned.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-successful.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -872,7 +872,7 @@ returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.14.7"></a><h4>Returns</h4>
+<a name="g-subprocess-get-successful.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the process exited cleanly with a exit status of 0</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -888,8 +888,8 @@ or return from <code class="function">main()</code>).</p>
 <p>It is an error to call this function before <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> has
 returned.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.15.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-if-exited.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -903,7 +903,7 @@ returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.15.8"></a><h4>Returns</h4>
+<a name="g-subprocess-get-if-exited.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the case of a normal exit</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -920,8 +920,8 @@ return value from main.</p>
 <p>It is an error to call this function before <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> and
 unless <a class="link" href="GSubprocess.html#g-subprocess-get-if-exited" title="g_subprocess_get_if_exited ()"><code class="function">g_subprocess_get_if_exited()</code></a> returned <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.16.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-exit-status.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -935,7 +935,7 @@ unless <a class="link" href="GSubprocess.html#g-subprocess-get-if-exited" title=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.16.8"></a><h4>Returns</h4>
+<a name="g-subprocess-get-exit-status.returns"></a><h4>Returns</h4>
 <p> the exit status</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -950,8 +950,8 @@ g_subprocess_get_if_signaled (<em class="parameter"><code><a class="link" href="
 <p>It is an error to call this function before <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> has
 returned.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.17.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-if-signaled.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -965,7 +965,7 @@ returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.17.8"></a><h4>Returns</h4>
+<a name="g-subprocess-get-if-signaled.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the case of termination due to a signal</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -981,8 +981,8 @@ that it terminated due to a signal.</p>
 <p>It is an error to call this function before <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> and
 unless <a class="link" href="GSubprocess.html#g-subprocess-get-if-signaled" title="g_subprocess_get_if_signaled ()"><code class="function">g_subprocess_get_if_signaled()</code></a> returned <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.18.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-term-sig.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -996,7 +996,7 @@ unless <a class="link" href="GSubprocess.html#g-subprocess-get-if-signaled" titl
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.18.8"></a><h4>Returns</h4>
+<a name="g-subprocess-get-term-sig.returns"></a><h4>Returns</h4>
 <p> the signal causing termination</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -1015,8 +1015,8 @@ followed by <a class="link" href="GSubprocess.html#g-subprocess-get-exit-status"
 <p>It is an error to call this function before <a class="link" href="GSubprocess.html#g-subprocess-wait" title="g_subprocess_wait ()"><code class="function">g_subprocess_wait()</code></a> has
 returned.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.19.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-get-status.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1030,7 +1030,7 @@ returned.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.19.9"></a><h4>Returns</h4>
+<a name="g-subprocess-get-status.returns"></a><h4>Returns</h4>
 <p> the (meaningless) <code class="function">waitpid()</code> exit status from the kernel</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -1048,8 +1048,8 @@ running.</p>
 be signalled.</p>
 <p>This API is not available on Windows.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.20.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-send-signal.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1083,8 +1083,8 @@ however, you can use <a class="link" href="GSubprocess.html#g-subprocess-wait" t
 the process after calling this function.</p>
 <p>On Unix, this function sends <code class="literal">SIGKILL</code>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.21.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-force-exit.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1153,8 +1153,8 @@ even if the operation was cancelled.  You should especially not
 attempt to interact with the pipes while the operation is in progress
 (either from another thread or if using the asynchronous version).</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.22.13"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-communicate.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1169,7 +1169,7 @@ attempt to interact with the pipes while the operation is in progress
 <tr>
 <td class="parameter_name"><p>stdin_buf</p></td>
 <td class="parameter_description"><p> data to send to the stdin of the subprocess, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
@@ -1195,7 +1195,7 @@ attempt to interact with the pipes while the operation is in progress
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.22.14"></a><h4>Returns</h4>
+<a name="g-subprocess-communicate.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if successful</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -1212,8 +1212,8 @@ g_subprocess_communicate_async (<em class="parameter"><code><a class="link" href
 <p>Asynchronous version of <a class="link" href="GSubprocess.html#g-subprocess-communicate" title="g_subprocess_communicate ()"><code class="function">g_subprocess_communicate()</code></a>.  Complete
 invocation with <a class="link" href="GSubprocess.html#g-subprocess-communicate-finish" title="g_subprocess_communicate_finish ()"><code class="function">g_subprocess_communicate_finish()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.23.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-communicate-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1228,12 +1228,12 @@ invocation with <a class="link" href="GSubprocess.html#g-subprocess-communicate-
 <tr>
 <td class="parameter_name"><p>stdin_buf</p></td>
 <td class="parameter_description"><p> Input data, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> Cancellable. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1260,8 +1260,8 @@ g_subprocess_communicate_finish (<em class="parameter"><code><a class="link" hre
                                  <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Complete an invocation of <a class="link" href="GSubprocess.html#g-subprocess-communicate-async" title="g_subprocess_communicate_async ()"><code class="function">g_subprocess_communicate_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.24.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-communicate-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1310,8 +1310,8 @@ g_subprocess_communicate_utf8 (<em class="parameter"><code><a class="link" href=
 <p>Like <a class="link" href="GSubprocess.html#g-subprocess-communicate" title="g_subprocess_communicate ()"><code class="function">g_subprocess_communicate()</code></a>, but validates the output of the
 process as UTF-8, and returns it as a regular NUL terminated string.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.25.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-communicate-utf8.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1326,7 +1326,7 @@ process as UTF-8, and returns it as a regular NUL terminated string.</p>
 <tr>
 <td class="parameter_name"><p>stdin_buf</p></td>
 <td class="parameter_description"><p> data to send to the stdin of the subprocess, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
@@ -1364,8 +1364,8 @@ g_subprocess_communicate_utf8_async (<em class="parameter"><code><a class="link"
 <p>Asynchronous version of <a class="link" href="GSubprocess.html#g-subprocess-communicate-utf8" title="g_subprocess_communicate_utf8 ()"><code class="function">g_subprocess_communicate_utf8()</code></a>.  Complete
 invocation with <a class="link" href="GSubprocess.html#g-subprocess-communicate-utf8-finish" title="g_subprocess_communicate_utf8_finish ()"><code class="function">g_subprocess_communicate_utf8_finish()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.26.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-communicate-utf8-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1380,7 +1380,7 @@ invocation with <a class="link" href="GSubprocess.html#g-subprocess-communicate-
 <tr>
 <td class="parameter_name"><p>stdin_buf</p></td>
 <td class="parameter_description"><p> Input data, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
@@ -1412,8 +1412,8 @@ g_subprocess_communicate_utf8_finish (<em class="parameter"><code><a class="link
                                       <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Complete an invocation of <a class="link" href="GSubprocess.html#g-subprocess-communicate-utf8-async" title="g_subprocess_communicate_utf8_async ()"><code class="function">g_subprocess_communicate_utf8_async()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.10.27.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-subprocess-communicate-utf8-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1469,8 +1469,8 @@ corresponding descriptor from the calling process.</p>
 example, you may not request both <a class="link" href="GSubprocess.html#G-SUBPROCESS-FLAGS-STDOUT-PIPE:CAPS"><code class="literal">G_SUBPROCESS_FLAGS_STDOUT_PIPE</code></a> and
 <a class="link" href="GSubprocess.html#G-SUBPROCESS-FLAGS-STDOUT-SILENCE:CAPS"><code class="literal">G_SUBPROCESS_FLAGS_STDOUT_SILENCE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.12.2.11.3.6"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GSubprocessFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1564,7 +1564,7 @@ example, you may not request both <a class="link" href="GSubprocess.html#G-SUBPR
 <a name="GSubprocess.property-details"></a><h2>Property Details</h2>
 <div class="refsect2">
 <a name="GSubprocess--argv"></a><h3>The <code class="literal">“argv”</code> property</h3>
-<pre class="programlisting">  “argv”                     <a href="../gobject-Boxed-Types.html#GStrv"><span class="type">GStrv</span></a></pre>
+<pre class="programlisting">  “argv”                     <a href="../glib-String-Utility-Functions.html#GStrv"><span class="type">GStrv</span></a></pre>
 <p>Argument vector.</p>
 <p>Flags: Write / Construct Only</p>
 </div>
@@ -1582,6 +1582,6 @@ example, you may not request both <a class="link" href="GSubprocess.html#G-SUBPR
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

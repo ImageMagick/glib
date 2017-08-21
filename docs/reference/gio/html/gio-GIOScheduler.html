@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GIOScheduler: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="async.html" title="Asynchronous I/O">
 <link rel="prev" href="GTask.html" title="GTask">
 <link rel="next" href="GSimpleAsyncResult.html" title="GSimpleAsyncResult">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-GIOScheduler.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -84,7 +84,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-GIOScheduler.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -120,8 +120,8 @@ into the main event loop (<a href="../glib-The-Main-Event-Loop.html#GMainLoop"><
 
 to see if they have been cancelled.</p>
 <div class="refsect3">
-<a name="id-1.4.5.5.7.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GIOSchedulerJobFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -147,7 +147,7 @@ to see if they have been cancelled.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.5.7.2.7"></a><h4>Returns</h4>
+<a name="GIOSchedulerJobFunc.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if this function should be called again to
 complete the job, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the job is complete (or cancelled)</p>
 </div>
@@ -176,8 +176,8 @@ regardless whether the job was cancelled or has run to completion.</p>
 by calling <a class="link" href="GCancellable.html#g-cancellable-cancel" title="g_cancellable_cancel ()"><code class="function">g_cancellable_cancel()</code></a> or by calling 
 <a class="link" href="gio-GIOScheduler.html#g-io-scheduler-cancel-all-jobs" title="g_io_scheduler_cancel_all_jobs ()"><code class="function">g_io_scheduler_cancel_all_jobs()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.5.5.7.3.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-io-scheduler-push-job.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -199,7 +199,7 @@ by calling <a class="link" href="GCancellable.html#g-cancellable-cancel" title="
 <td class="parameter_name"><p>notify</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> for <em class="parameter"><code>user_data</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>io_priority</p></td>
@@ -247,8 +247,8 @@ g_io_scheduler_job_send_to_mainloop (<em class="parameter"><code><a class="link"
 that the job was started from, waiting for the result (and thus
 blocking the I/O job).</p>
 <div class="refsect3">
-<a name="id-1.4.5.5.7.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-io-scheduler-job-send-to-mainloop.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -275,13 +275,13 @@ blocking the I/O job).</p>
 <td class="parameter_name"><p>notify</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> for <em class="parameter"><code>user_data</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.5.5.7.5.7"></a><h4>Returns</h4>
+<a name="g-io-scheduler-job-send-to-mainloop.returns"></a><h4>Returns</h4>
 <p> The return value of <em class="parameter"><code>func</code></em>
 </p>
 </div>
@@ -312,8 +312,8 @@ on to this function you have to ensure that it is not freed before
 <a class="link" href="gio-GIOScheduler.html#g-io-scheduler-push-job" title="g_io_scheduler_push_job ()"><code class="function">g_io_scheduler_push_job()</code></a> or by using refcounting for <em class="parameter"><code>user_data</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.5.5.7.6.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-io-scheduler-job-send-to-mainloop-async.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -340,7 +340,7 @@ on to this function you have to ensure that it is not freed before
 <td class="parameter_name"><p>notify</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> for <em class="parameter"><code>user_data</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -357,6 +357,6 @@ on to this function you have to ensure that it is not freed before
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

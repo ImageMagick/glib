@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the licence, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -48,13 +48,13 @@ check_relocatable_schema (GSettingsSchema *schema,
 {
   if (schema == NULL)
     {
-      g_printerr (_("No such schema '%s'\n"), schema_id);
+      g_printerr (_("No such schema “%s”\n"), schema_id);
       return FALSE;
     }
 
   if (!is_relocatable_schema (schema))
     {
-      g_printerr (_("Schema '%s' is not relocatable "
+      g_printerr (_("Schema “%s” is not relocatable "
                     "(path must not be specified)\n"),
                   schema_id);
       return FALSE;
@@ -69,13 +69,13 @@ check_schema (GSettingsSchema *schema,
 {
   if (schema == NULL)
     {
-      g_printerr (_("No such schema '%s'\n"), schema_id);
+      g_printerr (_("No such schema “%s”\n"), schema_id);
       return FALSE;
     }
 
   if (is_relocatable_schema (schema))
     {
-      g_printerr (_("Schema '%s' is relocatable "
+      g_printerr (_("Schema “%s” is relocatable "
                     "(path must be specified)\n"),
                   schema_id);
       return FALSE;
@@ -268,6 +268,16 @@ gsettings_list_recursively (void)
 
       g_strfreev (schemas);
     }
+}
+
+static void
+gsettings_description (void)
+{
+  const gchar *description;
+  description = g_settings_schema_key_get_description (global_schema_key);
+  if (description == NULL)
+    description = g_settings_schema_key_get_summary (global_schema_key);
+  g_print ("%s\n", description);
 }
 
 static void
@@ -562,6 +572,12 @@ gsettings_help (gboolean     requested,
       synopsis = N_("SCHEMA[:PATH] KEY");
     }
 
+  else if (strcmp (command, "describe") == 0)
+    {
+      description = _("Query the description for KEY");
+      synopsis = N_("SCHEMA[:PATH] KEY");
+    }
+
   else if (strcmp (command, "set") == 0)
     {
       description = _("Set the value of KEY to VALUE");
@@ -605,7 +621,7 @@ gsettings_help (gboolean     requested,
       g_string_append (string,
       _("Usage:\n"
         "  gsettings --version\n"
-        "  gsettings [--schemadir SCHEMADIR] COMMAND [ARGS...]\n"
+        "  gsettings [--schemadir SCHEMADIR] COMMAND [ARGS…]\n"
         "\n"
         "Commands:\n"
         "  help                      Show this information\n"
@@ -615,6 +631,7 @@ gsettings_help (gboolean     requested,
         "  list-children             List children of a schema\n"
         "  list-recursively          List keys and values, recursively\n"
         "  range                     Queries the range of a key\n"
+        "  describe                  Queries the description of a key\n"
         "  get                       Get the value of a key\n"
         "  set                       Set the value of a key\n"
         "  reset                     Reset the value of a key\n"
@@ -622,7 +639,7 @@ gsettings_help (gboolean     requested,
         "  writable                  Check if a key is writable\n"
         "  monitor                   Watch for changes\n"
         "\n"
-        "Use 'gsettings help COMMAND' to get detailed help.\n\n"));
+        "Use “gsettings help COMMAND” to get detailed help.\n\n"));
     }
   else
     {
@@ -697,7 +714,7 @@ main (int argc, char **argv)
   if (argc < 2)
     return gsettings_help (FALSE, NULL);
 
-  global_schema_source = g_settings_schema_source_ref (g_settings_schema_source_get_default ());
+  global_schema_source = g_settings_schema_source_get_default ();
 
   if (argc > 3 && g_str_equal (argv[1], "--schemadir"))
     {
@@ -705,7 +722,6 @@ main (int argc, char **argv)
       GError *error = NULL;
 
       global_schema_source = g_settings_schema_source_new_from_directory (argv[2], parent, FALSE, &error);
-      g_settings_schema_source_unref (parent);
 
       if (global_schema_source == NULL)
         {
@@ -719,6 +735,13 @@ main (int argc, char **argv)
       argv = argv + 2;
       argc -= 2;
     }
+  else if (global_schema_source == NULL)
+    {
+      g_printerr (_("No schemas installed\n"));
+      return 1;
+    }
+  else
+    g_settings_schema_source_ref (global_schema_source);
 
   need_settings = TRUE;
 
@@ -745,6 +768,12 @@ main (int argc, char **argv)
 
   else if ((argc == 2 || argc == 3) && strcmp (argv[1], "list-recursively") == 0)
     function = gsettings_list_recursively;
+
+  else if (argc == 4 && strcmp (argv[1], "describe") == 0)
+    {
+      need_settings = FALSE;
+      function = gsettings_description;
+    }
 
   else if (argc == 4 && strcmp (argv[1], "range") == 0)
     {
@@ -821,7 +850,7 @@ main (int argc, char **argv)
             {
               if (global_schema == NULL)
                 {
-                  g_printerr (_("No such schema '%s'\n"), parts[0]);
+                  g_printerr (_("No such schema “%s”\n"), parts[0]);
                   return 1;
                 }
             }
@@ -834,7 +863,7 @@ main (int argc, char **argv)
     {
       if (!g_settings_schema_has_key (global_schema, argv[3]))
         {
-          g_printerr (_("No such key '%s'\n"), argv[3]);
+          g_printerr (_("No such key “%s”\n"), argv[3]);
           return 1;
         }
 

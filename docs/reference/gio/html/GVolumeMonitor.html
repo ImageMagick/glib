@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GVolumeMonitor: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="volume_mon.html" title="Volumes and Drives">
 <link rel="prev" href="volume_mon.html" title="Volumes and Drives">
 <link rel="next" href="GVolume.html" title="GVolume">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GVolumeMonitor.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -102,7 +102,7 @@
 </div>
 <div class="refsect1">
 <a name="GVolumeMonitor.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -174,7 +174,7 @@
 </div>
 <div class="refsect1">
 <a name="GVolumeMonitor.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -220,7 +220,7 @@ thread-default-context active.</p>
 g_volume_monitor_get (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Gets the volume monitor used by gio.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.2.5"></a><h4>Returns</h4>
+<a name="g-volume-monitor-get.returns"></a><h4>Returns</h4>
 <p> a reference to the <a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"><span class="type">GVolumeMonitor</span></a> used by gio. Call
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when done with it. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -235,8 +235,8 @@ g_volume_monitor_get_connected_drives (<em class="parameter"><code><a class="lin
 <p>The returned list should be freed with <a href="../glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a>, after
 its elements have been unreffed with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-volume-monitor-get-connected-drives.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -250,7 +250,7 @@ its elements have been unreffed with <a href="../gobject-The-Base-Object-Type.ht
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.3.7"></a><h4>Returns</h4>
+<a name="g-volume-monitor-get-connected-drives.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of connected <a class="link" href="GDrive.html" title="GDrive"><span class="type">GDrive</span></a> objects. </p>
 <p><span class="annotation">[<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> GDrive][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -264,8 +264,8 @@ g_volume_monitor_get_volumes (<em class="parameter"><code><a class="link" href="
 <p>The returned list should be freed with <a href="../glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a>, after
 its elements have been unreffed with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.4.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-volume-monitor-get-volumes.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -279,7 +279,7 @@ its elements have been unreffed with <a href="../gobject-The-Base-Object-Type.ht
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.4.7"></a><h4>Returns</h4>
+<a name="g-volume-monitor-get-volumes.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> objects. </p>
 <p><span class="annotation">[<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> GVolume][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -293,8 +293,8 @@ g_volume_monitor_get_mounts (<em class="parameter"><code><a class="link" href="G
 <p>The returned list should be freed with <a href="../glib-Doubly-Linked-Lists.html#g-list-free"><code class="function">g_list_free()</code></a>, after
 its elements have been unreffed with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.5.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-volume-monitor-get-mounts.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -308,7 +308,7 @@ its elements have been unreffed with <a href="../gobject-The-Base-Object-Type.ht
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.5.7"></a><h4>Returns</h4>
+<a name="g-volume-monitor-get-mounts.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-Doubly-Linked-Lists.html#GList"><span class="type">GList</span></a> of <a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> objects. </p>
 <p><span class="annotation">[<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> GMount][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -353,8 +353,8 @@ associated with the <a class="link" href="GVolume.html" title="GVolume"><span cl
 is to return <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> objects representing entries in the users
 "favorite servers" list or similar.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.6.11"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-volume-monitor-adopt-orphan-mount.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -368,7 +368,7 @@ is to return <a class="link" href="GVolume.html" title="GVolume"><span class="ty
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.6.12"></a><h4>Returns</h4>
+<a name="g-volume-monitor-adopt-orphan-mount.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> object that is the parent for <em class="parameter"><code>mount</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 if no wants to adopt the <a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a>. </p>
@@ -383,8 +383,8 @@ g_volume_monitor_get_mount_for_uuid (<em class="parameter"><code><a class="link"
                                      <em class="parameter"><code>const <span class="type">char</span> *uuid</code></em>);</pre>
 <p>Finds a <a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> object by its UUID (see <a class="link" href="GMount.html#g-mount-get-uuid" title="g_mount_get_uuid ()"><code class="function">g_mount_get_uuid()</code></a>)</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-volume-monitor-get-mount-for-uuid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -405,7 +405,7 @@ g_volume_monitor_get_mount_for_uuid (<em class="parameter"><code><a class="link"
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.7.6"></a><h4>Returns</h4>
+<a name="g-volume-monitor-get-mount-for-uuid.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GMount.html" title="GMount"><span class="type">GMount</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no such mount is available.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -419,8 +419,8 @@ g_volume_monitor_get_volume_for_uuid (<em class="parameter"><code><a class="link
                                       <em class="parameter"><code>const <span class="type">char</span> *uuid</code></em>);</pre>
 <p>Finds a <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> object by its UUID (see <a class="link" href="GVolume.html#g-volume-get-uuid" title="g_volume_get_uuid ()"><code class="function">g_volume_get_uuid()</code></a>)</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-volume-monitor-get-volume-for-uuid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -441,7 +441,7 @@ g_volume_monitor_get_volume_for_uuid (<em class="parameter"><code><a class="link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.9.2.9.8.6"></a><h4>Returns</h4>
+<a name="g-volume-monitor-get-volume-for-uuid.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GVolume.html" title="GVolume"><span class="type">GVolume</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if no such volume is available.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -474,8 +474,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a drive changes.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-drive-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -511,8 +511,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a drive is connected to the system.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-drive-connected.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -548,8 +548,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a drive is disconnected from the system.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-drive-disconnected.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -586,8 +586,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
 <p>Emitted when the eject button is pressed on <em class="parameter"><code>drive</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-drive-eject-button.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -625,8 +625,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
 <p>Emitted when the stop button is pressed on <em class="parameter"><code>drive</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-drive-stop-button.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -663,8 +663,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a mount is added.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-mount-added.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -700,8 +700,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a mount changes.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-mount-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -737,8 +737,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a mount is about to be removed.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-mount-pre-unmount.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -774,8 +774,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a mount is removed.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-mount-removed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -811,8 +811,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a mountable volume is added to the system.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-volume-added.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -848,8 +848,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when mountable volume is changed.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-volume-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -885,8 +885,8 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
                <a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a>        user_data)</pre>
 <p>Emitted when a mountable volume is removed from the system.</p>
 <div class="refsect3">
-<a name="id-1.4.9.2.11.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GVolumeMonitor-volume-removed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -920,6 +920,6 @@ user_function (<a class="link" href="GVolumeMonitor.html" title="GVolumeMonitor"
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

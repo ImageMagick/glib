@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -137,7 +137,7 @@ g_malloc0 (gsize n_bytes)
 
 /**
  * g_realloc:
- * @mem: (allow-none): the memory to reallocate
+ * @mem: (nullable): the memory to reallocate
  * @n_bytes: new size of the memory in bytes
  * 
  * Reallocates the memory pointed to by @mem, so that it now has space for
@@ -175,7 +175,7 @@ g_realloc (gpointer mem,
 
 /**
  * g_free:
- * @mem: (allow-none): the memory to free
+ * @mem: (nullable): the memory to free
  * 
  * Frees the memory pointed to by @mem.
  *
@@ -192,7 +192,8 @@ g_free (gpointer mem)
 
 /**
  * g_clear_pointer: (skip)
- * @pp: a pointer to a variable, struct member etc. holding a pointer
+ * @pp: (not nullable): a pointer to a variable, struct member etc. holding a
+ *    pointer
  * @destroy: a function to which a gpointer can be passed, to destroy *@pp
  *
  * Clears a reference to a variable.
@@ -272,7 +273,7 @@ g_try_malloc0 (gsize n_bytes)
 
 /**
  * g_try_realloc:
- * @mem: (allow-none): previously-allocated memory, or %NULL.
+ * @mem: (nullable): previously-allocated memory, or %NULL.
  * @n_bytes: number of bytes to allocate.
  * 
  * Attempts to realloc @mem to a new size, @n_bytes, and returns %NULL
@@ -356,7 +357,7 @@ g_malloc0_n (gsize n_blocks,
 
 /**
  * g_realloc_n:
- * @mem: (allow-none): the memory to reallocate
+ * @mem: (nullable): the memory to reallocate
  * @n_blocks: the number of blocks to allocate
  * @n_block_bytes: the size of each block in bytes
  * 
@@ -424,7 +425,7 @@ g_try_malloc0_n (gsize n_blocks,
 
 /**
  * g_try_realloc_n:
- * @mem: (allow-none): previously-allocated memory, or %NULL.
+ * @mem: (nullable): previously-allocated memory, or %NULL.
  * @n_blocks: the number of blocks to allocate
  * @n_block_bytes: the size of each block in bytes
  * 
@@ -485,6 +486,9 @@ g_mem_set_vtable (GMemVTable *vtable)
 
 /**
  * glib_mem_profiler_table:
+ *
+ * Used to be a #GMemVTable containing profiling variants of the memory
+ * allocation functions, but this variable shouldn't be modified anymore.
  *
  * Deprecated: 2.46: Use other memory profiling tools instead
  */

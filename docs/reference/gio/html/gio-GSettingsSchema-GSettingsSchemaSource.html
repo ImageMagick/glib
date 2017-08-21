@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSettingsSchema, GSettingsSchemaSource: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="settings.html" title="Settings">
 <link rel="prev" href="GSettingsBackend.html" title="GSettingsBackend">
 <link rel="next" href="resources.html" title="Resources">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-GSettingsSchema-GSettingsSchemaSource.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -224,7 +224,7 @@
 </div>
 <a name="GSettingsSchemaSource"></a><a name="GSettingsSchema"></a><a name="GSettingsSchemaKey"></a><div class="refsect1">
 <a name="gio-GSettingsSchema-GSettingsSchemaSource.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -247,7 +247,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-GSettingsSchema-GSettingsSchemaSource.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-Boxed-Types.html">GBoxed</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-Boxed-Types.html">GBoxed</a>
     <span class="lineart">├──</span> GSettingsSchema
     <span class="lineart">├──</span> GSettingsSchemaKey
     <span class="lineart">╰──</span> GSettingsSchemaSource
@@ -322,50 +322,50 @@ access to some settings.</p>
 42
 43
 44</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">typedef</span><span class="normal"> </span><span class="keyword">struct</span>
-<span class="cbracket">{</span>
-<span class="normal">   </span><span class="symbol">...</span>
-<span class="normal">   </span><span class="usertype">GSettingsSchemaSource</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">schema_source</span><span class="symbol">;</span>
-<span class="normal">   </span><span class="symbol">...</span>
-<span class="cbracket">}</span><span class="normal"> Plugin</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwc">typedef</span> <span class="gtkdoc kwb">struct</span>
+<span class="gtkdoc opt">{</span>
+   <span class="gtkdoc opt">...</span>
+   GSettingsSchemaSource <span class="gtkdoc opt">*</span>schema_source<span class="gtkdoc opt">;</span>
+   <span class="gtkdoc opt">...</span>
+<span class="gtkdoc opt">}</span> Plugin<span class="gtkdoc opt">;</span>
 
-<span class="normal">Plugin </span><span class="symbol">*</span>
-<span class="function">initialise_plugin</span><span class="normal"> </span><span class="symbol">(</span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">dir</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">Plugin</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">plugin</span><span class="symbol">;</span>
+Plugin <span class="gtkdoc opt">*</span>
+<span class="function">initialise_plugin</span> <span class="gtkdoc opt">(</span><span class="gtkdoc kwb">const</span> gchar <span class="gtkdoc opt">*</span>dir<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  Plugin <span class="gtkdoc opt">*</span>plugin<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="symbol">...</span>
+  <span class="gtkdoc opt">...</span>
 
-<span class="normal">  plugin</span><span class="symbol">-&gt;</span><span class="normal">schema_source </span><span class="symbol">=</span>
-<span class="normal">    </span><span class="function">g_settings_new_schema_source_from_directory</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">dir</span><span class="symbol">,</span>
-<span class="normal">      </span><span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-get-default">g_settings_schema_source_get_default</a></span><span class="normal"> </span><span class="symbol">(),</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
+  plugin<span class="gtkdoc opt">-&gt;</span>schema_source <span class="gtkdoc opt">=</span>
+    <span class="function">g_settings_new_schema_source_from_directory</span> <span class="gtkdoc opt">(</span>dir<span class="gtkdoc opt">,</span>
+      <span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-get-default">g_settings_schema_source_get_default</a></span> <span class="gtkdoc opt">(),</span> FALSE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="symbol">...</span>
+  <span class="gtkdoc opt">...</span>
 
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> plugin</span><span class="symbol">;</span>
-<span class="cbracket">}</span>
+  <span class="keyword">return</span> plugin<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="symbol">...</span>
+<span class="gtkdoc opt">...</span>
 
-<span class="normal"><a href="GSettings.html#GSettings-struct">GSettings</a> </span><span class="symbol">*</span>
-<span class="function">plugin_get_settings</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">Plugin</span><span class="normal">      </span><span class="symbol">*</span><span class="normal">plugin</span><span class="symbol">,</span>
-<span class="normal">                     </span><span class="keyword">const</span><span class="normal"> </span><span class="usertype">gchar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">schema_id</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GSettingsSchema</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">schema</span><span class="symbol">;</span>
+GSettings <span class="gtkdoc opt">*</span>
+<span class="function">plugin_get_settings</span> <span class="gtkdoc opt">(</span>Plugin      <span class="gtkdoc opt">*</span>plugin<span class="gtkdoc opt">,</span>
+                     <span class="gtkdoc kwb">const</span> gchar <span class="gtkdoc opt">*</span>schema_id<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GSettingsSchema <span class="gtkdoc opt">*</span>schema<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">schema_id </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
-<span class="normal">    schema_id </span><span class="symbol">=</span><span class="normal"> plugin</span><span class="symbol">-&gt;</span><span class="normal">identifier</span><span class="symbol">;</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>schema_id <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
+    schema_id <span class="gtkdoc opt">=</span> plugin<span class="gtkdoc opt">-&gt;</span>identifier<span class="gtkdoc opt">;</span>
 
-<span class="normal">  schema </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-lookup">g_settings_schema_source_lookup</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">plugin</span><span class="symbol">-&gt;</span><span class="normal">schema_source</span><span class="symbol">,</span>
-<span class="normal">                                            schema_id</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#FALSE:CAPS">FALSE</a></span><span class="symbol">);</span>
+  schema <span class="gtkdoc opt">=</span> <span class="function"><a href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-lookup">g_settings_schema_source_lookup</a></span> <span class="gtkdoc opt">(</span>plugin<span class="gtkdoc opt">-&gt;</span>schema_source<span class="gtkdoc opt">,</span>
+                                            schema_id<span class="gtkdoc opt">,</span> FALSE<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">schema </span><span class="symbol">==</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">)</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="symbol">...</span><span class="normal"> disable the plugin </span><span class="usertype">or</span><span class="normal"> abort</span><span class="symbol">,</span><span class="normal"> etc </span><span class="symbol">...</span>
-<span class="normal">    </span><span class="cbracket">}</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>schema <span class="gtkdoc opt">==</span> NULL<span class="gtkdoc opt">)</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="gtkdoc opt">...</span> disable the plugin <span class="keyword">or</span> abort<span class="gtkdoc opt">,</span> etc <span class="gtkdoc opt">...</span>
+    <span class="gtkdoc opt">}</span>
 
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> </span><span class="function"><a href="GSettings.html#g-settings-new-full">g_settings_new_full</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">schema</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="keyword">return</span> <span class="function"><a href="GSettings.html#g-settings-new-full">g_settings_new_full</a></span> <span class="gtkdoc opt">(</span>schema<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -392,14 +392,14 @@ the following:</p>
 6
 7
 8</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GSettings</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">settings</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">gint</span><span class="normal"> some_value</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">{</span>
+  GSettings <span class="gtkdoc opt">*</span>settings<span class="gtkdoc opt">;</span>
+  gint some_value<span class="gtkdoc opt">;</span>
 
-<span class="normal">  settings </span><span class="symbol">=</span><span class="normal"> </span><span class="function">plugin_get_settings</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">self</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span>
-<span class="normal">  some_value </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GSettings.html#g-settings-get-int">g_settings_get_int</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">settings</span><span class="symbol">,</span><span class="normal"> </span><span class="string">"some-value"</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="symbol">...</span>
-<span class="cbracket">}</span></pre></td>
+  settings <span class="gtkdoc opt">=</span> <span class="function">plugin_get_settings</span> <span class="gtkdoc opt">(</span>self<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span>
+  some_value <span class="gtkdoc opt">=</span> <span class="function"><a href="GSettings.html#g-settings-get-int">g_settings_get_int</a></span> <span class="gtkdoc opt">(</span>settings<span class="gtkdoc opt">,</span> <span class="string">&quot;some-value&quot;</span><span class="gtkdoc opt">);</span>
+  <span class="gtkdoc opt">...</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -428,7 +428,7 @@ in <code class="literal">XDG_DATA_DIRS</code> and <code class="literal">GSETTING
 lookups performed against the default source should probably be done
 recursively.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.2.8"></a><h4>Returns</h4>
+<a name="g-settings-schema-source-get-default.returns"></a><h4>Returns</h4>
 <p> the default schema source. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -442,8 +442,8 @@ g_settings_schema_source_ref (<em class="parameter"><code><a class="link" href="
 <p>Increase the reference count of <em class="parameter"><code>source</code></em>
 , returning a new reference.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-source-ref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -457,7 +457,7 @@ g_settings_schema_source_ref (<em class="parameter"><code><a class="link" href="
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.3.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-source-ref.returns"></a><h4>Returns</h4>
 <p> a new reference to <em class="parameter"><code>source</code></em>
 </p>
 </div>
@@ -471,8 +471,8 @@ g_settings_schema_source_unref (<em class="parameter"><code><a class="link" href
 <p>Decrease the reference count of <em class="parameter"><code>source</code></em>
 , possibly freeing it.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-source-unref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -524,8 +524,8 @@ from the <em class="parameter"><code>parent</code></em>
  should probably be given as the default schema source, as
 returned by <a class="link" href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-source-get-default" title="g_settings_schema_source_get_default ()"><code class="function">g_settings_schema_source_get_default()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.5.12"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-source-new-from-directory.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -534,13 +534,13 @@ returned by <a class="link" href="gio-GSettingsSchema-GSettingsSchemaSource.html
 <tbody>
 <tr>
 <td class="parameter_name"><p>directory</p></td>
-<td class="parameter_description"><p>the filename of a directory</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> the filename of a directory. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> filename]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>parent</p></td>
 <td class="parameter_description"><p> a <a class="link" href="gio-GSettingsSchema-GSettingsSchemaSource.html#GSettingsSchemaSource"><span class="type">GSettingsSchemaSource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>trusted</p></td>
@@ -576,8 +576,8 @@ use <a class="link" href="GSettings.html#g-settings-new-with-path" title="g_sett
 <p>Do not call this function from normal programs.  This is designed for
 use by database editors, commandline tools, etc.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.6.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-source-list-schemas.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -630,8 +630,8 @@ want to introspect the content of schemas.</p>
 then the parent sources will also be checked.</p>
 <p>If the schema isn't found, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.7.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-source-lookup.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -657,7 +657,7 @@ then the parent sources will also be checked.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.7.9"></a><h4>Returns</h4>
+<a name="g-settings-schema-source-lookup.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="gio-GSettingsSchema-GSettingsSchemaSource.html#GSettingsSchema"><span class="type">GSettingsSchema</span></a>. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -671,8 +671,8 @@ g_settings_schema_ref (<em class="parameter"><code><a class="link" href="gio-GSe
 <p>Increase the reference count of <em class="parameter"><code>schema</code></em>
 , returning a new reference.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-ref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -686,7 +686,7 @@ g_settings_schema_ref (<em class="parameter"><code><a class="link" href="gio-GSe
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.8.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-ref.returns"></a><h4>Returns</h4>
 <p> a new reference to <em class="parameter"><code>schema</code></em>
 </p>
 </div>
@@ -700,8 +700,8 @@ g_settings_schema_unref (<em class="parameter"><code><a class="link" href="gio-G
 <p>Decrease the reference count of <em class="parameter"><code>schema</code></em>
 , possibly freeing it.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-unref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -724,8 +724,8 @@ g_settings_schema_get_id (<em class="parameter"><code><a class="link" href="gio-
 <p>Get the ID of <em class="parameter"><code>schema</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-get-id.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -739,7 +739,7 @@ g_settings_schema_get_id (<em class="parameter"><code><a class="link" href="gio-
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.10.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-get-id.returns"></a><h4>Returns</h4>
 <p> the ID. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -758,8 +758,8 @@ database: those located at the path returned by this function.</p>
 threfore describe multiple sets of keys at different locations.  For
 relocatable schemas, this function will return <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.11.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-get-path.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -773,7 +773,7 @@ relocatable schemas, this function will return <a href="../glib-Standard-Macros.
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.11.8"></a><h4>Returns</h4>
+<a name="g-settings-schema-get-path.returns"></a><h4>Returns</h4>
 <p> the path of the schema, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -789,8 +789,8 @@ g_settings_schema_has_key (<em class="parameter"><code><a class="link" href="gio
  has a key named <em class="parameter"><code>name</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-has-key.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -811,7 +811,7 @@ g_settings_schema_has_key (<em class="parameter"><code><a class="link" href="gio
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.12.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-has-key.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if such a key exists</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-40.html#api-index-2.40">2.40</a></p>
@@ -828,8 +828,8 @@ g_settings_schema_get_key (<em class="parameter"><code><a class="link" href="gio
 <p>It is a programmer error to request a key that does not exist.  See
 <a class="link" href="gio-GSettingsSchema-GSettingsSchemaSource.html#g-settings-schema-list-keys" title="g_settings_schema_list_keys ()"><code class="function">g_settings_schema_list_keys()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.13.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-get-key.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -850,7 +850,7 @@ g_settings_schema_get_key (<em class="parameter"><code><a class="link" href="gio
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.13.7"></a><h4>Returns</h4>
+<a name="g-settings-schema-get-key.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="gio-GSettingsSchema-GSettingsSchemaSource.html#GSettingsSchemaKey"><span class="type">GSettingsSchemaKey</span></a> for <em class="parameter"><code>name</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -865,8 +865,8 @@ g_settings_schema_key_ref (<em class="parameter"><code><a class="link" href="gio
 <p>Increase the reference count of <em class="parameter"><code>key</code></em>
 , returning a new reference.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.14.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-ref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -880,7 +880,7 @@ g_settings_schema_key_ref (<em class="parameter"><code><a class="link" href="gio
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.14.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-ref.returns"></a><h4>Returns</h4>
 <p> a new reference to <em class="parameter"><code>key</code></em>
 </p>
 </div>
@@ -894,8 +894,8 @@ g_settings_schema_key_unref (<em class="parameter"><code><a class="link" href="g
 <p>Decrease the reference count of <em class="parameter"><code>key</code></em>
 , possibly freeing it.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.15.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-unref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -920,8 +920,8 @@ g_settings_schema_list_children (<em class="parameter"><code><a class="link" hre
 <p>You should free the return value with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a> when you are done
 with it.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.16.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-list-children.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -935,7 +935,7 @@ with it.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.16.7"></a><h4>Returns</h4>
+<a name="g-settings-schema-list-children.returns"></a><h4>Returns</h4>
 <p> a list of the children on <em class="parameter"><code>settings</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8]</span></p>
@@ -953,8 +953,8 @@ g_settings_schema_list_keys (<em class="parameter"><code><a class="link" href="g
 (since you should already know what keys are in your schema).  This
 function is intended for introspection reasons.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.17.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-list-keys.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -968,7 +968,7 @@ function is intended for introspection reasons.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.17.7"></a><h4>Returns</h4>
+<a name="g-settings-schema-list-keys.returns"></a><h4>Returns</h4>
 <p> a list of the keys on
 <em class="parameter"><code>schema</code></em>
 . </p>
@@ -984,8 +984,8 @@ g_settings_schema_key_get_value_type (<em class="parameter"><code><a class="link
 <p>Gets the <a href="../glib-GVariantType.html#GVariantType"><span class="type">GVariantType</span></a> of <em class="parameter"><code>key</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.18.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-get-value-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -999,7 +999,7 @@ g_settings_schema_key_get_value_type (<em class="parameter"><code><a class="link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.18.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-get-value-type.returns"></a><h4>Returns</h4>
 <p> the type of <em class="parameter"><code>key</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -1017,8 +1017,8 @@ g_settings_schema_key_get_default_value
 <p>Note that this is the default value according to the schema.  System
 administrator defaults and lockdown are not visible via this API.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.19.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-get-default-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1032,7 +1032,7 @@ administrator defaults and lockdown are not visible via this API.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.19.7"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-get-default-value.returns"></a><h4>Returns</h4>
 <p> the default value for the key. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1073,8 +1073,8 @@ forms may be added to the possibilities described above.</p>
 <p>You should free the returned value with <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a> when it is
 no longer needed.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.20.13"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-get-range.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1088,7 +1088,7 @@ no longer needed.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.20.14"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-get-range.returns"></a><h4>Returns</h4>
 <p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> describing the range. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1108,8 +1108,8 @@ permitted range for <em class="parameter"><code>key</code></em>
  is not of the correct type -- you
 must check for this first.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.21.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-range-check.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1130,7 +1130,7 @@ must check for this first.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.21.7"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-range-check.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>value</code></em>
 is valid for <em class="parameter"><code>key</code></em>
 </p>
@@ -1145,8 +1145,8 @@ g_settings_schema_key_get_name (<em class="parameter"><code><a class="link" href
 <p>Gets the name of <em class="parameter"><code>key</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.22.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1160,7 +1160,7 @@ g_settings_schema_key_get_name (<em class="parameter"><code><a class="link" href
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.22.6"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-get-name.returns"></a><h4>Returns</h4>
 <p> the name of <em class="parameter"><code>key</code></em>
 .</p>
 </div>
@@ -1184,8 +1184,8 @@ the schemas is not stored in the compiled schema database so this
 function has to parse all of the source XML files in the schema
 directory.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.23.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-get-summary.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1199,7 +1199,7 @@ directory.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.23.9"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-get-summary.returns"></a><h4>Returns</h4>
 <p> the summary for <em class="parameter"><code>key</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p>
 </div>
@@ -1224,8 +1224,8 @@ the schemas is not stored in the compiled schema database so this
 function has to parse all of the source XML files in the schema
 directory.</p>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.24.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-schema-key-get-description.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1239,7 +1239,7 @@ directory.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.4.11.24.9"></a><h4>Returns</h4>
+<a name="g-settings-schema-key-get-description.returns"></a><h4>Returns</h4>
 <p> the description for <em class="parameter"><code>key</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a></p>
 </div>
@@ -1271,6 +1271,6 @@ using the following functions.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

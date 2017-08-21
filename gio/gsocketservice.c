@@ -3,10 +3,10 @@
  * Copyright © 2009 Codethink Limited
  * Copyright © 2009 Red Hat, Inc
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation; either version 2 of the licence or (at
- * your option) any later version.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -251,8 +251,10 @@ g_socket_service_is_active (GSocketService *service)
  * g_socket_service_start:
  * @service: a #GSocketService
  *
- * Starts the service, i.e. start accepting connections
- * from the added sockets when the mainloop runs.
+ * Restarts the service, i.e. start accepting connections
+ * from the added sockets when the mainloop runs. This only needs
+ * to be called after the service has been stopped from
+ * g_socket_service_stop().
  *
  * This call is thread-safe, so it may be called from a thread
  * handling an incoming client request.
@@ -282,6 +284,10 @@ g_socket_service_start (GSocketService *service)
  * g_socket_service_start() again later to begin listening again. To
  * close the listening sockets, call g_socket_listener_close(). (This
  * will happen automatically when the #GSocketService is finalized.)
+ *
+ * This must be called before calling g_socket_listener_close() as
+ * the socket service will start accepting connections immediately
+ * when a new socket is added.
  *
  * Since: 2.22
  */
@@ -321,7 +327,7 @@ g_socket_service_class_init (GSocketServiceClass *class)
    * GSocketService::incoming:
    * @service: the #GSocketService
    * @connection: a new #GSocketConnection object
-   * @source_object: (allow-none): the source_object passed to
+   * @source_object: (nullable): the source_object passed to
    *     g_socket_listener_add_address()
    *
    * The ::incoming signal is emitted when a new incoming connection
@@ -400,6 +406,10 @@ g_socket_service_ready (GObject      *object,
  * Creates a new #GSocketService with no sockets to listen for.
  * New listeners can be added with e.g. g_socket_listener_add_address()
  * or g_socket_listener_add_inet_port().
+ *
+ * New services are created active, there is no need to call
+ * g_socket_service_start(), unless g_socket_service_stop() has been
+ * called before.
  *
  * Returns: a new #GSocketService.
  *

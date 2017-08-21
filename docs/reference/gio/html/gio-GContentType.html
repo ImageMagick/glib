@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GContentType: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="types.html" title="File types and applications">
 <link rel="prev" href="types.html" title="File types and applications">
 <link rel="next" href="GAppInfo.html" title="GAppInfo">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-GContentType.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -53,6 +53,14 @@
 </td>
 <td class="function_name">
 <a class="link" href="gio-GContentType.html#g-content-type-is-a" title="g_content_type_is_a ()">g_content_type_is_a</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="../glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="gio-GContentType.html#g-content-type-is-mime-type" title="g_content_type_is_mime_type ()">g_content_type_is_mime_type</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
 <tr>
@@ -159,7 +167,9 @@ of a file. On UNIX it is a
 like "text/plain" or "image/png".
 On Win32 it is an extension string like ".doc", ".txt" or a perceived
 string like "audio". Such strings can be looked up in the registry at
-HKEY_CLASSES_ROOT.</p>
+HKEY_CLASSES_ROOT.
+On OSX it is a <a class="ulink" href="https://en.wikipedia.org/wiki/Uniform_Type_Identifier" target="_top">Uniform Type Identifier</a>
+such as "com.apple.application".</p>
 </div>
 <div class="refsect1">
 <a name="gio-GContentType.functions_details"></a><h2>Functions</h2>
@@ -170,8 +180,8 @@ g_content_type_equals (<em class="parameter"><code>const <a href="../glib-Basic-
                        <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type2</code></em>);</pre>
 <p>Compares two content types for equality.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-equals.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -192,7 +202,7 @@ g_content_type_equals (<em class="parameter"><code>const <a href="../glib-Basic-
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.2.6"></a><h4>Returns</h4>
+<a name="g-content-type-equals.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the two strings are identical or equivalent,
 <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
@@ -207,8 +217,8 @@ g_content_type_is_a (<em class="parameter"><code>const <a href="../glib-Basic-Ty
  is a subset of <em class="parameter"><code>supertype</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-is-a.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -229,7 +239,7 @@ g_content_type_is_a (<em class="parameter"><code>const <a href="../glib-Basic-Ty
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.3.6"></a><h4>Returns</h4>
+<a name="g-content-type-is-a.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>type</code></em>
 is a kind of <em class="parameter"><code>supertype</code></em>
 ,
@@ -238,15 +248,57 @@ is a kind of <em class="parameter"><code>supertype</code></em>
 </div>
 <hr>
 <div class="refsect2">
+<a name="g-content-type-is-mime-type"></a><h3>g_content_type_is_mime_type ()</h3>
+<pre class="programlisting"><a href="../glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+g_content_type_is_mime_type (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>,
+                             <em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *mime_type</code></em>);</pre>
+<p>Determines if <em class="parameter"><code>type</code></em>
+ is a subset of <em class="parameter"><code>mime_type</code></em>
+.
+Convenience wrapper around <a class="link" href="gio-GContentType.html#g-content-type-is-a" title="g_content_type_is_a ()"><code class="function">g_content_type_is_a()</code></a>.</p>
+<div class="refsect3">
+<a name="g-content-type-is-mime-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>type</p></td>
+<td class="parameter_description"><p>a content type string</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>mime_type</p></td>
+<td class="parameter_description"><p>a mime type string</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="g-content-type-is-mime-type.returns"></a><h4>Returns</h4>
+<p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>type</code></em>
+is a kind of <em class="parameter"><code>mime_type</code></em>
+,
+<a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-2-52.html#api-index-2.52">2.52</a></p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="g-content-type-is-unknown"></a><h3>g_content_type_is_unknown ()</h3>
 <pre class="programlisting"><a href="../glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
 g_content_type_is_unknown (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>);</pre>
 <p>Checks if the content type is the generic "unknown" type.
 On UNIX this is the "application/octet-stream" mimetype,
-while on win32 it is "*".</p>
+while on win32 it is "*" and on OSX it is a dynamic type
+or octet-stream.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-is-unknown.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -260,7 +312,7 @@ while on win32 it is "*".</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.4.6"></a><h4>Returns</h4>
+<a name="g-content-type-is-unknown.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the type is the unknown type.</p>
 </div>
 </div>
@@ -271,8 +323,8 @@ while on win32 it is "*".</p>
 g_content_type_get_description (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>);</pre>
 <p>Gets the human readable description of the content type.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-get-description.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -286,7 +338,7 @@ g_content_type_get_description (<em class="parameter"><code>const <a href="../gl
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.5.6"></a><h4>Returns</h4>
+<a name="g-content-type-get-description.returns"></a><h4>Returns</h4>
 <p> a short description of the content type <em class="parameter"><code>type</code></em>
 . Free the
 returned string with <a href="../glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a></p>
@@ -299,8 +351,8 @@ returned string with <a href="../glib-Memory-Allocation.html#g-free"><code class
 g_content_type_get_mime_type (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>);</pre>
 <p>Gets the mime type for the content type, if one is registered.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-get-mime-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -314,7 +366,7 @@ g_content_type_get_mime_type (<em class="parameter"><code>const <a href="../glib
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.6.6"></a><h4>Returns</h4>
+<a name="g-content-type-get-mime-type.returns"></a><h4>Returns</h4>
 <p> the registered mime type for the given <em class="parameter"><code>type</code></em>
 ,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if unknown. </p>
@@ -328,8 +380,8 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 g_content_type_get_icon (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>);</pre>
 <p>Gets the icon for a content type.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-get-icon.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -343,7 +395,7 @@ g_content_type_get_icon (<em class="parameter"><code>const <a href="../glib-Basi
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.7.6"></a><h4>Returns</h4>
+<a name="g-content-type-get-icon.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="GIcon.html" title="GIcon"><span class="type">GIcon</span></a> corresponding to the content type. Free the returned
 object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -356,8 +408,8 @@ object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code 
 g_content_type_get_symbolic_icon (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *type</code></em>);</pre>
 <p>Gets the symbolic icon for a content type.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-get-symbolic-icon.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -371,7 +423,7 @@ g_content_type_get_symbolic_icon (<em class="parameter"><code>const <a href="../
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.8.6"></a><h4>Returns</h4>
+<a name="g-content-type-get-symbolic-icon.returns"></a><h4>Returns</h4>
 <p> symbolic <a class="link" href="GIcon.html" title="GIcon"><span class="type">GIcon</span></a> corresponding to the content type.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -388,8 +440,8 @@ g_content_type_get_generic_icon_name (<em class="parameter"><code>const <a href=
 <a class="ulink" href="http://www.freedesktop.org/wiki/Specifications/shared-mime-info-spec" target="_top">shared-mime-info</a>
 specification for more on the generic icon name.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-get-generic-icon-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -403,11 +455,11 @@ specification for more on the generic icon name.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.9.7"></a><h4>Returns</h4>
+<a name="g-content-type-get-generic-icon-name.returns"></a><h4>Returns</h4>
 <p> the registered generic icon name for the given <em class="parameter"><code>type</code></em>
 ,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if unknown. Free with <a href="../glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>. </p>
-<p><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></p>
+<p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-34.html#api-index-2.34">2.34</a></p>
 </div>
@@ -419,8 +471,8 @@ g_content_type_can_be_executable (<em class="parameter"><code>const <a href="../
 <p>Checks if a content type can be executable. Note that for instance
 things like text files can be executables (i.e. scripts and batch files).</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.10.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-can-be-executable.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -434,7 +486,7 @@ things like text files can be executables (i.e. scripts and batch files).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.10.6"></a><h4>Returns</h4>
+<a name="g-content-type-can-be-executable.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file type corresponds to a type that
 can be executable, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
@@ -446,8 +498,8 @@ can be executable, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class
 g_content_type_from_mime_type (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *mime_type</code></em>);</pre>
 <p>Tries to find a content type based on the mime type name.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-from-mime-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -461,7 +513,7 @@ g_content_type_from_mime_type (<em class="parameter"><code>const <a href="../gli
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.11.6"></a><h4>Returns</h4>
+<a name="g-content-type-from-mime-type.returns"></a><h4>Returns</h4>
 <p> Newly allocated string with content type or
 <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. Free with <a href="../glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a>. </p>
 <p><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
@@ -484,8 +536,8 @@ or <em class="parameter"><code>data</code></em>
  may be <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, in which case the guess will be based solely
 on the other argument.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.12.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-guess.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -495,12 +547,12 @@ on the other argument.</p>
 <tr>
 <td class="parameter_name"><p>filename</p></td>
 <td class="parameter_description"><p> a string, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>data</p></td>
 <td class="parameter_description"><p> a stream of data, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=data_size]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=data_size]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>data_size</p></td>
@@ -512,13 +564,13 @@ on the other argument.</p>
 <td class="parameter_name"><p>result_uncertain</p></td>
 <td class="parameter_description"><p> return location for the certainty
 of the result, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.12.6"></a><h4>Returns</h4>
+<a name="g-content-type-guess.returns"></a><h4>Returns</h4>
 <p> a string indicating a guessed content type for the
 given data. Free with <a href="../glib-Memory-Allocation.html#g-free"><code class="function">g_free()</code></a></p>
 </div>
@@ -540,8 +592,8 @@ specification for more on x-content types.</p>
 <p>This function is useful in the implementation of
 <a class="link" href="GMount.html#g-mount-guess-content-type" title="g_mount_guess_content_type ()"><code class="function">g_mount_guess_content_type()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.13.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-content-type-guess-for-tree.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -555,7 +607,7 @@ specification for more on x-content types.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.13.8"></a><h4>Returns</h4>
+<a name="g-content-type-guess-for-tree.returns"></a><h4>Returns</h4>
 <p> an <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated
 array of zero or more content types. Free with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span></p>
@@ -571,7 +623,7 @@ g_content_types_get_registered (<em class="parameter"><code><span class="type">v
 known to the system. The list and its data should be freed using
 g_list_free_full (list, g_free).</p>
 <div class="refsect3">
-<a name="id-1.4.8.2.6.14.5"></a><h4>Returns</h4>
+<a name="g-content-types-get-registered.returns"></a><h4>Returns</h4>
 <p> list of the registered
 content types. </p>
 <p><span class="annotation">[<acronym title="Generics and defining elements of containers and arrays."><span class="acronym">element-type</span></acronym> utf8][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -583,6 +635,6 @@ content types. </p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

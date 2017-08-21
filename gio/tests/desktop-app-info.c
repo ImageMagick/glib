@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,6 +18,7 @@
  */
 
 #include <glib/glib.h>
+#include <glib/gstdio.h>
 #include <gio/gio.h>
 #include <gio/gdesktopappinfo.h>
 #include <stdlib.h>
@@ -172,14 +173,15 @@ test_fallback (void)
   apps = g_app_info_get_all_for_type ("text/x-python");
   g_assert_cmpint (g_list_length (apps), ==, old_length + 2);
 
-  /* check the ordering */
-  app = g_list_nth_data (apps, 0);
-  g_assert (g_app_info_equal (info1, app));
-
-  /* check that Test1 is the first recommended app */
+  /* check that Test1 is among the recommended apps */
   recomm = g_app_info_get_recommended_for_type ("text/x-python");
   g_assert (recomm != NULL);
-  app = g_list_nth_data (recomm, 0);
+  for (l = recomm; l; l = l->next)
+    {
+      app = l->data;
+      if (g_app_info_equal (info1, app))
+        break;
+    }
   g_assert (g_app_info_equal (info1, app));
 
   /* and that Test2 is among the fallback apps */
@@ -758,7 +760,14 @@ int
 main (int   argc,
       char *argv[])
 {
+  const gchar *build_dir;
   gint result;
+
+  /* With Meson build we need to change into right directory, so that the
+   * appinfo-test binary can be found. */
+  build_dir = g_getenv ("G_TEST_BUILDDIR");
+  if (build_dir)
+    g_chdir (build_dir);
 
   g_test_init (&argc, &argv, NULL);
 

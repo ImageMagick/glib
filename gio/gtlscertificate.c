@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -50,7 +50,7 @@
  * Since: 2.28
  */
 
-G_DEFINE_ABSTRACT_TYPE (GTlsCertificate, g_tls_certificate, G_TYPE_OBJECT);
+G_DEFINE_ABSTRACT_TYPE (GTlsCertificate, g_tls_certificate, G_TYPE_OBJECT)
 
 enum
 {
@@ -146,7 +146,7 @@ g_tls_certificate_class_init (GTlsCertificateClass *class)
   g_object_class_install_property (gobject_class, PROP_PRIVATE_KEY,
 				   g_param_spec_boxed ("private-key",
 						       P_("Private key"),
-						       P_("The DER representation of the certificate's private key"),
+						       P_("The DER representation of the certificate’s private key"),
 						       G_TYPE_BYTE_ARRAY,
 						       G_PARAM_WRITABLE |
 						       G_PARAM_CONSTRUCT_ONLY |
@@ -170,7 +170,7 @@ g_tls_certificate_class_init (GTlsCertificateClass *class)
   g_object_class_install_property (gobject_class, PROP_PRIVATE_KEY_PEM,
 				   g_param_spec_string ("private-key-pem",
 							P_("Private key (PEM)"),
-							P_("The PEM representation of the certificate's private key"),
+							P_("The PEM representation of the certificate’s private key"),
 							NULL,
 							G_PARAM_WRITABLE |
 							G_PARAM_CONSTRUCT_ONLY |
@@ -471,17 +471,22 @@ g_tls_certificate_new_from_pem  (const gchar  *data,
 				 gssize        length,
 				 GError      **error)
 {
+  GError *child_error = NULL;
   gchar *key_pem;
   GTlsCertificate *cert;
 
   g_return_val_if_fail (data != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   if (length == -1)
     length = strlen (data);
 
-  key_pem = parse_private_key (data, length, FALSE, error);
-  if (error && *error)
-    return NULL;
+  key_pem = parse_private_key (data, length, FALSE, &child_error);
+  if (child_error != NULL)
+    {
+      g_propagate_error (error, child_error);
+      return NULL;
+    }
 
   cert = parse_and_create_certificate (data, length, key_pem, error);
   g_free (key_pem);
@@ -491,7 +496,7 @@ g_tls_certificate_new_from_pem  (const gchar  *data,
 
 /**
  * g_tls_certificate_new_from_file:
- * @file: file containing a PEM-encoded certificate to import
+ * @file: (type filename): file containing a PEM-encoded certificate to import
  * @error: #GError for error reporting, or %NULL to ignore.
  *
  * Creates a #GTlsCertificate from the PEM-encoded data in @file. The
@@ -530,9 +535,10 @@ g_tls_certificate_new_from_file (const gchar  *file,
 
 /**
  * g_tls_certificate_new_from_files:
- * @cert_file: file containing one or more PEM-encoded certificates to
- * import
- * @key_file: file containing a PEM-encoded private key to import
+ * @cert_file: (type filename): file containing one or more PEM-encoded
+ *     certificates to import
+ * @key_file: (type filename): file containing a PEM-encoded private key
+ *     to import
  * @error: #GError for error reporting, or %NULL to ignore.
  *
  * Creates a #GTlsCertificate from the PEM-encoded data in @cert_file
@@ -586,7 +592,7 @@ g_tls_certificate_new_from_files (const gchar  *cert_file,
 
 /**
  * g_tls_certificate_list_new_from_file:
- * @file: file containing PEM-encoded certificates to import
+ * @file: (type filename): file containing PEM-encoded certificates to import
  * @error: #GError for error reporting, or %NULL to ignore.
  *
  * Creates one or more #GTlsCertificates from the PEM-encoded
@@ -672,8 +678,8 @@ g_tls_certificate_get_issuer (GTlsCertificate  *cert)
 /**
  * g_tls_certificate_verify:
  * @cert: a #GTlsCertificate
- * @identity: (allow-none): the expected peer identity
- * @trusted_ca: (allow-none): the certificate of a trusted authority
+ * @identity: (nullable): the expected peer identity
+ * @trusted_ca: (nullable): the certificate of a trusted authority
  *
  * This verifies @cert and returns a set of #GTlsCertificateFlags
  * indicating any problems found with it. This can be used to verify a

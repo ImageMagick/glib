@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -47,6 +47,15 @@
  * object hierarchy is broadcast using signals. This means that D-Bus
  * clients can keep caches up to date by only listening to D-Bus
  * signals.
+ *
+ * The recommended path to export an object manager at is the path form of the
+ * well-known name of a D-Bus service, or below. For example, if a D-Bus service
+ * is available at the well-known name `net.example.ExampleService1`, the object
+ * manager should typically be exported at `/net/example/ExampleService1`, or
+ * below (to allow for multiple object managers in a service).
+ *
+ * It is supported, but not recommended, to export an object manager at the root
+ * path, `/`.
  *
  * See #GDBusObjectManagerClient for the client-side code that is
  * intended to be used with #GDBusObjectManagerServer or any D-Bus
@@ -168,7 +177,10 @@ g_dbus_object_manager_server_set_property (GObject       *object,
       g_assert (manager->priv->object_path == NULL);
       g_assert (g_variant_is_object_path (g_value_get_string (value)));
       manager->priv->object_path = g_value_dup_string (value);
-      manager->priv->object_path_ending_in_slash = g_strdup_printf ("%s/", manager->priv->object_path);
+      if (g_str_equal (manager->priv->object_path, "/"))
+        manager->priv->object_path_ending_in_slash = g_strdup (manager->priv->object_path);
+      else
+        manager->priv->object_path_ending_in_slash = g_strdup_printf ("%s/", manager->priv->object_path);
       break;
 
     default:
@@ -242,8 +254,8 @@ g_dbus_object_manager_server_init (GDBusObjectManagerServer *manager)
  *
  * The returned server isn't yet exported on any connection. To do so,
  * use g_dbus_object_manager_server_set_connection(). Normally you
- * want to export all of your objects before doing so to avoid <ulink
- * url="http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager">InterfacesAdded</ulink>
+ * want to export all of your objects before doing so to avoid
+ * [InterfacesAdded](http://dbus.freedesktop.org/doc/dbus-specification.html#standard-interfaces-objectmanager)
  * signals being emitted.
  *
  * Returns: A #GDBusObjectManagerServer object. Free with g_object_unref().
@@ -262,7 +274,7 @@ g_dbus_object_manager_server_new (const gchar     *object_path)
 /**
  * g_dbus_object_manager_server_set_connection:
  * @manager: A #GDBusObjectManagerServer.
- * @connection: (allow-none): A #GDBusConnection or %NULL.
+ * @connection: (nullable): A #GDBusConnection or %NULL.
  *
  * Exports all objects managed by @manager on @connection. If
  * @connection is %NULL, stops exporting objects.

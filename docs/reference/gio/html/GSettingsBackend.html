@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GSettingsBackend: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="settings.html" title="Settings">
 <link rel="prev" href="GSettings.html" title="GSettings">
 <link rel="next" href="gio-GSettingsSchema-GSettingsSchemaSource.html" title="GSettingsSchema, GSettingsSchemaSource">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -34,7 +34,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GSettingsBackend.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -133,7 +133,7 @@
 </div>
 <div class="refsect1">
 <a name="GSettingsBackend.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -199,7 +199,7 @@ the default by setting the <code class="literal">GSETTINGS_BACKEND</code> enviro
 to the name of a settings backend.</p>
 <p>The user gets a reference to the backend.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.2.6"></a><h4>Returns</h4>
+<a name="g-settings-backend-get-default.returns"></a><h4>Returns</h4>
 <p> the default <a class="link" href="GSettingsBackend.html" title="GSettingsBackend"><span class="type">GSettingsBackend</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -233,8 +233,8 @@ in response to any other action (including from calls to
  must be set to the same
 value that was passed to that call.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.3.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -289,8 +289,8 @@ keys that were changed) but this is not strictly required.  As an
 example, if this function is called with the path of "/" then every
 single key in the application will be notified of a possible change.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.4.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-path-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -349,8 +349,8 @@ case <a class="link" href="GSettingsBackend.html#g-settings-backend-changed" tit
 be as long as possible (ie: the longest common prefix of all of the
 keys that were changed) but this is not strictly required.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.5.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-keys-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -394,8 +394,8 @@ changed.</p>
 <p>Since GSettings performs no locking operations for itself, this call
 will always be made in response to external events.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-path-writable-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -427,8 +427,8 @@ g_settings_backend_writable_changed (<em class="parameter"><code><a class="link"
 <p>Since GSettings performs no locking operations for itself, this call
 will always be made in response to external events.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.7.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-writable-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -462,8 +462,8 @@ g_settings_backend_changed_tree (<em class="parameter"><code><a class="link" hre
 , computes the longest common prefix and calls
 <a class="link" href="GSettingsBackend.html#g-settings-backend-changed" title="g_settings_backend_changed ()"><code class="function">g_settings_backend_changed()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.8.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-changed-tree.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -510,8 +510,8 @@ optionally, the value to store at each of those keys.</p>
  or <em class="parameter"><code>values</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-settings-backend-flatten-tree.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -537,7 +537,7 @@ location to save the relative keys. </p></td>
 <tr>
 <td class="parameter_name"><p>values</p></td>
 <td class="parameter_description"><p>         the location to save the values, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Free data container after the code is done."><span class="acronym">transfer container</span></acronym>][<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1]</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -574,8 +574,8 @@ of <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="symbol">[</span><span class="normal">toplevel</span><span class="symbol">]</span>
-<span class="normal">enabled</span><span class="symbol">=</span><span class="normal">true</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">[</span>toplevel<span class="gtkdoc opt">]</span>
+enabled<span class="gtkdoc opt">=</span><span class="keyword">true</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -598,8 +598,8 @@ the name of the keyfile group.  To continue the example, if
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="symbol">[</span><span class="normal">profiles</span><span class="symbol">/</span><span class="keyword">default</span><span class="symbol">]</span>
-<span class="normal">font</span><span class="symbol">-</span><span class="normal">size</span><span class="symbol">=</span><span class="number">12</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">[</span>profiles<span class="gtkdoc opt">/</span><span class="keyword">default</span><span class="gtkdoc opt">]</span>
+font<span class="gtkdoc opt">-</span>size<span class="gtkdoc opt">=</span><span class="number">12</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -620,8 +620,8 @@ syntax of the key file format.  For example, if you have '[' or ']'
 characters in your path names or '=' in your key names you may be in
 trouble.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.10.16"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-keyfile-settings-backend-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -643,13 +643,13 @@ trouble.</p>
 <td class="parameter_description"><p> the group name corresponding to
 <em class="parameter"><code>root_path</code></em>
 , or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.10.17"></a><h4>Returns</h4>
+<a name="g-keyfile-settings-backend-new.returns"></a><h4>Returns</h4>
 <p> a keyfile-backed <a class="link" href="GSettingsBackend.html" title="GSettingsBackend"><span class="type">GSettingsBackend</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -664,7 +664,7 @@ g_memory_settings_backend_new (<em class="parameter"><code><span class="type">vo
 to any backing storage, so the next time you run your application,
 the memory backend will start out with the default values again.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.11.6"></a><h4>Returns</h4>
+<a name="g-memory-settings-backend-new.returns"></a><h4>Returns</h4>
 <p> a newly created <a class="link" href="GSettingsBackend.html" title="GSettingsBackend"><span class="type">GSettingsBackend</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -679,7 +679,7 @@ g_null_settings_backend_new (<em class="parameter"><code><span class="type">void
 <p>This backend does not allow changes to settings, so all settings
 will always have their default values.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.8.12.6"></a><h4>Returns</h4>
+<a name="g-null-settings-backend-new.returns"></a><h4>Returns</h4>
 <p> a newly created <a class="link" href="GSettingsBackend.html" title="GSettingsBackend"><span class="type">GSettingsBackend</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -734,19 +734,14 @@ will always have their default values.</p>
 </pre>
 <p>Class structure for <a class="link" href="GSettingsBackend.html" title="GSettingsBackend"><span class="type">GSettingsBackend</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.19.3.9.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GSettingsBackendClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-The-Base-Object-Type.html#GObjectClass"><span class="type">GObjectClass</span></a> <em class="structfield"><code><a name="GSettingsBackendClass.parent-class"></a>parent_class</code></em>;</p></td>
-<td> </td>
-<td> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GSettingsBackendClass.read"></a>read</code></em> ()</p></td>
 <td class="struct_member_description"><p>virtual method to read a key's value</p></td>
@@ -815,6 +810,6 @@ will always have their default values.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

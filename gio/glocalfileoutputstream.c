@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -349,7 +349,7 @@ _g_local_file_output_stream_really_close (GLocalFileOutputStream *file,
 
 #ifndef G_OS_WIN32
   /* A simple try to close the fd in case we fail before the actual close */
-  (void) g_close (file->priv->fd, NULL);
+  g_close (file->priv->fd, NULL);
 #endif
   if (file->priv->tmp_filename)
     g_unlink (file->priv->tmp_filename);
@@ -552,7 +552,7 @@ set_error_from_open_errno (const char *filename,
       char *display_name = g_filename_display_name (filename);
       g_set_error (error, G_IO_ERROR,
                    g_io_error_from_errno (errsv),
-                   _("Error opening file '%s': %s"),
+                   _("Error opening file “%s”: %s"),
 		       display_name, g_strerror (errsv));
       g_free (display_name);
     }
@@ -748,6 +748,7 @@ handle_overwrite_open (const char    *filename,
   int open_flags;
   int res;
   int mode;
+  int errsv;
 
   mode = mode_from_flags_or_info (flags, reference_info);
 
@@ -763,7 +764,14 @@ handle_overwrite_open (const char    *filename,
 #ifdef O_NOFOLLOW
   is_symlink = FALSE;
   fd = g_open (filename, open_flags | O_NOFOLLOW, mode);
-  if (fd == -1 && errno == ELOOP)
+  errsv = errno;
+#if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || defined(__DragonFly__)
+  if (fd == -1 && errsv == EMLINK)
+#elif defined(__NetBSD__)
+  if (fd == -1 && errsv == EFTYPE)
+#else
+  if (fd == -1 && errsv == ELOOP)
+#endif
     {
       /* Could be a symlink, or it could be a regular ELOOP error,
        * but then the next open will fail too. */
@@ -772,17 +780,17 @@ handle_overwrite_open (const char    *filename,
     }
 #else
   fd = g_open (filename, open_flags, mode);
+  errsv = errno;
   /* This is racy, but we do it as soon as possible to minimize the race */
   is_symlink = g_file_test (filename, G_FILE_TEST_IS_SYMLINK);
 #endif
-    
+
   if (fd == -1)
     {
-      int errsv = errno;
       char *display_name = g_filename_display_name (filename);
       g_set_error (error, G_IO_ERROR,
 		   g_io_error_from_errno (errsv),
-		   _("Error opening file '%s': %s"),
+		   _("Error opening file “%s”: %s"),
 		   display_name, g_strerror (errsv));
       g_free (display_name);
       return -1;
@@ -793,14 +801,14 @@ handle_overwrite_open (const char    *filename,
 #else
   res = fstat (fd, &original_stat);
 #endif
+  errsv = errno;
 
-  if (res != 0) 
+  if (res != 0)
     {
-      int errsv = errno;
       char *display_name = g_filename_display_name (filename);
       g_set_error (error, G_IO_ERROR,
 		   g_io_error_from_errno (errsv),
-		   _("Error when getting information for file '%s': %s"),
+		   _("Error when getting information for file “%s”: %s"),
 		   display_name, g_strerror (errsv));
       g_free (display_name);
       goto err_out;
@@ -893,14 +901,14 @@ handle_overwrite_open (const char    *filename,
 	      original_stat.st_gid != tmp_statbuf.st_gid ||
 	      original_stat.st_mode != tmp_statbuf.st_mode)
 	    {
-	      (void) g_close (tmpfd, NULL);
+	      g_close (tmpfd, NULL);
 	      g_unlink (tmp_filename);
 	      g_free (tmp_filename);
 	      goto fallback_strategy;
 	    }
 	}
 
-      (void) g_close (fd, NULL);
+      g_close (fd, NULL);
       *temp_filename = tmp_filename;
       return tmpfd;
     }
@@ -953,6 +961,7 @@ handle_overwrite_open (const char    *filename,
                                G_IO_ERROR_CANT_CREATE_BACKUP,
                                _("Backup file creation failed"));
 	  g_unlink (backup_filename);
+	  g_close (bfd, NULL);
 	  g_free (backup_filename);
 	  goto err_out;
 	}
@@ -969,7 +978,7 @@ handle_overwrite_open (const char    *filename,
                                    G_IO_ERROR_CANT_CREATE_BACKUP,
                                    _("Backup file creation failed"));
 	      g_unlink (backup_filename);
-	      (void) g_close (bfd, NULL);
+	      g_close (bfd, NULL);
 	      g_free (backup_filename);
 	      goto err_out;
 	    }
@@ -983,13 +992,13 @@ handle_overwrite_open (const char    *filename,
                                G_IO_ERROR_CANT_CREATE_BACKUP,
                                _("Backup file creation failed"));
 	  g_unlink (backup_filename);
-          (void) g_close (bfd, NULL);
+          g_close (bfd, NULL);
 	  g_free (backup_filename);
 	  
 	  goto err_out;
 	}
       
-      (void) g_close (bfd, NULL);
+      g_close (bfd, NULL);
       g_free (backup_filename);
 
       /* Seek back to the start of the file after the backup copy */
@@ -1007,7 +1016,7 @@ handle_overwrite_open (const char    *filename,
 
   if (flags & G_FILE_CREATE_REPLACE_DESTINATION)
     {
-      (void) g_close (fd, NULL);
+      g_close (fd, NULL);
       
       if (g_unlink (filename) != 0)
 	{
@@ -1031,7 +1040,7 @@ handle_overwrite_open (const char    *filename,
 	  char *display_name = g_filename_display_name (filename);
 	  g_set_error (error, G_IO_ERROR,
 		       g_io_error_from_errno (errsv),
-		       _("Error opening file '%s': %s"),
+		       _("Error opening file “%s”: %s"),
 		       display_name, g_strerror (errsv));
 	  g_free (display_name);
 	  goto err_out2;
@@ -1059,7 +1068,7 @@ handle_overwrite_open (const char    *filename,
   return fd;
 
  err_out:
-  (void) g_close (fd, NULL);
+  g_close (fd, NULL);
  err_out2:
   return -1;
 }

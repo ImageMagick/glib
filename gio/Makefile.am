@@ -3,7 +3,9 @@ include $(top_srcdir)/glib.mk
 SUBDIRS = gdbus-2.0/codegen
 
 if OS_UNIX
+if !OS_COCOA
 SUBDIRS += xdgmime
+endif
 endif
 
 if OS_WIN32_AND_DLL_COMPILATION
@@ -105,7 +107,7 @@ settings_headers = \
 	gsettingsschema.h		\
 	gsettings.h
 
-settings_sources = \
+settings_base_sources = \
 	gvdb/gvdb-format.h		\
 	gvdb/gvdb-reader.h		\
 	gvdb/gvdb-reader.c		\
@@ -123,15 +125,21 @@ settings_sources = \
 	gsettings-mapping.c		\
 	gsettings.c
 
+settings_sources = $(settings_base_sources)
+
 if OS_WIN32
-settings_sources += \
+win32_settings_sources = \
 	gregistrysettingsbackend.h	\
 	gregistrysettingsbackend.c
+
+settings_sources += $(win32_settings_sources)
 endif
 
 if OS_COCOA
-settings_sources += \
+cocoa_settings_sources = \
 	gnextstepsettingsbackend.c
+
+settings_sources += $(cocoa_settings_sources)
 endif
 
 application_headers = \
@@ -187,6 +195,7 @@ local_sources = \
 	ghttpproxy.h			\
 	glocalfile.c 			\
 	glocalfile.h 			\
+	glocalfileprivate.h		\
 	glocalfileenumerator.c 		\
 	glocalfileenumerator.h 		\
 	glocalfileinfo.c 		\
@@ -214,6 +223,8 @@ local_sources = \
 platform_libadd =
 platform_deps =
 appinfo_sources =
+appinfo_headers =
+contenttype_sources =
 
 if HAVE_INOTIFY
 SUBDIRS += inotify
@@ -240,9 +251,14 @@ SUBDIRS += fam
 endif
 
 if OS_UNIX
-appinfo_sources += gdesktopappinfo.c
+if !OS_COCOA
 platform_libadd += xdgmime/libxdgmime.la
 platform_deps += xdgmime/libxdgmime.la
+
+appinfo_headers += gdesktopappinfo.h
+endif
+
+
 unix_sources = \
 	gfiledescriptorbased.c  \
 	gunixconnection.c	\
@@ -259,19 +275,27 @@ unix_sources = \
 	gunixvolumemonitor.h 	\
 	gunixinputstream.c 	\
 	gunixoutputstream.c 	\
-	gcontenttype.c 		\
 	gcontenttypeprivate.h 	\
 	gfdonotificationbackend.c \
 	ggtknotificationbackend.c \
+	gportalnotificationbackend.c \
+	gdocumentportal.c	\
+	gdocumentportal.h	\
+	gopenuriportal.c	\
+	gopenuriportal.h	\
+	gportalsupport.c	\
+	gportalsupport.h	\
+	$(portal_sources)	\
 	$(NULL)
 
 if OS_COCOA
+if MAC_OS_X_9
 unix_sources += gcocoanotificationbackend.c
+endif
 endif
 
 giounixincludedir=$(includedir)/gio-unix-2.0/gio
 giounixinclude_HEADERS = \
-	gdesktopappinfo.h	\
 	gfiledescriptorbased.h  \
 	gunixconnection.h	\
 	gunixcredentialsmessage.h	\
@@ -281,6 +305,7 @@ giounixinclude_HEADERS = \
 	gunixinputstream.h 	\
 	gunixoutputstream.h 	\
 	gunixsocketaddress.h	\
+	$(appinfo_headers) \
 	$(NULL)
 
 if HAVE_NETLINK
@@ -304,7 +329,6 @@ win32_actual_sources = \
 	$(gdbus_daemon_sources) \
 	gwin32registrykey.c \
 	gwin32registrykey.h \
-	gcontenttype-win32.c \
 	gwin32mount.c \
 	gwin32mount.h \
 	gwin32volumemonitor.c \
@@ -317,6 +341,7 @@ win32_actual_sources = \
 
 win32_more_sources_for_vcproj = \
 	gwin32appinfo.c \
+	gcontenttype-win32.c \
 	gregistrysettingsbackend.c \
 	win32/gwinhttpfile.c \
 	win32/gwinhttpfileinputstream.c \
@@ -327,6 +352,7 @@ win32_more_sources_for_vcproj = \
 
 if OS_WIN32
 appinfo_sources += gwin32appinfo.c gwin32appinfo.h
+contenttype_sources += gcontenttype-win32.c
 platform_libadd += -lshlwapi -lws2_32 -ldnsapi -liphlpapi
 win32_sources = $(win32_actual_sources)
 
@@ -338,7 +364,53 @@ giowin32include_HEADERS = \
 
 endif
 
-libgio_2_0_la_SOURCES =		\
+xdp_dbus_built_sources = xdp-dbus.c xdp-dbus.h
+BUILT_SOURCES += $(xdp_dbus_built_sources)
+CLEANFILES += $(xdp_dbus_built_sources)
+
+portal_interfaces = \
+	org.freedesktop.portal.Documents.xml \
+	org.freedesktop.portal.OpenURI.xml \
+	org.freedesktop.portal.NetworkMonitor.xml \
+	org.freedesktop.portal.ProxyResolver.xml \
+	$(NULL)
+
+EXTRA_DIST += $(portal_interfaces)
+
+$(xdp_dbus_built_sources) : $(portal_interfaces)
+	$(AM_V_GEN) UNINSTALLED_GLIB_SRCDIR=$(top_srcdir) 		\
+		UNINSTALLED_GLIB_BUILDDIR=$(top_builddir) 		\
+		$(PYTHON) $(srcdir)/gdbus-2.0/codegen/gdbus-codegen.in 	\
+		--interface-prefix org.freedesktop.portal.      	\
+		--c-namespace GXdp					\
+		--generate-c-code $(builddir)/xdp-dbus			\
+		--annotate "org.freedesktop.portal.Documents.Add()" "org.gtk.GDBus.C.UnixFD" "true" \
+		--annotate "org.freedesktop.portal.Documents.AddNamed()" "org.gtk.GDBus.C.UnixFD" "true" \
+		--annotate "org.freedesktop.portal.Documents.AddFull()" "org.gtk.GDBus.C.UnixFD" "true" \
+		--annotate "org.freedesktop.portal.OpenURI.OpenFile()" "org.gtk.GDBus.C.UnixFD" "true" \
+		$^
+
+portal_sources = \
+	gnetworkmonitorportal.c 	\
+	gnetworkmonitorportal.h		\
+	gproxyresolverportal.c		\
+	gproxyresolverportal.h		\
+	$(xdp_dbus_built_sources)	\
+	$(NULL)
+
+if OS_COCOA
+contenttype_sources += gosxcontenttype.c
+appinfo_sources += gosxappinfo.c gosxappinfo.h
+endif
+
+if OS_UNIX
+if !OS_COCOA
+contenttype_sources += gcontenttype.c
+appinfo_sources += gdesktopappinfo.c
+endif
+endif
+
+gio_base_sources =		\
 	gappinfo.c 		\
 	gappinfoprivate.h	\
 	gasynchelper.c 		\
@@ -357,6 +429,7 @@ libgio_2_0_la_SOURCES =		\
 	gconverteroutputstream.c	\
 	gcredentials.c		\
 	gcredentialsprivate.h	\
+	gdatagrambased.c	\
 	gdatainputstream.c 	\
 	gdataoutputstream.c 	\
 	gdrive.c 		\
@@ -390,6 +463,8 @@ libgio_2_0_la_SOURCES =		\
 	ginetsocketaddress.c	\
 	ginitable.c		\
 	ginputstream.c 		\
+	gio_probes.d		\
+	gio_trace.h		\
 	gioenums.h		\
 	gioerror.c 		\
 	giomodule.c 		\
@@ -467,6 +542,9 @@ libgio_2_0_la_SOURCES =		\
 	gtlsinteraction.c	\
 	gtlspassword.c		\
 	gtlsserverconnection.c	\
+	gdtlsconnection.c	\
+	gdtlsclientconnection.c	\
+	gdtlsserverconnection.c	\
 	gunionvolumemonitor.c 	\
 	gunionvolumemonitor.h 	\
 	gvfs.c 			\
@@ -478,14 +556,19 @@ libgio_2_0_la_SOURCES =		\
 	gioenumtypes.h		\
 	gioenumtypes.c		\
 	glistmodel.c 		\
-	gliststore.c 		\
-	$(appinfo_sources) 	\
-	$(unix_sources) 	\
-	$(win32_sources) 	\
+	gliststore.c		\
 	$(application_sources) 	\
-	$(settings_sources) 	\
 	$(gdbus_sources) 	\
 	$(local_sources) 	\
+	$(NULL)
+
+libgio_2_0_la_SOURCES =		\
+	$(gio_base_sources)	\
+	$(appinfo_sources) 	\
+	$(contenttype_sources) \
+	$(unix_sources) 	\
+	$(win32_sources) 	\
+	$(settings_sources) 	\
 	$(NULL)
 
 EXTRA_DIST += strinfo.c
@@ -530,6 +613,11 @@ libgio_2_0_la_CFLAGS += -xobjective-c
 libgio_2_0_la_LDFLAGS += -Wl,-framework,Foundation -Wl,-framework,AppKit
 endif
 
+if HAVE_LIBMOUNT
+libgio_2_0_la_CFLAGS += $(LIBMOUNT_CFLAGS)
+libgio_2_0_la_LIBADD += $(LIBMOUNT_LIBS)
+endif
+
 libgio_2_0_la_DEPENDENCIES = $(gio_win32_res) $(gio_def) $(platform_deps)
 
 gio-win32-res.o: gio.rc
@@ -548,6 +636,7 @@ gio_headers =			\
 	gconverter.h		\
 	gconverterinputstream.h	\
 	gconverteroutputstream.h	\
+	gdatagrambased.h	\
 	gdatainputstream.h 	\
 	gdataoutputstream.h 	\
 	gdrive.h 		\
@@ -630,6 +719,9 @@ gio_headers =			\
 	gtlsinteraction.h	\
 	gtlspassword.h		\
 	gtlsserverconnection.h	\
+	gdtlsconnection.h	\
+	gdtlsclientconnection.h	\
+	gdtlsserverconnection.h	\
 	gvfs.h 			\
 	gvolume.h 		\
 	gvolumemonitor.h 	\
@@ -665,7 +757,6 @@ EXTRA_DIST += 			\
 	data-to-c.pl		\
 	gioenumtypes.h.template	\
 	gioenumtypes.c.template	\
-	makefile.msc		\
 	gio.rc.in		\
 	gschema.dtd		\
 	gconstructor_as_data.h	\
@@ -744,6 +835,43 @@ gsettings_SOURCES = gsettings-tool.c
 schemadir = $(datadir)/glib-2.0/schemas
 dist_schema_DATA = gschema.dtd
 
+itsdir = $(datadir)/gettext/its
+dist_its_DATA = gschema.loc gschema.its
+
+# ------------------------------------------------------------------------
+# SystemTap and dtrace
+
+if ENABLE_DTRACE
+gio_probes.h: gio_probes.d
+	$(AM_V_GEN) $(DTRACE) -C -h -s $< -o $@.tmp
+	@$(SED) \
+		-e "s,define STAP_HAS_SEMAPHORES 1,undef STAP_HAS_SEMAPHORES," \
+		-e "s,define _SDT_HAS_SEMAPHORES 1,undef _SDT_HAS_SEMAPHORES," \
+		< $@.tmp > $@ && rm -f $@.tmp
+
+gio_probes.lo: gio_probes.d
+	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC $(DTRACE) -G -s $< -o $@
+
+BUILT_SOURCES += gio_probes.h gio_probes.lo
+CLEANFILES += gio_probes.h gio_probes.h.tmp
+libgio_2_0_la_LIBADD += gio_probes.lo
+endif
+
+tapsetdir   = @ABS_TAPSET_DIR@
+EXTRA_DIST += gio.stp.in
+
+if ENABLE_SYSTEMTAP
+tapset_DATA = libgio-2.0.so.0.@LT_CURRENT@.@LT_REVISION@.stp
+CLEANFILES += $(tapset_DATA)
+
+$(tapset_DATA): gio.stp.in Makefile
+	$(AM_V_GEN)$(SED) \
+		-e 's|[@]ABS_GLIB_RUNTIME_LIBDIR[@]|$(ABS_GLIB_RUNTIME_LIBDIR)|g' \
+		-e 's|[@]LT_CURRENT[@]|$(LT_CURRENT)|g' \
+		-e 's|[@]LT_REVISION[@]|$(LT_REVISION)|g' \
+		$< > $@
+endif
+
 # ------------------------------------------------------------------------
 # gdbus(1) tool
 
@@ -756,6 +884,7 @@ gdbus_LDADD = libgio-2.0.la 				\
 	$(NULL)
 
 if OS_UNIX
+if !OS_COCOA
 # ------------------------------------------------------------------------
 # gapplication(1) tool
 bin_PROGRAMS += gapplication
@@ -765,6 +894,7 @@ gapplication_LDADD = libgio-2.0.la 			\
 	$(top_builddir)/gmodule/libgmodule-2.0.la 	\
 	$(top_builddir)/glib/libglib-2.0.la		\
 	$(NULL)
+endif
 endif
 
 completiondir = $(datadir)/bash-completion/completions
@@ -788,11 +918,48 @@ gresource_LDADD = libgio-2.0.la				\
 	$(LIBELF_LIBS)
 
 # ------------------------------------------------------------------------
-# ------ MSVC Project File Generation ------
-MSVCPROJS = gio glib-compile-resources glib-compile-schemas
+# gio tool
 
-gio_FILES = $(libgio_2_0_la_SOURCES) $(win32_actual_sources) $(win32_more_sources_for_vcproj)
-gio_EXCLUDES = gunix*.c|gdesktopappinfo.c|gnetworkmonitornetlink.c|gcontenttype.c|gnetworkmonitornm.c
+bin_PROGRAMS += gio
+gio_SOURCES = \
+	gio-tool.c					\
+	gio-tool.h					\
+	gio-tool-cat.c					\
+	gio-tool-copy.c					\
+	gio-tool-info.c					\
+	gio-tool-list.c					\
+	gio-tool-mime.c					\
+	gio-tool-mkdir.c				\
+	gio-tool-monitor.c				\
+	gio-tool-mount.c				\
+	gio-tool-move.c					\
+	gio-tool-open.c					\
+	gio-tool-rename.c				\
+	gio-tool-remove.c				\
+	gio-tool-save.c					\
+	gio-tool-set.c					\
+	gio-tool-trash.c				\
+	gio-tool-tree.c					\
+	$(NULL)
+gio_LDADD = libgio-2.0.la 				\
+	$(top_builddir)/gobject/libgobject-2.0.la	\
+	$(top_builddir)/glib/libglib-2.0.la		\
+	$(NULL)
+
+# ------------------------------------------------------------------------
+# ------ MSVC Project File Generation ------
+# ------------------------------------------------------------------------
+#
+MSVCPROJS = gio glib-compile-resources glib-compile-schemas gio-tool
+
+gio_FILES =	\
+	$(gio_base_sources)			\
+	$(win32_actual_sources)			\
+	$(win32_more_sources_for_vcproj)	\
+	$(settings_base_sources)		\
+	$(win32_settings_sources)
+
+gio_EXCLUDES = dummy
 
 gio_HEADERS_DIR = $(includedir)/glib-2.0/gio
 gio_HEADERS_INST = $(gioinclude_HEADERS) $(nodist_gioinclude_HEADERS)
@@ -804,18 +971,28 @@ glib_compile_resources_EXCLUDES = dummy
 glib_compile_schemas_FILES = $(glib_compile_schemas_SOURCES)
 glib_compile_schemas_EXCLUDES = dummy
 
-include $(top_srcdir)/build/Makefile.msvcproj
+gio_tool_FILES = $(gio_SOURCES)
+gio_tool_EXCLUDES = dummy
+
+include $(top_srcdir)/win32/Makefile.msvcproj
 
 dist-hook: \
-	$(BUILT_EXTRA_DIST)	\
-	$(top_builddir)/build/win32/vs9/gio.vcproj	\
-	$(top_builddir)/build/win32/vs9/gio.headers	\
-	$(top_builddir)/build/win32/vs9/glib-compile-schemas.vcproj	\
-	$(top_builddir)/build/win32/vs9/glib-compile-resources.vcproj
+	$(BUILT_EXTRA_DIST)						\
+	$(top_builddir)/win32/vs9/gio.vcproj			\
+	$(top_builddir)/win32/vs9/gio.headers			\
+	$(top_builddir)/win32/vs9/glib-compile-schemas.vcproj	\
+	$(top_builddir)/win32/vs9/glib-compile-resources.vcproj	\
+	$(top_builddir)/win32/vs9/gio-tool.vcproj
 	files='$(BUILT_EXTRA_DIST)'; \
 	for f in $$files; do \
 	  if test -f $$f; then d=.; else d=$(srcdir); fi; \
 	  cp $$d/$$f $(distdir) || exit 1; done
+
+if HAVE_GLIB_RUNTIME_LIBDIR
+ABS_GLIB_RUNTIME_LIBDIR = $(realpath $(libdir)/$(GLIB_RUNTIME_LIBDIR))
+else
+ABS_GLIB_RUNTIME_LIBDIR = $(libdir)
+endif
 
 if HAVE_GLIB_RUNTIME_LIBDIR
 install-data-hook:

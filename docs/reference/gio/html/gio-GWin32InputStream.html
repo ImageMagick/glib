@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GWin32InputStream: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="streaming.html" title="Streaming I/O">
 <link rel="prev" href="GUnixOutputStream.html" title="GUnixOutputStream">
 <link rel="next" href="gio-GWin32OutputStream.html" title="GWin32OutputStream">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-GWin32InputStream.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -76,7 +76,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-GWin32InputStream.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -115,8 +115,8 @@ when the stream is closed.</p>
 <p>Note that "handle" here means a Win32 HANDLE, not a "file descriptor"
 as used in the Windows C libraries.</p>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-input-stream-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -137,7 +137,7 @@ as used in the Windows C libraries.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.2.8"></a><h4>Returns</h4>
+<a name="g-win32-input-stream-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="gio-GWin32InputStream.html#GWin32InputStream" title="struct GWin32InputStream"><span class="type">GWin32InputStream</span></a></p>
 </div>
 </div>
@@ -151,8 +151,8 @@ g_win32_input_stream_set_close_handle (<em class="parameter"><code><a class="lin
  shall be closed
 when the stream is closed.</p>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-input-stream-set-close-handle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -183,8 +183,8 @@ g_win32_input_stream_get_close_handle (<em class="parameter"><code><a class="lin
  will be
 closed when the stream is closed.</p>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-input-stream-get-close-handle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -198,7 +198,7 @@ closed when the stream is closed.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.4.6"></a><h4>Returns</h4>
+<a name="g-win32-input-stream-get-close-handle.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the handle is closed when done</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -210,8 +210,8 @@ closed when the stream is closed.</p>
 g_win32_input_stream_get_handle (<em class="parameter"><code><a class="link" href="gio-GWin32InputStream.html#GWin32InputStream" title="struct GWin32InputStream"><span class="type">GWin32InputStream</span></a> *stream</code></em>);</pre>
 <p>Return the Windows file handle that the stream reads from.</p>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-win32-input-stream-get-handle.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -225,7 +225,7 @@ g_win32_input_stream_get_handle (<em class="parameter"><code><a class="link" hre
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.7.21.7.5.6"></a><h4>Returns</h4>
+<a name="g-win32-input-stream-get-handle.returns"></a><h4>Returns</h4>
 <p> The file handle of <em class="parameter"><code>stream</code></em>
 </p>
 </div>
@@ -249,6 +249,6 @@ g_win32_input_stream_get_handle (<em class="parameter"><code><a class="link" hre
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

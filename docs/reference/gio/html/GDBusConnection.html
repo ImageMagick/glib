@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GDBusConnection: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="gdbus-lowlevel.html" title="Low-level D-Bus Support">
 <link rel="prev" href="GDBusMessage.html" title="GDBusMessage">
 <link rel="next" href="GDBusMethodInvocation.html" title="GDBusMethodInvocation">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -37,7 +37,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GDBusConnection.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -469,7 +469,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusConnection.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -531,7 +531,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusConnection.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -546,7 +546,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusConnection.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -677,8 +677,8 @@ then call <a class="link" href="GDBusConnection.html#g-bus-get-finish" title="g_
 <p>This is a asynchronous failable function. See <a class="link" href="GDBusConnection.html#g-bus-get-sync" title="g_bus_get_sync ()"><code class="function">g_bus_get_sync()</code></a> for
 the synchronous version.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-get.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -693,7 +693,7 @@ the synchronous version.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -727,8 +727,8 @@ event that you need a private message bus connection, use
 <p>Note that the returned <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> object will (usually) have
 the <a class="link" href="GDBusConnection.html#GDBusConnection--exit-on-close" title="The “exit-on-close” property"><span class="type">“exit-on-close”</span></a> property set to <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.3.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-get-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -750,7 +750,7 @@ to <a class="link" href="GDBusConnection.html#g-bus-get" title="g_bus_get ()"><
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.3.8"></a><h4>Returns</h4>
+<a name="g-bus-get-finish.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set.
 Free with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
@@ -782,8 +782,8 @@ event that you need a private message bus connection, use
 <p>Note that the returned <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> object will (usually) have
 the <a class="link" href="GDBusConnection.html#GDBusConnection--exit-on-close" title="The “exit-on-close” property"><span class="type">“exit-on-close”</span></a> property set to <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.4.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-get-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -798,7 +798,7 @@ the <a class="link" href="GDBusConnection.html#GDBusConnection--exit-on-close" t
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -809,7 +809,7 @@ the <a class="link" href="GDBusConnection.html#GDBusConnection--exit-on-close" t
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.4.9"></a><h4>Returns</h4>
+<a name="g-bus-get-sync.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set.
 Free with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
@@ -850,8 +850,8 @@ operation.</p>
 <a class="link" href="GDBusConnection.html#g-dbus-connection-new-sync" title="g_dbus_connection_new_sync ()"><code class="function">g_dbus_connection_new_sync()</code></a> for the synchronous
 version.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.5.10"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -866,7 +866,7 @@ version.</p>
 <tr>
 <td class="parameter_name"><p>guid</p></td>
 <td class="parameter_description"><p> the GUID to use if a authenticating as a server or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -876,12 +876,12 @@ version.</p>
 <tr>
 <td class="parameter_name"><p>observer</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -907,8 +907,8 @@ g_dbus_connection_new_finish (<em class="parameter"><code><a class="link" href="
                               <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an operation started with <a class="link" href="GDBusConnection.html#g-dbus-connection-new" title="g_dbus_connection_new ()"><code class="function">g_dbus_connection_new()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-new-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -930,7 +930,7 @@ passed to <a class="link" href="GDBusConnection.html#g-dbus-connection-new" titl
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.6.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-new-finish.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Free
 with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
@@ -964,8 +964,8 @@ authentication process.</p>
 <p>This is a synchronous failable constructor. See
 <a class="link" href="GDBusConnection.html#g-dbus-connection-new" title="g_dbus_connection_new ()"><code class="function">g_dbus_connection_new()</code></a> for the asynchronous version.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.7.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-new-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -980,7 +980,7 @@ authentication process.</p>
 <tr>
 <td class="parameter_name"><p>guid</p></td>
 <td class="parameter_description"><p> the GUID to use if a authenticating as a server or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -990,12 +990,12 @@ authentication process.</p>
 <tr>
 <td class="parameter_name"><p>observer</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1006,7 +1006,7 @@ authentication process.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.7.10"></a><h4>Returns</h4>
+<a name="g-dbus-connection-new-sync.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Free with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
 </div>
@@ -1025,7 +1025,8 @@ g_dbus_connection_new_for_address (<em class="parameter"><code>const <a href="..
 <p>Asynchronously connects and sets up a D-Bus client connection for
 exchanging D-Bus messages with an endpoint specified by <em class="parameter"><code>address</code></em>
 
-which must be in the D-Bus address format.</p>
+which must be in the
+<a class="ulink" href="https://dbus.freedesktop.org/doc/dbus-specification.html#addresses" target="_top">D-Bus address format</a>.</p>
 <p>This constructor can only be used to initiate client-side
 connections - use <a class="link" href="GDBusConnection.html#g-dbus-connection-new" title="g_dbus_connection_new ()"><code class="function">g_dbus_connection_new()</code></a> if you need to act as the
 server. In particular, <em class="parameter"><code>flags</code></em>
@@ -1043,8 +1044,8 @@ authentication process.</p>
 <a class="link" href="GDBusConnection.html#g-dbus-connection-new-for-address-sync" title="g_dbus_connection_new_for_address_sync ()"><code class="function">g_dbus_connection_new_for_address_sync()</code></a> for the synchronous
 version.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.8.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-new-for-address.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1064,12 +1065,12 @@ version.</p>
 <tr>
 <td class="parameter_name"><p>observer</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
@@ -1096,8 +1097,8 @@ g_dbus_connection_new_for_address_finish
                                 <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an operation started with <a class="link" href="GDBusConnection.html#g-dbus-connection-new-for-address" title="g_dbus_connection_new_for_address ()"><code class="function">g_dbus_connection_new_for_address()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.9.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-new-for-address-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1119,7 +1120,7 @@ to <a class="link" href="GDBusConnection.html#g-dbus-connection-new" title="g_db
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.9.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-new-for-address-finish.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Free with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
@@ -1139,7 +1140,8 @@ g_dbus_connection_new_for_address_sync
 <p>Synchronously connects and sets up a D-Bus client connection for
 exchanging D-Bus messages with an endpoint specified by <em class="parameter"><code>address</code></em>
 
-which must be in the D-Bus address format.</p>
+which must be in the
+<a class="ulink" href="https://dbus.freedesktop.org/doc/dbus-specification.html#addresses" target="_top">D-Bus address format</a>.</p>
 <p>This constructor can only be used to initiate client-side
 connections - use <a class="link" href="GDBusConnection.html#g-dbus-connection-new-sync" title="g_dbus_connection_new_sync ()"><code class="function">g_dbus_connection_new_sync()</code></a> if you need to act
 as the server. In particular, <em class="parameter"><code>flags</code></em>
@@ -1152,8 +1154,8 @@ as the server. In particular, <em class="parameter"><code>flags</code></em>
  is not <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> it may be used to control the
 authentication process.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.10.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-new-for-address-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1173,12 +1175,12 @@ authentication process.</p>
 <tr>
 <td class="parameter_name"><p>observer</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GDBusAuthObserver.html" title="GDBusAuthObserver"><span class="type">GDBusAuthObserver</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1189,7 +1191,7 @@ authentication process.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.10.9"></a><h4>Returns</h4>
+<a name="g-dbus-connection-new-for-address-sync.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Free with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
@@ -1209,8 +1211,8 @@ starts processing messages. Does nothing on if <em class="parameter"><code>conne
  wasn't
 created with this flag or if the method has already been called.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.11.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-start-message-processing.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1259,8 +1261,8 @@ then call <a class="link" href="GDBusConnection.html#g-dbus-connection-close-fin
 operation. See <a class="link" href="GDBusConnection.html#g-dbus-connection-close-sync" title="g_dbus_connection_close_sync ()"><code class="function">g_dbus_connection_close_sync()</code></a> for the synchronous
 version.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.12.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-close.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1275,13 +1277,13 @@ version.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the request is
 satisfied or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if you don't care about the result. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -1303,8 +1305,8 @@ g_dbus_connection_close_finish (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an operation started with <a class="link" href="GDBusConnection.html#g-dbus-connection-close" title="g_dbus_connection_close ()"><code class="function">g_dbus_connection_close()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-close-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1331,7 +1333,7 @@ to <a class="link" href="GDBusConnection.html#g-dbus-connection-close" title="g_
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.13.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-close-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the operation succeeded, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>error</code></em>
 is set</p>
 </div>
@@ -1350,8 +1352,8 @@ until this is done. See <a class="link" href="GDBusConnection.html#g-dbus-connec
 asynchronous version of this method and more details about what it
 does.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.14.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-close-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1366,7 +1368,7 @@ does.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1377,7 +1379,7 @@ does.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.14.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-close-sync.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the operation succeeded, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>error</code></em>
 is set</p>
 </div>
@@ -1391,8 +1393,8 @@ g_dbus_connection_is_closed (<em class="parameter"><code><a class="link" href="G
 <p>Gets whether <em class="parameter"><code>connection</code></em>
  is closed.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.15.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-is-closed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1406,7 +1408,7 @@ g_dbus_connection_is_closed (<em class="parameter"><code><a class="link" href="G
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.15.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-is-closed.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the connection is closed, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -1435,8 +1437,8 @@ then call <a class="link" href="GDBusConnection.html#g-dbus-connection-flush-fin
 operation. See <a class="link" href="GDBusConnection.html#g-dbus-connection-flush-sync" title="g_dbus_connection_flush_sync ()"><code class="function">g_dbus_connection_flush_sync()</code></a> for the synchronous
 version.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.16.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-flush.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1451,13 +1453,13 @@ version.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the
 request is satisfied or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if you don't care about the result. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -1479,8 +1481,8 @@ g_dbus_connection_flush_finish (<em class="parameter"><code><a class="link" href
                                 <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an operation started with <a class="link" href="GDBusConnection.html#g-dbus-connection-flush" title="g_dbus_connection_flush ()"><code class="function">g_dbus_connection_flush()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.17.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-flush-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1507,7 +1509,7 @@ to <a class="link" href="GDBusConnection.html#g-dbus-connection-flush" title="g_
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.17.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-flush-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the operation succeeded, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>error</code></em>
 is set</p>
 </div>
@@ -1526,8 +1528,8 @@ until this is done. See <a class="link" href="GDBusConnection.html#g-dbus-connec
 asynchronous version of this method and more details about what it
 does.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.18.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-flush-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1542,7 +1544,7 @@ does.</p>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1553,7 +1555,7 @@ does.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.18.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-flush-sync.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the operation succeeded, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>error</code></em>
 is set</p>
 </div>
@@ -1569,8 +1571,8 @@ g_dbus_connection_get_exit_on_close (<em class="parameter"><code><a class="link"
 closed by the remote peer. See
 <a class="link" href="GDBusConnection.html#GDBusConnection--exit-on-close" title="The “exit-on-close” property"><span class="type">“exit-on-close”</span></a> for more details.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.19.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-exit-on-close.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1584,7 +1586,7 @@ closed by the remote peer. See
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.19.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-get-exit-on-close.returns"></a><h4>Returns</h4>
 <p> whether the process is terminated when <em class="parameter"><code>connection</code></em>
 is
 closed by the remote peer</p>
@@ -1609,8 +1611,8 @@ If you are setting <em class="parameter"><code>exit_on_close</code></em>
 bus connection, you should make sure that your application exits
 when the user session ends.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.20.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-set-exit-on-close.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1644,8 +1646,8 @@ g_dbus_connection_get_stream (<em class="parameter"><code><a class="link" href="
 stream from a worker thread, so it is not safe to interact with
 the stream directly.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.21.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-stream.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1659,7 +1661,7 @@ the stream directly.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.21.7"></a><h4>Returns</h4>
+<a name="g-dbus-connection-get-stream.returns"></a><h4>Returns</h4>
 <p> the stream used for IO. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -1673,8 +1675,8 @@ g_dbus_connection_get_guid (<em class="parameter"><code><a class="link" href="GD
 <p>The GUID of the peer performing the role of server when
 authenticating. See <a class="link" href="GDBusConnection.html#GDBusConnection--guid" title="The “guid” property"><span class="type">“guid”</span></a> for more details.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.22.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-guid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1688,7 +1690,7 @@ authenticating. See <a class="link" href="GDBusConnection.html#GDBusConnection--
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.22.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-get-guid.returns"></a><h4>Returns</h4>
 <p> The GUID. Do not free this string, it is owned by
 <em class="parameter"><code>connection</code></em>
 .</p>
@@ -1706,8 +1708,8 @@ bus. This can also be used to figure out if <em class="parameter"><code>connecti
  is a
 message bus connection.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.23.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-unique-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1721,7 +1723,7 @@ message bus connection.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.23.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-get-unique-name.returns"></a><h4>Returns</h4>
 <p> the unique name or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>connection</code></em>
 is not a message
 bus connection. Do not free this string, it is owned by
@@ -1737,8 +1739,8 @@ bus connection. Do not free this string, it is owned by
 g_dbus_connection_get_capabilities (<em class="parameter"><code><a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> *connection</code></em>);</pre>
 <p>Gets the capabilities negotiated with the remote peer</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.24.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-capabilities.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1752,7 +1754,7 @@ g_dbus_connection_get_capabilities (<em class="parameter"><code><a class="link" 
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.24.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-get-capabilities.returns"></a><h4>Returns</h4>
 <p> zero or more flags from the <a class="link" href="GDBusConnection.html#GDBusCapabilityFlags" title="enum GDBusCapabilityFlags"><span class="type">GDBusCapabilityFlags</span></a> enumeration</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -1773,8 +1775,8 @@ authentication process.</p>
 each application is a client. So this method will always return
 <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> for message bus clients.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.25.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-peer-credentials.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1788,11 +1790,11 @@ each application is a client. So this method will always return
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.25.7"></a><h4>Returns</h4>
-<p> a <a class="link" href="GCredentials.html" title="GCredentials"><span class="type">GCredentials</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not available.
-Do not free this object, it is owned by <em class="parameter"><code>connection</code></em>
+<a name="g-dbus-connection-get-peer-credentials.returns"></a><h4>Returns</h4>
+<p> a <a class="link" href="GCredentials.html" title="GCredentials"><span class="type">GCredentials</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not
+available. Do not free this object, it is owned by <em class="parameter"><code>connection</code></em>
 . </p>
-<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
+<p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -1807,8 +1809,8 @@ API such as <a class="link" href="GDBusConnection.html#g-dbus-connection-send-me
 high-level API such as <a class="link" href="GDBusConnection.html#g-dbus-connection-emit-signal" title="g_dbus_connection_emit_signal ()"><code class="function">g_dbus_connection_emit_signal()</code></a>,
 <a class="link" href="GDBusConnection.html#g-dbus-connection-call" title="g_dbus_connection_call ()"><code class="function">g_dbus_connection_call()</code></a> or <a class="link" href="GDBusProxy.html#g-dbus-proxy-call" title="g_dbus_proxy_call ()"><code class="function">g_dbus_proxy_call()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.26.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-get-last-serial.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1822,7 +1824,7 @@ high-level API such as <a class="link" href="GDBusConnection.html#g-dbus-connect
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.26.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-get-last-serial.returns"></a><h4>Returns</h4>
 <p> the last used serial or zero when no message has been sent
 within the current thread</p>
 </div>
@@ -1885,20 +1887,20 @@ convenient 'inline' use of <a href="../glib-GVariant.html#g-variant-new"><code c
 12
 13
 14</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call">g_dbus_connection_call</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">connection</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="string">"/org/freedesktop/StringThings"</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="string">"TwoStrings"</span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"(ss)"</span><span class="symbol">,</span>
-<span class="normal">                                       </span><span class="string">"Thing One"</span><span class="symbol">,</span>
-<span class="normal">                                       </span><span class="string">"Thing Two"</span><span class="symbol">),</span>
-<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
-<span class="normal">                        <a href="GDBusConnection.html#G-DBUS-CALL-FLAGS-NONE:CAPS">G_DBUS_CALL_FLAGS_NONE</a></span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="symbol">-</span><span class="number">1</span><span class="symbol">,</span>
-<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
-<span class="normal">                        </span><span class="symbol">(</span><span class="normal"><a href="GAsyncResult.html#GAsyncReadyCallback">GAsyncReadyCallback</a></span><span class="symbol">)</span><span class="normal"> two_strings_done</span><span class="symbol">,</span>
-<span class="normal">                        <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call">g_dbus_connection_call</a></span> <span class="gtkdoc opt">(</span>connection<span class="gtkdoc opt">,</span>
+                        <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
+                        <span class="string">&quot;/org/freedesktop/StringThings&quot;</span><span class="gtkdoc opt">,</span>
+                        <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
+                        <span class="string">&quot;TwoStrings&quot;</span><span class="gtkdoc opt">,</span>
+                        <span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;(ss)&quot;</span><span class="gtkdoc opt">,</span>
+                                       <span class="string">&quot;Thing One&quot;</span><span class="gtkdoc opt">,</span>
+                                       <span class="string">&quot;Thing Two&quot;</span><span class="gtkdoc opt">),</span>
+                        NULL<span class="gtkdoc opt">,</span>
+                        G_DBUS_CALL_FLAGS_NONE<span class="gtkdoc opt">,</span>
+                        <span class="gtkdoc opt">-</span><span class="number">1</span><span class="gtkdoc opt">,</span>
+                        NULL<span class="gtkdoc opt">,</span>
+                        <span class="gtkdoc opt">(</span>GAsyncReadyCallback<span class="gtkdoc opt">)</span> two_strings_done<span class="gtkdoc opt">,</span>
+                        NULL<span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -1917,8 +1919,8 @@ function.</p>
  is <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> then the D-Bus method call message will be sent with
 the <a class="link" href="GDBusMessage.html#G-DBUS-MESSAGE-FLAGS-NO-REPLY-EXPECTED:CAPS"><code class="literal">G_DBUS_MESSAGE_FLAGS_NO_REPLY_EXPECTED</code></a> flag set.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.27.12"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-call.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1935,7 +1937,7 @@ the <a class="link" href="GDBusMessage.html#G-DBUS-MESSAGE-FLAGS-NO-REPLY-EXPECT
 <td class="parameter_description"><p> a unique or well-known bus name or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
 <em class="parameter"><code>connection</code></em>
 is not a message bus connection. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>object_path</p></td>
@@ -1956,12 +1958,12 @@ is not a message bus connection. </p></td>
 <td class="parameter_name"><p>parameters</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with parameters for the method
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not passing parameters. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>reply_type</p></td>
 <td class="parameter_description"><p> the expected type of the reply, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -1977,14 +1979,14 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the request
 is satisfied or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if you don't care about the result of the
 method invocation. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -2006,8 +2008,8 @@ g_dbus_connection_call_finish (<em class="parameter"><code><a class="link" href=
                                <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an operation started with <a class="link" href="GDBusConnection.html#g-dbus-connection-call" title="g_dbus_connection_call ()"><code class="function">g_dbus_connection_call()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.28.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-call-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2033,7 +2035,7 @@ g_dbus_connection_call_finish (<em class="parameter"><code><a class="link" href=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.28.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-call-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Otherwise a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with
 return values. Free with <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a>.</p>
@@ -2096,19 +2098,19 @@ This allows convenient 'inline' use of <a href="../glib-GVariant.html#g-variant-
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call-sync">g_dbus_connection_call_sync</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">connection</span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="string">"/org/freedesktop/StringThings"</span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="string">"org.freedesktop.StringThings"</span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="string">"TwoStrings"</span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="string">"(ss)"</span><span class="symbol">,</span>
-<span class="normal">                                            </span><span class="string">"Thing One"</span><span class="symbol">,</span>
-<span class="normal">                                            </span><span class="string">"Thing Two"</span><span class="symbol">),</span>
-<span class="normal">                             <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
-<span class="normal">                             <a href="GDBusConnection.html#G-DBUS-CALL-FLAGS-NONE:CAPS">G_DBUS_CALL_FLAGS_NONE</a></span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="symbol">-</span><span class="number">1</span><span class="symbol">,</span>
-<span class="normal">                             <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">,</span>
-<span class="normal">                             </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="function"><a href="GDBusConnection.html#g-dbus-connection-call-sync">g_dbus_connection_call_sync</a></span> <span class="gtkdoc opt">(</span>connection<span class="gtkdoc opt">,</span>
+                             <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
+                             <span class="string">&quot;/org/freedesktop/StringThings&quot;</span><span class="gtkdoc opt">,</span>
+                             <span class="string">&quot;org.freedesktop.StringThings&quot;</span><span class="gtkdoc opt">,</span>
+                             <span class="string">&quot;TwoStrings&quot;</span><span class="gtkdoc opt">,</span>
+                             <span class="function"><a href="../glib-GVariant.html#g-variant-new">g_variant_new</a></span> <span class="gtkdoc opt">(</span><span class="string">&quot;(ss)&quot;</span><span class="gtkdoc opt">,</span>
+                                            <span class="string">&quot;Thing One&quot;</span><span class="gtkdoc opt">,</span>
+                                            <span class="string">&quot;Thing Two&quot;</span><span class="gtkdoc opt">),</span>
+                             NULL<span class="gtkdoc opt">,</span>
+                             G_DBUS_CALL_FLAGS_NONE<span class="gtkdoc opt">,</span>
+                             <span class="gtkdoc opt">-</span><span class="number">1</span><span class="gtkdoc opt">,</span>
+                             NULL<span class="gtkdoc opt">,</span>
+                             <span class="gtkdoc opt">&amp;</span>error<span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -2119,8 +2121,8 @@ This allows convenient 'inline' use of <a href="../glib-GVariant.html#g-variant-
 <a class="link" href="GDBusConnection.html#g-dbus-connection-call" title="g_dbus_connection_call ()"><code class="function">g_dbus_connection_call()</code></a> for the asynchronous version of
 this method.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.29.11"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-call-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2137,7 +2139,7 @@ this method.</p>
 <td class="parameter_description"><p> a unique or well-known bus name or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
 <em class="parameter"><code>connection</code></em>
 is not a message bus connection. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>object_path</p></td>
@@ -2158,12 +2160,12 @@ is not a message bus connection. </p></td>
 <td class="parameter_name"><p>parameters</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with parameters for the method
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not passing parameters. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>reply_type</p></td>
 <td class="parameter_description"><p> the expected type of the reply, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -2179,7 +2181,7 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -2190,7 +2192,7 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.29.12"></a><h4>Returns</h4>
+<a name="g-dbus-connection-call-sync.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Otherwise a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with
 return values. Free with <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a>.</p>
@@ -2218,8 +2220,8 @@ g_dbus_connection_call_with_unix_fd_list
 <p>Like <a class="link" href="GDBusConnection.html#g-dbus-connection-call" title="g_dbus_connection_call ()"><code class="function">g_dbus_connection_call()</code></a> but also takes a <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> object.</p>
 <p>This method is only available on UNIX.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.30.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-call-with-unix-fd-list.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2236,7 +2238,7 @@ g_dbus_connection_call_with_unix_fd_list
 <td class="parameter_description"><p> a unique or well-known bus name or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
 <em class="parameter"><code>connection</code></em>
 is not a message bus connection. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>object_path</p></td>
@@ -2257,12 +2259,12 @@ is not a message bus connection. </p></td>
 <td class="parameter_name"><p>parameters</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with parameters for the method
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not passing parameters. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>reply_type</p></td>
 <td class="parameter_description"><p> the expected type of the reply, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -2278,19 +2280,19 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 <tr>
 <td class="parameter_name"><p>fd_list</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the request is
 satisfied or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if you don't * care about the result of the
 method invocation. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -2314,8 +2316,8 @@ g_dbus_connection_call_with_unix_fd_list_finish
                                 <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Finishes an operation started with <a class="link" href="GDBusConnection.html#g-dbus-connection-call-with-unix-fd-list" title="g_dbus_connection_call_with_unix_fd_list ()"><code class="function">g_dbus_connection_call_with_unix_fd_list()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.31.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-call-with-unix-fd-list-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2330,7 +2332,7 @@ g_dbus_connection_call_with_unix_fd_list_finish
 <tr>
 <td class="parameter_name"><p>out_fd_list</p></td>
 <td class="parameter_description"><p> return location for a <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>res</p></td>
@@ -2347,7 +2349,7 @@ g_dbus_connection_call_with_unix_fd_list_finish
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.31.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-call-with-unix-fd-list-finish.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Otherwise a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with
 return values. Free with <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a>.</p>
@@ -2375,8 +2377,8 @@ g_dbus_connection_call_with_unix_fd_list_sync
 <p>Like <a class="link" href="GDBusConnection.html#g-dbus-connection-call-sync" title="g_dbus_connection_call_sync ()"><code class="function">g_dbus_connection_call_sync()</code></a> but also takes and returns <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> objects.</p>
 <p>This method is only available on UNIX.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.32.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-call-with-unix-fd-list-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2393,7 +2395,7 @@ g_dbus_connection_call_with_unix_fd_list_sync
 <td class="parameter_description"><p> a unique or well-known bus name or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 if <em class="parameter"><code>connection</code></em>
 is not a message bus connection. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>object_path</p></td>
@@ -2414,12 +2416,12 @@ is not a message bus connection. </p></td>
 <td class="parameter_name"><p>parameters</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with parameters for
 the method or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not passing parameters. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>reply_type</p></td>
 <td class="parameter_description"><p> the expected type of the reply, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -2435,17 +2437,17 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 <tr>
 <td class="parameter_name"><p>fd_list</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>out_fd_list</p></td>
 <td class="parameter_description"><p> return location for a <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -2456,7 +2458,7 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.32.7"></a><h4>Returns</h4>
+<a name="g-dbus-connection-call-with-unix-fd-list-sync.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. Otherwise a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with
 return values. Free with <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a>.</p>
@@ -2479,8 +2481,8 @@ g_dbus_connection_emit_signal (<em class="parameter"><code><a class="link" href=
 <p>This can only fail if <em class="parameter"><code>parameters</code></em>
  is not compatible with the D-Bus protocol.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.33.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-emit-signal.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2496,7 +2498,7 @@ g_dbus_connection_emit_signal (<em class="parameter"><code><a class="link" href=
 <td class="parameter_name"><p>destination_bus_name</p></td>
 <td class="parameter_description"><p> the unique bus name for the destination
 for the signal or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to emit to all listeners. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>object_path</p></td>
@@ -2517,7 +2519,7 @@ for the signal or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="
 <td class="parameter_name"><p>parameters</p></td>
 <td class="parameter_description"><p> a <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> tuple with parameters for the signal
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if not passing parameters. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -2528,7 +2530,7 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.33.8"></a><h4>Returns</h4>
+<a name="g-dbus-connection-emit-signal.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> unless <em class="parameter"><code>error</code></em>
 is set</p>
 </div>
@@ -2547,8 +2549,8 @@ is set</p>
                         <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>Signature for callback function used in <a class="link" href="GDBusConnection.html#g-dbus-connection-signal-subscribe" title="g_dbus_connection_signal_subscribe ()"><code class="function">g_dbus_connection_signal_subscribe()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.34.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSignalCallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2644,8 +2646,8 @@ signal is unsubscribed from, and may be called after <em class="parameter"><code
 
 has been destroyed.)</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.35.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-signal-subscribe.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2661,31 +2663,31 @@ has been destroyed.)</p>
 <td class="parameter_name"><p>sender</p></td>
 <td class="parameter_description"><p> sender name to match on (unique or well-known name)
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to listen from all senders. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>interface_name</p></td>
 <td class="parameter_description"><p> D-Bus interface name to match on or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to
 match on all interfaces. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>member</p></td>
 <td class="parameter_description"><p> D-Bus signal name to match on or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to match on
 all signals. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>object_path</p></td>
 <td class="parameter_description"><p> object path to match on or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to match on
 all object paths. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>arg0</p></td>
 <td class="parameter_description"><p> contents of first string argument to match on or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 to match on all kinds of arguments. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
@@ -2709,13 +2711,13 @@ signal</p></td>
 <td class="parameter_description"><p> function to free <em class="parameter"><code>user_data</code></em>
 with when
 subscription is removed or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.35.10"></a><h4>Returns</h4>
+<a name="g-dbus-connection-signal-subscribe.returns"></a><h4>Returns</h4>
 <p> a subscription identifier that can be used with <a class="link" href="GDBusConnection.html#g-dbus-connection-signal-unsubscribe" title="g_dbus_connection_signal_unsubscribe ()"><code class="function">g_dbus_connection_signal_unsubscribe()</code></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -2728,8 +2730,8 @@ g_dbus_connection_signal_unsubscribe (<em class="parameter"><code><a class="link
                                       <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> subscription_id</code></em>);</pre>
 <p>Unsubscribes from signals.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.36.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-signal-unsubscribe.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2787,8 +2789,8 @@ UNIX file descriptors.</p>
  contain the
 <a class="link" href="GDBusConnection.html#G-DBUS-SEND-MESSAGE-FLAGS-PRESERVE-SERIAL:CAPS"><code class="literal">G_DBUS_SEND_MESSAGE_FLAGS_PRESERVE_SERIAL</code></a> flag.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.37.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-send-message.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2815,7 +2817,7 @@ UNIX file descriptors.</p>
 <td class="parameter_description"><p> return location for serial number assigned
 to <em class="parameter"><code>message</code></em>
 when sending it or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -2826,7 +2828,7 @@ when sending it or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.37.10"></a><h4>Returns</h4>
+<a name="g-dbus-connection-send-message.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was well-formed and queued for
 transmission, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>error</code></em>
 is set</p>
@@ -2881,8 +2883,8 @@ See <a class="link" href="GDBusConnection.html#g-dbus-connection-send-message-wi
 for an example of how to use this low-level API to send and receive
 UNIX file descriptors.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.38.10"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-send-message-with-reply.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2915,18 +2917,18 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 <td class="parameter_description"><p> return location for serial number assigned
 to <em class="parameter"><code>message</code></em>
 when sending it or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>callback</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GAsyncResult.html#GAsyncReadyCallback" title="GAsyncReadyCallback ()"><span class="type">GAsyncReadyCallback</span></a> to call when the request
 is satisfied or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if you don't care about the result. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -2957,8 +2959,8 @@ be of type <a class="link" href="GDBusMessage.html#G-DBUS-MESSAGE-TYPE-ERROR:CAP
 for an example of how to use this low-level API to send and receive
 UNIX file descriptors.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.39.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-send-message-with-reply-finish.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -2985,7 +2987,7 @@ UNIX file descriptors.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.39.8"></a><h4>Returns</h4>
+<a name="g-dbus-connection-send-message-with-reply-finish.returns"></a><h4>Returns</h4>
 <p> a locked <a class="link" href="GDBusMessage.html" title="GDBusMessage"><span class="type">GDBusMessage</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
 is set. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -3040,8 +3042,8 @@ UNIX file descriptors.</p>
  contain the
 <a class="link" href="GDBusConnection.html#G-DBUS-SEND-MESSAGE-FLAGS-PRESERVE-SERIAL:CAPS"><code class="literal">G_DBUS_SEND_MESSAGE_FLAGS_PRESERVE_SERIAL</code></a> flag.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.40.10"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-send-message-with-reply-sync.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3074,12 +3076,12 @@ timeout or <a href="../glib-Basic-Types.html#G-MAXINT:CAPS"><code class="literal
 <td class="parameter_description"><p> return location for serial number
 assigned to <em class="parameter"><code>message</code></em>
 when sending it or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>cancellable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GCancellable.html" title="GCancellable"><span class="type">GCancellable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -3090,7 +3092,7 @@ when sending it or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class=
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.40.11"></a><h4>Returns</h4>
+<a name="g-dbus-connection-send-message-with-reply-sync.returns"></a><h4>Returns</h4>
 <p> a locked <a class="link" href="GDBusMessage.html" title="GDBusMessage"><span class="type">GDBusMessage</span></a> that is the reply
 to <em class="parameter"><code>message</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if <em class="parameter"><code>error</code></em>
@@ -3125,15 +3127,15 @@ message can simply return the <em class="parameter"><code>message</code></em>
 7
 8
 9</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="GDBusMessage.html#GDBusMessage-struct">GDBusMessage</a> </span><span class="symbol">*</span>
-<span class="function">passive_filter</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#GDBusConnection-struct">GDBusConnection</a> </span><span class="symbol">*</span><span class="normal">connection</span>
-<span class="normal">                </span><span class="usertype">GDBusMessage</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
-<span class="normal">                </span><span class="usertype">gboolean</span><span class="normal">         incoming</span><span class="symbol">,</span>
-<span class="normal">                </span><span class="usertype">gpointer</span><span class="normal">         user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="symbol">/&lt;!--</span><span class="normal"> </span><span class="symbol">--&gt;*</span><span class="normal"> inspect @message </span><span class="symbol">*&lt;!--</span><span class="normal"> </span><span class="symbol">--&gt;/</span>
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> message</span><span class="symbol">;</span>
-<span class="cbracket">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GDBusMessage <span class="gtkdoc opt">*</span>
+<span class="function">passive_filter</span> <span class="gtkdoc opt">(</span>GDBusConnection <span class="gtkdoc opt">*</span>connection
+                GDBusMessage    <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
+                gboolean         incoming<span class="gtkdoc opt">,</span>
+                gpointer         user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="gtkdoc opt">/&lt;!-- --&gt;*</span> inspect &#64;message <span class="gtkdoc opt">*&lt;!-- --&gt;/</span>
+  <span class="keyword">return</span> message<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3158,19 +3160,19 @@ Filter functions that wants to drop a message can simply return <a href="../glib
 11
 12
 13</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="GDBusMessage.html#GDBusMessage-struct">GDBusMessage</a> </span><span class="symbol">*</span>
-<span class="function">drop_filter</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#GDBusConnection-struct">GDBusConnection</a> </span><span class="symbol">*</span><span class="normal">connection</span>
-<span class="normal">             </span><span class="usertype">GDBusMessage</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
-<span class="normal">             </span><span class="usertype">gboolean</span><span class="normal">         incoming</span><span class="symbol">,</span>
-<span class="normal">             </span><span class="usertype">gpointer</span><span class="normal">         user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="keyword">if</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">should_drop_message</span><span class="symbol">)</span>
-<span class="normal">    </span><span class="cbracket">{</span>
-<span class="normal">      </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
-<span class="normal">      message </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
-<span class="normal">    </span><span class="cbracket">}</span>
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> message</span><span class="symbol">;</span>
-<span class="cbracket">}</span></pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GDBusMessage <span class="gtkdoc opt">*</span>
+<span class="function">drop_filter</span> <span class="gtkdoc opt">(</span>GDBusConnection <span class="gtkdoc opt">*</span>connection
+             GDBusMessage    <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
+             gboolean         incoming<span class="gtkdoc opt">,</span>
+             gpointer         user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="keyword">if</span> <span class="gtkdoc opt">(</span>should_drop_message<span class="gtkdoc opt">)</span>
+    <span class="gtkdoc opt">{</span>
+      <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
+      message <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+    <span class="gtkdoc opt">}</span>
+  <span class="keyword">return</span> message<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3200,24 +3202,24 @@ Finally, a filter function may modify a message by copying it:</p>
 16
 17
 18</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="keyword">static</span><span class="normal"> <a href="GDBusMessage.html#GDBusMessage-struct">GDBusMessage</a> </span><span class="symbol">*</span>
-<span class="function">modifying_filter</span><span class="normal"> </span><span class="symbol">(</span><span class="normal"><a href="GDBusConnection.html#GDBusConnection-struct">GDBusConnection</a> </span><span class="symbol">*</span><span class="normal">connection</span>
-<span class="normal">                  </span><span class="usertype">GDBusMessage</span><span class="normal">    </span><span class="symbol">*</span><span class="normal">message</span><span class="symbol">,</span>
-<span class="normal">                  </span><span class="usertype">gboolean</span><span class="normal">         incoming</span><span class="symbol">,</span>
-<span class="normal">                  </span><span class="usertype">gpointer</span><span class="normal">         user_data</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GDBusMessage</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">copy</span><span class="symbol">;</span>
-<span class="normal">  </span><span class="usertype">GError</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">error</span><span class="symbol">;</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc kwb">static</span> GDBusMessage <span class="gtkdoc opt">*</span>
+<span class="function">modifying_filter</span> <span class="gtkdoc opt">(</span>GDBusConnection <span class="gtkdoc opt">*</span>connection
+                  GDBusMessage    <span class="gtkdoc opt">*</span>message<span class="gtkdoc opt">,</span>
+                  gboolean         incoming<span class="gtkdoc opt">,</span>
+                  gpointer         user_data<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GDBusMessage <span class="gtkdoc opt">*</span>copy<span class="gtkdoc opt">;</span>
+  GError <span class="gtkdoc opt">*</span>error<span class="gtkdoc opt">;</span>
 
-<span class="normal">  error </span><span class="symbol">=</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">;</span>
-<span class="normal">  copy </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="GDBusMessage.html#g-dbus-message-copy">g_dbus_message_copy</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">,</span><span class="normal"> </span><span class="symbol">&amp;</span><span class="normal">error</span><span class="symbol">);</span>
-<span class="normal">  </span><span class="symbol">/&lt;!--</span><span class="normal"> </span><span class="symbol">--&gt;*</span><span class="normal"> handle @error being </span><span class="usertype">is</span><span class="normal"> set </span><span class="symbol">*&lt;!--</span><span class="normal"> </span><span class="symbol">--&gt;/</span>
-<span class="normal">  </span><span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">message</span><span class="symbol">);</span>
+  error <span class="gtkdoc opt">=</span> NULL<span class="gtkdoc opt">;</span>
+  copy <span class="gtkdoc opt">=</span> <span class="function"><a href="GDBusMessage.html#g-dbus-message-copy">g_dbus_message_copy</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">, &amp;</span>error<span class="gtkdoc opt">);</span>
+  <span class="gtkdoc opt">/&lt;!-- --&gt;*</span> handle &#64;error being is set <span class="gtkdoc opt">*&lt;!-- --&gt;/</span>
+  <span class="function"><a href="../gobject-The-Base-Object-Type.html#g-object-unref">g_object_unref</a></span> <span class="gtkdoc opt">(</span>message<span class="gtkdoc opt">);</span>
 
-<span class="normal">  </span><span class="symbol">/&lt;!--</span><span class="normal"> </span><span class="symbol">--&gt;*</span><span class="normal"> modify @copy </span><span class="symbol">*&lt;!--</span><span class="normal"> </span><span class="symbol">--&gt;/</span>
+  <span class="gtkdoc opt">/&lt;!-- --&gt;*</span> modify &#64;copy <span class="gtkdoc opt">*&lt;!-- --&gt;/</span>
 
-<span class="normal">  </span><span class="keyword">return</span><span class="normal"> copy</span><span class="symbol">;</span>
-<span class="cbracket">}</span></pre></td>
+  <span class="keyword">return</span> copy<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -3230,13 +3232,13 @@ be sent on <em class="parameter"><code>connection</code></em>
  (it could use features, such as file
 descriptors, not compatible with <em class="parameter"><code>connection</code></em>
 ), then a warning is
-logged to &lt;emphasis&gt;standard error&lt;/emphasis&gt;. Applications can
+logged to standard error. Applications can
 check this ahead of time using <a class="link" href="GDBusMessage.html#g-dbus-message-to-blob" title="g_dbus_message_to_blob ()"><code class="function">g_dbus_message_to_blob()</code></a> passing a
 <a class="link" href="GDBusConnection.html#GDBusCapabilityFlags" title="enum GDBusCapabilityFlags"><span class="type">GDBusCapabilityFlags</span></a> value obtained from <em class="parameter"><code>connection</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.41.12"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusMessageFilterFunction.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3268,12 +3270,12 @@ a message to be sent to the other peer.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.41.13"></a><h4>Returns</h4>
+<a name="GDBusMessageFilterFunction.returns"></a><h4>Returns</h4>
 <p> A <a class="link" href="GDBusMessage.html" title="GDBusMessage"><span class="type">GDBusMessage</span></a> that will be freed with
 <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> to drop the message. Passive filter
 functions can simply return the passed <em class="parameter"><code>message</code></em>
 object. </p>
-<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
 </div>
@@ -3313,8 +3315,8 @@ filter is removed, and may be called after <em class="parameter"><code>connectio
  has been
 destroyed.)</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.42.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-add-filter.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3348,7 +3350,7 @@ is removed or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="lite
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.42.9"></a><h4>Returns</h4>
+<a name="g-dbus-connection-add-filter.returns"></a><h4>Returns</h4>
 <p> a filter identifier that can be used with
 <a class="link" href="GDBusConnection.html#g-dbus-connection-remove-filter" title="g_dbus_connection_remove_filter ()"><code class="function">g_dbus_connection_remove_filter()</code></a></p>
 </div>
@@ -3368,8 +3370,8 @@ free data that the filter might be using. Instead, you should pass
 a <a href="../glib-Datasets.html#GDestroyNotify"><span class="type">GDestroyNotify</span></a> to <a class="link" href="GDBusConnection.html#g-dbus-connection-add-filter" title="g_dbus_connection_add_filter ()"><code class="function">g_dbus_connection_add_filter()</code></a>, which will be
 called when it is guaranteed that the data is no longer needed.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.43.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-remove-filter.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3406,8 +3408,8 @@ called when it is guaranteed that the data is no longer needed.</p>
 <p>The type of the <em class="parameter"><code>method_call</code></em>
  function in <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.44.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusInterfaceMethodCallFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3474,8 +3476,8 @@ called when it is guaranteed that the data is no longer needed.</p>
 <p>The type of the <em class="parameter"><code>get_property</code></em>
  function in <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.45.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusInterfaceGetPropertyFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3522,7 +3524,7 @@ called when it is guaranteed that the data is no longer needed.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.45.6"></a><h4>Returns</h4>
+<a name="GDBusInterfaceGetPropertyFunc.returns"></a><h4>Returns</h4>
 <p> A <a href="../glib-GVariant.html#GVariant"><span class="type">GVariant</span></a> with the value for <em class="parameter"><code>property_name</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if
 <em class="parameter"><code>error</code></em>
@@ -3546,8 +3548,8 @@ consumed - otherwise its reference count is decreased by one.</p>
 <p>The type of the <em class="parameter"><code>set_property</code></em>
  function in <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.46.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusInterfaceSetPropertyFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3599,7 +3601,7 @@ consumed - otherwise its reference count is decreased by one.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.46.6"></a><h4>Returns</h4>
+<a name="GDBusInterfaceSetPropertyFunc.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the property was set to <em class="parameter"><code>value</code></em>
 , <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if <em class="parameter"><code>error</code></em>
 is set.</p>
@@ -3661,8 +3663,8 @@ as the object is exported. Also note that <em class="parameter"><code>vtable</co
  will be copied.</p>
 <p>See this <a class="link" href="GDBusConnection.html#gdbus-server" title="An example D-Bus server">server</a> for an example of how to use this method.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.47.13"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-register-object.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3687,13 +3689,13 @@ as the object is exported. Also note that <em class="parameter"><code>vtable</co
 <tr>
 <td class="parameter_name"><p>vtable</p></td>
 <td class="parameter_description"><p> a <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a> to call into or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
 <td class="parameter_description"><p> data to pass to functions in <em class="parameter"><code>vtable</code></em>
 . </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data_free_func</p></td>
@@ -3709,7 +3711,7 @@ as the object is exported. Also note that <em class="parameter"><code>vtable</co
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.47.14"></a><h4>Returns</h4>
+<a name="g-dbus-connection-register-object.returns"></a><h4>Returns</h4>
 <p> 0 if <em class="parameter"><code>error</code></em>
 is set, otherwise a registration id (never 0)
 that can be used with <a class="link" href="GDBusConnection.html#g-dbus-connection-unregister-object" title="g_dbus_connection_unregister_object ()"><code class="function">g_dbus_connection_unregister_object()</code></a></p>
@@ -3724,8 +3726,8 @@ g_dbus_connection_unregister_object (<em class="parameter"><code><a class="link"
                                      <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> registration_id</code></em>);</pre>
 <p>Unregisters an object.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.48.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-unregister-object.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3747,7 +3749,7 @@ g_dbus_connection_unregister_object (<em class="parameter"><code><a class="link"
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.48.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-unregister-object.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the object was unregistered, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -3768,8 +3770,8 @@ g_dbus_connection_register_object_with_closures
 <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a> for easier binding in other languages.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_dbus_connection_register_object]</span></p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.49.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-register-object-with-closures.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3815,7 +3817,7 @@ g_dbus_connection_register_object_with_closures
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.49.7"></a><h4>Returns</h4>
+<a name="g-dbus-connection-register-object-with-closures.returns"></a><h4>Returns</h4>
 <p> 0 if <em class="parameter"><code>error</code></em>
 is set, otherwise a registration id (never 0)
 that can be used with <a class="link" href="GDBusConnection.html#g-dbus-connection-unregister-object" title="g_dbus_connection_unregister_object ()"><code class="function">g_dbus_connection_unregister_object()</code></a> .</p>
@@ -3840,8 +3842,8 @@ specified (ie: to verify that the object path is valid).</p>
 contain the '/' character.</p>
 <p>The return value will be freed with <a href="../glib-String-Utility-Functions.html#g-strfreev"><code class="function">g_strfreev()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.50.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSubtreeEnumerateFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3873,7 +3875,7 @@ contain the '/' character.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.50.9"></a><h4>Returns</h4>
+<a name="GDBusSubtreeEnumerateFunc.returns"></a><h4>Returns</h4>
 <p> A newly allocated array of strings for node names that are children of <em class="parameter"><code>object_path</code></em>
 .</p>
 </div>
@@ -3906,8 +3908,8 @@ items is that the standard DBus interfaces will returned to the
 remote introspector in the empty array case, but not in the <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>
 case.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.51.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSubtreeIntrospectFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -3946,7 +3948,7 @@ case.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.51.10"></a><h4>Returns</h4>
+<a name="GDBusSubtreeIntrospectFunc.returns"></a><h4>Returns</h4>
 <p> A <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>-terminated array of pointers to <a class="link" href="gio-D-Bus-Introspection-Data.html#GDBusInterfaceInfo"><span class="type">GDBusInterfaceInfo</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -3968,8 +3970,8 @@ case.</p>
 , if non-<a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>, is always exactly one
 segment of the object path (ie: it never contains a slash).</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.52.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSubtreeDispatchFunc.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4005,8 +4007,8 @@ segment of the object path (ie: it never contains a slash).</p>
 </tr>
 <tr>
 <td class="parameter_name"><p>out_user_data</p></td>
-<td class="parameter_description"><p>Return location for user data to pass to functions in the returned <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a> (never <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>).</p></td>
-<td class="parameter_annotations"> </td>
+<td class="parameter_description"><p> Return location for user data to pass to functions in the returned <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a> (never <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>). </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][not optional]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -4018,7 +4020,7 @@ segment of the object path (ie: it never contains a slash).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.52.7"></a><h4>Returns</h4>
+<a name="GDBusSubtreeDispatchFunc.returns"></a><h4>Returns</h4>
 <p> A <a class="link" href="GDBusConnection.html#GDBusInterfaceVTable" title="GDBusInterfaceVTable"><span class="type">GDBusInterfaceVTable</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if you don't want to handle the methods.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -4072,8 +4074,8 @@ registration.</p>
 <p>See this <a class="link" href="GDBusConnection.html#gdbus-subtree-server" title="An example for exporting a subtree">server</a> for an example of how to use
 this method.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.53.12"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-register-subtree.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4121,7 +4123,7 @@ dispatch nodes in the subtree</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.53.13"></a><h4>Returns</h4>
+<a name="g-dbus-connection-register-subtree.returns"></a><h4>Returns</h4>
 <p> 0 if <em class="parameter"><code>error</code></em>
 is set, otherwise a subtree registration id (never 0)
 that can be used with <a class="link" href="GDBusConnection.html#g-dbus-connection-unregister-subtree" title="g_dbus_connection_unregister_subtree ()"><code class="function">g_dbus_connection_unregister_subtree()</code></a> .</p>
@@ -4136,8 +4138,8 @@ g_dbus_connection_unregister_subtree (<em class="parameter"><code><a class="link
                                       <em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> registration_id</code></em>);</pre>
 <p>Unregisters a subtree.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.54.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-connection-unregister-subtree.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4159,7 +4161,7 @@ g_dbus_connection_unregister_subtree (<em class="parameter"><code><a class="link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.17.7.11.54.6"></a><h4>Returns</h4>
+<a name="g-dbus-connection-unregister-subtree.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the subtree was unregistered, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-26.html#api-index-2.26">2.26</a></p>
@@ -4171,8 +4173,8 @@ g_dbus_connection_unregister_subtree (<em class="parameter"><code><a class="link
 <a name="GBusType"></a><h3>enum GBusType</h3>
 <p>An enumeration for well-known message buses.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.2.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusType.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4225,8 +4227,8 @@ should only be accessed using the provided API.</p>
 <a name="GDBusConnectionFlags"></a><h3>enum GDBusConnectionFlags</h3>
 <p>Flags used when creating a new <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.4.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusConnectionFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4289,8 +4291,8 @@ delayed until <a class="link" href="GDBusConnection.html#g-dbus-connection-start
 <a name="GDBusCapabilityFlags"></a><h3>enum GDBusCapabilityFlags</h3>
 <p>Capabilities negotiated with the remote peer.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.5.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusCapabilityFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4322,8 +4324,8 @@ supports exchanging UNIX file descriptors with the remote peer.</p>
 <a name="GDBusCallFlags"></a><h3>enum GDBusCallFlags</h3>
 <p>Flags used in <a class="link" href="GDBusConnection.html#g-dbus-connection-call" title="g_dbus_connection_call ()"><code class="function">g_dbus_connection_call()</code></a> and similar APIs.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.6.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusCallFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4364,8 +4366,8 @@ wait for interactive authorization. Since 2.46.</p>
 <a name="GDBusSignalFlags"></a><h3>enum GDBusSignalFlags</h3>
 <p>Flags used when subscribing to signals via <a class="link" href="GDBusConnection.html#g-dbus-connection-signal-subscribe" title="g_dbus_connection_signal_subscribe ()"><code class="function">g_dbus_connection_signal_subscribe()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.7.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSignalFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4415,8 +4417,8 @@ or one of the paths is a subpath of the other.</p>
 <a name="GDBusSendMessageFlags"></a><h3>enum GDBusSendMessageFlags</h3>
 <p>Flags used when sending <a href="GDBusMessage.html#GDBusMessage-struct"><span class="type">GDBusMessages</span></a> on a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.8.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSendMessageFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4495,8 +4497,8 @@ you must ensure that you either provide a non-<a href="../glib-Standard-Macros.h
 function or provide an implementation of the <code class="literal">Set</code> call. If implementing
 the call, you must return the value of type <a href="../glib-GVariantType.html#G-VARIANT-TYPE-UNIT:CAPS"><code class="literal">G_VARIANT_TYPE_UNIT</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.9.11"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusInterfaceVTable.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -4534,8 +4536,8 @@ the call, you must return the value of type <a href="../glib-GVariantType.html#G
 </pre>
 <p>Virtual table for handling subtrees registered with <a class="link" href="GDBusConnection.html#g-dbus-connection-register-subtree" title="g_dbus_connection_register_subtree ()"><code class="function">g_dbus_connection_register_subtree()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.10.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSubtreeVTable.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
@@ -4567,8 +4569,8 @@ the call, you must return the value of type <a href="../glib-GVariantType.html#G
 <a name="GDBusSubtreeFlags"></a><h3>enum GDBusSubtreeFlags</h3>
 <p>Flags passed to <a class="link" href="GDBusConnection.html#g-dbus-connection-register-subtree" title="g_dbus_connection_register_subtree ()"><code class="function">g_dbus_connection_register_subtree()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.12.11.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusSubtreeFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -4728,8 +4730,8 @@ case <em class="parameter"><code>remote_peer_vanished</code></em>
 . You are guaranteed that this signal is emitted only
 once.</p>
 <div class="refsect3">
-<a name="id-1.4.17.7.14.2.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusConnection-closed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -4751,7 +4753,7 @@ remote peer closed its end of the connection</p></td>
 <tr>
 <td class="parameter_name"><p>error</p></td>
 <td class="parameter_description"><p> a <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> with more details about the event or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -4767,6 +4769,6 @@ remote peer closed its end of the connection</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

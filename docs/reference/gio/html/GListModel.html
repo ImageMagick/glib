@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GListModel: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="data-models.html" title="Data Models">
 <link rel="prev" href="data-models.html" title="Data Models">
 <link rel="next" href="GListStore.html" title="GListStore">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -37,7 +37,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GListModel.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -88,7 +88,7 @@
 </div>
 <div class="refsect1">
 <a name="GListModel.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -103,7 +103,7 @@
 </div>
 <div class="refsect1">
 <a name="GListModel.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -122,7 +122,7 @@
 </div>
 <div class="refsect1">
 <a name="GListModel.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/GTypeModule.html">GInterface</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/GTypeModule.html">GInterface</a>
     <span class="lineart">╰──</span> GListModel
 </pre>
 </div>
@@ -198,8 +198,8 @@ implementation of that interface.</p>
 <p>The item type of a <a class="link" href="GListModel.html" title="GListModel"><span class="type">GListModel</span></a> can not change during the life of the
 model.</p>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-list-model-get-item-type.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -213,7 +213,7 @@ model.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.2.7"></a><h4>Returns</h4>
+<a name="g-list-model-get-item-type.returns"></a><h4>Returns</h4>
 <p> the <a href="../gobject-Type-Information.html#GType"><span class="type">GType</span></a> of the items contained in <em class="parameter"><code>list</code></em>
 .</p>
 </div>
@@ -231,8 +231,8 @@ less efficient than iterating the list with increasing values for
 <em class="parameter"><code>position</code></em>
  until <a class="link" href="GListModel.html#g-list-model-get-item" title="g_list_model_get_item ()"><code class="function">g_list_model_get_item()</code></a> returns <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-list-model-get-n-items.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -246,7 +246,7 @@ less efficient than iterating the list with increasing values for
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.3.7"></a><h4>Returns</h4>
+<a name="g-list-model-get-n-items.returns"></a><h4>Returns</h4>
 <p> the number of items in <em class="parameter"><code>list</code></em>
 .</p>
 </div>
@@ -267,8 +267,8 @@ items in <em class="parameter"><code>list</code></em>
 of the list.  See <a class="link" href="GListModel.html#g-list-model-get-n-items" title="g_list_model_get_n_items ()"><code class="function">g_list_model_get_n_items()</code></a>.</p>
 <p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.4.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-list-model-get-item.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -289,7 +289,7 @@ of the list.  See <a class="link" href="GListModel.html#g-list-model-get-n-items
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.4.8"></a><h4>Returns</h4>
+<a name="g-list-model-get-item.returns"></a><h4>Returns</h4>
 <p> the item at <em class="parameter"><code>position</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>][<acronym title="Override the parsed C type with given type."><span class="acronym">type</span></acronym> GObject]</span></p>
@@ -311,8 +311,8 @@ items in <em class="parameter"><code>list</code></em>
 of the list.  See <a class="link" href="GListModel.html#g-list-model-get-n-items" title="g_list_model_get_n_items ()"><code class="function">g_list_model_get_n_items()</code></a>.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_list_model_get_item]</span></p>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.5.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-list-model-get-object.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -333,7 +333,7 @@ of the list.  See <a class="link" href="GListModel.html#g-list-model-get-n-items
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.5.8"></a><h4>Returns</h4>
+<a name="g-list-model-get-object.returns"></a><h4>Returns</h4>
 <p> the object at <em class="parameter"><code>position</code></em>
 . </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>][<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></p>
@@ -368,8 +368,8 @@ series of accesses to the model via the API, without returning to the
 mainloop, and without calling other code, will continue to view the
 same contents of the model.</p>
 <div class="refsect3">
-<a name="id-1.4.22.2.11.6.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-list-model-items-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -427,19 +427,14 @@ using the following functions.</p>
 </pre>
 <p>The virtual function table for <a class="link" href="GListModel.html" title="GListModel"><span class="type">GListModel</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.22.2.12.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GListModelInterface.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
 <tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a> <em class="structfield"><code><a name="GListModelInterface.g-iface"></a>g_iface</code></em>;</p></td>
-<td class="struct_member_description"><p>parent <a href="../gobject-Type-Information.html#GTypeInterface"><span class="type">GTypeInterface</span></a></p></td>
-<td class="struct_member_annotations"> </td>
-</tr>
 <tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GListModelInterface.get-item-type"></a>get_item_type</code></em> ()</p></td>
 <td class="struct_member_description"><p>the virtual function pointer for <a class="link" href="GListModel.html#g-list-model-get-item-type" title="g_list_model_get_item_type ()"><code class="function">g_list_model_get_item_type()</code></a></p></td>
@@ -479,8 +474,8 @@ user_function (<a class="link" href="GListModel.html" title="GListModel"><span c
  items
 were added in their place.</p>
 <div class="refsect3">
-<a name="id-1.4.22.2.13.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GListModel-items-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -526,6 +521,6 @@ changed</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

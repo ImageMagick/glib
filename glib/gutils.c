@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -27,7 +27,8 @@
  */
 
 #include "config.h"
-#include "glibconfig.h"
+
+#include "gutils.h"
 
 #include <stdarg.h>
 #include <stdlib.h>
@@ -50,12 +51,6 @@
 #include <crt_externs.h> /* for _NSGetEnviron */
 #endif
 
-/* implement gutils's inline functions
- */
-#define	G_IMPLEMENT_INLINES 1
-#define	__G_UTILS_C__
-#include "gutils.h"
-
 #include "glib-init.h"
 #include "glib-private.h"
 #include "genviron.h"
@@ -68,6 +63,7 @@
 #include "gstrfuncs.h"
 #include "garray.h"
 #include "glibintl.h"
+#include "gstdio.h"
 
 #ifdef G_PLATFORM_WIN32
 #include "gconvert.h"
@@ -226,12 +222,14 @@ void
 g_atexit (GVoidFunc func)
 {
   gint result;
+  int errsv;
 
   result = atexit ((void (*)(void)) func);
+  errsv = errno;
   if (result)
     {
       g_error ("Could not register atexit() function: %s",
-               g_strerror (errno));
+               g_strerror (errsv));
     }
 }
 
@@ -303,7 +301,7 @@ g_find_program_in_path (const gchar *program)
 
 /**
  * g_find_program_in_path:
- * @program: a program name in the GLib file name encoding
+ * @program: (type filename): a program name in the GLib file name encoding
  * 
  * Locates the first executable named @program in the user's path, in the
  * same way that execvp() would locate it. Returns an allocated string
@@ -323,7 +321,8 @@ g_find_program_in_path (const gchar *program)
  * the program is found, the return value contains the full name
  * including the type suffix.
  *
- * Returns: a newly-allocated string with the absolute path, or %NULL
+ * Returns: (type filename): a newly-allocated string with the absolute path,
+ *     or %NULL
  **/
 #ifdef G_OS_WIN32
 static gchar *
@@ -483,6 +482,10 @@ g_find_program_in_path (const gchar *program)
   return NULL;
 }
 
+/* The functions below are defined this way for compatibility reasons.
+ * See the note in gutils.h.
+ */
+
 /**
  * g_bit_nth_lsf:
  * @mask: a #gulong containing flags
@@ -496,6 +499,12 @@ g_find_program_in_path (const gchar *program)
  * Returns: the index of the first bit set which is higher than @nth_bit, or -1
  *    if no higher bits are set
  */
+gint
+(g_bit_nth_lsf) (gulong mask,
+                 gint   nth_bit)
+{
+  return g_bit_nth_lsf_impl (mask, nth_bit);
+}
 
 /**
  * g_bit_nth_msf:
@@ -511,6 +520,13 @@ g_find_program_in_path (const gchar *program)
  * Returns: the index of the first bit set which is lower than @nth_bit, or -1
  *    if no lower bits are set
  */
+gint
+(g_bit_nth_msf) (gulong mask,
+                 gint   nth_bit)
+{
+  return g_bit_nth_msf_impl (mask, nth_bit);
+}
+
 
 /**
  * g_bit_storage:
@@ -521,6 +537,11 @@ g_find_program_in_path (const gchar *program)
  *
  * Returns: the number of bits used to hold @number
  */
+guint
+(g_bit_storage) (gulong number)
+{
+  return g_bit_storage_impl (number);
+}
 
 G_LOCK_DEFINE_STATIC (g_utils_global);
 
@@ -609,7 +630,7 @@ g_get_user_database_entry (void)
         gint error;
         gchar *logname;
 
-#  if defined (HAVE_POSIX_GETPWUID_R) || defined (HAVE_NONPOSIX_GETPWUID_R)
+#  if defined (HAVE_GETPWUID_R)
         struct passwd pwd;
 #    ifdef _SC_GETPW_R_SIZE_MAX
         /* This reurns the maximum length */
@@ -632,7 +653,6 @@ g_get_user_database_entry (void)
             buffer = g_malloc (bufsize + 6);
             errno = 0;
 
-#    ifdef HAVE_POSIX_GETPWUID_R
             if (logname) {
               error = getpwnam_r (logname, &pwd, buffer, bufsize, &pw);
               if (!pw || (pw->pw_uid != getuid ())) {
@@ -643,23 +663,6 @@ g_get_user_database_entry (void)
               error = getpwuid_r (getuid (), &pwd, buffer, bufsize, &pw);
             }
             error = error < 0 ? errno : error;
-#    else /* HAVE_NONPOSIX_GETPWUID_R */
-#      if defined(_AIX)
-            error = getpwuid_r (getuid (), &pwd, buffer, bufsize);
-            pw = error == 0 ? &pwd : NULL;
-#      else /* !_AIX */
-            if (logname) {
-              pw = getpwnam_r (logname, &pwd, buffer, bufsize);
-              if (!pw || (pw->pw_uid != getuid ())) {
-                /* LOGNAME is lying, fall back to looking up the uid */
-                pw = getpwuid_r (getuid (), &pwd, buffer, bufsize);
-              }
-            } else {
-              pw = getpwuid_r (getuid (), &pwd, buffer, bufsize);
-            }
-            error = pw ? 0 : errno;
-#      endif /* !_AIX */
-#    endif /* HAVE_NONPOSIX_GETPWUID_R */
 
             if (!pw)
               {
@@ -685,7 +688,7 @@ g_get_user_database_entry (void)
               }
           }
         while (!pw);
-#  endif /* HAVE_POSIX_GETPWUID_R || HAVE_NONPOSIX_GETPWUID_R */
+#  endif /* HAVE_GETPWUID_R */
 
         if (!pw)
           {
@@ -751,7 +754,7 @@ g_get_user_database_entry (void)
  * encoding, or something else, and there is no guarantee that it is even
  * consistent on a machine. On Windows, it is always UTF-8.
  *
- * Returns: the user name of the current user.
+ * Returns: (type filename): the user name of the current user.
  */
 const gchar *
 g_get_user_name (void)
@@ -772,7 +775,7 @@ g_get_user_name (void)
  * real user name cannot be determined, the string "Unknown" is 
  * returned.
  *
- * Returns: the user's real name.
+ * Returns: (type filename): the user's real name.
  */
 const gchar *
 g_get_real_name (void)
@@ -808,7 +811,7 @@ g_get_real_name (void)
  * should either directly check the `HOME` environment variable yourself
  * or unset it before calling any functions in GLib.
  *
- * Returns: the current user's home directory
+ * Returns: (type filename): the current user's home directory
  */
 const gchar *
 g_get_home_dir (void)
@@ -904,7 +907,7 @@ g_get_home_dir (void)
  * it is always UTF-8. The return value is never %NULL or the empty
  * string.
  *
- * Returns: the directory to use for temporary files.
+ * Returns: (type filename): the directory to use for temporary files.
  */
 const gchar *
 g_get_tmp_dir (void)
@@ -1003,9 +1006,11 @@ static gchar *g_prgname = NULL;
  * Gets the name of the program. This name should not be localized,
  * in contrast to g_get_application_name().
  *
- * If you are using GDK or GTK+ the program name is set in gdk_init(), 
- * which is called by gtk_init(). The program name is found by taking 
- * the last component of @argv[0].
+ * If you are using #GApplication the program name is set in
+ * g_application_run(). In case of GDK or GTK+ it is set in
+ * gdk_init(), which is called by gtk_init() and the
+ * #GtkApplication::startup handler. The program name is found by
+ * taking the last component of @argv[0].
  *
  * Returns: the name of the program. The returned string belongs 
  *     to GLib and must not be modified or freed.
@@ -1051,6 +1056,12 @@ g_get_prgname (void)
  *
  * Sets the name of the program. This name should not be localized,
  * in contrast to g_set_application_name().
+ *
+ * If you are using #GApplication the program name is set in
+ * g_application_run(). In case of GDK or GTK+ it is set in
+ * gdk_init(), which is called by gtk_init() and the
+ * #GtkApplication::startup handler. The program name is found by
+ * taking the last component of @argv[0].
  *
  * Note that for thread-safety reasons this function can only be called once.
  */
@@ -1141,31 +1152,33 @@ g_set_application_name (const gchar *application_name)
  * [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
  * In this case the directory retrieved will be `XDG_DATA_HOME`.
  *
- * On Windows this is the folder to use for local (as opposed to
- * roaming) application data. See documentation for
- * CSIDL_LOCAL_APPDATA. Note that on Windows it thus is the same as
- * what g_get_user_config_dir() returns.
+ * On Windows it follows XDG Base Directory Specification if `XDG_DATA_HOME`
+ * is defined. If `XDG_DATA_HOME` is undefined, the folder to use for local (as
+ * opposed to roaming) application data is used instead. See the
+ * [documentation for `CSIDL_LOCAL_APPDATA`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_local_appdata).
+ * Note that in this case on Windows it will be the same
+ * as what g_get_user_config_dir() returns.
  *
- * Returns: a string owned by GLib that must not be modified 
+ * Returns: (type filename): a string owned by GLib that must not be modified
  *               or freed.
  * Since: 2.6
  **/
 const gchar *
 g_get_user_data_dir (void)
 {
-  gchar *data_dir;  
+  gchar *data_dir = NULL;
 
   G_LOCK (g_utils_global);
 
   if (!g_user_data_dir)
     {
-#ifdef G_OS_WIN32
-      data_dir = get_special_folder (CSIDL_LOCAL_APPDATA);
-#else
-      data_dir = (gchar *) g_getenv ("XDG_DATA_HOME");
+      const gchar *data_dir_env = g_getenv ("XDG_DATA_HOME");
 
-      if (data_dir && data_dir[0])
-        data_dir = g_strdup (data_dir);
+      if (data_dir_env && data_dir_env[0])
+        data_dir = g_strdup (data_dir_env);
+#ifdef G_OS_WIN32
+      else
+        data_dir = get_special_folder (CSIDL_LOCAL_APPDATA);
 #endif
       if (!data_dir || !data_dir[0])
 	{
@@ -1190,17 +1203,17 @@ g_get_user_data_dir (void)
 static void
 g_init_user_config_dir (void)
 {
-  gchar *config_dir;
+  gchar *config_dir = NULL;
 
   if (!g_user_config_dir)
     {
-#ifdef G_OS_WIN32
-      config_dir = get_special_folder (CSIDL_LOCAL_APPDATA);
-#else
-      config_dir = (gchar *) g_getenv ("XDG_CONFIG_HOME");
+      const gchar *config_dir_env = g_getenv ("XDG_CONFIG_HOME");
 
-      if (config_dir && config_dir[0])
-	config_dir = g_strdup (config_dir);
+      if (config_dir_env && config_dir_env[0])
+	config_dir = g_strdup (config_dir_env);
+#ifdef G_OS_WIN32
+      else
+        config_dir = get_special_folder (CSIDL_LOCAL_APPDATA);
 #endif
       if (!config_dir || !config_dir[0])
 	{
@@ -1227,12 +1240,14 @@ g_init_user_config_dir (void)
  * [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
  * In this case the directory retrieved will be `XDG_CONFIG_HOME`.
  *
- * On Windows this is the folder to use for local (as opposed to
- * roaming) application data. See documentation for
- * CSIDL_LOCAL_APPDATA. Note that on Windows it thus is the same as
- * what g_get_user_data_dir() returns.
+ * On Windows it follows XDG Base Directory Specification if `XDG_CONFIG_HOME` is defined.
+ * If `XDG_CONFIG_HOME` is undefined, the folder to use for local (as opposed
+ * to roaming) application data is used instead. See the
+ * [documentation for `CSIDL_LOCAL_APPDATA`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_local_appdata).
+ * Note that in this case on Windows it will be  the same
+ * as what g_get_user_data_dir() returns.
  *
- * Returns: a string owned by GLib that must not be modified 
+ * Returns: (type filename): a string owned by GLib that must not be modified
  *               or freed.
  * Since: 2.6
  **/
@@ -1257,33 +1272,34 @@ g_get_user_config_dir (void)
  * On UNIX platforms this is determined using the mechanisms described
  * in the
  * [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
- * In this case the directory retrieved will be XDG_CACHE_HOME.
+ * In this case the directory retrieved will be `XDG_CACHE_HOME`.
  *
- * On Windows is the directory that serves as a common repository for
- * temporary Internet files. A typical path is
- * C:\Documents and Settings\username\Local Settings\Temporary Internet Files.
- * See documentation for CSIDL_INTERNET_CACHE.
+ * On Windows it follows XDG Base Directory Specification if `XDG_CACHE_HOME` is defined.
+ * If `XDG_CACHE_HOME` is undefined, the directory that serves as a common
+ * repository for temporary Internet files is used instead. A typical path is
+ * `C:\Documents and Settings\username\Local Settings\Temporary Internet Files`.
+ * See the [documentation for `CSIDL_INTERNET_CACHE`](https://msdn.microsoft.com/en-us/library/windows/desktop/bb762494%28v=vs.85%29.aspx#csidl_internet_cache).
  *
- * Returns: a string owned by GLib that must not be modified 
+ * Returns: (type filename): a string owned by GLib that must not be modified
  *               or freed.
  * Since: 2.6
  **/
 const gchar *
 g_get_user_cache_dir (void)
 {
-  gchar *cache_dir;  
+  gchar *cache_dir = NULL;
 
   G_LOCK (g_utils_global);
 
   if (!g_user_cache_dir)
     {
-#ifdef G_OS_WIN32
-      cache_dir = get_special_folder (CSIDL_INTERNET_CACHE); /* XXX correct? */
-#else
-      cache_dir = (gchar *) g_getenv ("XDG_CACHE_HOME");
+      const gchar *cache_dir_env = g_getenv ("XDG_CACHE_HOME");
 
-      if (cache_dir && cache_dir[0])
-          cache_dir = g_strdup (cache_dir);
+      if (cache_dir_env && cache_dir_env[0])
+        cache_dir = g_strdup (cache_dir_env);
+#ifdef G_OS_WIN32
+      else
+        cache_dir = get_special_folder (CSIDL_INTERNET_CACHE);
 #endif
       if (!cache_dir || !cache_dir[0])
 	{
@@ -1310,46 +1326,54 @@ g_get_user_cache_dir (void)
  * Returns a directory that is unique to the current user on the local
  * system.
  *
- * On UNIX platforms this is determined using the mechanisms described
+ * This is determined using the mechanisms described
  * in the 
  * [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
  * This is the directory
  * specified in the `XDG_RUNTIME_DIR` environment variable.
- * In the case that this variable is not set, GLib will issue a warning
- * message to stderr and return the value of g_get_user_cache_dir().
+ * In the case that this variable is not set, we return the value of
+ * g_get_user_cache_dir(), after verifying that it exists.
  *
- * On Windows this is the folder to use for local (as opposed to
- * roaming) application data. See documentation for
- * CSIDL_LOCAL_APPDATA.  Note that on Windows it thus is the same as
- * what g_get_user_config_dir() returns.
- *
- * Returns: a string owned by GLib that must not be modified or freed.
+ * Returns: (type filename): a string owned by GLib that must not be
+ *     modified or freed.
  *
  * Since: 2.28
  **/
 const gchar *
 g_get_user_runtime_dir (void)
 {
-#ifndef G_OS_WIN32
   static const gchar *runtime_dir;
-  static gsize initialised;
 
-  if (g_once_init_enter (&initialised))
+  if (g_once_init_enter (&runtime_dir))
     {
-      runtime_dir = g_strdup (getenv ("XDG_RUNTIME_DIR"));
-      
-      g_once_init_leave (&initialised, 1);
+      const gchar *dir;
+
+      dir = g_strdup (getenv ("XDG_RUNTIME_DIR"));
+
+      if (dir == NULL)
+        {
+          /* No need to strdup this one since it is valid forever. */
+          dir = g_get_user_cache_dir ();
+
+          /* The user should be able to rely on the directory existing
+           * when the function returns.  Probably it already does, but
+           * let's make sure.  Just do mkdir() directly since it will be
+           * no more expensive than a stat() in the case that the
+           * directory already exists and is a lot easier.
+           *
+           * $XDG_CACHE_HOME is probably ~/.cache/ so as long as $HOME
+           * exists this will work.  If the user changed $XDG_CACHE_HOME
+           * then they can make sure that it exists...
+           */
+          (void) g_mkdir (dir, 0700);
+        }
+
+      g_assert (dir != NULL);
+
+      g_once_init_leave (&runtime_dir, dir);
     }
 
-  if (runtime_dir)
-    return runtime_dir;
-
-  /* Both fallback for UNIX and the default
-   * in Windows: use the user cache directory.
-   */
-#endif
-
-  return g_get_user_cache_dir ();
+  return runtime_dir;
 }
 
 #ifdef HAVE_CARBON
@@ -1703,8 +1727,8 @@ g_reload_user_special_dirs_cache (void)
  * of the special directory without requiring the session to restart; GLib
  * will not reflect any change once the special directories are loaded.
  *
- * Returns: the path to the specified special directory, or %NULL
- *   if the logical id was not found. The returned string is owned by
+ * Returns: (type filename): the path to the specified special directory, or
+ *   %NULL if the logical id was not found. The returned string is owned by
  *   GLib and should not be modified or freed.
  *
  * Since: 2.14
@@ -1789,8 +1813,8 @@ get_module_share_dir (gconstpointer address)
   return retval;
 }
 
-const gchar * const *
-g_win32_get_system_data_dirs_for_module (void (*address_of_function)(void))
+static const gchar * const *
+g_win32_get_system_data_dirs_for_module_real (void (*address_of_function)(void))
 {
   GArray *data_dirs;
   HMODULE hmodule;
@@ -1886,6 +1910,54 @@ g_win32_get_system_data_dirs_for_module (void (*address_of_function)(void))
   return (const gchar * const *) retval;
 }
 
+const gchar * const *
+g_win32_get_system_data_dirs_for_module (void (*address_of_function)(void))
+{
+  gboolean should_call_g_get_system_data_dirs;
+
+  should_call_g_get_system_data_dirs = TRUE;
+  /* These checks are the same as the ones that g_get_system_data_dirs() does.
+   * Please keep them in sync.
+   */
+  G_LOCK (g_utils_global);
+
+  if (!g_system_data_dirs)
+    {
+      const gchar *data_dirs = g_getenv ("XDG_DATA_DIRS");
+
+      if (!data_dirs || !data_dirs[0])
+        should_call_g_get_system_data_dirs = FALSE;
+    }
+
+  G_UNLOCK (g_utils_global);
+
+  /* There is a subtle difference between g_win32_get_system_data_dirs_for_module (NULL),
+   * which is what GLib code can normally call,
+   * and g_win32_get_system_data_dirs_for_module (&_g_win32_get_system_data_dirs),
+   * which is what the inline function used by non-GLib code calls.
+   * The former gets prefix relative to currently-running executable,
+   * the latter - relative to the module that calls _g_win32_get_system_data_dirs()
+   * (disguised as g_get_system_data_dirs()), which could be an executable or
+   * a DLL that is located somewhere else.
+   * This is why that inline function in gutils.h exists, and why we can't just
+   * call g_get_system_data_dirs() from there - because we need to get the address
+   * local to the non-GLib caller-module.
+   */
+
+  /*
+   * g_get_system_data_dirs() will fall back to calling
+   * g_win32_get_system_data_dirs_for_module_real(NULL) if XDG_DATA_DIRS is NULL
+   * or an empty string. The checks above ensure that we do not call it in such
+   * cases and use the address_of_function that we've been given by the inline function.
+   * The reason we're calling g_get_system_data_dirs /at all/ is to give
+   * XDG_DATA_DIRS precedence (if it is set).
+   */
+  if (should_call_g_get_system_data_dirs)
+    return g_get_system_data_dirs ();
+
+  return g_win32_get_system_data_dirs_for_module_real (address_of_function);
+}
+
 #endif
 
 /**
@@ -1897,9 +1969,11 @@ g_win32_get_system_data_dirs_for_module (void (*address_of_function)(void))
  * On UNIX platforms this is determined using the mechanisms described
  * in the
  * [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec)
- * In this case the list of directories retrieved will be XDG_DATA_DIRS.
+ * In this case the list of directories retrieved will be `XDG_DATA_DIRS`.
  *
- * On Windows the first elements in the list are the Application Data
+ * On Windows it follows XDG Base Directory Specification if `XDG_DATA_DIRS` is defined.
+ * If `XDG_DATA_DIRS` is undefined,
+ * the first elements in the list are the Application Data
  * and Documents folders for All Users. (These can be determined only
  * on Windows 2000 or later and are not present in the list on other
  * Windows versions.) See documentation for CSIDL_COMMON_APPDATA and
@@ -1921,8 +1995,10 @@ g_win32_get_system_data_dirs_for_module (void (*address_of_function)(void))
  * Note that on Windows the returned list can vary depending on where
  * this function is called.
  *
- * Returns: (array zero-terminated=1) (transfer none): a %NULL-terminated array of strings owned by GLib that must 
- *               not be modified or freed.
+ * Returns: (array zero-terminated=1) (element-type filename) (transfer none):
+ *     a %NULL-terminated array of strings owned by GLib that must not be
+ *     modified or freed.
+ * 
  * Since: 2.6
  **/
 const gchar * const * 
@@ -1930,19 +2006,25 @@ g_get_system_data_dirs (void)
 {
   gchar **data_dir_vector;
 
+  /* These checks are the same as the ones that g_win32_get_system_data_dirs_for_module()
+   * does. Please keep them in sync.
+   */
   G_LOCK (g_utils_global);
 
   if (!g_system_data_dirs)
     {
-#ifdef G_OS_WIN32
-      data_dir_vector = (gchar **) g_win32_get_system_data_dirs_for_module (NULL);
-#else
       gchar *data_dirs = (gchar *) g_getenv ("XDG_DATA_DIRS");
 
+#ifndef G_OS_WIN32
       if (!data_dirs || !data_dirs[0])
           data_dirs = "/usr/local/share/:/usr/share/";
 
       data_dir_vector = g_strsplit (data_dirs, G_SEARCHPATH_SEPARATOR_S, 0);
+#else
+      if (!data_dirs || !data_dirs[0])
+        data_dir_vector = g_strdupv ((gchar **) g_win32_get_system_data_dirs_for_module_real (NULL));
+      else
+        data_dir_vector = g_strsplit (data_dirs, G_SEARCHPATH_SEPARATOR_S, 0);
 #endif
 
       g_system_data_dirs = data_dir_vector;
@@ -1966,41 +2048,50 @@ g_get_system_data_dirs (void)
  * [XDG Base Directory Specification](http://www.freedesktop.org/Standards/basedir-spec).
  * In this case the list of directories retrieved will be `XDG_CONFIG_DIRS`.
  *
- * On Windows is the directory that contains application data for all users.
- * A typical path is C:\Documents and Settings\All Users\Application Data.
- * This folder is used for application data that is not user specific.
- * For example, an application can store a spell-check dictionary, a database
- * of clip art, or a log file in the CSIDL_COMMON_APPDATA folder.
- * This information will not roam and is available to anyone using the computer.
+ * On Windows it follows XDG Base Directory Specification if `XDG_CONFIG_DIRS` is defined.
+ * If `XDG_CONFIG_DIRS` is undefined, the directory that contains application
+ * data for all users is used instead. A typical path is
+ * `C:\Documents and Settings\All Users\Application Data`.
+ * This folder is used for application data
+ * that is not user specific. For example, an application can store
+ * a spell-check dictionary, a database of clip art, or a log file in the
+ * CSIDL_COMMON_APPDATA folder. This information will not roam and is available
+ * to anyone using the computer.
  *
- * Returns: (array zero-terminated=1) (transfer none): a %NULL-terminated array of strings owned by GLib that must 
- *               not be modified or freed.
+ * Returns: (array zero-terminated=1) (element-type filename) (transfer none):
+ *     a %NULL-terminated array of strings owned by GLib that must not be
+ *     modified or freed.
+ * 
  * Since: 2.6
  **/
 const gchar * const *
 g_get_system_config_dirs (void)
 {
-  gchar *conf_dirs, **conf_dir_vector;
+  gchar **conf_dir_vector;
 
   G_LOCK (g_utils_global);
 
   if (!g_system_config_dirs)
     {
+      const gchar *conf_dirs = g_getenv ("XDG_CONFIG_DIRS");
 #ifdef G_OS_WIN32
-      conf_dirs = get_special_folder (CSIDL_COMMON_APPDATA);
       if (conf_dirs)
 	{
 	  conf_dir_vector = g_strsplit (conf_dirs, G_SEARCHPATH_SEPARATOR_S, 0);
-	  g_free (conf_dirs);
 	}
       else
 	{
-	  /* Return empty list */
-	  conf_dir_vector = g_strsplit ("", G_SEARCHPATH_SEPARATOR_S, 0);
+	  gchar *special_conf_dirs = get_special_folder (CSIDL_COMMON_APPDATA);
+
+	  if (special_conf_dirs)
+	    conf_dir_vector = g_strsplit (special_conf_dirs, G_SEARCHPATH_SEPARATOR_S, 0);
+	  else
+	    /* Return empty list */
+	    conf_dir_vector = g_strsplit ("", G_SEARCHPATH_SEPARATOR_S, 0);
+
+	  g_free (special_conf_dirs);
 	}
 #else
-      conf_dirs = (gchar *) g_getenv ("XDG_CONFIG_DIRS");
-
       if (!conf_dirs || !conf_dirs[0])
           conf_dirs = "/etc/xdg";
 
@@ -2018,7 +2109,7 @@ g_get_system_config_dirs (void)
 
 /**
  * g_nullify_pointer:
- * @nullify_location: the memory address of the pointer.
+ * @nullify_location: (not nullable): the memory address of the pointer.
  *
  * Set the pointer at the specified location to %NULL.
  **/
@@ -2375,3 +2466,29 @@ g_check_setuid (void)
   return FALSE;
 #endif
 }
+
+#ifdef G_OS_WIN32
+/**
+ * g_abort:
+ *
+ * A wrapper for the POSIX abort() function.
+ *
+ * On Windows it is a function that makes extra effort (including a call
+ * to abort()) to ensure that a debugger-catchable exception is thrown
+ * before the program terminates.
+ *
+ * See your C library manual for more details about abort().
+ *
+ * Since: 2.50
+ */
+void
+g_abort (void)
+{
+  /* One call to break the debugger */
+  DebugBreak ();
+  /* One call in case CRT does get saner about abort() behaviour */
+  abort ();
+  /* And one call to bind them all and terminate the program for sure */
+  ExitProcess (127);
+}
+#endif

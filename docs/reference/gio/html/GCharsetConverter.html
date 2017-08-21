@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GCharsetConverter: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="conversion.html" title="Data conversion">
 <link rel="prev" href="GConverter.html" title="GConverter">
 <link rel="next" href="GZlibCompressor.html" title="GZlibCompressor">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GCharsetConverter.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -79,7 +79,7 @@
 </div>
 <div class="refsect1">
 <a name="GCharsetConverter.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -108,7 +108,7 @@
 </div>
 <div class="refsect1">
 <a name="GCharsetConverter.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -151,8 +151,8 @@ g_charset_converter_new (<em class="parameter"><code>const <a href="../glib-Basi
                          <em class="parameter"><code><a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> **error</code></em>);</pre>
 <p>Creates a new <a class="link" href="GCharsetConverter.html" title="GCharsetConverter"><span class="type">GCharsetConverter</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-charset-converter-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -178,7 +178,7 @@ g_charset_converter_new (<em class="parameter"><code>const <a href="../glib-Basi
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.2.6"></a><h4>Returns</h4>
+<a name="g-charset-converter-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GCharsetConverter.html" title="GCharsetConverter"><span class="type">GCharsetConverter</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-24.html#api-index-2.24">2.24</a></p>
@@ -191,8 +191,8 @@ g_charset_converter_set_use_fallback (<em class="parameter"><code><a class="link
                                       <em class="parameter"><code><a href="../glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> use_fallback</code></em>);</pre>
 <p>Sets the <a class="link" href="GCharsetConverter.html#GCharsetConverter--use-fallback" title="The “use-fallback” property"><span class="type">“use-fallback”</span></a> property.</p>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-charset-converter-set-use-fallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -221,8 +221,8 @@ g_charset_converter_set_use_fallback (<em class="parameter"><code><a class="link
 g_charset_converter_get_use_fallback (<em class="parameter"><code><a class="link" href="GCharsetConverter.html" title="GCharsetConverter"><span class="type">GCharsetConverter</span></a> *converter</code></em>);</pre>
 <p>Gets the <a class="link" href="GCharsetConverter.html#GCharsetConverter--use-fallback" title="The “use-fallback” property"><span class="type">“use-fallback”</span></a> property.</p>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-charset-converter-get-use-fallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -236,7 +236,7 @@ g_charset_converter_get_use_fallback (<em class="parameter"><code><a class="link
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.4.6"></a><h4>Returns</h4>
+<a name="g-charset-converter-get-use-fallback.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if fallbacks are used by <em class="parameter"><code>converter</code></em>
 </p>
 </div>
@@ -250,8 +250,8 @@ g_charset_converter_get_num_fallbacks (<em class="parameter"><code><a class="lin
 <p>Gets the number of fallbacks that <em class="parameter"><code>converter</code></em>
  has applied so far.</p>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-charset-converter-get-num-fallbacks.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -265,7 +265,7 @@ g_charset_converter_get_num_fallbacks (<em class="parameter"><code><a class="lin
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.6.3.10.5.6"></a><h4>Returns</h4>
+<a name="g-charset-converter-get-num-fallbacks.returns"></a><h4>Returns</h4>
 <p> the number of fallbacks that <em class="parameter"><code>converter</code></em>
 has applied</p>
 </div>
@@ -308,6 +308,6 @@ has applied</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

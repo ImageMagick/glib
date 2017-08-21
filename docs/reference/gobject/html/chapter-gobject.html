@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>The GObject base class: GObject Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GObject Reference Manual">
 <link rel="up" href="pt01.html" title="Part I. Concepts">
 <link rel="prev" href="gtype-non-instantiable-classed.html" title="Non-instantiable classed types: interfaces">
 <link rel="next" href="gobject-memory.html" title="Object memory management">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -83,7 +83,7 @@
 <p>
       Objects which inherit from GObject are allowed to override this
       constructed class method.
-      The example below shows how <span class="type">MamanBar</span> overrides the parent's construction process:
+      The example below shows how <span class="type">ViewerFile</span> overrides the parent's construction process:
 </p>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
@@ -125,56 +125,56 @@
 34
 35
 36</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="preproc">#define</span><span class="normal"> </span><span class="usertype">MAMAN_TYPE_BAR</span><span class="normal"> </span><span class="function">maman_bar_get_type</span><span class="normal"> </span><span class="symbol">()</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MamanBar</span><span class="symbol">,</span><span class="normal"> maman_bar</span><span class="symbol">,</span><span class="normal"> MAMAN</span><span class="symbol">,</span><span class="normal"> BAR</span><span class="symbol">,</span><span class="normal"> <a href="gobject-The-Base-Object-Type.html#GObject-struct">GObject</a></span><span class="symbol">)</span>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc ppc">#define VIEWER_TYPE_FILE viewer_file_get_type ()</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DECLARE-FINAL-TYPE:CAPS">G_DECLARE_FINAL_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> VIEWER<span class="gtkdoc opt">,</span> <span class="gtkdoc kwb">FILE</span><span class="gtkdoc opt">,</span> GObject<span class="gtkdoc opt">)</span>
 
-<span class="keyword">struct</span><span class="normal"> </span><span class="classname">_MamanBar</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GObject</span><span class="normal"> parent_instance</span><span class="symbol">;</span>
+<span class="gtkdoc kwb">struct</span> _ViewerFile
+<span class="gtkdoc opt">{</span>
+  GObject parent_instance<span class="gtkdoc opt">;</span>
 
-<span class="normal">  </span><span class="comment">/* instance members */</span>
-<span class="cbracket">}</span><span class="symbol">;</span>
+  <span class="comment">/* instance members */</span>
+<span class="gtkdoc opt">};</span>
 
-<span class="comment">/* will create maman_bar_get_type and set maman_bar_parent_class */</span>
-<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MamanBar</span><span class="symbol">,</span><span class="normal"> maman_bar</span><span class="symbol">,</span><span class="normal"> <a href="gobject-Type-Information.html#G-TYPE-OBJECT:CAPS">G_TYPE_OBJECT</a></span><span class="symbol">);</span>
+<span class="comment">/* will create viewer_file_get_type and set viewer_file_parent_class */</span>
+<span class="function"><a href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS">G_DEFINE_TYPE</a></span> <span class="gtkdoc opt">(</span>ViewerFile<span class="gtkdoc opt">,</span> viewer_file<span class="gtkdoc opt">,</span> G_TYPE_OBJECT<span class="gtkdoc opt">)</span>
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">maman_bar_constructed</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">GObject</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">obj</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="comment">/* update the object state depending on constructor properties */</span>
+<span class="gtkdoc kwb">static void</span>
+<span class="function">viewer_file_constructed</span> <span class="gtkdoc opt">(</span>GObject <span class="gtkdoc opt">*</span>obj<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="comment">/* update the object state depending on constructor properties */</span>
 
-<span class="normal">  </span><span class="comment">/* Always chain up to the parent constructed function to complete object</span>
+  <span class="comment">/* Always chain up to the parent constructed function to complete object</span>
 <span class="comment">   * initialisation. */</span>
-<span class="normal">  </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">maman_bar_parent_class</span><span class="symbol">)-&gt;</span><span class="function">constructed</span><span class="normal"> </span><span class="symbol">(</span><span class="normal">obj</span><span class="symbol">);</span>
-<span class="cbracket">}</span>
+  <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>viewer_file_parent_class<span class="gtkdoc opt">)-&gt;</span><span class="function">constructed</span> <span class="gtkdoc opt">(</span>obj<span class="gtkdoc opt">);</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">maman_bar_class_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">MamanBarClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">klass</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="usertype">GObjectClass</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">object_class </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">klass</span><span class="symbol">);</span>
+<span class="gtkdoc kwb">static void</span>
+<span class="function">viewer_file_class_init</span> <span class="gtkdoc opt">(</span>ViewerFileClass <span class="gtkdoc opt">*</span>klass<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  GObjectClass <span class="gtkdoc opt">*</span>object_class <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#G-OBJECT-CLASS:CAPS">G_OBJECT_CLASS</a></span> <span class="gtkdoc opt">(</span>klass<span class="gtkdoc opt">);</span>
 
-<span class="normal">  object_class</span><span class="symbol">-&gt;</span><span class="normal">constructed </span><span class="symbol">=</span><span class="normal"> maman_bar_constructed</span><span class="symbol">;</span>
-<span class="cbracket">}</span>
+  object_class<span class="gtkdoc opt">-&gt;</span>constructed <span class="gtkdoc opt">=</span> viewer_file_constructed<span class="gtkdoc opt">;</span>
+<span class="gtkdoc opt">}</span>
 
-<span class="keyword">static</span><span class="normal"> </span><span class="type">void</span>
-<span class="function">maman_bar_init</span><span class="normal"> </span><span class="symbol">(</span><span class="usertype">MamanBar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">self</span><span class="symbol">)</span>
-<span class="cbracket">{</span>
-<span class="normal">  </span><span class="comment">/* initialize the object */</span>
-<span class="cbracket">}</span></pre></td>
+<span class="gtkdoc kwb">static void</span>
+<span class="function">viewer_file_init</span> <span class="gtkdoc opt">(</span>ViewerFile <span class="gtkdoc opt">*</span>self<span class="gtkdoc opt">)</span>
+<span class="gtkdoc opt">{</span>
+  <span class="comment">/* initialize the object */</span>
+<span class="gtkdoc opt">}</span></pre></td>
       </tr>
     </tbody>
   </table>
 </div>
 
 <p>
-      If the user instantiates an object <span class="type">MamanBar</span> with:
+      If the user instantiates an object <span class="type">ViewerFile</span> with:
 </p>
 <div class="informalexample">
   <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
     <tbody>
       <tr>
         <td class="listing_lines" align="right"><pre>1</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="usertype">MamanBar</span><span class="normal"> </span><span class="symbol">*</span><span class="normal">bar </span><span class="symbol">=</span><span class="normal"> </span><span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span><span class="normal"> </span><span class="symbol">(</span><span class="normal">MAMAN_TYPE_BAR</span><span class="symbol">,</span><span class="normal"> <a href="../glib-Standard-Macros.html#NULL:CAPS">NULL</a></span><span class="symbol">);</span></pre></td>
+        <td class="listing_code"><pre class="programlisting">ViewerFile <span class="gtkdoc opt">*</span>file <span class="gtkdoc opt">=</span> <span class="function"><a href="gobject-The-Base-Object-Type.html#g-object-new">g_object_new</a></span> <span class="gtkdoc opt">(</span>VIEWER_TYPE_FILE<span class="gtkdoc opt">,</span> NULL<span class="gtkdoc opt">);</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -182,23 +182,22 @@
 
 <p>        
       If this is the first instantiation of such an object, the
-      <code class="function">maman_bar_class_init</code> function will be invoked
-      after any <code class="function">maman_bar_base_class_init</code> function.
+      <code class="function">viewer_file_class_init</code> function will be invoked
+      after any <code class="function">viewer_file_base_class_init</code> function.
       This will make sure the class structure of this new object is
-      correctly initialized. Here, <code class="function">maman_bar_class_init</code>
+      correctly initialized. Here, <code class="function">viewer_file_class_init</code>
       is expected to override the object's class methods and setup the
       class' own methods. In the example above, the constructor method is
       the only overridden method: it is set to
-      <code class="function">maman_bar_constructor</code>.
+      <code class="function">viewer_file_constructor</code>.
     </p>
 <p>
       Once <code class="function"><a class="link" href="gobject-The-Base-Object-Type.html#g-object-new" title="g_object_new ()">g_object_new</a></code> has obtained a reference to an initialized
       class structure, it invokes its constructor method to create an instance of the new 
-      object. Since it has just been overridden by <code class="function">maman_bar_class_init</code> 
-      to <code class="function">maman_bar_constructor</code>, the latter is called and, because it
-      was implemented correctly, it chains up to its parent's constructor. In
+      object, if the constructor has been overridden in <code class="function">viewer_file_class_init</code>.
+      Overridden constructors must chain up to their parent’s constructor. In
       order to find the parent class and chain up to the parent class
-      constructor, we can use the <code class="literal">maman_bar_parent_class</code>
+      constructor, we can use the <code class="literal">viewer_file_parent_class</code>
       pointer that has been set up for us by the
       <a class="link" href="gobject-Type-Information.html#G-DEFINE-TYPE:CAPS" title="G_DEFINE_TYPE()"><code class="literal">G_DEFINE_TYPE</code></a>
       macro.
@@ -225,7 +224,7 @@
       </p>
 <div class="table">
 <a name="gobject-construction-table"></a><p class="title"><b>Table 4. <code class="function"><a class="link" href="gobject-The-Base-Object-Type.html#g-object-new" title="g_object_new ()">g_object_new</a></code></b></p>
-<div class="table-contents"><table summary="g_object_new" border="1">
+<div class="table-contents"><table class="table" summary="g_object_new" border="1">
 <colgroup>
 <col align="left">
 <col align="left">
@@ -265,12 +264,13 @@
 <td> </td>
 </tr>
 <tr>
-<td rowspan="2" align="left">Each call to <code class="function"><a class="link" href="gobject-The-Base-Object-Type.html#g-object-new" title="g_object_new ()">g_object_new</a></code> for target type</td>
-<td align="left">target type's class constructor method: GObjectClass-&gt;constructor</td>
+<td rowspan="3" align="left">Each call to <code class="function"><a class="link" href="gobject-The-Base-Object-Type.html#g-object-new" title="g_object_new ()">g_object_new</a></code> for target type</td>
+<td align="left">target type's class <code class="function">constructor</code> method: <code class="function">GObjectClass-&gt;constructor</code>
+</td>
 <td align="left">On object's instance</td>
 <td>
-                If you need to complete the object initialization after all the construction properties
-                are set, override the constructor method and make sure to chain up to the object's
+                If you need to handle construct properties in a custom way, or implement a singleton class, override the constructor
+                method and make sure to chain up to the object's
                 parent class before doing your own initialization.
                 In doubt, do not override the constructor method.
               </td>
@@ -284,6 +284,16 @@
                 Provide an <code class="function">instance_init</code> function to initialize your object before its construction
                 properties are set. This is the preferred way to initialize a GObject instance.
                 This function is equivalent to C++ constructors.
+              </td>
+</tr>
+<tr>
+<td align="left">target type's class <code class="function">constructed</code> method: <code class="function">GObjectClass-&gt;constructed</code>
+</td>
+<td align="left">On object's instance</td>
+<td>
+                If you need to perform object initialization steps after all construct properties have been set.
+                This is the final step in the object initialization process, and is only called if the <code class="function">constructor</code>
+                method returned a new object instance (rather than, for example, an existing singleton).
               </td>
 </tr>
 </tbody>
@@ -306,6 +316,6 @@
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

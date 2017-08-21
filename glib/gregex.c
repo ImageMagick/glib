@@ -14,9 +14,8 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
 #include "config.h"
@@ -64,7 +63,7 @@
  * Note that, unless you set the #G_REGEX_RAW flag, all the strings passed
  * to these functions must be encoded in UTF-8. The lengths and the positions
  * inside the strings are in bytes and not in characters, so, for instance,
- * "\xc3\xa0" (i.e. "&agrave;") is two bytes long but it is treated as a
+ * "\xc3\xa0" (i.e. "à") is two bytes long but it is treated as a
  * single character. If you set #G_REGEX_RAW the strings can be non-valid
  * UTF-8 strings and a byte is treated as a character, so "\xc3\xa0" is two
  * bytes and two characters long.
@@ -678,7 +677,7 @@ g_match_info_unref (GMatchInfo *match_info)
 
 /**
  * g_match_info_free:
- * @match_info: (allow-none): a #GMatchInfo, or %NULL
+ * @match_info: (nullable): a #GMatchInfo, or %NULL
  *
  * If @match_info is not %NULL, calls g_match_info_unref(); otherwise does
  * nothing.
@@ -895,7 +894,7 @@ g_match_info_is_partial_match (const GMatchInfo *match_info)
 
 /**
  * g_match_info_expand_references:
- * @match_info: (allow-none): a #GMatchInfo or %NULL
+ * @match_info: (nullable): a #GMatchInfo or %NULL
  * @string_to_expand: the string to expand
  * @error: location to store the error occurring, or %NULL to ignore errors
  *
@@ -917,7 +916,7 @@ g_match_info_is_partial_match (const GMatchInfo *match_info)
  * Use g_regex_check_replacement() to find out whether @string_to_expand
  * contains references.
  *
- * Returns: (allow-none): the expanded string, or %NULL if an error occurred
+ * Returns: (nullable): the expanded string, or %NULL if an error occurred
  *
  * Since: 2.14
  */
@@ -978,7 +977,7 @@ g_match_info_expand_references (const GMatchInfo  *match_info,
  * The string is fetched from the string passed to the match function,
  * so you cannot call this function after freeing the string.
  *
- * Returns: (allow-none): The matched substring, or %NULL if an error
+ * Returns: (nullable): The matched substring, or %NULL if an error
  *     occurred. You have to free the string yourself
  *
  * Since: 2.14
@@ -1011,9 +1010,9 @@ g_match_info_fetch (const GMatchInfo *match_info,
  * g_match_info_fetch_pos:
  * @match_info: #GMatchInfo structure
  * @match_num: number of the sub expression
- * @start_pos: (out) (allow-none): pointer to location where to store
+ * @start_pos: (out) (optional): pointer to location where to store
  *     the start position, or %NULL
- * @end_pos: (out) (allow-none): pointer to location where to store
+ * @end_pos: (out) (optional): pointer to location where to store
  *     the end position, or %NULL
  *
  * Retrieves the position in bytes of the @match_num'th capturing
@@ -1109,7 +1108,7 @@ get_matched_substring_number (const GMatchInfo *match_info,
  * The string is fetched from the string passed to the match function,
  * so you cannot call this function after freeing the string.
  *
- * Returns: (allow-none): The matched substring, or %NULL if an error
+ * Returns: (nullable): The matched substring, or %NULL if an error
  *     occurred. You have to free the string yourself
  *
  * Since: 2.14
@@ -1136,9 +1135,9 @@ g_match_info_fetch_named (const GMatchInfo *match_info,
  * g_match_info_fetch_named_pos:
  * @match_info: #GMatchInfo structure
  * @name: name of the subexpression
- * @start_pos: (out) (allow-none): pointer to location where to store
+ * @start_pos: (out) (optional): pointer to location where to store
  *     the start position, or %NULL
- * @end_pos: (out) (allow-none): pointer to location where to store
+ * @end_pos: (out) (optional): pointer to location where to store
  *     the end position, or %NULL
  *
  * Retrieves the position in bytes of the capturing parentheses named @name.
@@ -1286,8 +1285,8 @@ static pcre *regex_compile (const gchar         *pattern,
  * Compiles the regular expression to an internal form, and does
  * the initial setup of the #GRegex structure.
  *
- * Returns: a #GRegex structure. Call g_regex_unref() when you
- *   are done with it
+ * Returns: (nullable): a #GRegex structure or %NULL if an error occured. Call
+ *   g_regex_unref() when you are done with it
  *
  * Since: 2.14
  */
@@ -1582,6 +1581,10 @@ g_regex_get_max_lookbehind (const GRegex *regex)
  *
  * Returns the compile options that @regex was created with.
  *
+ * Depending on the version of PCRE that is used, this may or may not
+ * include flags set by option expressions such as `(?i)` found at the
+ * top-level within the compiled pattern.
+ *
  * Returns: flags from #GRegexCompileFlags
  *
  * Since: 2.26
@@ -1656,7 +1659,7 @@ g_regex_match_simple (const gchar        *pattern,
  * @regex: a #GRegex structure from g_regex_new()
  * @string: the string to scan for matches
  * @match_options: match options
- * @match_info: (out) (allow-none): pointer to location where to store
+ * @match_info: (out) (optional): pointer to location where to store
  *     the #GMatchInfo, or %NULL if you do not need it
  *
  * Scans for a match in string for the pattern in @regex.
@@ -1717,9 +1720,9 @@ g_regex_match (const GRegex      *regex,
  * @regex: a #GRegex structure from g_regex_new()
  * @string: (array length=string_len): the string to scan for matches
  * @string_len: the length of @string, or -1 if @string is nul-terminated
- * @start_position: starting index of the string to match
+ * @start_position: starting index of the string to match, in bytes
  * @match_options: match options
- * @match_info: (out) (allow-none): pointer to location where to store
+ * @match_info: (out) (optional): pointer to location where to store
  *     the #GMatchInfo, or %NULL if you do not need it
  * @error: location to store the error occurring, or %NULL to ignore errors
  *
@@ -1811,7 +1814,7 @@ g_regex_match_full (const GRegex      *regex,
  * @regex: a #GRegex structure from g_regex_new()
  * @string: the string to scan for matches
  * @match_options: match options
- * @match_info: (out) (allow-none): pointer to location where to store
+ * @match_info: (out) (optional): pointer to location where to store
  *     the #GMatchInfo, or %NULL if you do not need it
  *
  * Using the standard algorithm for regular expression matching only
@@ -1848,9 +1851,9 @@ g_regex_match_all (const GRegex      *regex,
  * @regex: a #GRegex structure from g_regex_new()
  * @string: (array length=string_len): the string to scan for matches
  * @string_len: the length of @string, or -1 if @string is nul-terminated
- * @start_position: starting index of the string to match
+ * @start_position: starting index of the string to match, in bytes
  * @match_options: match options
- * @match_info: (out) (allow-none): pointer to location where to store
+ * @match_info: (out) (optional): pointer to location where to store
  *     the #GMatchInfo, or %NULL if you do not need it
  * @error: location to store the error occurring, or %NULL to ignore errors
  *
@@ -1908,6 +1911,7 @@ g_regex_match_all_full (const GRegex      *regex,
   gboolean done;
   pcre *pcre_re;
   pcre_extra *extra;
+  gboolean retval;
 
   g_return_val_if_fail (regex != NULL, FALSE);
   g_return_val_if_fail (string != NULL, FALSE);
@@ -1981,13 +1985,14 @@ g_regex_match_all_full (const GRegex      *regex,
 
   /* set info->pos to -1 so that a call to g_match_info_next() fails. */
   info->pos = -1;
+  retval = info->matches >= 0;
 
   if (match_info != NULL)
     *match_info = info;
   else
     g_match_info_free (info);
 
-  return info->matches >= 0;
+  return retval;
 }
 
 /**
@@ -2119,7 +2124,7 @@ g_regex_split (const GRegex     *regex,
  * @regex: a #GRegex structure
  * @string: (array length=string_len): the string to split with the pattern
  * @string_len: the length of @string, or -1 if @string is nul-terminated
- * @start_position: starting index of the string to match
+ * @start_position: starting index of the string to match, in bytes
  * @match_options: match time option flags
  * @max_tokens: the maximum number of tokens to split @string into.
  *   If this is less than 1, the string is split completely
@@ -2289,7 +2294,6 @@ g_regex_split_full (const GRegex      *regex,
     {
       g_propagate_error (error, tmp_error);
       g_list_free_full (list, g_free);
-      match_info->pos = -1;
       return NULL;
     }
 
@@ -2406,7 +2410,7 @@ expand_escape (const gchar        *replacement,
               h = g_ascii_xdigit_value (*p);
               if (h < 0)
                 {
-                  error_detail = _("hexadecimal digit or '}' expected");
+                  error_detail = _("hexadecimal digit or “}” expected");
                   goto error;
                 }
               x = x * 16 + h;
@@ -2462,7 +2466,7 @@ expand_escape (const gchar        *replacement,
       p++;
       if (*p != '<')
         {
-          error_detail = _("missing '<' in symbolic reference");
+          error_detail = _("missing “<” in symbolic reference");
           goto error;
         }
       q = p + 1;
@@ -2569,7 +2573,7 @@ expand_escape (const gchar        *replacement,
         }
       break;
     case 0:
-      error_detail = _("stray final '\\'");
+      error_detail = _("stray final “\\”");
       goto error;
       break;
     default:
@@ -2584,7 +2588,7 @@ expand_escape (const gchar        *replacement,
   tmp_error = g_error_new (G_REGEX_ERROR,
                            G_REGEX_ERROR_REPLACE,
                            _("Error while parsing replacement "
-                             "text \"%s\" at char %lu: %s"),
+                             "text “%s” at char %lu: %s"),
                            replacement,
                            (gulong)(p - replacement),
                            error_detail);
@@ -2749,7 +2753,7 @@ interpolation_list_needs_match (GList *list)
  * @regex: a #GRegex structure
  * @string: (array length=string_len): the string to perform matches against
  * @string_len: the length of @string, or -1 if @string is nul-terminated
- * @start_position: starting index of the string to match
+ * @start_position: starting index of the string to match, in bytes
  * @replacement: text to replace each match with
  * @match_options: options for the match
  * @error: location to store the error occurring, or %NULL to ignore errors
@@ -2840,7 +2844,7 @@ literal_replacement (const GMatchInfo *match_info,
  * @regex: a #GRegex structure
  * @string: (array length=string_len): the string to perform matches against
  * @string_len: the length of @string, or -1 if @string is nul-terminated
- * @start_position: starting index of the string to match
+ * @start_position: starting index of the string to match, in bytes
  * @replacement: text to replace each match with
  * @match_options: options for the match
  * @error: location to store the error occurring, or %NULL to ignore errors
@@ -2883,7 +2887,7 @@ g_regex_replace_literal (const GRegex      *regex,
  * @regex: a #GRegex structure from g_regex_new()
  * @string: (array length=string_len): string to perform matches against
  * @string_len: the length of @string, or -1 if @string is nul-terminated
- * @start_position: starting index of the string to match
+ * @start_position: starting index of the string to match, in bytes
  * @match_options: options for the match
  * @eval: a function to call for each match
  * @user_data: user data to pass to the function
@@ -2993,7 +2997,7 @@ g_regex_replace_eval (const GRegex        *regex,
 /**
  * g_regex_check_replacement:
  * @replacement: the replacement string
- * @has_references: (out) (allow-none): location to store information about
+ * @has_references: (out) (optional): location to store information about
  *   references in @replacement or %NULL
  * @error: location to store error
  *

@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -355,15 +355,18 @@ g_unix_input_stream_read (GInputStream  *stream,
 
   while (1)
     {
+      int errsv;
+
       poll_fds[0].revents = poll_fds[1].revents = 0;
       do
-	poll_ret = g_poll (poll_fds, nfds, -1);
-      while (poll_ret == -1 && errno == EINTR);
+        {
+          poll_ret = g_poll (poll_fds, nfds, -1);
+          errsv = errno;
+        }
+      while (poll_ret == -1 && errsv == EINTR);
 
       if (poll_ret == -1)
 	{
-          int errsv = errno;
-
 	  g_set_error (error, G_IO_ERROR,
 		       g_io_error_from_errno (errsv),
 		       _("Error reading from file descriptor: %s"),
@@ -460,6 +463,7 @@ g_unix_input_stream_close_async (GInputStream        *stream,
   GError *error = NULL;
 
   task = g_task_new (stream, cancellable, callback, user_data);
+  g_task_set_source_tag (task, g_unix_input_stream_close_async);
   g_task_set_priority (task, io_priority);
 
   if (g_unix_input_stream_close (stream, cancellable, &error))

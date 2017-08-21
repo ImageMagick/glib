@@ -4,7 +4,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the licence, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -23,10 +23,9 @@
 
 static inline void
 g_autoptr_cleanup_generic_gfree (void *p)
-{ 
+{
   void **pp = (void**)p;
-  if (*pp)
-    g_free (*pp);
+  g_free (*pp);
 }
 
 static inline void
@@ -87,3 +86,4 @@ G_DEFINE_AUTOPTR_CLEANUP_FUNC(GVariantIter, g_variant_iter_free)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GVariantDict, g_variant_dict_unref)
 G_DEFINE_AUTO_CLEANUP_CLEAR_FUNC(GVariantDict, g_variant_dict_clear)
 G_DEFINE_AUTOPTR_CLEANUP_FUNC(GVariantType, g_variant_type_free)
+G_DEFINE_AUTO_CLEANUP_FREE_FUNC(GStrv, g_strfreev, NULL)

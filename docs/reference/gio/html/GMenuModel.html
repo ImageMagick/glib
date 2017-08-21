@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GMenuModel: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GDBusActionGroup.html" title="GDBusActionGroup">
 <link rel="next" href="GMenu.html" title="GMenu">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -35,7 +35,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GMenuModel.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -172,7 +172,7 @@
 </div>
 <div class="refsect1">
 <a name="GMenuModel.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -187,7 +187,7 @@
 </div>
 <a name="GMenuAttributeIter"></a><a name="GMenuLinkIter"></a><div class="refsect1">
 <a name="GMenuModel.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -319,7 +319,7 @@ in the <a class="link" href="GMenuModel.html#G-MENU-ATTRIBUTE-ACTION:CAPS" title
 identifies an action in an action group. Which action group(s) provide
 actions depends on the context in which the menu model is used.
 E.g. when the model is exported as the application menu of a
-<a href="http://developer.gnome.org/gtk3/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a>, actions can be application-wide or window-specific
+<a href="../gtk4/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a>, actions can be application-wide or window-specific
 (and thus come from two different action groups). By convention, the
 application-wide actions have names that start with "app.", while the
 names of window-specific actions start with "win.".</p>
@@ -369,8 +369,8 @@ g_menu_model_is_mutable (<em class="parameter"><code><a class="link" href="GMenu
 <p>An immutable <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a> will never emit the <a class="link" href="GMenuModel.html#GMenuModel-items-changed" title="The “items-changed” signal"><span class="type">“items-changed”</span></a>
 signal. Consumers of the model may make optimisations accordingly.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-is-mutable.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -384,7 +384,7 @@ signal. Consumers of the model may make optimisations accordingly.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.2.7"></a><h4>Returns</h4>
+<a name="g-menu-model-is-mutable.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the model is mutable (ie: "items-changed" may be
 emitted).</p>
 </div>
@@ -398,8 +398,8 @@ g_menu_model_get_n_items (<em class="parameter"><code><a class="link" href="GMen
 <p>Query the number of items in <em class="parameter"><code>model</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-get-n-items.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -413,7 +413,7 @@ g_menu_model_get_n_items (<em class="parameter"><code><a class="link" href="GMen
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.3.6"></a><h4>Returns</h4>
+<a name="g-menu-model-get-n-items.returns"></a><h4>Returns</h4>
 <p> the number of items</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -440,8 +440,8 @@ expected type is unspecified) then the value is returned.</p>
 <p>If the attribute does not exist, or does not match the expected type
 then <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.4.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-get-item-attribute-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -467,13 +467,13 @@ then <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL
 <td class="parameter_name"><p>expected_type</p></td>
 <td class="parameter_description"><p> the expected type of the attribute, or
 <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.4.9"></a><h4>Returns</h4>
+<a name="g-menu-model-get-item-attribute-value.returns"></a><h4>Returns</h4>
 <p> the value of the attribute. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -509,8 +509,8 @@ returned.</p>
 particular, no '&amp;' characters are allowed in <em class="parameter"><code>format_string</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.5.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-get-item-attribute.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -547,7 +547,7 @@ particular, no '&amp;' characters are allowed in <em class="parameter"><code>for
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.5.9"></a><h4>Returns</h4>
+<a name="g-menu-model-get-item-attribute.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the named attribute was found with the expected
 type</p>
 </div>
@@ -568,8 +568,8 @@ specified by <em class="parameter"><code>link</code></em>
 <p>If the link exists, the linked <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a> is returned.  If the link
 does not exist, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-get-item-link.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -595,7 +595,7 @@ does not exist, <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="li
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.6.7"></a><h4>Returns</h4>
+<a name="g-menu-model-get-item-link.returns"></a><h4>Returns</h4>
 <p> the linked <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -613,8 +613,8 @@ the item at position <em class="parameter"><code>item_index</code></em>
 .</p>
 <p>You must free the iterator with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when you are done.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.7.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-iterate-item-attributes.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -635,7 +635,7 @@ the item at position <em class="parameter"><code>item_index</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.7.7"></a><h4>Returns</h4>
+<a name="g-menu-model-iterate-item-attributes.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenuModel.html#GMenuAttributeIter"><span class="type">GMenuAttributeIter</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -653,8 +653,8 @@ position <em class="parameter"><code>item_index</code></em>
 .</p>
 <p>You must free the iterator with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when you are done.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-iterate-item-links.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -675,7 +675,7 @@ position <em class="parameter"><code>item_index</code></em>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.8.7"></a><h4>Returns</h4>
+<a name="g-menu-model-iterate-item-links.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GMenuModel.html#GMenuLinkIter"><span class="type">GMenuLinkIter</span></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -703,8 +703,8 @@ entry and not in response to calls -- particularly those from the
 <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a> API.  Said another way: the menu must not change while
 user code is running without returning to the mainloop.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.9.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-model-items-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -760,8 +760,8 @@ remains at the current position.  The value returned in <em class="parameter"><c
  must
 be unreffed using <a href="../glib-GVariant.html#g-variant-unref"><code class="function">g_variant_unref()</code></a> when it is no longer in use.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.10.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-attribute-iter-get-next.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -776,18 +776,18 @@ be unreffed using <a href="../glib-GVariant.html#g-variant-unref"><code class="f
 <tr>
 <td class="parameter_name"><p>out_name</p></td>
 <td class="parameter_description"><p> the type of the attribute. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>value</p></td>
 <td class="parameter_description"><p> the attribute value. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.10.9"></a><h4>Returns</h4>
+<a name="g-menu-attribute-iter-get-next.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if there is no additional
 attribute</p>
 </div>
@@ -802,8 +802,8 @@ g_menu_attribute_iter_get_name (<em class="parameter"><code><a class="link" href
 a string.</p>
 <p>The iterator is not advanced.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.11.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-attribute-iter-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -817,7 +817,7 @@ a string.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.11.7"></a><h4>Returns</h4>
+<a name="g-menu-attribute-iter-get-name.returns"></a><h4>Returns</h4>
 <p> the name of the attribute</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -830,8 +830,8 @@ g_menu_attribute_iter_get_value (<em class="parameter"><code><a class="link" hre
 <p>Gets the value of the attribute at the current iterator position.</p>
 <p>The iterator is not advanced.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-attribute-iter-get-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -845,7 +845,7 @@ g_menu_attribute_iter_get_value (<em class="parameter"><code><a class="link" hre
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.12.7"></a><h4>Returns</h4>
+<a name="g-menu-attribute-iter-get-value.returns"></a><h4>Returns</h4>
 <p> the value of the current attribute. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -864,8 +864,8 @@ attributes.</p>
 to advance it to the first attribute (and determine if the first
 attribute exists at all).</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.13.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-attribute-iter-next.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -879,7 +879,7 @@ attribute exists at all).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.13.8"></a><h4>Returns</h4>
+<a name="g-menu-attribute-iter-next.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when there are no more attributes</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -892,8 +892,8 @@ g_menu_link_iter_get_name (<em class="parameter"><code><a class="link" href="GMe
 <p>Gets the name of the link at the current iterator position.</p>
 <p>The iterator is not advanced.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.14.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-link-iter-get-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -907,7 +907,7 @@ g_menu_link_iter_get_name (<em class="parameter"><code><a class="link" href="GMe
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.14.7"></a><h4>Returns</h4>
+<a name="g-menu-link-iter-get-name.returns"></a><h4>Returns</h4>
 <p> the type of the link</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -935,8 +935,8 @@ remains at the current position.  The value returned in <em class="parameter"><c
  must
 be unreffed using <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a> when it is no longer in use.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.15.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-link-iter-get-next.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -951,18 +951,18 @@ be unreffed using <a href="../gobject-The-Base-Object-Type.html#g-object-unref">
 <tr>
 <td class="parameter_name"><p>out_link</p></td>
 <td class="parameter_description"><p> the name of the link. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>value</p></td>
 <td class="parameter_description"><p> the linked <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.15.9"></a><h4>Returns</h4>
+<a name="g-menu-link-iter-get-next.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if there is no additional link</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -975,8 +975,8 @@ g_menu_link_iter_get_value (<em class="parameter"><code><a class="link" href="GM
 <p>Gets the linked <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a> at the current iterator position.</p>
 <p>The iterator is not advanced.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.16.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-link-iter-get-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -990,7 +990,7 @@ g_menu_link_iter_get_value (<em class="parameter"><code><a class="link" href="GM
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.16.7"></a><h4>Returns</h4>
+<a name="g-menu-link-iter-get-value.returns"></a><h4>Returns</h4>
 <p> the <a class="link" href="GMenuModel.html" title="GMenuModel"><span class="type">GMenuModel</span></a> that is linked to. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -1008,8 +1008,8 @@ link.</p>
 advance it to the first link (and determine if the first link exists
 at all).</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.17.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-menu-link-iter-next.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1023,7 +1023,7 @@ at all).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.13.11.17.8"></a><h4>Returns</h4>
+<a name="g-menu-link-iter-next.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, or <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> when there are no more links</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -1158,8 +1158,8 @@ new item).</p>
 and expect to see the results of the modification that is being
 reported.  The signal is emitted after the modification.</p>
 <div class="refsect3">
-<a name="id-1.4.24.13.13.2.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GMenuModel-items-changed.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1203,6 +1203,6 @@ reported.  The signal is emitted after the modification.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

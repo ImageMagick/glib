@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GResource: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="resources.html" title="Resources">
 <link rel="prev" href="resources.html" title="Resources">
 <link rel="next" href="permissions.html" title="Permissions">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -34,7 +34,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GResource.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -176,16 +176,12 @@
 <a class="link" href="GResource.html#g-resources-get-info" title="g_resources_get_info ()">g_resources_get_info</a> <span class="c_punctuation">()</span>
 </td>
 </tr>
-<tr>
-<td class="define_keyword">#define</td>
-<td class="function_name"><a class="link" href="GResource.html#G-RESOURCE-ERROR:CAPS" title="G_RESOURCE_ERROR">G_RESOURCE_ERROR</a></td>
-</tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect1">
 <a name="GResource.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -208,6 +204,10 @@
 <td class="function_name"><a class="link" href="GResource.html#GStaticResource" title="struct GStaticResource">GStaticResource</a></td>
 </tr>
 <tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="GResource.html#G-RESOURCE-ERROR:CAPS" title="G_RESOURCE_ERROR">G_RESOURCE_ERROR</a></td>
+</tr>
+<tr>
 <td class="datatype_keyword">enum</td>
 <td class="function_name"><a class="link" href="GResource.html#GResourceError" title="enum GResourceError">GResourceError</a></td>
 </tr>
@@ -216,7 +216,7 @@
 </div>
 <div class="refsect1">
 <a name="GResource.object-hierarchy"></a><h2>Object Hierarchy</h2>
-<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-Boxed-Types.html">GBoxed</a>
+<pre class="screen">    <a href="/home/mclasen/gnome/share/gtk-doc/html/gobject/gobject-Boxed-Types.html">GBoxed</a>
     <span class="lineart">╰──</span> GResource
 </pre>
 </div>
@@ -229,7 +229,7 @@
 <a name="GResource.description"></a><h2>Description</h2>
 <p>Applications and libraries often contain binary or textual data that is
 really part of the application, rather than user data. For instance
-<a href="http://developer.gnome.org/gtk3/GtkBuilder.html#GtkBuilder-struct"><span class="type">GtkBuilder</span></a> .ui files, splashscreen images, GMenu markup XML, CSS files,
+<a href="../gtk4/GtkBuilder.html#GtkBuilder-struct"><span class="type">GtkBuilder</span></a> .ui files, splashscreen images, GMenu markup XML, CSS files,
 icons, etc. These are often shipped as files in <code class="literal">$datadir/appname</code>, or
 manually included as literal strings in the code.</p>
 <p>The <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a> API and the glib-compile-resources program
@@ -256,6 +256,12 @@ the resource file, rather than an (uncompressed) copy if it. For this, the gdk-p
 program must be in the PATH, or the <code class="literal">GDK_PIXBUF_PIXDATA</code> environment variable must be
 set to the full path to the gdk-pixbuf-pixdata executable; otherwise the resource compiler will
 abort.</p>
+<p>Resource files will be exported in the GResource namespace using the
+combination of the given <code class="literal">prefix</code> and the filename from the <code class="literal">file</code> element.
+The <code class="literal">alias</code> attribute can be used to alter the filename to expose them at a
+different location in the resource namespace. Typically, this is used to
+include files from a different source directory without exposing the source
+directory in the resource namespace, as in the example below.</p>
 <p>Resource bundles are created by the glib-compile-resources program
 which takes an XML file that describes the bundle, and a set of files that the XML references. These
 are combined into a binary resource bundle.</p>
@@ -271,15 +277,17 @@ are combined into a binary resource bundle.</p>
 5
 6
 7
-8</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="symbol">&lt;?</span><span class="usertype">xml</span><span class="normal"> version</span><span class="symbol">=</span><span class="string">"1.0"</span><span class="normal"> encoding</span><span class="symbol">=</span><span class="string">"UTF-8"</span><span class="symbol">?&gt;</span>
-<span class="symbol">&lt;</span><span class="normal">gresources</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;</span><span class="usertype">gresource</span><span class="normal"> prefix</span><span class="symbol">=</span><span class="string">"/org/gtk/Example"</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="normal">file</span><span class="symbol">&gt;</span><span class="normal">data</span><span class="symbol">/</span><span class="normal">splashscreen</span><span class="symbol">.</span><span class="normal">png</span><span class="symbol">&lt;/</span><span class="normal">file</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">file</span><span class="normal"> compressed</span><span class="symbol">=</span><span class="string">"true"</span><span class="symbol">&gt;</span><span class="normal">dialog</span><span class="symbol">.</span><span class="normal">ui</span><span class="symbol">&lt;/</span><span class="normal">file</span><span class="symbol">&gt;</span>
-<span class="normal">    </span><span class="symbol">&lt;</span><span class="usertype">file</span><span class="normal"> preprocess</span><span class="symbol">=</span><span class="string">"xml-stripblanks"</span><span class="symbol">&gt;</span><span class="normal">menumarkup</span><span class="symbol">.</span><span class="normal">xml</span><span class="symbol">&lt;/</span><span class="normal">file</span><span class="symbol">&gt;</span>
-<span class="normal">  </span><span class="symbol">&lt;/</span><span class="normal">gresource</span><span class="symbol">&gt;</span>
-<span class="symbol">&lt;/</span><span class="normal">gresources</span><span class="symbol">&gt;</span></pre></td>
+8
+9</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">&lt;?</span>xml version<span class="gtkdoc opt">=</span><span class="string">&quot;1.0&quot;</span> encoding<span class="gtkdoc opt">=</span><span class="string">&quot;UTF-8&quot;</span><span class="gtkdoc opt">?&gt;</span>
+<span class="gtkdoc opt">&lt;</span>gresources<span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;</span>gresource prefix<span class="gtkdoc opt">=</span><span class="string">&quot;/org/gtk/Example&quot;</span><span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>file<span class="gtkdoc opt">&gt;</span>data<span class="gtkdoc opt">/</span>splashscreen<span class="gtkdoc opt">.</span>png<span class="gtkdoc opt">&lt;/</span>file<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>file compressed<span class="gtkdoc opt">=</span><span class="string">&quot;true&quot;</span><span class="gtkdoc opt">&gt;</span>dialog<span class="gtkdoc opt">.</span>ui<span class="gtkdoc opt">&lt;/</span>file<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>file preprocess<span class="gtkdoc opt">=</span><span class="string">&quot;xml-stripblanks&quot;</span><span class="gtkdoc opt">&gt;</span>menumarkup<span class="gtkdoc opt">.</span>xml<span class="gtkdoc opt">&lt;/</span>file<span class="gtkdoc opt">&gt;</span>
+    <span class="gtkdoc opt">&lt;</span>file alias<span class="gtkdoc opt">=</span><span class="string">&quot;example.css&quot;</span><span class="gtkdoc opt">&gt;</span>data<span class="gtkdoc opt">/</span>example<span class="gtkdoc opt">.</span>css<span class="gtkdoc opt">&lt;/</span>file<span class="gtkdoc opt">&gt;</span>
+  <span class="gtkdoc opt">&lt;/</span>gresource<span class="gtkdoc opt">&gt;</span>
+<span class="gtkdoc opt">&lt;/</span>gresources<span class="gtkdoc opt">&gt;</span></pre></td>
       </tr>
     </tbody>
   </table>
@@ -293,10 +301,12 @@ are combined into a binary resource bundle.</p>
       <tr>
         <td class="listing_lines" align="right"><pre>1
 2
-3</pre></td>
-        <td class="listing_code"><pre class="programlisting"><span class="symbol">/</span><span class="normal">org</span><span class="symbol">/</span><span class="normal">gtk</span><span class="symbol">/</span><span class="normal">Example</span><span class="symbol">/</span><span class="normal">data</span><span class="symbol">/</span><span class="normal">splashscreen</span><span class="symbol">.</span><span class="normal">png</span>
-<span class="symbol">/</span><span class="normal">org</span><span class="symbol">/</span><span class="normal">gtk</span><span class="symbol">/</span><span class="normal">Example</span><span class="symbol">/</span><span class="normal">dialog</span><span class="symbol">.</span><span class="normal">ui</span>
-<span class="symbol">/</span><span class="normal">org</span><span class="symbol">/</span><span class="normal">gtk</span><span class="symbol">/</span><span class="normal">Example</span><span class="symbol">/</span><span class="normal">menumarkup</span><span class="symbol">.</span><span class="normal">xml</span></pre></td>
+3
+4</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">/</span>org<span class="gtkdoc opt">/</span>gtk<span class="gtkdoc opt">/</span>Example<span class="gtkdoc opt">/</span>data<span class="gtkdoc opt">/</span>splashscreen<span class="gtkdoc opt">.</span>png
+<span class="gtkdoc opt">/</span>org<span class="gtkdoc opt">/</span>gtk<span class="gtkdoc opt">/</span>Example<span class="gtkdoc opt">/</span>dialog<span class="gtkdoc opt">.</span>ui
+<span class="gtkdoc opt">/</span>org<span class="gtkdoc opt">/</span>gtk<span class="gtkdoc opt">/</span>Example<span class="gtkdoc opt">/</span>menumarkup<span class="gtkdoc opt">.</span>xml
+<span class="gtkdoc opt">/</span>org<span class="gtkdoc opt">/</span>gtk<span class="gtkdoc opt">/</span>Example<span class="gtkdoc opt">/</span>example<span class="gtkdoc opt">.</span>css</pre></td>
       </tr>
     </tbody>
   </table>
@@ -318,15 +328,47 @@ register the resource so its files can be accessed using
 using API calls like <a class="link" href="GResource.html#g-resources-open-stream" title="g_resources_open_stream ()"><code class="function">g_resources_open_stream()</code></a> to stream the data or <a class="link" href="GResource.html#g-resources-lookup-data" title="g_resources_lookup_data ()"><code class="function">g_resources_lookup_data()</code></a> to get a direct pointer
 to the data. You can also use URIs like "resource:///org/gtk/Example/data/splashscreen.png" with <a class="link" href="GFile.html" title="GFile"><span class="type">GFile</span></a> to access
 the resource data.</p>
+<p>Some higher-level APIs, such as <a href="../gtk4/GtkApplication.html#GtkApplication-struct"><span class="type">GtkApplication</span></a>, will automatically load
+resources from certain well-known paths in the resource namespace as a
+convenience. See the documentation for those APIs for details.</p>
 <p>There are two forms of the generated source, the default version uses the compiler support for constructor
 and destructor functions (where available) to automatically create and register the <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a> on startup
-or library load time. If you pass --manual-register two functions to register/unregister the resource is instead
-created. This requires an explicit initialization call in your application/library, but it works on all platforms,
-even on the minor ones where this is not available. (Constructor support is available for at least Win32, Mac OS and Linux.)</p>
+or library load time. If you pass <code class="literal">--manual-register</code>, two functions to register/unregister the resource are created
+instead. This requires an explicit initialization call in your application/library, but it works on all platforms,
+even on the minor ones where constructors are not supported. (Constructor support is available for at least Win32, Mac OS and Linux.)</p>
 <p>Note that resource data can point directly into the data segment of e.g. a library, so if you are unloading libraries
 during runtime you need to be very careful with keeping around pointers to data from a resource, as this goes away
 when the library is unloaded. However, in practice this is not generally a problem, since most resource accesses
-is for your own resources, and resource data is often used once, during parsing, and then released.</p>
+are for your own resources, and resource data is often used once, during parsing, and then released.</p>
+<p>When debugging a program or testing a change to an installed version, it is often useful to be able to
+replace resources in the program or library, without recompiling, for debugging or quick hacking and testing
+purposes. Since GLib 2.50, it is possible to use the <code class="literal">G_RESOURCE_OVERLAYS</code> environment variable to selectively overlay
+resources with replacements from the filesystem.  It is a colon-separated list of substitutions to perform
+during resource lookups.</p>
+<p>A substitution has the form</p>
+<div class="informalexample">
+  <table class="listing_frame" border="0" cellpadding="0" cellspacing="0">
+    <tbody>
+      <tr>
+        <td class="listing_lines" align="right"><pre>1</pre></td>
+        <td class="listing_code"><pre class="programlisting"><span class="gtkdoc opt">/</span>org<span class="gtkdoc opt">/</span>gtk<span class="gtkdoc opt">/</span>libgtk<span class="gtkdoc opt">=/</span>home<span class="gtkdoc opt">/</span>desrt<span class="gtkdoc opt">/</span>gtk<span class="gtkdoc opt">-</span>overlay</pre></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p></p>
+<p>The part before the <code class="literal">=</code> is the resource subpath for which the overlay applies.  The part after is a
+filesystem path which contains files and subdirectories as you would like to be loaded as resources with the
+equivalent names.</p>
+<p>In the example above, if an application tried to load a resource with the resource path
+<code class="literal">/org/gtk/libgtk/ui/gtkdialog.ui</code> then GResource would check the filesystem path
+<code class="literal">/home/desrt/gtk-overlay/ui/gtkdialog.ui</code>.  If a file was found there, it would be used instead.  This is an
+overlay, not an outright replacement, which means that if a file is not found at that path, the built-in
+version will be used instead.  Whiteouts are not currently supported.</p>
+<p>Substitutions must start with a slash, and must not contain a trailing slash before the '='.  The path after
+the slash should ideally be absolute, but this is not strictly required.  It is possible to overlay the
+location of a single resource with an individual file.</p>
 </div>
 <div class="refsect1">
 <a name="GResource.functions_details"></a><h2>Functions</h2>
@@ -340,8 +382,8 @@ you to query it for data.</p>
 <p>If you want to use this resource in the global resource namespace you need
 to register it with <a class="link" href="GResource.html#g-resources-register" title="g_resources_register ()"><code class="function">g_resources_register()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.2.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-load.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -362,7 +404,7 @@ to register it with <a class="link" href="GResource.html#g-resources-register" t
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.2.7"></a><h4>Returns</h4>
+<a name="g-resource-load.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -381,8 +423,8 @@ the data should not be modified or freed.</p>
 <p>If you want to use this resource in the global resource namespace you need
 to register it with <a class="link" href="GResource.html#g-resources-register" title="g_resources_register ()"><code class="function">g_resources_register()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-new-from-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -403,7 +445,7 @@ to register it with <a class="link" href="GResource.html#g-resources-register" t
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.3.7"></a><h4>Returns</h4>
+<a name="g-resource-new-from-data.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -418,8 +460,8 @@ g_resource_ref (<em class="parameter"><code><a class="link" href="GResource.html
  by one. This
 function is MT-safe and may be called from any thread.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-ref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -433,7 +475,7 @@ function is MT-safe and may be called from any thread.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.4.6"></a><h4>Returns</h4>
+<a name="g-resource-ref.returns"></a><h4>Returns</h4>
 <p> The passed in <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -449,8 +491,8 @@ reference count drops to 0, all memory allocated by the resource is
 released. This function is MT-safe and may be called from any
 thread.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-unref.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -487,8 +529,8 @@ the heap and automatically uncompress the data.</p>
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.6.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-lookup-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -519,7 +561,7 @@ the heap and automatically uncompress the data.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.6.9"></a><h4>Returns</h4>
+<a name="g-resource-lookup-data.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../glib-Byte-Arrays.html#g-bytes-unref"><code class="function">g_bytes_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -540,8 +582,8 @@ returns a <a class="link" href="GInputStream.html" title="GInputStream"><span cl
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.7.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-open-stream.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -572,7 +614,7 @@ returns a <a class="link" href="GInputStream.html" title="GInputStream"><span cl
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.7.7"></a><h4>Returns</h4>
+<a name="g-resource-open-stream.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -597,8 +639,8 @@ be released with <a href="../glib-String-Utility-Functions.html#g-strfreev"><cod
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.8.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-enumerate-children.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -629,7 +671,7 @@ be released with <a href="../glib-String-Utility-Functions.html#g-strfreev"><cod
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.8.8"></a><h4>Returns</h4>
+<a name="g-resource-enumerate-children.returns"></a><h4>Returns</h4>
 <p> an array of constant strings. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -651,8 +693,8 @@ if found returns information about it.</p>
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.9.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resource-get-info.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -678,13 +720,13 @@ if found returns information about it.</p>
 <td class="parameter_name"><p>size</p></td>
 <td class="parameter_description"><p> a location to place the length of the contents of the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
 <td class="parameter_description"><p> a location to place the flags about the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -695,7 +737,7 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.9.7"></a><h4>Returns</h4>
+<a name="g-resource-get-info.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file was found. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if there were errors</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
@@ -711,8 +753,8 @@ GStaticResource.</p>
 glib-compile-resources
 and is not typically used by other code.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.10.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-static-resource-init.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -737,8 +779,8 @@ g_static_resource_fini (<em class="parameter"><code><a class="link" href="GResou
 glib-compile-resources
 and is not typically used by other code.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.11.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-static-resource-fini.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -763,8 +805,8 @@ g_static_resource_get_resource (<em class="parameter"><code><a class="link" href
 glib-compile-resources
 and is not typically used by other code.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.12.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-static-resource-get-resource.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -778,7 +820,7 @@ and is not typically used by other code.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.12.7"></a><h4>Returns</h4>
+<a name="g-static-resource-get-resource.returns"></a><h4>Returns</h4>
 <p> a <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>. </p>
 <p><span class="annotation">[<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
 </div>
@@ -793,8 +835,8 @@ g_resources_register (<em class="parameter"><code><a class="link" href="GResourc
 Once a resource is registered the files in it can be accessed
 with the global resource lookup functions like <a class="link" href="GResource.html#g-resources-lookup-data" title="g_resources_lookup_data ()"><code class="function">g_resources_lookup_data()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.13.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resources-register.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -816,8 +858,8 @@ with the global resource lookup functions like <a class="link" href="GResource.h
 g_resources_unregister (<em class="parameter"><code><a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a> *resource</code></em>);</pre>
 <p>Unregisters the resource from the process-global set of resources.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.14.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resources-unregister.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -853,8 +895,8 @@ the heap and automatically uncompress the data.</p>
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.15.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resources-lookup-data.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -880,7 +922,7 @@ the heap and automatically uncompress the data.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.15.9"></a><h4>Returns</h4>
+<a name="g-resources-lookup-data.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Byte-Arrays.html#GBytes"><span class="type">GBytes</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../glib-Byte-Arrays.html#g-bytes-unref"><code class="function">g_bytes_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -901,8 +943,8 @@ that lets you read the data.</p>
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.16.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resources-open-stream.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -928,7 +970,7 @@ that lets you read the data.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.16.7"></a><h4>Returns</h4>
+<a name="g-resources-open-stream.returns"></a><h4>Returns</h4>
 <p> <a class="link" href="GInputStream.html" title="GInputStream"><span class="type">GInputStream</span></a> or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> on error.
 Free the returned object with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>. </p>
 <p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -950,8 +992,8 @@ be released with <a href="../glib-String-Utility-Functions.html#g-strfreev"><cod
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.17.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resources-enumerate-children.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -977,7 +1019,7 @@ be released with <a href="../glib-String-Utility-Functions.html#g-strfreev"><cod
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.17.7"></a><h4>Returns</h4>
+<a name="g-resources-enumerate-children.returns"></a><h4>Returns</h4>
 <p> an array of constant strings. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> zero-terminated=1][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
 </div>
@@ -998,8 +1040,8 @@ globally registered resources and if found returns information about it.</p>
 <p><em class="parameter"><code>lookup_flags</code></em>
  controls the behaviour of the lookup.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.18.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-resources-get-info.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -1020,13 +1062,13 @@ globally registered resources and if found returns information about it.</p>
 <td class="parameter_name"><p>size</p></td>
 <td class="parameter_description"><p> a location to place the length of the contents of the file,
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>flags</p></td>
-<td class="parameter_description"><p> a location to place the flags about the file,
-or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the length is not needed. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_description"><p> a location to place the <a class="link" href="GResource.html#GResourceFlags" title="enum GResourceFlags"><span class="type">GResourceFlags</span></a> about the file,
+or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a> if the flags are not needed. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>error</p></td>
@@ -1037,19 +1079,10 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.20.2.8.18.7"></a><h4>Returns</h4>
+<a name="g-resources-get-info.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the file was found. <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if there were errors</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-32.html#api-index-2.32">2.32</a></p>
-</div>
-<hr>
-<div class="refsect2">
-<a name="G-RESOURCE-ERROR:CAPS"></a><h3>G_RESOURCE_ERROR</h3>
-<pre class="programlisting">#define G_RESOURCE_ERROR (g_resource_error_quark ())
-</pre>
-<p>Error domain for <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>. Errors in this domain will be from the
-<a class="link" href="GResource.html#GResourceError" title="enum GResourceError"><span class="type">GResourceError</span></a> enumeration. See <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> for more information on
-error domains.</p>
 </div>
 </div>
 <div class="refsect1">
@@ -1066,8 +1099,8 @@ error domains.</p>
 <p>GResourceFlags give information about a particular file inside a resource
 bundle.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.9.3.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GResourceFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1098,8 +1131,8 @@ bundle.</p>
 <a name="GResourceLookupFlags"></a><h3>enum GResourceLookupFlags</h3>
 <p>GResourceLookupFlags determine how resource path lookups are handled.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.9.4.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GResourceLookupFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1127,12 +1160,21 @@ using the following functions.</p>
 </div>
 <hr>
 <div class="refsect2">
+<a name="G-RESOURCE-ERROR:CAPS"></a><h3>G_RESOURCE_ERROR</h3>
+<pre class="programlisting">#define G_RESOURCE_ERROR (g_resource_error_quark ())
+</pre>
+<p>Error domain for <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a>. Errors in this domain will be from the
+<a class="link" href="GResource.html#GResourceError" title="enum GResourceError"><span class="type">GResourceError</span></a> enumeration. See <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> for more information on
+error domains.</p>
+</div>
+<hr>
+<div class="refsect2">
 <a name="GResourceError"></a><h3>enum GResourceError</h3>
 <p>An error code used with <a class="link" href="GResource.html#G-RESOURCE-ERROR:CAPS" title="G_RESOURCE_ERROR"><code class="literal">G_RESOURCE_ERROR</code></a> in a <a href="../glib-Error-Reporting.html#GError"><span class="type">GError</span></a> returned
 from a <a class="link" href="GResource.html" title="GResource"><span class="type">GResource</span></a> routine.</p>
 <div class="refsect3">
-<a name="id-1.4.20.2.9.6.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GResourceError.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -1161,6 +1203,6 @@ from a <a class="link" href="GResource.html" title="GResource"><span class="type
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

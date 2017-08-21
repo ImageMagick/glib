@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GPropertyAction: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="application.html" title="Application support">
 <link rel="prev" href="GSimpleAction.html" title="GSimpleAction">
 <link rel="next" href="GRemoteActionGroup.html" title="GRemoteActionGroup">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -36,7 +36,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GPropertyAction.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -53,7 +53,7 @@
 </div>
 <div class="refsect1">
 <a name="GPropertyAction.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -111,7 +111,7 @@
 </div>
 <div class="refsect1">
 <a name="GPropertyAction.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -166,16 +166,16 @@ particular piece of state is kept (and therefore has to be synchronised
 between). <a class="link" href="GPropertyAction.html" title="GPropertyAction"><span class="type">GPropertyAction</span></a> does not have a separate state that is kept
 in sync with the property value -- its state is the property value.</p>
 <p>For example, it might be useful to create a <a class="link" href="GAction.html" title="GAction"><span class="type">GAction</span></a> corresponding to
-the "visible-child-name" property of a <a href="http://developer.gnome.org/gtk3/GtkStack.html#GtkStack-struct"><span class="type">GtkStack</span></a> so that the current
+the "visible-child-name" property of a <a href="../gtk4/GtkStack.html#GtkStack-struct"><span class="type">GtkStack</span></a> so that the current
 page can be switched from a menu.  The active radio indication in the
 menu is then directly determined from the active page of the
-<a href="http://developer.gnome.org/gtk3/GtkStack.html#GtkStack-struct"><span class="type">GtkStack</span></a>.</p>
+<a href="../gtk4/GtkStack.html#GtkStack-struct"><span class="type">GtkStack</span></a>.</p>
 <p>An anti-example would be binding the "active-id" property on a
-<a href="http://developer.gnome.org/gtk3/GtkComboBox.html#GtkComboBox-struct"><span class="type">GtkComboBox</span></a>.  This is because the state of the combobox itself is
+<a href="../gtk4/GtkComboBox.html#GtkComboBox-struct"><span class="type">GtkComboBox</span></a>.  This is because the state of the combobox itself is
 probably uninteresting and is actually being used to control
 something else.</p>
 <p>Another anti-example would be to bind to the "visible-child-name"
-property of a <a href="http://developer.gnome.org/gtk3/GtkStack.html#GtkStack-struct"><span class="type">GtkStack</span></a> if this value is actually stored in
+property of a <a href="../gtk4/GtkStack.html#GtkStack-struct"><span class="type">GtkStack</span></a> if this value is actually stored in
 <a class="link" href="GSettings.html" title="GSettings"><span class="type">GSettings</span></a>.  In that case, the real source of the value is
 <a class="link" href="GSettings.html" title="GSettings"><span class="type">GSettings</span></a>.  If you want a <a class="link" href="GAction.html" title="GAction"><span class="type">GAction</span></a> to control a setting stored in
 <a class="link" href="GSettings.html" title="GSettings"><span class="type">GSettings</span></a>, see <a class="link" href="GSettings.html#g-settings-create-action" title="g_settings_create_action ()"><code class="function">g_settings_create_action()</code></a> instead, and possibly
@@ -199,8 +199,8 @@ construct-only).</p>
  and doesn't release it
 until the action is destroyed.</p>
 <div class="refsect3">
-<a name="id-1.4.24.9.10.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-property-action-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -227,7 +227,7 @@ to wrap. </p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.24.9.10.2.8"></a><h4>Returns</h4>
+<a name="g-property-action-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GPropertyAction.html" title="GPropertyAction"><span class="type">GPropertyAction</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-38.html#api-index-2.38">2.38</a></p>
@@ -326,6 +326,6 @@ action is stateless.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GDBusObjectSkeleton: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="gdbus-convenience.html" title="High-level D-Bus Support">
 <link rel="prev" href="GDBusObject.html" title="GDBusObject">
 <link rel="next" href="GDBusObjectProxy.html" title="GDBusObjectProxy">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -37,7 +37,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GDBusObjectSkeleton.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -96,7 +96,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusObjectSkeleton.properties"></a><h2>Properties</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="properties_type">
 <col width="300px" class="properties_name">
@@ -112,7 +112,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusObjectSkeleton.signals"></a><h2>Signals</h2>
-<div class="informaltable"><table border="0">
+<div class="informaltable"><table class="informaltable" border="0">
 <colgroup>
 <col width="150px" class="signals_return">
 <col width="300px" class="signals_name">
@@ -127,7 +127,7 @@
 </div>
 <div class="refsect1">
 <a name="GDBusObjectSkeleton.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -176,8 +176,8 @@ dynamic and change at runtime.</p>
 g_dbus_object_skeleton_new (<em class="parameter"><code>const <a href="../glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *object_path</code></em>);</pre>
 <p>Creates a new <a class="link" href="GDBusObjectSkeleton.html" title="GDBusObjectSkeleton"><span class="type">GDBusObjectSkeleton</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-skeleton-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -191,7 +191,7 @@ g_dbus_object_skeleton_new (<em class="parameter"><code>const <a href="../glib-B
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.2.6"></a><h4>Returns</h4>
+<a name="g-dbus-object-skeleton-new.returns"></a><h4>Returns</h4>
 <p> A <a class="link" href="GDBusObjectSkeleton.html" title="GDBusObjectSkeleton"><span class="type">GDBusObjectSkeleton</span></a>. Free with <a href="../gobject-The-Base-Object-Type.html#g-object-unref"><code class="function">g_object_unref()</code></a>.</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-30.html#api-index-2.30">2.30</a></p>
@@ -206,8 +206,8 @@ interfaces belonging to <em class="parameter"><code>object</code></em>
 . See that method for when flushing
 is useful.</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.3.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-skeleton-flush.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -240,8 +240,8 @@ interface name, it is removed before <em class="parameter"><code>interface_</cod
  and holds
 it until removed.</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.4.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-skeleton-add-interface.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -274,8 +274,8 @@ g_dbus_object_skeleton_remove_interface
  from <em class="parameter"><code>object</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-skeleton-remove-interface.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -310,8 +310,8 @@ g_dbus_object_skeleton_remove_interface_by_name
 <p>If no D-Bus interface of the given interface exists, this function
 does nothing.</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.6.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-skeleton-remove-interface-by-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -343,8 +343,8 @@ g_dbus_object_skeleton_set_object_path
 <p>Sets the object path for <em class="parameter"><code>object</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.11.7.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-dbus-object-skeleton-set-object-path.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -390,25 +390,18 @@ accessed using the provided API.</p>
 </pre>
 <p>Class structure for <a class="link" href="GDBusObjectSkeleton.html" title="GDBusObjectSkeleton"><span class="type">GDBusObjectSkeleton</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.12.3.5"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusObjectSkeletonClass.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="struct_members_name">
 <col class="struct_members_description">
 <col width="200px" class="struct_members_annotations">
 </colgroup>
-<tbody>
-<tr>
-<td class="struct_member_name"><p><a href="../gobject-The-Base-Object-Type.html#GObjectClass"><span class="type">GObjectClass</span></a> <em class="structfield"><code><a name="GDBusObjectSkeletonClass.parent-class"></a>parent_class</code></em>;</p></td>
-<td class="struct_member_description"><p>The parent class.</p></td>
-<td class="struct_member_annotations"> </td>
-</tr>
-<tr>
+<tbody><tr>
 <td class="struct_member_name"><p><em class="structfield"><code><a name="GDBusObjectSkeletonClass.authorize-method"></a>authorize_method</code></em> ()</p></td>
 <td class="struct_member_description"><p>Signal class handler for the <a class="link" href="GDBusObjectSkeleton.html#GDBusObjectSkeleton-authorize-method" title="The “authorize-method” signal"><span class="type">“authorize-method”</span></a> signal.</p></td>
 <td class="struct_member_annotations"> </td>
-</tr>
-</tbody>
+</tr></tbody>
 </table></div>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-30.html#api-index-2.30">2.30</a></p>
@@ -441,8 +434,8 @@ determine if the method call is authorized.</p>
 except that it is for the enclosing object.</p>
 <p>The default class handler just returns <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.8.14.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GDBusObjectSkeleton-authorize-method.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -474,7 +467,7 @@ is for.</p></td>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.8.14.2.8"></a><h4>Returns</h4>
+<a name="GDBusObjectSkeleton-authorize-method.returns"></a><h4>Returns</h4>
 <p> <a href="../glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the call is authorized, <a href="../glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise.</p>
 </div>
 <p>Flags: <a href="../gobject-Signals.html#G-SIGNAL-RUN-LAST:CAPS">Run Last</a></p>
@@ -483,6 +476,6 @@ is for.</p></td>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

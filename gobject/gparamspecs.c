@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -1067,7 +1067,7 @@ param_gtype_set_default (GParamSpec *pspec,
 {
   GParamSpecGType *tspec = G_PARAM_SPEC_GTYPE (pspec);
 
-  value->data[0].v_long = tspec->is_a_type;
+  value->data[0].v_pointer = GSIZE_TO_POINTER (tspec->is_a_type);
 }
 
 static gboolean
@@ -1075,12 +1075,12 @@ param_gtype_validate (GParamSpec *pspec,
 		      GValue     *value)
 {
   GParamSpecGType *tspec = G_PARAM_SPEC_GTYPE (pspec);
-  GType gtype = value->data[0].v_long;
+  GType gtype = GPOINTER_TO_SIZE (value->data[0].v_pointer);
   guint changed = 0;
   
   if (tspec->is_a_type != G_TYPE_NONE && !g_type_is_a (gtype, tspec->is_a_type))
     {
-      value->data[0].v_long = tspec->is_a_type;
+      value->data[0].v_pointer = GSIZE_TO_POINTER (tspec->is_a_type);
       changed++;
     }
   
@@ -1092,8 +1092,8 @@ param_gtype_values_cmp (GParamSpec   *pspec,
 			const GValue *value1,
 			const GValue *value2)
 {
-  GType p1 = value1->data[0].v_long;
-  GType p2 = value2->data[0].v_long;
+  GType p1 = GPOINTER_TO_SIZE (value1->data[0].v_pointer);
+  GType p2 = GPOINTER_TO_SIZE (value2->data[0].v_pointer);
 
   /* not much to compare here, try to at least provide stable lesser/greater result */
 
@@ -2212,7 +2212,7 @@ g_param_spec_double (const gchar *name,
  * @name: canonical name of the property specified
  * @nick: nick name for the property specified
  * @blurb: description of the property specified
- * @default_value: default value for the property specified
+ * @default_value: (nullable): default value for the property specified
  * @flags: flags for the property specified
  *
  * Creates a new #GParamSpecString instance.
@@ -2532,7 +2532,7 @@ g_param_spec_override (const gchar *name,
  * @nick: nick name for the property specified
  * @blurb: description of the property specified
  * @type: a #GVariantType
- * @default_value: (allow-none) (transfer full): a #GVariant of type @type to
+ * @default_value: (nullable) (transfer full): a #GVariant of type @type to
  *                 use as the default value, or %NULL
  * @flags: flags for the property specified
  *

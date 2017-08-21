@@ -8,6 +8,8 @@
 
 #include "testenum.h"
 
+static const gchar *locale_dir = ".";
+
 static gboolean backend_set;
 
 /* These tests rely on the schemas in org.gtk.test.gschema.xml
@@ -335,6 +337,7 @@ test_complex_types (void)
   gchar *s;
   gint i1, i2;
   GVariantIter *iter = NULL;
+  GVariant *v = NULL;
 
   settings = g_settings_new ("org.gtk.test.complex-types");
 
@@ -369,6 +372,22 @@ test_complex_types (void)
   g_assert_cmpint (i1, ==, 5);
   g_assert (!g_variant_iter_next (iter, "i", &i1));
   g_variant_iter_free (iter);
+
+  g_settings_get (settings, "test-dict", "a{sau}", &iter);
+  g_assert_cmpint (g_variant_iter_n_children (iter), ==, 2);
+  g_assert (g_variant_iter_next (iter, "{&s@au}", &s, &v));
+  g_assert_cmpstr (s, ==, "AC");
+  g_assert_cmpstr ((char *)g_variant_get_type (v), ==, "au");
+  g_variant_unref (v);
+  g_assert (g_variant_iter_next (iter, "{&s@au}", &s, &v));
+  g_assert_cmpstr (s, ==, "IV");
+  g_assert_cmpstr ((char *)g_variant_get_type (v), ==, "au");
+  g_variant_unref (v);
+  g_variant_iter_free (iter);
+
+  v = g_settings_get_value (settings, "test-dict");
+  g_assert_cmpstr ((char *)g_variant_get_type (v), ==, "a{sau}");
+  g_variant_unref (v);
 
   g_object_unref (settings);
 }
@@ -715,7 +734,7 @@ test_l10n (void)
   gchar *str;
   gchar *locale;
 
-  bindtextdomain ("test", ".");
+  bindtextdomain ("test", locale_dir);
   bind_textdomain_codeset ("test", "UTF-8");
 
   locale = g_strdup (setlocale (LC_MESSAGES, NULL));
@@ -737,7 +756,6 @@ test_l10n (void)
       str = g_settings_get_string (settings, "error-message");
 
       g_assert_cmpstr (str, ==, "Unbenannt");
-      g_object_unref (settings);
       g_free (str);
       str = NULL;
     }
@@ -746,6 +764,7 @@ test_l10n (void)
 
   setlocale (LC_MESSAGES, locale);
   g_free (locale);
+  g_object_unref (settings);
 }
 
 /* Test that message context works as expected with translated
@@ -762,7 +781,7 @@ test_l10n_context (void)
   gchar *str;
   gchar *locale;
 
-  bindtextdomain ("test", ".");
+  bindtextdomain ("test", locale_dir);
   bind_textdomain_codeset ("test", "UTF-8");
 
   locale = g_strdup (setlocale (LC_MESSAGES, NULL));
@@ -784,7 +803,6 @@ test_l10n_context (void)
       g_settings_get (settings, "backspace", "s", &str);
 
       g_assert_cmpstr (str, ==, "Löschen");
-      g_object_unref (settings);
       g_free (str);
       str = NULL;
     }
@@ -793,6 +811,7 @@ test_l10n_context (void)
 
   setlocale (LC_MESSAGES, locale);
   g_free (locale);
+  g_object_unref (settings);
 }
 
 enum
@@ -1179,6 +1198,16 @@ test_simple_binding (void)
   u = 1111;
   g_object_get (obj, "uint", &u, NULL);
   g_assert_cmpuint (u, ==, 54321);
+
+  g_settings_bind (settings, "uint64", obj, "uint64", G_SETTINGS_BIND_DEFAULT);
+
+  g_object_set (obj, "uint64", (guint64) 12345, NULL);
+  g_assert_cmpuint (g_settings_get_uint64 (settings, "uint64"), ==, 12345);
+
+  g_settings_set_uint64 (settings, "uint64", 54321);
+  u64 = 1111;
+  g_object_get (obj, "uint64", &u64, NULL);
+  g_assert_cmpuint (u64, ==, 54321);
 
   g_settings_bind (settings, "int64", obj, "int64", G_SETTINGS_BIND_DEFAULT);
 
@@ -1883,6 +1912,9 @@ test_enums (void)
   g_free (str);
 
   g_assert_cmpint (g_settings_get_enum (settings, "test"), ==, TEST_ENUM_QUUX);
+
+  g_object_unref (direct);
+  g_object_unref (settings);
 }
 
 static void
@@ -1991,6 +2023,9 @@ test_flags (void)
 
   g_assert_cmpint (g_settings_get_flags (settings, "f-test"), ==,
                    TEST_FLAGS_TALKING | TEST_FLAGS_LAUGHING);
+
+  g_object_unref (direct);
+  g_object_unref (settings);
 }
 
 static void
@@ -2055,6 +2090,9 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
   g_assert (!g_settings_range_check (settings, "val", value));
   g_variant_unref (value);
 G_GNUC_END_IGNORE_DEPRECATIONS
+
+  g_object_unref (direct);
+  g_object_unref (settings);
 }
 
 static gboolean
@@ -2337,10 +2375,8 @@ test_schema_list_keys (void)
                             "farewell",
                             NULL));
 
-
   g_strfreev (keys);
   g_settings_schema_unref (schema);
-  g_settings_schema_source_unref (src);
 }
 
 static void
@@ -2404,6 +2440,8 @@ test_actions (void)
   g_assert_cmpstr (g_variant_get_string (state, NULL), ==, "kthxbye");
 
   g_free (name);
+  g_variant_type_free (param_type);
+  g_variant_type_free (state_type);
   g_variant_unref (state);
 
   g_object_unref (string);
@@ -2568,6 +2606,14 @@ main (int argc, char *argv[])
   gchar *enums;
   gint result;
 
+/* Meson build sets this */
+#ifdef TEST_LOCALE_PATH
+  if (g_str_has_suffix (TEST_LOCALE_PATH, "LC_MESSAGES"))
+    {
+      locale_dir = TEST_LOCALE_PATH G_DIR_SEPARATOR_S ".." G_DIR_SEPARATOR_S "..";
+    }
+#endif
+
   setlocale (LC_ALL, "");
 
   g_test_init (&argc, &argv, NULL);
@@ -2577,13 +2623,19 @@ main (int argc, char *argv[])
       backend_set = g_getenv ("GSETTINGS_BACKEND") != NULL;
 
       g_setenv ("XDG_DATA_DIRS", ".", TRUE);
+      g_setenv ("XDG_DATA_HOME", ".", TRUE);
       g_setenv ("GSETTINGS_SCHEMA_DIR", ".", TRUE);
 
       if (!backend_set)
         g_setenv ("GSETTINGS_BACKEND", "memory", TRUE);
 
+/* Meson build defines this, autotools build does not */
+#ifndef GLIB_MKENUMS
+#define GLIB_MKENUMS "../../gobject/glib-mkenums"
+#endif
+
       g_remove ("org.gtk.test.enums.xml");
-      g_assert (g_spawn_command_line_sync ("../../gobject/glib-mkenums "
+      g_assert (g_spawn_command_line_sync (GLIB_MKENUMS " "
                                            "--template " SRCDIR "/enums.xml.template "
                                            SRCDIR "/testenum.h",
                                            &enums, NULL, &result, NULL));
@@ -2593,9 +2645,15 @@ main (int argc, char *argv[])
 
       g_assert (g_file_get_contents (SRCDIR "/org.gtk.test.gschema.xml.orig", &schema_text, NULL, NULL));
       g_assert (g_file_set_contents ("org.gtk.test.gschema.xml", schema_text, -1, NULL));
+      g_free (schema_text);
+
+/* Meson build defines this, autotools build does not */
+#ifndef GLIB_COMPILE_SCHEMAS
+#define GLIB_COMPILE_SCHEMAS "../glib-compile-schemas"
+#endif
 
       g_remove ("gschemas.compiled");
-      g_assert (g_spawn_command_line_sync ("../glib-compile-schemas --targetdir=. "
+      g_assert (g_spawn_command_line_sync (GLIB_COMPILE_SCHEMAS " --targetdir=. "
                                            "--schema-file=org.gtk.test.enums.xml "
                                            "--schema-file=org.gtk.test.gschema.xml",
                                            NULL, NULL, &result, NULL));
@@ -2603,7 +2661,7 @@ main (int argc, char *argv[])
 
       g_remove ("schema-source/gschemas.compiled");
       g_mkdir ("schema-source", 0777);
-      g_assert (g_spawn_command_line_sync ("../glib-compile-schemas --targetdir=schema-source "
+      g_assert (g_spawn_command_line_sync (GLIB_COMPILE_SCHEMAS " --targetdir=schema-source "
                                            "--schema-file=" SRCDIR "/org.gtk.schemasourcecheck.gschema.xml",
                                            NULL, NULL, &result, NULL));
       g_assert (result == 0);

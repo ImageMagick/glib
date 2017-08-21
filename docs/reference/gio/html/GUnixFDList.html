@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>GUnixFDList: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="networking.html" title="Low-level network support">
 <link rel="prev" href="GSocketControlMessage.html" title="GSocketControlMessage">
 <link rel="next" href="GUnixFDMessage.html" title="GUnixFDMessage">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -34,7 +34,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="GUnixFDList.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -100,7 +100,7 @@
 </div>
 <div class="refsect1">
 <a name="GUnixFDList.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -150,8 +150,8 @@ the caller.</p>
  is -1 then <em class="parameter"><code>fds</code></em>
  must be terminated with -1.</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.2.7"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-list-new-from-array.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -172,7 +172,7 @@ the caller.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.2.8"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-new-from-array.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-24.html#api-index-2.24">2.24</a></p>
@@ -184,7 +184,7 @@ the caller.</p>
 g_unix_fd_list_new (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
 <p>Creates a new <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a> containing no file descriptors.</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.3.5"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-new.returns"></a><h4>Returns</h4>
 <p> a new <a class="link" href="GUnixFDList.html" title="GUnixFDList"><span class="type">GUnixFDList</span></a></p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-24.html#api-index-2.24">2.24</a></p>
@@ -198,8 +198,8 @@ g_unix_fd_list_get_length (<em class="parameter"><code><a class="link" href="GUn
  (ie: the number of file descriptors
 contained within).</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.4.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-list-get-length.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -213,7 +213,7 @@ contained within).</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.4.6"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-get-length.returns"></a><h4>Returns</h4>
 <p> the length of <em class="parameter"><code>list</code></em>
 </p>
 </div>
@@ -239,8 +239,8 @@ when you are done.</p>
 <p>A possible cause of failure is exceeding the per-process or
 system-wide file descriptor limit.</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.5.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-list-get.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -266,7 +266,7 @@ system-wide file descriptor limit.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.5.9"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-get.returns"></a><h4>Returns</h4>
 <p> the file descriptor, or -1 in case of error</p>
 </div>
 <p class="since">Since: <a class="link" href="api-index-2-24.html#api-index-2.24">2.24</a></p>
@@ -292,8 +292,8 @@ terminated with -1.</p>
 descriptors contained in <em class="parameter"><code>list</code></em>
 , an empty array is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.6.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-list-peek-fds.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -309,13 +309,13 @@ descriptors contained in <em class="parameter"><code>list</code></em>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> pointer to the length of the returned
 array, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.6.9"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-peek-fds.returns"></a><h4>Returns</h4>
 <p> an array of file
 descriptors. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Don't free data after the code is done."><span class="acronym">transfer none</span></acronym>]</span></p>
@@ -346,8 +346,8 @@ terminated with -1.</p>
 descriptors contained in <em class="parameter"><code>list</code></em>
 , an empty array is returned.</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.7.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-list-steal-fds.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -363,13 +363,13 @@ descriptors contained in <em class="parameter"><code>list</code></em>
 <td class="parameter_name"><p>length</p></td>
 <td class="parameter_description"><p> pointer to the length of the returned
 array, or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="Parameter for returning results. Default is transfer full."><span class="acronym">out</span></acronym>][<acronym title="NULL may be passed instead of a pointer to a location."><span class="acronym">optional</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.7.10"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-steal-fds.returns"></a><h4>Returns</h4>
 <p> an array of file
 descriptors. </p>
 <p><span class="annotation">[<acronym title="Parameter points to an array of items."><span class="acronym">array</span></acronym> length=length][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
@@ -396,8 +396,8 @@ system-wide file descriptor limit.</p>
 this index with <a class="link" href="GUnixFDList.html#g-unix-fd-list-get" title="g_unix_fd_list_get ()"><code class="function">g_unix_fd_list_get()</code></a> then you will receive back a
 duplicated copy of the same file descriptor.</p>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.8.8"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-unix-fd-list-append.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -423,7 +423,7 @@ duplicated copy of the same file descriptor.</p>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.13.9.8.8.9"></a><h4>Returns</h4>
+<a name="g-unix-fd-list-append.returns"></a><h4>Returns</h4>
 <p> the index of the appended fd in case of success, else -1
 (and <em class="parameter"><code>error</code></em>
 is set)</p>
@@ -446,6 +446,6 @@ using the following functions.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

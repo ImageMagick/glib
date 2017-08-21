@@ -55,7 +55,6 @@ MIRRORING_TAB_SOURCE = 				\
 # The compilation of GRegex can be disabled, but the source files must
 # be distributed.
 EXTRA_DIST += 			\
-	makefile.msc.in		\
 	glib.rc.in		\
 	gen-unicode-tables.pl	\
 	glibconfig.h.win32.in	\
@@ -71,7 +70,6 @@ CLEANFILES += libglib-gdb.py
 
 # These may be in the builddir too
 BUILT_EXTRA_DIST += 		\
-	makefile.msc		\
 	glibconfig.h.win32	\
 	glib.rc
 
@@ -188,6 +186,7 @@ libglib_2_0_la_SOURCES = 	\
 	gunicodeprivate.h	\
 	gurifuncs.c 		\
 	gutils.c		\
+	guuid.c			\
 	gvariant.h		\
 	gvariant.c		\
 	gvariant-core.h		\
@@ -309,6 +308,7 @@ glibsubinclude_HEADERS = \
 	gunicode.h	\
 	gurifuncs.h 	\
 	gutils.h	\
+	guuid.h		\
 	gvarianttype.h	\
 	gvariant.h	\
 	gversion.h	\
@@ -350,8 +350,8 @@ pcre_lib = pcre/libpcre.la
 pcre_inc =
 endif
 
-libglib_2_0_la_CFLAGS = $(AM_CFLAGS) $(GLIB_HIDDEN_VISIBILITY_CFLAGS)
-libglib_2_0_la_LIBADD = libcharset/libcharset.la $(printf_la) @GIO@ @GSPAWN@ @PLATFORMDEP@ @ICONV_LIBS@ @G_LIBS_EXTRA@ $(pcre_lib) $(G_THREAD_LIBS_EXTRA) $(G_THREAD_LIBS_FOR_GTHREAD)
+libglib_2_0_la_CFLAGS = $(AM_CFLAGS) $(GLIB_HIDDEN_VISIBILITY_CFLAGS) $(LIBSYSTEMD_CFLAGS)
+libglib_2_0_la_LIBADD = libcharset/libcharset.la $(printf_la) @GIO@ @GSPAWN@ @PLATFORMDEP@ @ICONV_LIBS@ @G_LIBS_EXTRA@ $(pcre_lib) $(G_THREAD_LIBS_EXTRA) $(G_THREAD_LIBS_FOR_GTHREAD) $(LIBSYSTEMD_LIBS)
 libglib_2_0_la_DEPENDENCIES = libcharset/libcharset.la $(printf_la) @GIO@ @GSPAWN@ @PLATFORMDEP@ $(glib_win32_res) $(glib_def)
 
 libglib_2_0_la_LDFLAGS = $(GLIB_LINK_FLAGS) \
@@ -362,26 +362,34 @@ libglib_2_0_la_LDFLAGS = $(GLIB_LINK_FLAGS) \
 INSTALL_PROGS=
 
 if ENABLE_DTRACE
-DTCOMPILE = $(patsubst -W%,,$(LTCOMPILE))
-DTCFLAGS = $(patsubst -W%,,$(CFLAGS))
-
 glib_probes.h: glib_probes.d
 	$(AM_V_GEN) $(DTRACE) -C -h -s $< -o $@.tmp
-	@$(SED) -e "s,define STAP_HAS_SEMAPHORES 1,undef STAP_HAS_SEMAPHORES," < $@.tmp > $@ && rm -f $@.tmp
+	@$(SED) \
+		-e "s,define STAP_HAS_SEMAPHORES 1,undef STAP_HAS_SEMAPHORES," \
+		-e "s,define _SDT_HAS_SEMAPHORES 1,undef _SDT_HAS_SEMAPHORES," \
+		< $@.tmp > $@ && rm -f $@.tmp
 
 glib_probes.lo: glib_probes.d
-	$(AM_V_GEN) env CC="$(DTCOMPILE)" CFLAGS="$(DTCFLAGS)" $(DTRACE) -G -s $< -o $@
+	$(AM_V_GEN) $(LIBTOOL) --mode=compile $(AM_V_lt) --tag=CC $(DTRACE) -G -s $< -o $@
 
 BUILT_SOURCES += glib_probes.h glib_probes.lo
 CLEANFILES += glib_probes.h glib_probes.h.tmp
 libglib_2_0_la_LIBADD += glib_probes.lo
 endif
 
-if ENABLE_SYSTEMTAP
-tapset_in_files = glib.stp.in
 tapsetdir   = @ABS_TAPSET_DIR@
-tapset_DATA = $(tapset_in_files:.stp.in=.stp)
-EXTRA_DIST += $(tapset_in_files)
+EXTRA_DIST += glib.stp.in
+
+if ENABLE_SYSTEMTAP
+tapset_DATA = libglib-2.0.so.0.@LT_CURRENT@.@LT_REVISION@.stp
+CLEANFILES += $(tapset_DATA)
+
+$(tapset_DATA): glib.stp.in Makefile
+	$(AM_V_GEN)$(SED) \
+		-e 's|[@]ABS_GLIB_RUNTIME_LIBDIR[@]|$(ABS_GLIB_RUNTIME_LIBDIR)|g' \
+		-e 's|[@]LT_CURRENT[@]|$(LT_CURRENT)|g' \
+		-e 's|[@]LT_REVISION[@]|$(LT_REVISION)|g' \
+		$< > $@
 endif
 
 gspawn-win32-helper-console.c:
@@ -458,9 +466,9 @@ glib_HEADERS_DIR = $(glibsubincludedir)
 glib_HEADERS_INST = $(deprecatedinclude_HEADERS) $(glibsubinclude_HEADERS)
 glib_HEADERS_EXCLUDES = dummy
 
-include $(top_srcdir)/build/Makefile.msvcproj
+include $(top_srcdir)/win32/Makefile.msvcproj
 
-dist-hook: $(BUILT_EXTRA_DIST) $(top_builddir)/build/win32/vs9/glib.vcproj $(top_builddir)/build/win32/vs9/glib.headers
+dist-hook: $(BUILT_EXTRA_DIST) $(top_builddir)/win32/vs9/glib.vcproj $(top_builddir)/win32/vs9/glib.headers
 	files='$(BUILT_EXTRA_DIST)'; \
 	for f in $$files; do \
 	  if test -f $$f; then d=.; else d=$(srcdir); fi; \
@@ -468,11 +476,16 @@ dist-hook: $(BUILT_EXTRA_DIST) $(top_builddir)/build/win32/vs9/glib.vcproj $(top
 
 # install gdb scripts
 gdbdir = $(datadir)/glib-2.0/gdb
-dist_gdb_SCRIPTS = glib.py
+dist_gdb_DATA = glib_gdb.py
 
 libglib-gdb.py: libglib-gdb.py.in
 	$(AM_V_GEN) $(SED) -e "s|\@datadir\@|$(datadir)|" $(srcdir)/libglib-gdb.py.in > $(builddir)/libglib-gdb.py
 
+if HAVE_GLIB_RUNTIME_LIBDIR
+ABS_GLIB_RUNTIME_LIBDIR = $(realpath $(libdir)/$(GLIB_RUNTIME_LIBDIR))
+else
+ABS_GLIB_RUNTIME_LIBDIR = $(libdir)
+endif
 
 install-data-hook: libglib-gdb.py
 	mkdir -p $(DESTDIR)$(datadir)/gdb/auto-load$(ABS_GLIB_RUNTIME_LIBDIR)

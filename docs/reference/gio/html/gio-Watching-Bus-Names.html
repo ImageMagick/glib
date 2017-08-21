@@ -3,12 +3,12 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Watching Bus Names: GIO Reference Manual</title>
-<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
 <link rel="home" href="index.html" title="GIO Reference Manual">
 <link rel="up" href="gdbus-convenience.html" title="High-level D-Bus Support">
 <link rel="prev" href="gio-Owning-Bus-Names.html" title="Owning Bus Names">
 <link rel="next" href="GDBusInterface.html" title="GDBusInterface">
-<meta name="generator" content="GTK-Doc V1.24.1 (XML mode)">
+<meta name="generator" content="GTK-Doc V1.25.1 (XML mode)">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
@@ -33,7 +33,7 @@
 </tr></table></div>
 <div class="refsect1">
 <a name="gio-Watching-Bus-Names.functions"></a><h2>Functions</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="functions_return">
 <col class="functions_name">
@@ -100,7 +100,7 @@
 </div>
 <div class="refsect1">
 <a name="gio-Watching-Bus-Names.other"></a><h2>Types and Values</h2>
-<div class="informaltable"><table width="100%" border="0">
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="name">
 <col class="description">
@@ -133,8 +133,8 @@
                              <em class="parameter"><code><a href="../glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> user_data</code></em>);</pre>
 <p>Invoked when the name being watched is known to have to have a owner.</p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.2.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusNameAppearedCallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -179,8 +179,8 @@ established has been closed.  In that case, <em class="parameter"><code>connecti
  will be
 <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.3.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusNameVanishedCallback.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -256,8 +256,8 @@ Basically, the application should create object proxies in
 <em class="parameter"><code>name_vanished_handler</code></em>
 .</p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.4.9"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-watch-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -283,13 +283,13 @@ Basically, the application should create object proxies in
 <td class="parameter_name"><p>name_appeared_handler</p></td>
 <td class="parameter_description"><p> Handler to invoke when <em class="parameter"><code>name</code></em>
 is known to exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_vanished_handler</p></td>
 <td class="parameter_description"><p> Handler to invoke when <em class="parameter"><code>name</code></em>
 is known to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -300,13 +300,13 @@ is known to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code 
 <td class="parameter_name"><p>user_data_free_func</p></td>
 <td class="parameter_description"><p> Function for freeing <em class="parameter"><code>user_data</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.4.10"></a><h4>Returns</h4>
+<a name="g-bus-watch-name.returns"></a><h4>Returns</h4>
 <p> An identifier (never 0) that an be used with
 <a class="link" href="gio-Watching-Bus-Names.html#g-bus-unwatch-name" title="g_bus_unwatch_name ()"><code class="function">g_bus_unwatch_name()</code></a> to stop watching the name.</p>
 </div>
@@ -326,8 +326,8 @@ g_bus_watch_name_on_connection (<em class="parameter"><code><a class="link" href
 <p>Like <a class="link" href="gio-Watching-Bus-Names.html#g-bus-watch-name" title="g_bus_watch_name ()"><code class="function">g_bus_watch_name()</code></a> but takes a <a class="link" href="GDBusConnection.html" title="GDBusConnection"><span class="type">GDBusConnection</span></a> instead of a
 <a class="link" href="GDBusConnection.html#GBusType" title="enum GBusType"><span class="type">GBusType</span></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.5.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-watch-name-on-connection.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -353,13 +353,13 @@ g_bus_watch_name_on_connection (<em class="parameter"><code><a class="link" href
 <td class="parameter_name"><p>name_appeared_handler</p></td>
 <td class="parameter_description"><p> Handler to invoke when <em class="parameter"><code>name</code></em>
 is known to exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_vanished_handler</p></td>
 <td class="parameter_description"><p> Handler to invoke when <em class="parameter"><code>name</code></em>
 is known to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>user_data</p></td>
@@ -370,13 +370,13 @@ is known to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code 
 <td class="parameter_name"><p>user_data_free_func</p></td>
 <td class="parameter_description"><p> Function for freeing <em class="parameter"><code>user_data</code></em>
 or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.5.6"></a><h4>Returns</h4>
+<a name="g-bus-watch-name-on-connection.returns"></a><h4>Returns</h4>
 <p> An identifier (never 0) that an be used with
 <a class="link" href="gio-Watching-Bus-Names.html#g-bus-unwatch-name" title="g_bus_unwatch_name ()"><code class="function">g_bus_unwatch_name()</code></a> to stop watching the name.</p>
 </div>
@@ -389,8 +389,8 @@ or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</
 g_bus_unwatch_name (<em class="parameter"><code><a href="../glib-Basic-Types.html#guint"><span class="type">guint</span></a> watcher_id</code></em>);</pre>
 <p>Stops watching a name.</p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.6.5"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-unwatch-name.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -418,8 +418,8 @@ g_bus_watch_name_with_closures (<em class="parameter"><code><a class="link" href
 easier binding in other languages.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_bus_watch_name]</span></p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.7.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-watch-name-with-closures.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -446,20 +446,20 @@ easier binding in other languages.</p>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is known
 to exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_vanished_closure</p></td>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is known
 to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.7.7"></a><h4>Returns</h4>
+<a name="g-bus-watch-name-with-closures.returns"></a><h4>Returns</h4>
 <p> An identifier (never 0) that an be used with
 <a class="link" href="gio-Watching-Bus-Names.html#g-bus-unwatch-name" title="g_bus_unwatch_name ()"><code class="function">g_bus_unwatch_name()</code></a> to stop watching the name.</p>
 </div>
@@ -479,8 +479,8 @@ g_bus_watch_name_on_connection_with_closures
 easier binding in other languages.</p>
 <p><span class="annotation">[<acronym title="Rename the original symbol's name to SYMBOL."><span class="acronym">rename-to</span></acronym> g_bus_watch_name_on_connection]</span></p>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.8.6"></a><h4>Parameters</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="g-bus-watch-name-on-connection-with-closures.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="150px" class="parameters_name">
 <col class="parameters_description">
@@ -507,20 +507,20 @@ easier binding in other languages.</p>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is known
 to exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 <tr>
 <td class="parameter_name"><p>name_vanished_closure</p></td>
 <td class="parameter_description"><p> <a href="../gobject-Closures.html#GClosure"><span class="type">GClosure</span></a> to invoke when <em class="parameter"><code>name</code></em>
 is known
 to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="literal">NULL</code></a>. </p></td>
-<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>]</span></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
 </tr>
 </tbody>
 </table></div>
 </div>
 <div class="refsect3">
-<a name="id-1.4.18.3.7.8.7"></a><h4>Returns</h4>
+<a name="g-bus-watch-name-on-connection-with-closures.returns"></a><h4>Returns</h4>
 <p> An identifier (never 0) that an be used with
 <a class="link" href="gio-Watching-Bus-Names.html#g-bus-unwatch-name" title="g_bus_unwatch_name ()"><code class="function">g_bus_unwatch_name()</code></a> to stop watching the name.</p>
 </div>
@@ -533,8 +533,8 @@ to not exist or <a href="../glib-Standard-Macros.html#NULL:CAPS"><code class="li
 <a name="GBusNameWatcherFlags"></a><h3>enum GBusNameWatcherFlags</h3>
 <p>Flags used in <a class="link" href="gio-Watching-Bus-Names.html#g-bus-watch-name" title="g_bus_watch_name ()"><code class="function">g_bus_watch_name()</code></a>.</p>
 <div class="refsect3">
-<a name="id-1.4.18.3.8.2.4"></a><h4>Members</h4>
-<div class="informaltable"><table width="100%" border="0">
+<a name="GBusNameWatcherFlags.members"></a><h4>Members</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
 <colgroup>
 <col width="300px" class="enum_members_name">
 <col class="enum_members_description">
@@ -565,6 +565,6 @@ name.</p>
 </div>
 </div>
 <div class="footer">
-<hr>Generated by GTK-Doc V1.24.1</div>
+<hr>Generated by GTK-Doc V1.25.1</div>
 </body>
 </html>

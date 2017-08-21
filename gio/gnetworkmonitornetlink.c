@@ -5,7 +5,7 @@
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * version 2.1 of the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -94,7 +94,7 @@ g_network_monitor_netlink_initable_init (GInitable     *initable,
       int errsv = errno;
       g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errsv),
                    _("Could not create network monitor: %s"),
-                   g_strerror (errno));
+                   g_strerror (errsv));
       return FALSE;
     }
 
@@ -106,7 +106,7 @@ g_network_monitor_netlink_initable_init (GInitable     *initable,
       int errsv = errno;
       g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errsv),
                    _("Could not create network monitor: %s"),
-                   g_strerror (errno));
+                   g_strerror (errsv));
       (void) g_close (sockfd, NULL);
       return FALSE;
     }
@@ -125,7 +125,7 @@ g_network_monitor_netlink_initable_init (GInitable     *initable,
       int errsv = errno;
       g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errsv),
                    _("Could not create network monitor: %s"),
-                   g_strerror (errno));
+                   g_strerror (errsv));
       return FALSE;
     }
 
@@ -295,7 +295,7 @@ read_netlink_messages (GSocket      *socket,
   gssize len;
   gint flags;
   GError *error = NULL;
-  GSocketAddress *addr;
+  GSocketAddress *addr = NULL;
   struct nlmsghdr *msg;
   struct rtmsg *rtmsg;
   struct rtattr *attr;
@@ -326,6 +326,7 @@ read_netlink_messages (GSocket      *socket,
   if (len < 0)
     {
       g_warning ("Error on netlink socket: %s", error->message);
+      g_clear_object (&addr);
       g_error_free (error);
       if (nl->priv->dump_networks)
         finish_dump (nl);
@@ -335,6 +336,7 @@ read_netlink_messages (GSocket      *socket,
   if (!g_socket_address_to_native (addr, &source_sockaddr, sizeof (source_sockaddr), &error))
     {
       g_warning ("Error on netlink socket: %s", error->message);
+      g_clear_object (&addr);
       g_error_free (error);
       if (nl->priv->dump_networks)
         finish_dump (nl);
@@ -425,6 +427,7 @@ read_netlink_messages (GSocket      *socket,
 
  done:
   g_free (iv.buffer);
+  g_clear_object (&addr);
 
   if (!retval && nl->priv->dump_networks)
     finish_dump (nl);

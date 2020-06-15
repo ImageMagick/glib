@@ -49,6 +49,7 @@
 #include "gfileutils.h"
 
 #include "gstdio.h"
+#include "gstdioprivate.h"
 #include "glibintl.h"
 
 #ifdef HAVE_LINUX_MAGIC_H /* for btrfs check */
@@ -62,12 +63,21 @@
  * @title: File Utilities
  * @short_description: various file-related functions
  *
+ * Do not use these APIs unless you are porting a POSIX application to Windows.
+ * A more high-level file access API is provided as GIO — see the documentation
+ * for #GFile.
+ *
  * There is a group of functions which wrap the common POSIX functions
  * dealing with filenames (g_open(), g_rename(), g_mkdir(), g_stat(),
  * g_unlink(), g_remove(), g_fopen(), g_freopen()). The point of these
  * wrappers is to make it possible to handle file names with any Unicode
  * characters in them on Windows without having to use ifdefs and the
  * wide character API in the application code.
+ *
+ * On some Unix systems, these APIs may be defined as identical to their POSIX
+ * counterparts. For this reason, you must check for and include the necessary
+ * header files (such as `fcntl.h`) before using functions like g_creat(). You
+ * must also define the relevant feature test macros.
  *
  * The pathname argument should be in the GLib file name encoding.
  * On POSIX this is the actual on-disk encoding which might correspond
@@ -216,6 +226,20 @@ g_mkdir_with_parents (const gchar *pathname,
       return -1;
     }
 
+  /* try to create the full path first */
+  if (g_mkdir (pathname, mode) == 0)
+    return 0;
+  else if (errno == EEXIST)
+    {
+      if (!g_file_test (pathname, G_FILE_TEST_IS_DIR))
+        {
+          errno = ENOTDIR;
+          return -1;
+        }
+      return 0;
+    }
+
+  /* walk the full path and try creating each element */
   fn = g_strdup (pathname);
 
   if (g_path_is_absolute (fn))
@@ -238,9 +262,12 @@ g_mkdir_with_parents (const gchar *pathname,
 	  if (g_mkdir (fn, mode) == -1 && errno != EEXIST)
 	    {
 	      int errno_save = errno;
-	      g_free (fn);
-	      errno = errno_save;
-	      return -1;
+	      if (errno != ENOENT || !p)
+                {
+	          g_free (fn);
+	          errno = errno_save;
+	          return -1;
+		}
 	    }
 	}
       else if (!g_file_test (fn, G_FILE_TEST_IS_DIR))
@@ -1163,6 +1190,17 @@ write_to_temp_file (const gchar  *contents,
  *   lists, metadata etc. may be lost. If @filename is a symbolic link,
  *   the link itself will be replaced, not the linked file.
  *
+ * - On UNIX, if @filename already exists and is non-empty, and if the system
+ *   supports it (via a journalling filesystem or equivalent), the fsync()
+ *   call (or equivalent) will be used to ensure atomic replacement: @filename
+ *   will contain either its old contents or @contents, even in the face of
+ *   system power loss, the disk being unsafely removed, etc.
+ *
+ * - On UNIX, if @filename does not already exist or is empty, there is a
+ *   possibility that system power loss etc. after calling this function will
+ *   leave @filename empty or full of NUL bytes, depending on the underlying
+ *   filesystem.
+ *
  * - On Windows renaming a file will not remove an existing file with the
  *   new name, so on Windows there is a race condition between the existing
  *   file being removed and the temporary file being renamed.
@@ -1280,7 +1318,7 @@ get_tmp_file (gchar            *tmpl,
     "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   static const int NLETTERS = sizeof (letters) - 1;
   glong value;
-  GTimeVal tv;
+  gint64 now_us;
   static int counter = 0;
 
   g_return_val_if_fail (tmpl != NULL, -1);
@@ -1295,8 +1333,8 @@ get_tmp_file (gchar            *tmpl,
     }
 
   /* Get some more or less random data.  */
-  g_get_current_time (&tv);
-  value = (tv.tv_usec ^ tv.tv_sec) + counter++;
+  now_us = g_get_real_time ();
+  value = ((now_us % G_USEC_PER_SEC) ^ (now_us / G_USEC_PER_SEC)) + counter++;
 
   for (count = 0; count < 100; value += 7777, ++count)
     {
@@ -1600,6 +1638,8 @@ g_file_open_tmp (const gchar  *tmpl,
   gchar *fulltemplate;
   gint result;
 
+  g_return_val_if_fail (error == NULL || *error == NULL, -1);
+
   result = g_get_tmp_name (tmpl, &fulltemplate,
                            wrap_g_open,
                            O_CREAT | O_EXCL | O_RDWR | O_BINARY,
@@ -1646,6 +1686,8 @@ g_dir_make_tmp (const gchar  *tmpl,
                 GError      **error)
 {
   gchar *fulltemplate;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   if (g_get_tmp_name (tmpl, &fulltemplate, wrap_g_mkdir, 0, 0700, error) == -1)
     return NULL;
@@ -1951,6 +1993,44 @@ g_build_pathname_va (const gchar  *first_element,
 
 #endif
 
+static gchar *
+g_build_filename_va (const gchar  *first_argument,
+                     va_list      *args,
+                     gchar       **str_array)
+{
+  gchar *str;
+
+#ifndef G_OS_WIN32
+  str = g_build_path_va (G_DIR_SEPARATOR_S, first_argument, args, str_array);
+#else
+  str = g_build_pathname_va (first_argument, args, str_array);
+#endif
+
+  return str;
+}
+
+/**
+ * g_build_filename_valist:
+ * @first_element: (type filename): the first element in the path
+ * @args: va_list of remaining elements in path
+ *
+ * Behaves exactly like g_build_filename(), but takes the path elements
+ * as a va_list. This function is mainly meant for language bindings.
+ *
+ * Returns: (type filename): a newly-allocated string that must be freed
+ *     with g_free().
+ *
+ * Since: 2.56
+ */
+gchar *
+g_build_filename_valist (const gchar  *first_element,
+                         va_list      *args)
+{
+  g_return_val_if_fail (first_element != NULL, NULL);
+
+  return g_build_filename_va (first_element, args, NULL);
+}
+
 /**
  * g_build_filenamev:
  * @args: (array zero-terminated=1) (element-type filename): %NULL-terminated
@@ -1968,15 +2048,7 @@ g_build_pathname_va (const gchar  *first_element,
 gchar *
 g_build_filenamev (gchar **args)
 {
-  gchar *str;
-
-#ifndef G_OS_WIN32
-  str = g_build_path_va (G_DIR_SEPARATOR_S, NULL, NULL, args);
-#else
-  str = g_build_pathname_va (NULL, NULL, args);
-#endif
-
-  return str;
+  return g_build_filename_va (NULL, NULL, args);
 }
 
 /**
@@ -2011,11 +2083,7 @@ g_build_filename (const gchar *first_element,
   va_list args;
 
   va_start (args, first_element);
-#ifndef G_OS_WIN32
-  str = g_build_path_va (G_DIR_SEPARATOR_S, first_element, &args, NULL);
-#else
-  str = g_build_pathname_va (first_element, &args, NULL);
-#endif
+  str = g_build_filename_va (first_element, &args, NULL);
   va_end (args);
 
   return str;
@@ -2039,12 +2107,15 @@ gchar *
 g_file_read_link (const gchar  *filename,
 	          GError      **error)
 {
-#ifdef HAVE_READLINK
+#if defined (HAVE_READLINK)
   gchar *buffer;
   size_t size;
-  ssize_t read_size;
+  gssize read_size;
   
-  size = 256; 
+  g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  size = 256;
   buffer = g_malloc (size);
   
   while (TRUE) 
@@ -2070,7 +2141,31 @@ g_file_read_link (const gchar  *filename,
       size *= 2;
       buffer = g_realloc (buffer, size);
     }
+#elif defined (G_OS_WIN32)
+  gchar *buffer;
+  gssize read_size;
+  
+  g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  read_size = g_win32_readlink_utf8 (filename, NULL, 0, &buffer, TRUE);
+  if (read_size < 0)
+    {
+      int saved_errno = errno;
+      set_file_error (error,
+                      filename,
+                      _("Failed to read the symbolic link “%s”: %s"),
+                      saved_errno);
+      return NULL;
+    }
+  else if (read_size == 0)
+    return strdup ("");
+  else
+    return buffer;
 #else
+  g_return_val_if_fail (filename != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
   g_set_error_literal (error,
                        G_FILE_ERROR,
                        G_FILE_ERROR_INVAL,
@@ -2095,7 +2190,7 @@ g_file_read_link (const gchar  *filename,
  * an absolute file name one that either begins with a directory
  * separator such as "\Users\tml" or begins with the root on a drive,
  * for example "C:\Windows". The first case also includes UNC paths
- * such as "\\myserver\docs\foo". In all cases, either slashes or
+ * such as "\\\\myserver\docs\foo". In all cases, either slashes or
  * backslashes are accepted.
  *
  * Note that a file name relative to the current drive root does not
@@ -2326,7 +2421,9 @@ g_path_get_basename (const gchar *file_name)
  * g_path_get_dirname:
  * @file_name: (type filename): the name of the file
  *
- * Gets the directory components of a file name.
+ * Gets the directory components of a file name. For example, the directory
+ * component of `/usr/bin/test` is `/usr/bin`. The directory component of `/`
+ * is `/`.
  *
  * If the file name has no directory components "." is returned.
  * The returned string should be freed when no longer needed.
@@ -2425,6 +2522,141 @@ g_path_get_dirname (const gchar *file_name)
   base[len] = 0;
 
   return base;
+}
+
+/**
+ * g_canonicalize_filename:
+ * @filename: (type filename): the name of the file
+ * @relative_to: (type filename) (nullable): the relative directory, or %NULL
+ * to use the current working directory
+ *
+ * Gets the canonical file name from @filename. All triple slashes are turned into
+ * single slashes, and all `..` and `.`s resolved against @relative_to.
+ *
+ * Symlinks are not followed, and the returned path is guaranteed to be absolute.
+ *
+ * If @filename is an absolute path, @relative_to is ignored. Otherwise,
+ * @relative_to will be prepended to @filename to make it absolute. @relative_to
+ * must be an absolute path, or %NULL. If @relative_to is %NULL, it'll fallback
+ * to g_get_current_dir().
+ *
+ * This function never fails, and will canonicalize file paths even if they don't
+ * exist.
+ *
+ * No file system I/O is done.
+ *
+ * Returns: (type filename) (transfer full): a newly allocated string with the
+ * canonical file path
+ * Since: 2.58
+ */
+gchar *
+g_canonicalize_filename (const gchar *filename,
+                         const gchar *relative_to)
+{
+  gchar *canon, *start, *p, *q;
+  guint i;
+
+  g_return_val_if_fail (relative_to == NULL || g_path_is_absolute (relative_to), NULL);
+
+  if (!g_path_is_absolute (filename))
+    {
+      gchar *cwd_allocated = NULL;
+      const gchar  *cwd;
+
+      if (relative_to != NULL)
+        cwd = relative_to;
+      else
+        cwd = cwd_allocated = g_get_current_dir ();
+
+      canon = g_build_filename (cwd, filename, NULL);
+      g_free (cwd_allocated);
+    }
+  else
+    {
+      canon = g_strdup (filename);
+    }
+
+  start = (char *)g_path_skip_root (canon);
+
+  if (start == NULL)
+    {
+      /* This shouldn't really happen, as g_get_current_dir() should
+         return an absolute pathname, but bug 573843 shows this is
+         not always happening */
+      g_free (canon);
+      return g_build_filename (G_DIR_SEPARATOR_S, filename, NULL);
+    }
+
+  /* POSIX allows double slashes at the start to
+   * mean something special (as does windows too).
+   * So, "//" != "/", but more than two slashes
+   * is treated as "/".
+   */
+  i = 0;
+  for (p = start - 1;
+       (p >= canon) &&
+         G_IS_DIR_SEPARATOR (*p);
+       p--)
+    i++;
+  if (i > 2)
+    {
+      i -= 1;
+      start -= i;
+      memmove (start, start+i, strlen (start+i) + 1);
+    }
+
+  /* Make sure we're using the canonical dir separator */
+  p++;
+  while (p < start && G_IS_DIR_SEPARATOR (*p))
+    *p++ = G_DIR_SEPARATOR;
+
+  p = start;
+  while (*p != 0)
+    {
+      if (p[0] == '.' && (p[1] == 0 || G_IS_DIR_SEPARATOR (p[1])))
+        {
+          memmove (p, p+1, strlen (p+1)+1);
+        }
+      else if (p[0] == '.' && p[1] == '.' && (p[2] == 0 || G_IS_DIR_SEPARATOR (p[2])))
+        {
+          q = p + 2;
+          /* Skip previous separator */
+          p = p - 2;
+          if (p < start)
+            p = start;
+          while (p > start && !G_IS_DIR_SEPARATOR (*p))
+            p--;
+          if (G_IS_DIR_SEPARATOR (*p))
+            *p++ = G_DIR_SEPARATOR;
+          memmove (p, q, strlen (q)+1);
+        }
+      else
+        {
+          /* Skip until next separator */
+          while (*p != 0 && !G_IS_DIR_SEPARATOR (*p))
+            p++;
+
+          if (*p != 0)
+            {
+              /* Canonicalize one separator */
+              *p++ = G_DIR_SEPARATOR;
+            }
+        }
+
+      /* Remove additional separators */
+      q = p;
+      while (*q && G_IS_DIR_SEPARATOR (*q))
+        q++;
+
+      if (p != q)
+        memmove (p, q, strlen (q) + 1);
+    }
+
+  /* Remove trailing slashes */
+  if (p > start && G_IS_DIR_SEPARATOR (*(p-1)))
+    *(p-1) = 0;
+
+  return canon;
 }
 
 #if defined(MAXPATHLEN)

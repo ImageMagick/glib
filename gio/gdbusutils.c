@@ -291,22 +291,22 @@ gchar *
 g_dbus_generate_guid (void)
 {
   GString *s;
-  GTimeVal now;
   guint32 r1;
   guint32 r2;
   guint32 r3;
+  gint64 now_us;
 
   s = g_string_new (NULL);
 
   r1 = g_random_int ();
   r2 = g_random_int ();
   r3 = g_random_int ();
-  g_get_current_time (&now);
+  now_us = g_get_real_time ();
 
   g_string_append_printf (s, "%08x", r1);
   g_string_append_printf (s, "%08x", r2);
   g_string_append_printf (s, "%08x", r3);
-  g_string_append_printf (s, "%08x", (guint32) now.tv_sec);
+  g_string_append_printf (s, "%08x", (guint32) (now_us / G_USEC_PER_SEC));
 
   return g_string_free (s, FALSE);
 }
@@ -685,7 +685,7 @@ g_dbus_gvalue_to_gvariant (const GValue       *gvalue,
     {
       GVariant *untrusted_empty;
       untrusted_empty = g_variant_new_from_data (type, NULL, 0, FALSE, NULL, NULL);
-      ret = g_variant_ref_sink (g_variant_get_normal_form (untrusted_empty));
+      ret = g_variant_take_ref (g_variant_get_normal_form (untrusted_empty));
       g_variant_unref (untrusted_empty);
     }
 

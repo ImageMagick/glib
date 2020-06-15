@@ -93,7 +93,7 @@ glist_test (void)
 
   for (i = 0; i < 10; i++)
     if (g_list_position (list, g_list_nth (list, i)) != i)
-      g_error ("g_list_position does not seem to be the inverse of g_list_nth\n");
+      g_error ("g_list_position does not seem to be the inverse of g_list_nth");
 
   g_list_free (list);
   list = NULL;
@@ -469,7 +469,7 @@ my_hash_callback_remove_test (gpointer key,
   int *d = value;
 
   if ((*d) % 2)
-    g_error ("hash table entry %d should have been removed already\n", *d);
+    g_error ("hash table entry %d should have been removed already", *d);
 }
 
 static void
@@ -572,6 +572,26 @@ log_warning_error_tests (void)
                          "*g_print*assertion*failed*");
   g_print (NULL);
   g_test_assert_expected_messages ();
+}
+
+static void
+log_warning_rate_limited_tests (void)
+{
+#if defined(G_HAVE_ISO_VARARGS) || defined(G_HAVE_GNUC_VARARGS)
+  int i;
+
+  g_test_expect_message (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
+                         "*harmless single warning 1*");
+  g_test_expect_message (G_LOG_DOMAIN, G_LOG_LEVEL_WARNING,
+                         "*harmless single warning 2*");
+  for (i = 0; i < 10; i++)
+    g_warning_once ("harmless single warning 1");
+  for (i = 0; i < 10; i++)
+    g_warning_once ("harmless single warning 2");
+  g_test_assert_expected_messages ();
+#else
+  g_test_skip ("Variadic macro support not available");
+#endif
 }
 
 static void
@@ -838,6 +858,59 @@ test_paths (void)
     { "", NULL },
   };
   const guint n_skip_root_checks = G_N_ELEMENTS (skip_root_checks);
+  struct {
+    gchar *cwd;
+    gchar *relative_path;
+    gchar *canonical_path;
+  } canonicalize_filename_checks[] = {
+#ifndef G_OS_WIN32
+    { "/etc", "../usr/share", "/usr/share" },
+    { "/", "/foo/bar", "/foo/bar" },
+    { "/usr/bin", "../../foo/bar", "/foo/bar" },
+    { "/", "../../foo/bar", "/foo/bar" },
+    { "/double//dash", "../../foo/bar", "/foo/bar" },
+    { "/usr/share/foo", ".././././bar", "/usr/share/bar" },
+    { "/foo/bar", "../bar/./.././bar", "/foo/bar" },
+    { "/test///dir", "../../././foo/bar", "/foo/bar" },
+    { "/test///dir", "../../././/foo///bar", "/foo/bar" },
+    { "/etc", "///triple/slash", "/triple/slash" },
+    { "/etc", "//double/slash", "//double/slash" },
+    { "///triple/slash", ".", "/triple/slash" },
+    { "//double/slash", ".", "//double/slash" },
+    { "/cwd/../with/./complexities/", "./hello", "/with/complexities/hello" },
+#else
+    { "/etc", "../usr/share", "\\usr\\share" },
+    { "/", "/foo/bar", "\\foo\\bar" },
+    { "/usr/bin", "../../foo/bar", "\\foo\\bar" },
+    { "/", "../../foo/bar", "\\foo\\bar" },
+    { "/double//dash", "../../foo/bar", "\\foo\\bar" },
+    { "/usr/share/foo", ".././././bar", "\\usr\\share\\bar" },
+    { "/foo/bar", "../bar/./.././bar", "\\foo\\bar" },
+    { "/test///dir", "../../././foo/bar", "\\foo\\bar" },
+    { "/test///dir", "../../././/foo///bar", "\\foo\\bar" },
+    { "/etc", "///triple/slash", "\\triple\\slash" },
+    { "/etc", "//double/slash", "//double/slash" },
+    { "///triple/slash", ".", "\\triple\\slash" },
+    { "//double/slash", ".", "//double/slash\\" },
+    { "/cwd/../with/./complexities/", "./hello", "\\with\\complexities\\hello" },
+
+    { "\\etc", "..\\usr\\share", "\\usr\\share" },
+    { "\\", "\\foo\\bar", "\\foo\\bar" },
+    { "\\usr\\bin", "..\\..\\foo\\bar", "\\foo\\bar" },
+    { "\\", "..\\..\\foo\\bar", "\\foo\\bar" },
+    { "\\double\\\\dash", "..\\..\\foo\\bar", "\\foo\\bar" },
+    { "\\usr\\share\\foo", "..\\.\\.\\.\\bar", "\\usr\\share\\bar" },
+    { "\\foo\\bar", "..\\bar\\.\\..\\.\\bar", "\\foo\\bar" },
+    { "\\test\\\\\\dir", "..\\..\\.\\.\\foo\\bar", "\\foo\\bar" },
+    { "\\test\\\\\\dir", "..\\..\\.\\.\\\\foo\\\\\\bar", "\\foo\\bar" },
+    { "\\etc", "\\\\\\triple\\slash", "\\triple\\slash" },
+    { "\\etc", "\\\\double\\slash", "\\\\double\\slash" },
+    { "\\\\\\triple\\slash", ".", "\\triple\\slash" },
+    { "\\\\double\\slash", ".", "\\\\double\\slash\\" },
+    { "\\cwd\\..\\with\\.\\complexities\\", ".\\hello", "\\with\\complexities\\hello" },
+#endif
+  };
+  const guint n_canonicalize_filename_checks = G_N_ELEMENTS (canonicalize_filename_checks);
   gchar *string;
   guint i;
   if (g_test_verbose())
@@ -867,7 +940,7 @@ test_paths (void)
       gchar *dirname = g_path_get_dirname (dirname_checks[i].filename);
       if (strcmp (dirname, dirname_checks[i].dirname) != 0)
 	{
-	  g_error ("\nfailed for \"%s\"==\"%s\" (returned: \"%s\")\n",
+	  g_error ("failed for \"%s\"==\"%s\" (returned: \"%s\")",
 		   dirname_checks[i].filename,
 		   dirname_checks[i].dirname,
 		   dirname);
@@ -887,7 +960,7 @@ test_paths (void)
 	  ((skipped && skip_root_checks[i].without_root) &&
 	   strcmp (skipped, skip_root_checks[i].without_root)))
 	{
-	  g_error ("\nfailed for \"%s\"==\"%s\" (returned: \"%s\")\n",
+	  g_error ("failed for \"%s\"==\"%s\" (returned: \"%s\")",
 		   skip_root_checks[i].filename,
 		   (skip_root_checks[i].without_root ?
 		    skip_root_checks[i].without_root : "<NULL>"),
@@ -895,6 +968,43 @@ test_paths (void)
 	}
     }
   if (g_test_verbose())
+    g_printerr ("ok\n");
+
+  if (g_test_verbose ())
+    g_printerr ("checking g_canonicalize_filename()...");
+  for (i = 0; i < n_canonicalize_filename_checks; i++)
+    {
+      gchar *canonical_path = g_canonicalize_filename (canonicalize_filename_checks[i].relative_path,
+                                                       canonicalize_filename_checks[i].cwd);
+      if (g_strcmp0 (canonical_path, canonicalize_filename_checks[i].canonical_path) != 0)
+        {
+          g_error ("\nfailed for \"%s\"==\"%s\" (returned: \"%s\")\n",
+                   canonicalize_filename_checks[i].relative_path,
+                   canonicalize_filename_checks[i].canonical_path,
+                   canonical_path);
+        }
+      g_free (canonical_path);
+    }
+  if (g_test_verbose ())
+    g_printerr ("ok\n");
+
+  if (g_test_verbose ())
+    g_printerr ("checking g_canonicalize_filename() supports NULL...");
+
+  {
+    const gchar *relative_path = "./";
+    gchar *canonical_path = g_canonicalize_filename (relative_path, NULL);
+    gchar *cwd = g_get_current_dir ();
+    if (g_strcmp0 (canonical_path, cwd) != 0)
+      {
+        g_error ("\nfailed for \"%s\"==\"%s\" (returned: \"%s\")\n",
+                 relative_path, cwd, canonical_path);
+      }
+    g_free (cwd);
+    g_free (canonical_path);
+  }
+
+  if (g_test_verbose ())
     g_printerr ("ok\n");
 }
 
@@ -918,25 +1028,25 @@ test_file_functions (void)
   strcpy (template, "fooXXXXXX");
   fd = g_mkstemp (template);
   if (fd == -1)
-    g_error ("g_mkstemp didn't work for template %s\n", template);
+    g_error ("g_mkstemp didn't work for template %s", template);
   n = write (fd, hello, hellolen);
   errsv = errno;
   if (n == -1)
-    g_error ("write() failed: %s\n", g_strerror (errsv));
+    g_error ("write() failed: %s", g_strerror (errsv));
   else if (n != hellolen)
-    g_error ("write() should have written %d bytes, wrote %d\n", hellolen, n);
+    g_error ("write() should have written %d bytes, wrote %d", hellolen, n);
 
   lseek (fd, 0, 0);
   n = read (fd, chars, sizeof (chars));
   errsv = errno;
   if (n == -1)
-    g_error ("read() failed: %s\n", g_strerror (errsv));
+    g_error ("read() failed: %s", g_strerror (errsv));
   else if (n != hellolen)
-    g_error ("read() should have read %d bytes, got %d\n", hellolen, n);
+    g_error ("read() should have read %d bytes, got %d", hellolen, n);
 
   chars[n] = 0;
   if (strcmp (chars, hello) != 0)
-    g_error ("wrote '%s', but got '%s'\n", hello, chars);
+    g_error ("wrote '%s', but got '%s'", hello, chars);
   if (fd != -1)
     close (fd);
   remove (template);
@@ -978,7 +1088,7 @@ test_file_functions (void)
   name_used = NULL;
   fd = g_file_open_tmp (template, &name_used, &error);
   if (fd == -1)
-    g_error ("g_file_open_tmp didn't work for template '%s': %s\n", template, error->message);
+    g_error ("g_file_open_tmp didn't work for template '%s': %s", template, error->message);
   else if (g_test_verbose())
     g_printerr ("g_file_open_tmp for template '%s' used name '%s'\n", template, name_used);
   if (fd != -1)
@@ -990,7 +1100,7 @@ test_file_functions (void)
   name_used = NULL;
   fd = g_file_open_tmp (NULL, &name_used, &error);
   if (fd == -1)
-    g_error ("g_file_open_tmp didn't work for a NULL template: %s\n", error->message);
+    g_error ("g_file_open_tmp didn't work for a NULL template: %s", error->message);
   else
     close (fd);
   g_clear_error (&error);
@@ -1011,7 +1121,7 @@ test_arrays (void)
     g_ptr_array_add (gparray, GINT_TO_POINTER (i));
   for (i = 0; i < 10000; i++)
     if (g_ptr_array_index (gparray, i) != GINT_TO_POINTER (i))
-      g_error ("array fails: %p ( %p )\n", g_ptr_array_index (gparray, i), GINT_TO_POINTER (i));
+      g_error ("array fails: %p ( %p )", g_ptr_array_index (gparray, i), GINT_TO_POINTER (i));
   g_ptr_array_free (gparray, TRUE);
 
   gbarray = g_byte_array_new ();
@@ -1031,7 +1141,7 @@ test_arrays (void)
     g_array_append_val (garray, i);
   for (i = 0; i < 10000; i++)
     if (g_array_index (garray, gint, i) != i)
-      g_error ("failure: %d ( %d )\n", g_array_index (garray, gint, i), i);
+      g_error ("failure: %d ( %d )", g_array_index (garray, gint, i), i);
   g_array_free (garray, TRUE);
 
   garray = g_array_new (FALSE, FALSE, sizeof (gint));
@@ -1039,7 +1149,7 @@ test_arrays (void)
     g_array_prepend_val (garray, i);
   for (i = 0; i < 100; i++)
     if (g_array_index (garray, gint, i) != (100 - i - 1))
-      g_error ("failure: %d ( %d )\n", g_array_index (garray, gint, i), 100 - i - 1);
+      g_error ("failure: %d ( %d )", g_array_index (garray, gint, i), 100 - i - 1);
   g_array_free (garray, TRUE);
 }
 
@@ -1064,7 +1174,7 @@ hash_table_tests (void)
   g_hash_table_foreach (hash_table, my_hash_callback, NULL);
   for (i = 0; i < 10000; i++)
     if (array[i] == 0)
-      g_error ("hashtable-test: wrong value: %d\n", i);
+      g_error ("hashtable-test: wrong value: %d", i);
   for (i = 0; i < 10000; i++)
     g_hash_table_remove (hash_table, &array[i]);
   for (i = 0; i < 10000; i++)
@@ -1074,15 +1184,16 @@ hash_table_tests (void)
     }
   if (g_hash_table_foreach_remove (hash_table, my_hash_callback_remove, NULL) != 5000 ||
       g_hash_table_size (hash_table) != 5000)
-    g_error ("hashtable removal failed\n");
+    g_error ("hashtable removal failed");
   g_hash_table_foreach (hash_table, my_hash_callback_remove_test, NULL);
   g_hash_table_destroy (hash_table);
 }
 
-#ifndef G_DISABLE_DEPRECATED
 static void
 relation_test (void)
 {
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
   GRelation *relation = g_relation_new (2);
   GTuples *tuples;
   gint data [1024];
@@ -1151,8 +1262,9 @@ relation_test (void)
   g_relation_destroy (relation);
 
   relation = NULL;
+
+  G_GNUC_END_IGNORE_DEPRECATIONS
 }
-#endif
 
 static void
 gstring_tests (void)
@@ -1308,7 +1420,7 @@ various_string_tests (void)
     {
       tmp_string = g_string_chunk_insert (string_chunk, "hi pete");
       if (strcmp ("hi pete", tmp_string) != 0)
-	g_error ("string chunks are broken.\n");
+	g_error ("string chunks are broken.");
     }
   tmp_string_2 = g_string_chunk_insert_const (string_chunk, tmp_string);
   g_assert (tmp_string_2 != tmp_string && strcmp (tmp_string_2, tmp_string) == 0);
@@ -1547,10 +1659,11 @@ various_string_tests (void)
   /* g_debug (argv[0]); */
 }
 
-#ifndef G_DISABLE_DEPRECATED
 static void
 test_mem_chunks (void)
 {
+  G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+
   GMemChunk *mem_chunk = g_mem_chunk_new ("test mem chunk", 50, 100, G_ALLOC_AND_FREE);
   gchar *mem[10000];
   guint i;
@@ -1565,8 +1678,9 @@ test_mem_chunks (void)
     g_mem_chunk_free (mem_chunk, mem[i]);
 
   g_mem_chunk_destroy (mem_chunk);
+
+  G_GNUC_END_IGNORE_DEPRECATIONS
 }
-#endif
 
 int
 main (int   argc,
@@ -1584,16 +1698,13 @@ main (int   argc,
   g_test_add_func ("/testglib/GTree", binary_tree_test);
   g_test_add_func ("/testglib/Arrays", test_arrays);
   g_test_add_func ("/testglib/GHashTable", hash_table_tests);
-#ifndef G_DISABLE_DEPRECATED
   g_test_add_func ("/testglib/Relation (deprecated)", relation_test);
-#endif
   g_test_add_func ("/testglib/File Paths", test_paths);
   g_test_add_func ("/testglib/File Functions", test_file_functions);
   g_test_add_func ("/testglib/Parse Debug Strings", test_g_parse_debug_string);
-#ifndef G_DISABLE_DEPRECATED
   g_test_add_func ("/testglib/GMemChunk (deprecated)", test_mem_chunks);
-#endif
   g_test_add_func ("/testglib/Warnings & Errors", log_warning_error_tests);
+  g_test_add_func ("/testglib/Warnings (rate limited)", log_warning_rate_limited_tests);
   g_test_add_func ("/testglib/Timers (slow)", timer_tests);
 
   return g_test_run();

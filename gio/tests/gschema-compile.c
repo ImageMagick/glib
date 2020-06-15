@@ -11,28 +11,23 @@ typedef struct {
   const gchar *err;
 } SchemaTest;
 
-/* Meson build defines this, autotools build does not */
-#ifndef GLIB_COMPILE_SCHEMAS
-#define GLIB_COMPILE_SCHEMAS "../glib-compile-schemas"
-#endif
-
 static void
 test_schema_do_compile (gpointer data)
 {
   SchemaTest *test = (SchemaTest *) data;
   gchar *filename = g_strconcat (test->name, ".gschema.xml", NULL);
   gchar *path = g_test_build_filename (G_TEST_DIST, "schema-tests", filename, NULL);
-  gchar *argv[] = {
-    GLIB_COMPILE_SCHEMAS,
+  const gchar *argv[] = {
+    GLIB_COMPILE_SCHEMAS,  /* defined in meson.build */
     "--strict",
     "--dry-run",
     "--schema-file", path,
-    (gchar *)test->opt,
+    test->opt,
     NULL
   };
   gchar *envp[] = { NULL };
 
-  execve (argv[0], argv, envp);
+  execve (argv[0], (char **) argv, envp);
   g_assert_not_reached ();
 }
 
@@ -86,6 +81,7 @@ static const SchemaTest tests[] = {
   { "enum",                         NULL, NULL                                                  },
   { "enum-with-aliases",            NULL, NULL                                                  },
   { "enum-with-invalid-alias",      NULL, "*“banger” is not in enumerated type*"                },
+  { "enum-with-invalid-value",      NULL, "*Invalid numeric value*"                             },
   { "enum-with-repeated-alias",     NULL, "*<alias value='sausages'/> already specified*"       },
   { "enum-with-repeated-nick",      NULL, "*<value nick='spam'/> already specified*"            },
   { "enum-with-repeated-value",     NULL, "*value='1' already specified*"                       },

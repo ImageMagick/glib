@@ -157,6 +157,18 @@ gboolean               g_socket_leave_multicast_group   (GSocket                
                                                          gboolean                 source_specific,
                                                          const gchar             *iface,
                                                          GError                 **error);
+GLIB_AVAILABLE_IN_2_56
+gboolean               g_socket_join_multicast_group_ssm    (GSocket                 *socket,
+                                                             GInetAddress            *group,
+                                                             GInetAddress            *source_specific,
+                                                             const gchar             *iface,
+                                                             GError                 **error);
+GLIB_AVAILABLE_IN_2_56
+gboolean               g_socket_leave_multicast_group_ssm   (GSocket                 *socket,
+                                                             GInetAddress            *group,
+                                                             GInetAddress            *source_specific,
+                                                             const gchar             *iface,
+                                                             GError                 **error);
 GLIB_AVAILABLE_IN_ALL
 gboolean               g_socket_connect                 (GSocket                 *socket,
 							 GSocketAddress          *address,
@@ -180,7 +192,7 @@ gboolean               g_socket_condition_wait          (GSocket                
 GLIB_AVAILABLE_IN_2_32
 gboolean               g_socket_condition_timed_wait    (GSocket                 *socket,
 							 GIOCondition             condition,
-							 gint64                   timeout,
+							 gint64                   timeout_us,
 							 GCancellable            *cancellable,
 							 GError                 **error);
 GLIB_AVAILABLE_IN_ALL
@@ -286,7 +298,18 @@ gssize                 g_socket_send_with_blocking      (GSocket                
 							 gboolean                 blocking,
 							 GCancellable            *cancellable,
 							 GError                 **error);
-
+GLIB_AVAILABLE_IN_2_60
+GPollableReturn        g_socket_send_message_with_timeout (GSocket                *socket,
+							   GSocketAddress         *address,
+							   const GOutputVector    *vectors,
+							   gint                    num_vectors,
+							   GSocketControlMessage **messages,
+							   gint                    num_messages,
+							   gint                    flags,
+							   gint64                  timeout_us,
+							   gsize                  *bytes_written,
+							   GCancellable           *cancellable,
+							   GError                **error);
 GLIB_AVAILABLE_IN_2_36
 gboolean               g_socket_get_option              (GSocket                 *socket,
 							 gint                     level,

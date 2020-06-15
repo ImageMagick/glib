@@ -20,6 +20,8 @@
  * if advised of the possibility of such damage.
  */
 
+#include "config.h" /* for _GLIB_EXTERN */
+
 #include <gio/gio.h>
 
 #include "symbol-visibility.h"
@@ -31,6 +33,8 @@ typedef struct _TestA {
 typedef struct _TestAClass {
   GObjectClass parent_class;
 } TestAClass;
+
+GType test_a_get_type (void);
 
 G_DEFINE_TYPE (TestA, test_a, G_TYPE_OBJECT)
 

@@ -18,10 +18,9 @@ if host_system == 'windows'
   # inline workarounds for getaddrinfo, getnameinfo and freeaddrinfo if
   # they aren't present at run-time (on Windows 2000).
   gnetworking_h_wspiapi_include = '#include <wspiapi.h>'
-endif
-
-if host_system.contains('android')
-  # Android does not have C_IN in public headers, we define it wherever necessary
+elif not host_system.contains('android')
+  # Don't check for C_IN on Android since it does not define it in public
+  # headers, we define it ourselves wherever necessary
   if not cc.compiles('''#include <sys/types.h>
                         #include <arpa/nameser.h>
                         int qclass = C_IN;''',
@@ -88,18 +87,86 @@ if host_system != 'windows'
     glib_conf.set('HAVE_RES_INIT', 1)
   endif
 
-  if cc.compiles('''#include <netinet/in.h>
-                    struct ip_mreqn foo;''',
-                 name : 'struct ip_mreqn')
-    glib_conf.set('HAVE_IP_MREQN', '/**/')
+  # res_nclose()
+  if cc.links('''#include <sys/types.h>
+                 #include <netinet/in.h>
+                 #include <arpa/nameser.h>
+                 #include <resolv.h>
+                 int main (int argc, char ** argv) {
+                   struct __res_state res;
+                   res_nclose(&res);
+                   return 0;
+                 }''', args : network_args, name : 'res_nclose()')
+    glib_conf.set('HAVE_RES_NCLOSE', 1)
   endif
+
+  # res_ndestroy()
+  if cc.links('''#include <sys/types.h>
+                 #include <netinet/in.h>
+                 #include <arpa/nameser.h>
+                 #include <resolv.h>
+                 int main (int argc, char ** argv) {
+                   struct __res_state res;
+                   res_ndestroy(&res);
+                   return 0;
+                 }''', args : network_args, name : 'res_ndestroy()')
+    glib_conf.set('HAVE_RES_NDESTROY', 1)
+  endif
+
+  # res_ninit()
+  if cc.links('''#include <sys/types.h>
+                 #include <netinet/in.h>
+                 #include <arpa/nameser.h>
+                 #include <resolv.h>
+                 int main (int argc, char ** argv) {
+                   struct __res_state res;
+                   return res_ninit(&res);
+                 }''', args : network_args, name : 'res_ninit()')
+    glib_conf.set('HAVE_RES_NINIT', 1)
+  endif
+
+  # res_nquery()
+  if cc.links('''#include <sys/types.h>
+                 #include <netinet/in.h>
+                 #include <arpa/nameser.h>
+                 #include <resolv.h>
+                 int main (int argc, char ** argv) {
+                   struct __res_state res;
+                   return res_nquery(&res, "test", 0, 0, (void *)0, 0);
+                 }''', args : network_args, name : 'res_nquery()')
+    glib_conf.set('HAVE_RES_NQUERY', 1)
+  endif
+
+  if cc.has_type('struct ip_mreqn', prefix : '#include <netinet/in.h>')
+    glib_conf.set('HAVE_IP_MREQN', 1)
+  endif
+
+  if cc.compiles('''#include <sys/ioctl.h>
+                    #include <net/if.h>
+                    int main (int argc, char ** argv) {
+                      struct ifreq ifr;
+                      ioctl(0, SIOCGIFADDR, &ifr);
+                      return 0;
+                    }''',
+                 name : 'ioctl with request SIOCGIFADDR')
+    glib_conf.set('HAVE_SIOCGIFADDR', '/**/')
+  endif
+
 endif
 
-network_args_string = ''
-foreach arg : network_args
-  network_args_string += arg + ' '
-endforeach
-glib_conf.set('NETWORK_LIBS', network_args_string)
+if host_system.contains('android')
+  # struct ip_mreq_source definition is broken on Android NDK <= r16
+  # See https://bugzilla.gnome.org/show_bug.cgi?id=740791
+  if not cc.compiles('''#include <netinet/in.h>
+                        int main(int argc, char ** argv) {
+                          struct ip_mreq_source mc_req_src;
+                          mc_req_src.imr_interface.s_addr = 0;
+                          return 0;
+                        }''',
+                        name : 'ip_mreq_source.imr_interface has s_addr member')
+    glib_conf.set('BROKEN_IP_MREQ_SOURCE_STRUCT', 1)
+  endif
+endif
 
 gnetworking_h_conf.set('WSPIAPI_INCLUDE', gnetworking_h_wspiapi_include)
 gnetworking_h_conf.set('NAMESER_COMPAT_INCLUDE', gnetworking_h_nameser_compat_include)
@@ -109,7 +176,7 @@ gnetworking_h = configure_file(input : 'gnetworking.h.in',
                                install_dir : join_paths(get_option('includedir'), 'glib-2.0/gio'),
                                configuration : gnetworking_h_conf)
 
-gdbus_headers = files([
+gdbus_headers = files(
   'gdbusauthobserver.h',
   'gcredentials.h',
   'gdbusutils.h',
@@ -132,9 +199,9 @@ gdbus_headers = files([
   'gdbusobjectmanagerclient.h',
   'gdbusobjectmanagerserver.h',
   'gtestdbus.h',
-])
+)
 
-gdbus_sources = [
+gdbus_sources = files(
   'gdbusutils.c',
   'gdbusaddress.c',
   'gdbusauthobserver.c',
@@ -162,7 +229,7 @@ gdbus_sources = [
   'gdbusobjectmanagerclient.c',
   'gdbusobjectmanagerserver.c',
   'gtestdbus.c',
-]
+)
 
 # Generate gdbus-codegen
 subdir('gdbus-2.0/codegen')
@@ -171,41 +238,35 @@ subdir('gdbus-2.0/codegen')
 xdp_dbus_generated = custom_target('xdp-dbus',
     input : ['org.freedesktop.portal.Documents.xml',
              'org.freedesktop.portal.OpenURI.xml',
-             'org.freedesktop.portal.NetworkMonitor.xml',
-             'org.freedesktop.portal.ProxyResolver.xml'],
+             'org.freedesktop.portal.ProxyResolver.xml',
+             'org.freedesktop.portal.Trash.xml'],
     output : ['xdp-dbus.h', 'xdp-dbus.c'],
+    depend_files : gdbus_codegen_built_files,
     command : [python, gdbus_codegen,
                '--interface-prefix', 'org.freedesktop.portal.',
                '--output-directory', '@OUTDIR@',
                '--generate-c-code', 'xdp-dbus',
                '--c-namespace', 'GXdp',
-               '--annotate', 'org.freedesktop.portal.Documents.Add()',
-                             'org.gtk.GDBus.C.UnixFD', 'true',
-               '--annotate', 'org.freedesktop.portal.Documents.AddNamed()',
-                             'org.gtk.GDBus.C.UnixFD', 'true',
-               '--annotate', 'org.freedesktop.portal.Documents.AddFull()',
-                             'org.gtk.GDBus.C.UnixFD', 'true',
-               '--annotate', 'org.freedesktop.portal.OpenURI.OpenFile()',
-                             'org.gtk.GDBus.C.UnixFD', 'true',
                '@INPUT@'])
 
 # Generate gdbus-generated.{c,h}
 gdbus_daemon_generated = custom_target('gdbus-daemon-generated',
     input : ['dbus-daemon.xml'],
     output : ['gdbus-daemon-generated.h', 'gdbus-daemon-generated.c'],
+    depend_files : gdbus_codegen_built_files,
     command : [python, gdbus_codegen,
                '--interface-prefix', 'org.',
                '--output-directory', '@OUTDIR@',
                '--generate-c-code', 'gdbus-daemon-generated',
                '--c-namespace', '_G', '@INPUT@'])
 
-settings_headers = files([
+settings_headers = files(
   'gsettingsbackend.h',
   'gsettingsschema.h',
   'gsettings.h',
-])
+)
 
-settings_sources = [
+settings_sources = files(
   'gvdb/gvdb-reader.c',
   'gdelayedsettingsbackend.c',
   'gkeyfilesettingsbackend.c',
@@ -215,18 +276,13 @@ settings_sources = [
   'gsettingsschema.c',
   'gsettings-mapping.c',
   'gsettings.c',
-]
+)
 
 if host_system == 'windows'
-  settings_sources += [ 'gregistrysettingsbackend.c' ]
+  settings_sources += files('gregistrysettingsbackend.c')
 endif
 
-# FIXME:
-#if OS_COCOA
-#settings_sources += [ 'gnextstepsettingsbackend.c' ]
-#endif
-
-application_headers = files([
+application_headers = files(
   'gapplication.h',
   'gapplicationcommandline.h',
 
@@ -245,9 +301,9 @@ application_headers = files([
   'gmenuexporter.h',
   'gdbusmenumodel.h',
   'gnotification.h',
-])
+)
 
-application_sources = [
+application_sources = files(
   'gapplication.c',
   'gapplicationcommandline.c',
   'gapplicationimpl-dbus.c',
@@ -268,9 +324,9 @@ application_sources = [
   'gdbusmenumodel.c',
   'gnotification.c',
   'gnotificationbackend.c',
-]
+)
 
-local_sources = [
+local_sources = files(
   'ghttpproxy.c',
   'glocalfile.c',
   'glocalfileenumerator.c',
@@ -284,17 +340,30 @@ local_sources = [
   'gsocks4aproxy.c',
   'gsocks5proxy.c',
   'thumbnail-verify.c',
-]
+)
 
 platform_deps = []
 internal_deps = []
+# TODO: internal_objects is a workaround for
+# <https://github.com/mesonbuild/meson/issues/3934> and
+# <https://github.com/mesonbuild/meson/issues/3937>. When we can depend
+# on a meson version where those are fixed, revert the commit that
+# introduced this workaround.
+internal_objects = []
 appinfo_sources = []
 contenttype_sources = []
 portal_sources = []
 unix_sources = []
+win32_sources = []
+
+# This is also used by tests/gdbus-daemon, so use files() to include the path
+gdbus_daemon_sources = [
+  files('gdbusdaemon.c'),
+  gdbus_daemon_generated,
+]
 
 if host_system != 'windows'
-  unix_sources = [
+  unix_sources = files(
     'gfiledescriptorbased.c',
     'gunixconnection.c',
     'gunixcredentialsmessage.c',
@@ -309,19 +378,21 @@ if host_system != 'windows'
     'gunixoutputstream.c',
     'gfdonotificationbackend.c',
     'ggtknotificationbackend.c',
-  ]
+  )
 
-  portal_sources = [
+  portal_sources = [files(
     'gdocumentportal.c',
     'gopenuriportal.c',
+    'gmemorymonitorportal.c',
     'gnetworkmonitorportal.c',
     'gproxyresolverportal.c',
+    'gtrashportal.c',
     'gportalsupport.c',
-    'gportalnotificationbackend.c',
+    'gportalnotificationbackend.c'),
     xdp_dbus_generated
   ]
 
-  gio_unix_include_headers = [
+  gio_unix_include_headers = files(
     'gfiledescriptorbased.h',
     'gunixconnection.h',
     'gunixcredentialsmessage.h',
@@ -331,62 +402,68 @@ if host_system != 'windows'
     'gunixinputstream.h',
     'gunixoutputstream.h',
     'gunixsocketaddress.h',
-  ]
+  )
 
   if glib_have_cocoa
-    contenttype_sources += ['gosxcontenttype.c']
-    appinfo_sources += ['gosxappinfo.c']
+    settings_sources += files('gnextstepsettingsbackend.m')
+    contenttype_sources += files('gosxcontenttype.m')
+    appinfo_sources += files('gosxappinfo.m')
     if glib_have_os_x_9_or_later
-      unix_sources += ['gcocoanotificationbackend.c']
+      unix_sources += files('gcocoanotificationbackend.m')
     endif
+    application_headers += files('gosxappinfo.h')
   else
-    contenttype_sources += ['gcontenttype.c']
-    appinfo_sources += ['gdesktopappinfo.c']
-    gio_unix_include_headers += ['gdesktopappinfo.h']
-    subdir('xdgmime')
-    internal_deps += [xdgmime_lib]
+    contenttype_sources += files('gcontenttype.c')
+    appinfo_sources += files('gdesktopappinfo.c')
+    gio_unix_include_headers += files('gdesktopappinfo.h')
   endif
+
+  subdir('xdgmime')
+  internal_deps += [xdgmime_lib]
+  internal_objects += [xdgmime_lib.extract_all_objects()]
 
   install_headers(gio_unix_include_headers, subdir : 'gio-unix-2.0/gio')
 
   if glib_conf.has('HAVE_NETLINK')
-    unix_sources += [
+    unix_sources += files(
       'gnetworkmonitornetlink.c',
       'gnetworkmonitornm.c',
-    ]
+    )
   endif
-endif
-
-# This is also used by tests/gdbus-daemon, so use files() to include the path
-gdbus_daemon_sources = [
-  files('gdbusdaemon.c'),
-  gdbus_daemon_generated,
-]
-
-win32_sources = gdbus_daemon_sources
-if host_system == 'windows'
-  appinfo_sources += ['gwin32appinfo.c']
-  contenttype_sources += ['gcontenttype-win32.c']
+else
+  appinfo_sources += files('gwin32appinfo.c')
+  contenttype_sources += files('gcontenttype-win32.c')
   platform_deps += [cc.find_library('shlwapi'),
                     cc.find_library('dnsapi'),
                     iphlpapi_dep,
                     winsock2]
-  win32_sources += [
+  win32_sources += files(
     'gwin32registrykey.c',
     'gwin32mount.c',
     'gwin32volumemonitor.c',
     'gwin32inputstream.c',
     'gwin32outputstream.c',
-  ]
+    'gwin32networkmonitor.c',
+    'gwin32networkmonitor.h',
+    'gwin32notificationbackend.c',
+  )
 
-  gio_win32_include_headers = [
+  gio_win_rc = configure_file(
+    input: 'gio.rc.in',
+    output: 'gio.rc',
+    configuration: glibconfig_conf,
+  )
+  gio_win_res = windows.compile_resources(gio_win_rc)
+  win32_sources += [gio_win_res]
+
+  gio_win32_include_headers = files(
     'gwin32inputstream.h',
     'gwin32outputstream.h',
-  ]
+  )
   install_headers(gio_win32_include_headers, subdir : 'gio-win32-2.0/gio')
 endif
 
-gio_sources = [
+gio_sources = files(
   'gappinfo.c',
   'gasynchelper.c',
   'gasyncinitable.c',
@@ -430,15 +507,19 @@ gio_sources = [
   'ginputstream.c',
   'gioerror.c',
   'giomodule.c',
+  'giomodule-priv.c',
   'gioscheduler.c',
   'giostream.c',
   'gloadableicon.c',
+  'gmarshal-internal.c',
   'gmount.c',
+  'gmemorymonitor.c',
+  'gmemorymonitordbus.c',
   'gmemoryinputstream.c',
   'gmemoryoutputstream.c',
   'gmountoperation.c',
-  'gnativevolumemonitor.c',
   'gnativesocketaddress.c',
+  'gnativevolumemonitor.c',
   'gnetworkaddress.c',
   'gnetworking.c',
   'gnetworkmonitor.c',
@@ -461,6 +542,7 @@ gio_sources = [
   'gsimpleasyncresult.c',
   'gsimpleiostream.c',
   'gsimplepermission.c',
+  'gsimpleproxyresolver.c',
   'gsocket.c',
   'gsocketaddress.c',
   'gsocketaddressenumerator.c',
@@ -471,16 +553,15 @@ gio_sources = [
   'gsocketinputstream.c',
   'gsocketlistener.c',
   'gsocketoutputstream.c',
-  'gsubprocesslauncher.c',
-  'gsubprocess.c',
   'gsocketservice.c',
   'gsrvtarget.c',
-  'gsimpleproxyresolver.c',
+  'gsubprocesslauncher.c',
+  'gsubprocess.c',
   'gtask.c',
   'gtcpconnection.c',
   'gtcpwrapperconnection.c',
-  'gthreadedsocketservice.c',
   'gthemedicon.c',
+  'gthreadedsocketservice.c',
   'gthreadedresolver.c',
   'gthreadedresolver.h',
   'gtlsbackend.c',
@@ -503,10 +584,11 @@ gio_sources = [
   'gzlibdecompressor.c',
   'glistmodel.c',
   'gliststore.c',
-]
+)
 
 gio_sources += appinfo_sources
 gio_sources += contenttype_sources
+gio_sources += gdbus_daemon_sources
 gio_sources += unix_sources
 gio_sources += win32_sources
 gio_sources += application_sources
@@ -516,14 +598,6 @@ gio_sources += portal_sources
 gio_sources += local_sources
 
 MISSING_STUFF = '''
-if OS_WIN32_AND_DLL_COMPILATION
-gio_win32_res = gio-win32-res.o
-gio_win32_res_ldflag = -Wl,$(gio_win32_res)
-endif
-
-gio-win32-res.o: gio.rc
-  '$(WINDRES) gio.rc $@
-
 # This is read by gobject-introspection/misc/ and gtk-doc
 gio-public-headers.txt: Makefile
   '$(AM_V_GEN) echo $(gioinclude_HEADERS) $(giowin32include_HEADERS) $(giounixinclude_HEADERS) > $@.tmp && mv $@.tmp $@
@@ -535,7 +609,7 @@ gio-2.0.lib: libgio-2.0.la gio.def
   '$(AM_V_GEN) lib.exe -machine:@LIB_EXE_MACHINE_FLAG@ -name:libgio-2.0-$(LT_CURRENT_MINUS_AGE).dll -def:$(builddir)/gio.def -out:$@
 '''
 
-gio_headers = files([
+gio_headers = files(
   'gappinfo.h',
   'gasyncinitable.h',
   'gasyncresult.h',
@@ -570,21 +644,23 @@ gio_headers = files([
   'ginetaddress.h',
   'ginetaddressmask.h',
   'ginetsocketaddress.h',
-  'ginputstream.h',
   'ginitable.h',
+  'ginputstream.h',
   'gio.h',
   'gio-autocleanups.h',
-  'giotypes.h',
   'gioenums.h',
   'gioerror.h',
   'giomodule.h',
   'gioscheduler.h',
   'giostream.h',
+  'giotypes.h',
   'gloadableicon.h',
   'gmount.h',
   'gmemoryinputstream.h',
+  'gmemorymonitor.h',
   'gmemoryoutputstream.h',
   'gmountoperation.h',
+  'gnativesocketaddress.h',
   'gnativevolumemonitor.h',
   'gnetworkaddress.h',
   'gnetworkmonitor.h',
@@ -594,8 +670,8 @@ gio_headers = files([
   'gpollableinputstream.h',
   'gpollableoutputstream.h',
   'gpollableutils.h',
-  'gproxyaddress.h',
   'gproxy.h',
+  'gproxyaddress.h',
   'gproxyaddressenumerator.h',
   'gproxyresolver.h',
   'gresolver.h',
@@ -604,6 +680,7 @@ gio_headers = files([
   'gsimpleasyncresult.h',
   'gsimpleiostream.h',
   'gsimplepermission.h',
+  'gsimpleproxyresolver.h',
   'gsocket.h',
   'gsocketaddress.h',
   'gsocketaddressenumerator.h',
@@ -614,14 +691,13 @@ gio_headers = files([
   'gsocketlistener.h',
   'gsocketservice.h',
   'gsrvtarget.h',
-  'gsimpleproxyresolver.h',
-  'gtask.h',
   'gsubprocess.h',
   'gsubprocesslauncher.h',
+  'gtask.h',
   'gtcpconnection.h',
   'gtcpwrapperconnection.h',
-  'gthreadedsocketservice.h',
   'gthemedicon.h',
+  'gthreadedsocketservice.h',
   'gtlsbackend.h',
   'gtlscertificate.h',
   'gtlsclientconnection.h',
@@ -641,7 +717,7 @@ gio_headers = files([
   'gzlibdecompressor.h',
   'glistmodel.h',
   'gliststore.h',
-])
+)
 
 gio_headers += application_headers
 gio_headers += settings_headers
@@ -669,37 +745,38 @@ gioenumtypes_c = custom_target('gioenumtypes_c',
              '--template', files('gioenumtypes.c.template'),
              '@INPUT@', gnetworking_h])
 
-gioenumtypes_dep = declare_dependency(sources : [gioenumtypes_h])
+gioenumtypes_dep = declare_dependency(sources : [gioenumtypes_h, glib_enumtypes_h])
 
 # inotify
 if glib_conf.has('HAVE_SYS_INOTIFY_H') and have_func_inotify_init1
   subdir('inotify')
   internal_deps += [ inotify_lib ]
+  internal_objects += [inotify_lib.extract_all_objects()]
 endif
 
 # kevent
 if have_func_kqueue and have_func_kevent
   subdir('kqueue')
   internal_deps += [ kqueue_lib ]
+  internal_objects += [kqueue_lib.extract_all_objects()]
 endif
 
 if host_system == 'windows'
   subdir('win32')
   internal_deps += [ giowin32_lib ]
+  internal_objects += [giowin32_lib.extract_all_objects()]
 endif
 
-# FIXME: FAM support
-#if HAVE_FAM
-#  subdir('fam')
-#endif
-
-install_data([
-  'completion/gapplication',
-  'completion/gdbus',
-  'completion/gsettings',
-  'completion/gresource'
-],
-install_dir: join_paths(get_option('datadir'), 'bash-completion/completions'))
+if have_bash
+  install_data([
+    'completion/gapplication',
+    'completion/gdbus',
+    'completion/gio',
+    'completion/gsettings',
+    'completion/gresource'
+  ],
+  install_dir: join_paths(get_option('datadir'), 'bash-completion/completions'))
+endif
 
 if enable_dtrace
   gio_dtrace_obj = dtrace_obj_gen.process('gio_probes.d')
@@ -709,34 +786,109 @@ else
   gio_dtrace_hdr = []
 endif
 
-libgio = shared_library('gio-2.0',
+libgio = library('gio-2.0',
   gioenumtypes_h, gioenumtypes_c, gnetworking_h, gio_sources,
   gio_dtrace_hdr, gio_dtrace_obj,
+  objects : internal_objects,
   version : library_version,
   soversion : soversion,
+  darwin_versions : darwin_versions,
   install : true,
   include_directories : [configinc, gioinc],
-  link_with : internal_deps,
-  #libgio_2_0_la_LDFLAGS = $(GLIB_LINK_FLAGS)',
   #  '$(gio_win32_res_ldflag)',
-  #$(SELINUX_LIBS)
-  #$(XATTR_LIBS)
-  dependencies : [libintl, libz_dep, libdl_dep, libmount_dep, libglib_dep,
-                  libgobject_dep, libgmodule_dep] + platform_deps + network_libs,
+  dependencies : [libz_dep, libdl_dep, libmount_dep, libglib_dep,
+                  libgobject_dep, libgmodule_dep, selinux_dep, xattr_dep,
+                  platform_deps, network_libs],
   c_args : gio_c_args,
+  objc_args : gio_c_args,
   # intl.lib is not compatible with SAFESEH
-  link_args : noseh_link_args,
+  link_args : [noseh_link_args, glib_link_flags],
 )
 
+if get_option('gio_module_dir') != ''
+  pkgconfig_giomodulesdir = join_paths('${prefix}', get_option('gio_module_dir'))
+else
+  pkgconfig_giomodulesdir = join_paths('${libdir}', 'gio', 'modules')
+endif
+
+schemas_subdir = join_paths('glib-2.0', 'schemas')
+
+pkg.generate(libgio,
+  libraries_private : [osx_ldflags],
+  requires : ['glib-2.0', 'gobject-2.0'],
+  variables : ['datadir=' + join_paths('${prefix}', get_option('datadir')),
+               'schemasdir=' + join_paths('${datadir}', schemas_subdir),
+               'bindir=' + join_paths('${prefix}', get_option('bindir')),
+               'giomoduledir=' + pkgconfig_giomodulesdir,
+               'gio=' + join_paths('${bindir}', 'gio'),
+               'gio_querymodules=' + join_paths('${bindir}', 'gio-querymodules'),
+               'glib_compile_schemas=' + join_paths('${bindir}', 'glib-compile-schemas'),
+               'glib_compile_resources=' + join_paths('${bindir}', 'glib-compile-resources'),
+               'gdbus=' + join_paths('${bindir}', 'gdbus'),
+               'gdbus_codegen=' + join_paths('${bindir}', 'gdbus-codegen'),
+               'gresource=' + join_paths('${bindir}', 'gresource'),
+               'gsettings=' + join_paths('${bindir}', 'gsettings')],
+  version : glib_version,
+  install_dir : glib_pkgconfigreldir,
+  filebase : 'gio-2.0',
+  name : 'GIO',
+  description : 'glib I/O library',
+)
+
+if host_system == 'windows'
+  pkg.generate(requires : ['gobject-2.0', 'gmodule-no-export-2.0', 'gio-2.0'],
+    subdirs : ['gio-win32-2.0'],
+    version : glib_version,
+    install_dir : glib_pkgconfigreldir,
+    filebase : 'gio-windows-2.0',
+    name : 'GIO Windows specific APIs',
+    description : 'Windows specific headers for glib I/O library',
+  )
+else
+  pkg.generate(requires : ['gobject-2.0', 'gio-2.0'],
+    subdirs : ['gio-unix-2.0'],
+    version : glib_version,
+    install_dir : glib_pkgconfigreldir,
+    filebase : 'gio-unix-2.0',
+    name : 'GIO unix specific APIs',
+    description : 'unix specific headers for glib I/O library',
+  )
+endif
+
 libgio_dep = declare_dependency(link_with : libgio,
-  dependencies : [gioenumtypes_dep],
-  # We sadly need to export configinc here because everyone includes <gio/*.h>
-  include_directories : [configinc, gioinc])
+  dependencies : [libgmodule_dep, libgobject_dep, gioenumtypes_dep],
+  include_directories : [gioinc])
+
+if host_system == 'windows'
+  # Hack till https://github.com/mesonbuild/meson/issues/2324 is fixed
+  libgiounix_dep = dependency('', required : false)
+  libgiowin32_dep = libgio_dep
+else
+  libgiowin32_dep = dependency('', required : false)
+  libgiounix_dep = libgio_dep
+endif
 
 # Dependencies used by executables below
+have_libelf = false
 libelf = dependency('libelf', version : '>= 0.8.12', required : false)
 if libelf.found()
+  have_libelf = true
+else
+  # This fallback is necessary on *BSD. elfutils isn't the only libelf
+  # implementation, and *BSD usually includes their own libelf as a system
+  # library which doesn't have a corresponding .pc file.
+  libelf = cc.find_library('elf', required : false)
+  have_libelf = libelf.found()
+  have_libelf = have_libelf and cc.has_function('elf_begin', dependencies : libelf)
+  have_libelf = have_libelf and cc.has_function('elf_getshdrstrndx', dependencies : libelf)
+  have_libelf = have_libelf and cc.has_function('elf_getshdrnum', dependencies : libelf)
+  have_libelf = have_libelf and cc.has_header('libelf.h')
+endif
+
+if have_libelf
   glib_conf.set('HAVE_LIBELF', 1)
+else
+  libelf = []
 endif
 
 gconstructor_as_data_h = custom_target('gconstructor_as_data.h',
@@ -766,24 +918,22 @@ gio_tool_sources = [
   'gio-tool-tree.c',
 ]
 
-# FIXME: are all these HAVE_CONFIG_H needed/used here?
 executable('gio', gio_tool_sources,
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'] + gio_c_args,
+  c_args : gio_c_args,
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
-  dependencies : [libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
 
 executable('gresource', 'gresource-tool.c',
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'],
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
-  dependencies : [libelf, libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+  dependencies : [libelf, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
 
-executable('gio-querymodules', 'gio-querymodules.c',
+gio_querymodules = executable('gio-querymodules', 'gio-querymodules.c', 'giomodule-priv.c',
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'] + gio_c_args,
+  c_args : gio_c_args,
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
   dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
@@ -791,45 +941,52 @@ executable('gio-querymodules', 'gio-querymodules.c',
 glib_compile_schemas = executable('glib-compile-schemas',
   [gconstructor_as_data_h, 'gvdb/gvdb-builder.c', 'glib-compile-schemas.c'],
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'],
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
-  dependencies : [libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
 
 glib_compile_resources = executable('glib-compile-resources',
   [gconstructor_as_data_h, 'gvdb/gvdb-builder.c', 'glib-compile-resources.c'],
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'] + gio_c_args,
+  c_args : gio_c_args,
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
-  dependencies : [libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+
+# Cannot override those programs in cross compilation case because they are
+# native executables that cannot be run on the build machine.
+# See https://gitlab.gnome.org/GNOME/glib/issues/1859.
+if not meson.is_cross_build()
+  meson.override_find_program('glib-compile-schemas', glib_compile_schemas)
+  meson.override_find_program('glib-compile-resources', glib_compile_resources)
+endif
 
 executable('gsettings', 'gsettings-tool.c',
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'] + gio_c_args,
+  c_args : gio_c_args,
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
-  dependencies : [libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
 install_data('gschema.dtd',
-  install_dir : join_paths(get_option('datadir'), 'glib-2.0/schemas'))
+  install_dir : join_paths(get_option('datadir'), schemas_subdir))
 
 install_data(['gschema.loc', 'gschema.its'],
   install_dir : join_paths(get_option('datadir'), 'gettext/its'))
 
 executable('gdbus', 'gdbus-tool.c',
   install : true,
-  c_args : ['-DHAVE_CONFIG_H=1'] + gio_c_args,
+  c_args : gio_c_args,
   # intl.lib is not compatible with SAFESEH
   link_args : noseh_link_args,
-  dependencies : [libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
 
-if host_system != 'windows'
+if host_system != 'windows' and not glib_have_cocoa
   executable('gapplication', 'gapplication-tool.c',
     install : true,
-    c_args : ['-DHAVE_CONFIG_H=1'] + gio_c_args,
+    c_args : gio_c_args,
     # intl.lib is not compatible with SAFESEH
     link_args : noseh_link_args,
-    dependencies : [libintl, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
+    dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
 endif
 
 if enable_systemtap
@@ -837,9 +994,21 @@ if enable_systemtap
     output : '@0@.stp'.format(libgio.full_path().split('/').get(-1)),
     configuration : stp_cdata,
     install_dir : tapset_install_dir,
-    install : true)
+  )
 endif
 
-if host_system != 'windows'
-  subdir('tests')
+subdir('fam')
+if build_tests
+    subdir('tests')
 endif
+
+# The following is an example for building internal marshallers that are used
+# by GIO. We cannot guarantee glib-genmarshal availability while building GLib
+# so they are pre-generated and placed into gmarshal-internal.[ch].
+#
+# gmarshal_internal = gnome.genmarshal('gmarshal-internal',
+#   sources: 'gmarshal-internal.list',
+#   prefix: '_g_cclosure_marshal',
+#   valist_marshallers: true,
+#   internal: true,
+# )

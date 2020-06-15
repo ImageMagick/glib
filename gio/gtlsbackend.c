@@ -21,6 +21,7 @@
 #include "glib.h"
 
 #include "gtlsbackend.h"
+#include "gtlsdatabase.h"
 #include "gdummytlsbackend.h"
 #include "gioenumtypes.h"
 #include "giomodule-priv.h"
@@ -84,6 +85,9 @@
 
 G_DEFINE_INTERFACE (GTlsBackend, g_tls_backend, G_TYPE_OBJECT)
 
+static GTlsDatabase *default_database;
+G_LOCK_DEFINE_STATIC (default_database_lock);
+
 static void
 g_tls_backend_default_init (GTlsBackendInterface *iface)
 {
@@ -143,10 +147,8 @@ g_tls_backend_supports_dtls (GTlsBackend *backend)
 {
   if (G_TLS_BACKEND_GET_INTERFACE (backend)->supports_dtls)
     return G_TLS_BACKEND_GET_INTERFACE (backend)->supports_dtls (backend);
-  else if (G_IS_DUMMY_TLS_BACKEND (backend))
-    return FALSE;
-  else
-    return TRUE;
+
+  return FALSE;
 }
 
 /**
@@ -163,13 +165,50 @@ g_tls_backend_supports_dtls (GTlsBackend *backend)
 GTlsDatabase *
 g_tls_backend_get_default_database (GTlsBackend *backend)
 {
+  GTlsDatabase *db;
+
   g_return_val_if_fail (G_IS_TLS_BACKEND (backend), NULL);
 
   /* This method was added later, so accept the (remote) possibility it can be NULL */
   if (!G_TLS_BACKEND_GET_INTERFACE (backend)->get_default_database)
     return NULL;
 
-  return G_TLS_BACKEND_GET_INTERFACE (backend)->get_default_database (backend);
+  G_LOCK (default_database_lock);
+
+  if (!default_database)
+    default_database = G_TLS_BACKEND_GET_INTERFACE (backend)->get_default_database (backend);
+  db = default_database ? g_object_ref (default_database) : NULL;
+  G_UNLOCK (default_database_lock);
+
+  return db;
+}
+
+/**
+ * g_tls_backend_set_default_database:
+ * @backend: the #GTlsBackend
+ * @database: (nullable): the #GTlsDatabase
+ *
+ * Set the default #GTlsDatabase used to verify TLS connections
+ *
+ * Any subsequent call to g_tls_backend_get_default_database() will return
+ * the database set in this call.  Existing databases and connections are not
+ * modified.
+ *
+ * Setting a %NULL default database will reset to using the system default
+ * database as if g_tls_backend_set_default_database() had never been called.
+ *
+ * Since: 2.60
+ */
+void
+g_tls_backend_set_default_database (GTlsBackend  *backend,
+                                    GTlsDatabase *database)
+{
+  g_return_if_fail (G_IS_TLS_BACKEND (backend));
+  g_return_if_fail (database == NULL || G_IS_TLS_DATABASE (database));
+
+  G_LOCK (default_database_lock);
+  g_set_object (&default_database, database);
+  G_UNLOCK (default_database_lock);
 }
 
 /**
@@ -230,14 +269,22 @@ g_tls_backend_get_server_connection_type (GTlsBackend *backend)
  * Gets the #GType of @backend’s #GDtlsClientConnection implementation.
  *
  * Returns: the #GType of @backend’s #GDtlsClientConnection
- *   implementation.
+ *   implementation, or %G_TYPE_INVALID if this backend doesn’t support DTLS.
  *
  * Since: 2.48
  */
 GType
 g_tls_backend_get_dtls_client_connection_type (GTlsBackend *backend)
 {
-  return G_TLS_BACKEND_GET_INTERFACE (backend)->get_dtls_client_connection_type ();
+  GTlsBackendInterface *iface;
+
+  g_return_val_if_fail (G_IS_TLS_BACKEND (backend), G_TYPE_INVALID);
+
+  iface = G_TLS_BACKEND_GET_INTERFACE (backend);
+  if (iface->get_dtls_client_connection_type == NULL)
+    return G_TYPE_INVALID;
+
+  return iface->get_dtls_client_connection_type ();
 }
 
 /**
@@ -247,14 +294,22 @@ g_tls_backend_get_dtls_client_connection_type (GTlsBackend *backend)
  * Gets the #GType of @backend’s #GDtlsServerConnection implementation.
  *
  * Returns: the #GType of @backend’s #GDtlsServerConnection
- *   implementation.
+ *   implementation, or %G_TYPE_INVALID if this backend doesn’t support DTLS.
  *
  * Since: 2.48
  */
 GType
 g_tls_backend_get_dtls_server_connection_type (GTlsBackend *backend)
 {
-  return G_TLS_BACKEND_GET_INTERFACE (backend)->get_dtls_server_connection_type ();
+  GTlsBackendInterface *iface;
+
+  g_return_val_if_fail (G_IS_TLS_BACKEND (backend), G_TYPE_INVALID);
+
+  iface = G_TLS_BACKEND_GET_INTERFACE (backend);
+  if (iface->get_dtls_server_connection_type == NULL)
+    return G_TYPE_INVALID;
+
+  return iface->get_dtls_server_connection_type ();
 }
 
 /**

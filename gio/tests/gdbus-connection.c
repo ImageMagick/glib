@@ -1197,6 +1197,7 @@ test_connection_basic (void)
   GDBusConnection *connection;
   GError *error;
   GDBusCapabilityFlags flags;
+  GDBusConnectionFlags connection_flags;
   gchar *guid;
   gchar *name;
   gboolean closed;
@@ -1214,6 +1215,11 @@ test_connection_basic (void)
   flags = g_dbus_connection_get_capabilities (connection);
   g_assert (flags == G_DBUS_CAPABILITY_FLAGS_NONE ||
             flags == G_DBUS_CAPABILITY_FLAGS_UNIX_FD_PASSING);
+
+  connection_flags = g_dbus_connection_get_flags (connection);
+  g_assert_cmpint (connection_flags, ==,
+                   G_DBUS_CONNECTION_FLAGS_AUTHENTICATION_CLIENT |
+                   G_DBUS_CONNECTION_FLAGS_MESSAGE_BUS_CONNECTION);
 
   credentials = g_dbus_connection_get_peer_credentials (connection);
   g_assert (credentials == NULL);
@@ -1250,6 +1256,10 @@ main (int   argc,
       char *argv[])
 {
   int ret;
+
+  /* FIXME: Add debug for https://gitlab.gnome.org/GNOME/glib/issues/1957 */
+  g_setenv ("G_DBUS_DEBUG", "all", TRUE);
+
   g_test_init (&argc, &argv, NULL);
 
   /* all the tests rely on a shared main loop */

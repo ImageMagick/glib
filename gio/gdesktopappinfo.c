@@ -24,6 +24,10 @@
 
 #include "config.h"
 
+/* For the #GDesktopAppInfoLookup macros; since macro deprecation is implemented
+ * in the preprocessor, we need to define this before including glib.h*/
+#define GLIB_DISABLE_DEPRECATION_WARNINGS
+
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
@@ -139,6 +143,7 @@ G_DEFINE_TYPE_WITH_CODE (GDesktopAppInfo, g_desktop_app_info, G_TYPE_OBJECT,
 
 typedef struct
 {
+  gatomicrefcount             ref_count;
   gchar                      *path;
   gchar                      *alternatively_watching;
   gboolean                    is_config;
@@ -150,14 +155,33 @@ typedef struct
   GHashTable                 *memory_implementations;
 } DesktopFileDir;
 
-static DesktopFileDir *desktop_file_dirs;
-static guint           n_desktop_file_dirs;
-static const guint     desktop_file_dir_user_config_index = 0;
-static guint           desktop_file_dir_user_data_index;
+static GPtrArray      *desktop_file_dirs = NULL;
+static const gchar    *desktop_file_dirs_config_dir = NULL;
+static DesktopFileDir *desktop_file_dir_user_config = NULL;  /* (owned) */
+static DesktopFileDir *desktop_file_dir_user_data = NULL;  /* (owned) */
 static GMutex          desktop_file_dir_lock;
 
 /* Monitor 'changed' signal handler {{{2 */
 static void desktop_file_dir_reset (DesktopFileDir *dir);
+
+static DesktopFileDir *
+desktop_file_dir_ref (DesktopFileDir *dir)
+{
+  g_atomic_ref_count_inc (&dir->ref_count);
+
+  return dir;
+}
+
+static void
+desktop_file_dir_unref (DesktopFileDir *dir)
+{
+  if (g_atomic_ref_count_dec (&dir->ref_count))
+    {
+      desktop_file_dir_reset (dir);
+      g_free (dir->path);
+      g_free (dir);
+    }
+}
 
 /*< internal >
  * desktop_file_dir_get_alternative_dir:
@@ -264,11 +288,15 @@ static gboolean
 desktop_file_dir_app_name_is_masked (DesktopFileDir *dir,
                                      const gchar    *app_name)
 {
-  while (dir > desktop_file_dirs)
-    {
-      dir--;
+  guint i;
 
-      if (dir->app_names && g_hash_table_contains (dir->app_names, app_name))
+  for (i = 0; i < desktop_file_dirs->len; i++)
+    {
+      DesktopFileDir *i_dir = g_ptr_array_index (desktop_file_dirs, i);
+
+      if (dir == i_dir)
+        return FALSE;
+      if (i_dir->app_names && g_hash_table_contains (i_dir->app_names, app_name))
         return TRUE;
     }
 
@@ -385,6 +413,22 @@ const gchar desktop_key_match_category[N_DESKTOP_KEYS] = {
   [DESKTOP_KEY_GenericName]      = 4,
   [DESKTOP_KEY_X_GNOME_FullName] = 5,
   [DESKTOP_KEY_Comment]          = 6
+};
+
+/* Common prefix commands to ignore from Exec= lines */
+const char * const exec_key_match_blacklist[] = {
+  "bash",
+  "env",
+  "flatpak",
+  "gjs",
+  "pkexec",
+  "python",
+  "python2",
+  "python3",
+  "sh",
+  "wine",
+  "wine64",
+  NULL
 };
 
 static gchar *
@@ -1089,6 +1133,10 @@ desktop_file_dir_unindexed_setup_search (DesktopFileDir *dir)
                   /* Skip the pathname, if any */
                   if ((slash = strrchr (raw, '/')))
                     value = slash + 1;
+
+                  /* Don't match on blacklisted binaries like interpreters */
+                  if (g_strv_contains (exec_key_match_blacklist, value))
+		    value = NULL;
                 }
 
               if (value)
@@ -1225,44 +1273,41 @@ desktop_file_dir_unindexed_get_implementations (DesktopFileDir  *dir,
 /* DesktopFileDir "API" {{{2 */
 
 /*< internal >
- * desktop_file_dir_create:
- * @array: the #GArray to add a new item to
+ * desktop_file_dir_new:
  * @data_dir: an XDG_DATA_DIR
  *
- * Creates a #DesktopFileDir for the corresponding @data_dir, adding it
- * to @array.
+ * Creates a #DesktopFileDir for the corresponding @data_dir.
  */
-static void
-desktop_file_dir_create (GArray      *array,
-                         const gchar *data_dir)
+static DesktopFileDir *
+desktop_file_dir_new (const gchar *data_dir)
 {
-  DesktopFileDir dir = { 0, };
+  DesktopFileDir *dir = g_new0 (DesktopFileDir, 1);
 
-  dir.path = g_build_filename (data_dir, "applications", NULL);
+  g_atomic_ref_count_init (&dir->ref_count);
+  dir->path = g_build_filename (data_dir, "applications", NULL);
 
-  g_array_append_val (array, dir);
+  return g_steal_pointer (&dir);
 }
 
 /*< internal >
- * desktop_file_dir_create:
- * @array: the #GArray to add a new item to
+ * desktop_file_dir_new_for_config:
  * @config_dir: an XDG_CONFIG_DIR
  *
- * Just the same as desktop_file_dir_create() except that it does not
+ * Just the same as desktop_file_dir_new() except that it does not
  * add the "applications" directory.  It also marks the directory as
  * config-only, which prevents us from attempting to find desktop files
  * here.
  */
-static void
-desktop_file_dir_create_for_config (GArray      *array,
-                                    const gchar *config_dir)
+static DesktopFileDir *
+desktop_file_dir_new_for_config (const gchar *config_dir)
 {
-  DesktopFileDir dir = { 0, };
+  DesktopFileDir *dir = g_new0 (DesktopFileDir, 1);
 
-  dir.path = g_strdup (config_dir);
-  dir.is_config = TRUE;
+  g_atomic_ref_count_init (&dir->ref_count);
+  dir->path = g_strdup (config_dir);
+  dir->is_config = TRUE;
 
-  g_array_append_val (array, dir);
+  return g_steal_pointer (&dir);
 }
 
 /*< internal >
@@ -1283,6 +1328,7 @@ desktop_file_dir_reset (DesktopFileDir *dir)
   if (dir->monitor)
     {
       g_signal_handlers_disconnect_by_func (dir->monitor, desktop_file_dir_changed, dir);
+      g_file_monitor_cancel (dir->monitor);
       g_object_unref (dir->monitor);
       dir->monitor = NULL;
     }
@@ -1314,6 +1360,14 @@ desktop_file_dir_reset (DesktopFileDir *dir)
   dir->is_setup = FALSE;
 }
 
+static void
+closure_notify_cb (gpointer  data,
+                   GClosure *closure)
+{
+  DesktopFileDir *dir = data;
+  desktop_file_dir_unref (dir);
+}
+
 /*< internal >
  * desktop_file_dir_init:
  * @dir: a #DesktopFileDir
@@ -1342,7 +1396,9 @@ desktop_file_dir_init (DesktopFileDir *dir)
    * we will fall back to polling.
    */
   dir->monitor = g_local_file_monitor_new_in_worker (watch_dir, TRUE, G_FILE_MONITOR_NONE,
-                                                     desktop_file_dir_changed, dir, NULL);
+                                                     desktop_file_dir_changed,
+                                                     desktop_file_dir_ref (dir),
+                                                     closure_notify_cb, NULL);
 
   desktop_file_dir_unindexed_init (dir);
 
@@ -1455,44 +1511,57 @@ static void
 desktop_file_dirs_lock (void)
 {
   gint i;
+  const gchar *user_config_dir = g_get_user_config_dir ();
 
   g_mutex_lock (&desktop_file_dir_lock);
 
-  if (desktop_file_dirs == NULL)
+  /* If the XDG dirs configuration has changed (expected only during tests),
+   * clear and reload the state. */
+  if (desktop_file_dirs_config_dir != NULL &&
+      g_strcmp0 (desktop_file_dirs_config_dir, user_config_dir) != 0)
+    {
+      g_debug ("%s: Resetting desktop app info dirs from %s to %s",
+               G_STRFUNC, desktop_file_dirs_config_dir, user_config_dir);
+
+      g_ptr_array_set_size (desktop_file_dirs, 0);
+      g_clear_pointer (&desktop_file_dir_user_config, desktop_file_dir_unref);
+      g_clear_pointer (&desktop_file_dir_user_data, desktop_file_dir_unref);
+    }
+
+  if (desktop_file_dirs == NULL || desktop_file_dirs->len == 0)
     {
       const char * const *dirs;
-      GArray *tmp;
       gint i;
 
-      tmp = g_array_new (FALSE, FALSE, sizeof (DesktopFileDir));
+      if (desktop_file_dirs == NULL)
+        desktop_file_dirs = g_ptr_array_new_with_free_func ((GDestroyNotify) desktop_file_dir_unref);
 
       /* First, the configs.  Highest priority: the user's ~/.config */
-      desktop_file_dir_create_for_config (tmp, g_get_user_config_dir ());
+      desktop_file_dir_user_config = desktop_file_dir_new_for_config (user_config_dir);
+      g_ptr_array_add (desktop_file_dirs, desktop_file_dir_ref (desktop_file_dir_user_config));
 
       /* Next, the system configs (/etc/xdg, and so on). */
       dirs = g_get_system_config_dirs ();
       for (i = 0; dirs[i]; i++)
-        desktop_file_dir_create_for_config (tmp, dirs[i]);
+        g_ptr_array_add (desktop_file_dirs, desktop_file_dir_new_for_config (dirs[i]));
 
       /* Now the data.  Highest priority: the user's ~/.local/share/applications */
-      desktop_file_dir_user_data_index = tmp->len;
-      desktop_file_dir_create (tmp, g_get_user_data_dir ());
+      desktop_file_dir_user_data = desktop_file_dir_new (g_get_user_data_dir ());
+      g_ptr_array_add (desktop_file_dirs, desktop_file_dir_ref (desktop_file_dir_user_data));
 
       /* Following that, XDG_DATA_DIRS/applications, in order */
       dirs = g_get_system_data_dirs ();
       for (i = 0; dirs[i]; i++)
-        desktop_file_dir_create (tmp, dirs[i]);
+        g_ptr_array_add (desktop_file_dirs, desktop_file_dir_new (dirs[i]));
 
-      /* The list of directories will never change after this. */
-      desktop_file_dirs = (DesktopFileDir *) tmp->data;
-      n_desktop_file_dirs = tmp->len;
-
-      g_array_free (tmp, FALSE);
+      /* The list of directories will never change after this, unless
+       * g_get_user_config_dir() changes due to %G_TEST_OPTION_ISOLATE_DIRS. */
+      desktop_file_dirs_config_dir = user_config_dir;
     }
 
-  for (i = 0; i < n_desktop_file_dirs; i++)
-    if (!desktop_file_dirs[i].is_setup)
-      desktop_file_dir_init (&desktop_file_dirs[i]);
+  for (i = 0; i < desktop_file_dirs->len; i++)
+    if (!((DesktopFileDir *) g_ptr_array_index (desktop_file_dirs, i))->is_setup)
+      desktop_file_dir_init (g_ptr_array_index (desktop_file_dirs, i));
 }
 
 static void
@@ -1506,8 +1575,8 @@ desktop_file_dirs_invalidate_user_config (void)
 {
   g_mutex_lock (&desktop_file_dir_lock);
 
-  if (n_desktop_file_dirs)
-    desktop_file_dir_reset (&desktop_file_dirs[desktop_file_dir_user_config_index]);
+  if (desktop_file_dir_user_config != NULL)
+    desktop_file_dir_reset (desktop_file_dir_user_config);
 
   g_mutex_unlock (&desktop_file_dir_lock);
 }
@@ -1517,8 +1586,8 @@ desktop_file_dirs_invalidate_user_data (void)
 {
   g_mutex_lock (&desktop_file_dir_lock);
 
-  if (n_desktop_file_dirs)
-    desktop_file_dir_reset (&desktop_file_dirs[desktop_file_dir_user_data_index]);
+  if (desktop_file_dir_user_data != NULL)
+    desktop_file_dir_reset (desktop_file_dir_user_data);
 
   g_mutex_unlock (&desktop_file_dir_lock);
 }
@@ -1838,7 +1907,7 @@ g_desktop_app_info_load_file (GDesktopAppInfo *self)
  *
  * Creates a new #GDesktopAppInfo.
  *
- * Returns: a new #GDesktopAppInfo or %NULL on error.
+ * Returns: (nullable): a new #GDesktopAppInfo or %NULL on error.
  *
  * Since: 2.18
  **/
@@ -1864,7 +1933,7 @@ g_desktop_app_info_new_from_keyfile (GKeyFile *key_file)
  *
  * Creates a new #GDesktopAppInfo.
  *
- * Returns: a new #GDesktopAppInfo or %NULL on error.
+ * Returns: (nullable): a new #GDesktopAppInfo or %NULL on error.
  **/
 GDesktopAppInfo *
 g_desktop_app_info_new_from_filename (const char *filename)
@@ -1896,7 +1965,8 @@ g_desktop_app_info_new_from_filename (const char *filename)
  * (i.e. a desktop id of kde-foo.desktop will match
  * `/usr/share/applications/kde/foo.desktop`).
  *
- * Returns: a new #GDesktopAppInfo, or %NULL if no desktop file with that id
+ * Returns: (nullable): a new #GDesktopAppInfo, or %NULL if no desktop
+ *     file with that id exists.
  */
 GDesktopAppInfo *
 g_desktop_app_info_new (const char *desktop_id)
@@ -1906,9 +1976,9 @@ g_desktop_app_info_new (const char *desktop_id)
 
   desktop_file_dirs_lock ();
 
-  for (i = 0; i < n_desktop_file_dirs; i++)
+  for (i = 0; i < desktop_file_dirs->len; i++)
     {
-      appinfo = desktop_file_dir_get_app (&desktop_file_dirs[i], desktop_id);
+      appinfo = desktop_file_dir_get_app (g_ptr_array_index (desktop_file_dirs, i), desktop_id);
 
       if (appinfo)
         break;
@@ -2199,7 +2269,7 @@ g_desktop_app_info_get_show_in (GDesktopAppInfo *info,
 /* Launching... {{{2 */
 
 static char *
-expand_macro_single (char macro, char *uri)
+expand_macro_single (char macro, const char *uri)
 {
   GFile *file;
   char *result = NULL;
@@ -2248,6 +2318,29 @@ expand_macro_single (char macro, char *uri)
   return result;
 }
 
+static char *
+expand_macro_uri (char macro, const char *uri, gboolean force_file_uri, char force_file_uri_macro)
+{
+  char *expanded = NULL;
+
+  g_return_val_if_fail (uri != NULL, NULL);
+
+  if (!force_file_uri ||
+      /* Pass URI if it contains an anchor */
+      strchr (uri, '#') != NULL)
+    {
+      expanded = expand_macro_single (macro, uri);
+    }
+  else
+    {
+      expanded = expand_macro_single (force_file_uri_macro, uri);
+      if (expanded == NULL)
+        expanded = expand_macro_single (macro, uri);
+    }
+
+  return expanded;
+}
+
 static void
 expand_macro (char              macro,
               GString          *exec,
@@ -2255,10 +2348,10 @@ expand_macro (char              macro,
               GList           **uri_list)
 {
   GList *uris = *uri_list;
-  char *expanded;
+  char *expanded = NULL;
   gboolean force_file_uri;
   char force_file_uri_macro;
-  char *uri;
+  const char *uri;
 
   g_return_if_fail (exec != NULL);
 
@@ -2295,19 +2388,8 @@ expand_macro (char              macro,
       if (uris)
         {
           uri = uris->data;
-          if (!force_file_uri ||
-              /* Pass URI if it contains an anchor */
-              strchr (uri, '#') != NULL)
-            {
-              expanded = expand_macro_single (macro, uri);
-            }
-          else
-            {
-              expanded = expand_macro_single (force_file_uri_macro, uri);
-              if (expanded == NULL)
-                expanded = expand_macro_single (macro, uri);
-            }
-
+          expanded = expand_macro_uri (macro, uri,
+                                       force_file_uri, force_file_uri_macro);
           if (expanded)
             {
               g_string_append (exec, expanded);
@@ -2325,20 +2407,8 @@ expand_macro (char              macro,
       while (uris)
         {
           uri = uris->data;
-
-          if (!force_file_uri ||
-              /* Pass URI if it contains an anchor */
-              strchr (uri, '#') != NULL)
-            {
-              expanded = expand_macro_single (macro, uri);
-            }
-          else
-            {
-              expanded = expand_macro_single (force_file_uri_macro, uri);
-              if (expanded == NULL)
-                expanded = expand_macro_single (macro, uri);
-            }
-
+          expanded = expand_macro_uri (macro, uri,
+                                       force_file_uri, force_file_uri_macro);
           if (expanded)
             {
               g_string_append (exec, expanded);
@@ -2477,29 +2547,40 @@ prepend_terminal_to_vector (int    *argc,
   if (check != NULL)
     {
       term_argv[0] = check;
-      /* Note that gnome-terminal takes -x and
-       * as -e in gnome-terminal is broken we use that. */
-      term_argv[1] = g_strdup ("-x");
+      /* Since 2017, gnome-terminal has preferred `--` over `-x` or `-e`. */
+      term_argv[1] = g_strdup ("--");
     }
   else
     {
       if (check == NULL)
-        check = g_find_program_in_path ("nxterm");
+        check = g_find_program_in_path ("mate-terminal");
       if (check == NULL)
-        check = g_find_program_in_path ("color-xterm");
-      if (check == NULL)
-        check = g_find_program_in_path ("rxvt");
-      if (check == NULL)
-        check = g_find_program_in_path ("xterm");
-      if (check == NULL)
-        check = g_find_program_in_path ("dtterm");
-      if (check == NULL)
+        check = g_find_program_in_path ("xfce4-terminal");
+      if (check != NULL)
         {
-          check = g_strdup ("xterm");
-          g_warning ("couldn't find a terminal, falling back to xterm");
+          term_argv[0] = check;
+          /* Note that gnome-terminal takes -x and
+           * as -e in gnome-terminal is broken we use that. */
+          term_argv[1] = g_strdup ("-x");
         }
-      term_argv[0] = check;
-      term_argv[1] = g_strdup ("-e");
+      else
+        {
+          if (check == NULL)
+            check = g_find_program_in_path ("nxterm");
+          if (check == NULL)
+            check = g_find_program_in_path ("color-xterm");
+          if (check == NULL)
+            check = g_find_program_in_path ("rxvt");
+          if (check == NULL)
+            check = g_find_program_in_path ("dtterm");
+          if (check == NULL)
+            {
+              check = g_strdup ("xterm");
+              g_debug ("Couldn’t find a terminal: falling back to xterm");
+            }
+          term_argv[0] = check;
+          term_argv[1] = g_strdup ("-e");
+        }
     }
 
   real_argc = term_argc + *argc;
@@ -2541,41 +2622,6 @@ create_files_for_uris (GList *uris)
     }
 
   return g_list_reverse (res);
-}
-
-typedef struct
-{
-  GSpawnChildSetupFunc user_setup;
-  gpointer user_setup_data;
-
-  char *pid_envvar;
-} ChildSetupData;
-
-static void
-child_setup (gpointer user_data)
-{
-  ChildSetupData *data = user_data;
-
-  if (data->pid_envvar)
-    {
-      pid_t pid = getpid ();
-      char buf[20];
-      int i;
-
-      /* Write the pid into the space already reserved for it in the
-       * environment array. We can't use sprintf because it might
-       * malloc, so we do it by hand. It's simplest to write the pid
-       * out backwards first, then copy it over.
-       */
-      for (i = 0; pid; i++, pid /= 10)
-        buf[i] = (pid % 10) + '0';
-      for (i--; i >= 0; i--)
-        *(data->pid_envvar++) = buf[i];
-      *data->pid_envvar = '\0';
-    }
-
-  if (data->user_setup)
-    data->user_setup (data->user_setup_data);
 }
 
 static void
@@ -2656,13 +2702,17 @@ g_desktop_app_info_launch_uris_with_spawn (GDesktopAppInfo            *info,
                                            gpointer                    user_setup_data,
                                            GDesktopAppLaunchCallback   pid_callback,
                                            gpointer                    pid_callback_data,
+                                           gint                        stdin_fd,
+                                           gint                        stdout_fd,
+                                           gint                        stderr_fd,
                                            GError                    **error)
 {
   gboolean completed = FALSE;
   GList *old_uris;
+  GList *dup_uris;
+
   char **argv, **envp;
   int argc;
-  ChildSetupData data;
 
   g_return_val_if_fail (info != NULL, FALSE);
 
@@ -2673,20 +2723,35 @@ g_desktop_app_info_launch_uris_with_spawn (GDesktopAppInfo            *info,
   else
     envp = g_get_environ ();
 
+  /* The GList* passed to expand_application_parameters() will be modified
+   * internally by expand_macro(), so we need to pass a copy of it instead,
+   * and also use that copy to control the exit condition of the loop below.
+   */
+  dup_uris = g_list_copy (uris);
   do
     {
       GPid pid;
       GList *launched_uris;
       GList *iter;
       char *sn_id = NULL;
+      char **wrapped_argv;
+      int i;
+      const gchar * const wrapper_argv[] =
+        {
+          "/bin/sh",
+          "-e",
+          "-u",
+          "-c", "export GIO_LAUNCHED_DESKTOP_FILE_PID=$$; exec \"$@\"",
+          "sh",  /* argv[0] for sh */
+        };
 
-      old_uris = uris;
-      if (!expand_application_parameters (info, exec_line, &uris, &argc, &argv, error))
+      old_uris = dup_uris;
+      if (!expand_application_parameters (info, exec_line, &dup_uris, &argc, &argv, error))
         goto out;
 
       /* Get the subset of URIs we're launching with this process */
       launched_uris = NULL;
-      for (iter = old_uris; iter != NULL && iter != uris; iter = iter->next)
+      for (iter = old_uris; iter != NULL && iter != dup_uris; iter = iter->next)
         launched_uris = g_list_prepend (launched_uris, iter->data);
       launched_uris = g_list_reverse (launched_uris);
 
@@ -2697,25 +2762,11 @@ g_desktop_app_info_launch_uris_with_spawn (GDesktopAppInfo            *info,
           goto out;
         }
 
-      data.user_setup = user_setup;
-      data.user_setup_data = user_setup_data;
-
       if (info->filename)
-        {
-          envp = g_environ_setenv (envp,
-                                   "GIO_LAUNCHED_DESKTOP_FILE",
-                                   info->filename,
-                                   TRUE);
-          envp = g_environ_setenv (envp,
-                                   "GIO_LAUNCHED_DESKTOP_FILE_PID",
-                                   "XXXXXXXXXXXXXXXXXXXX", /* filled in child_setup */
-                                   TRUE);
-          data.pid_envvar = (char *)g_environ_getenv (envp, "GIO_LAUNCHED_DESKTOP_FILE_PID");
-        }
-      else
-        {
-          data.pid_envvar = NULL;
-        }
+        envp = g_environ_setenv (envp,
+                                 "GIO_LAUNCHED_DESKTOP_FILE",
+                                 info->filename,
+                                 TRUE);
 
       sn_id = NULL;
       if (launch_context)
@@ -2734,14 +2785,40 @@ g_desktop_app_info_launch_uris_with_spawn (GDesktopAppInfo            *info,
           g_list_free_full (launched_files, g_object_unref);
         }
 
-      if (!g_spawn_async (info->path,
-                          argv,
-                          envp,
-                          spawn_flags,
-                          child_setup,
-                          &data,
-                          &pid,
-                          error))
+      /* Wrap the @argv in a command which will set the
+       * `GIO_LAUNCHED_DESKTOP_FILE_PID` environment variable. We can’t set this
+       * in @envp along with `GIO_LAUNCHED_DESKTOP_FILE` because we need to know
+       * the PID of the new forked process. We can’t use setenv() between fork()
+       * and exec() because we’d rather use posix_spawn() for speed.
+       *
+       * `sh` should be available on all the platforms that `GDesktopAppInfo`
+       * currently supports (since they are all POSIX). If additional platforms
+       * need to be supported in future, it will probably have to be replaced
+       * with a wrapper program (grep the GLib git history for
+       * `gio-launch-desktop` for an example of this which could be
+       * resurrected). */
+      wrapped_argv = g_new (char *, argc + G_N_ELEMENTS (wrapper_argv) + 1);
+
+      for (i = 0; i < G_N_ELEMENTS (wrapper_argv); i++)
+        wrapped_argv[i] = g_strdup (wrapper_argv[i]);
+      for (i = 0; i < argc; i++)
+        wrapped_argv[i + G_N_ELEMENTS (wrapper_argv)] = g_steal_pointer (&argv[i]);
+
+      wrapped_argv[i + G_N_ELEMENTS (wrapper_argv)] = NULL;
+      g_free (argv);
+      argv = NULL;
+
+      if (!g_spawn_async_with_fds (info->path,
+                                   wrapped_argv,
+                                   envp,
+                                   spawn_flags,
+                                   user_setup,
+                                   user_setup_data,
+                                   &pid,
+                                   stdin_fd,
+                                   stdout_fd,
+                                   stderr_fd,
+                                   error))
         {
           if (sn_id)
             g_app_launch_context_launch_failed (launch_context, sn_id);
@@ -2779,14 +2856,15 @@ g_desktop_app_info_launch_uris_with_spawn (GDesktopAppInfo            *info,
       g_free (sn_id);
       g_list_free (launched_uris);
 
-      g_strfreev (argv);
-      argv = NULL;
+      g_strfreev (wrapped_argv);
+      wrapped_argv = NULL;
     }
-  while (uris != NULL);
+  while (dup_uris != NULL);
 
   completed = TRUE;
 
  out:
+  g_list_free (dup_uris);
   g_strfreev (argv);
   g_strfreev (envp);
 
@@ -2843,7 +2921,10 @@ static void
 launch_uris_with_dbus (GDesktopAppInfo    *info,
                        GDBusConnection    *session_bus,
                        GList              *uris,
-                       GAppLaunchContext  *launch_context)
+                       GAppLaunchContext  *launch_context,
+                       GCancellable       *cancellable,
+                       GAsyncReadyCallback callback,
+                       gpointer            user_data)
 {
   GVariantBuilder builder;
   gchar *object_path;
@@ -2862,14 +2943,11 @@ launch_uris_with_dbus (GDesktopAppInfo    *info,
 
   g_variant_builder_add_value (&builder, g_desktop_app_info_make_platform_data (info, uris, launch_context));
 
-  /* This is non-blocking API.  Similar to launching via fork()/exec()
-   * we don't wait around to see if the program crashed during startup.
-   * This is what startup-notification's job is...
-   */
   object_path = object_path_from_appid (info->app_id);
   g_dbus_connection_call (session_bus, info->app_id, object_path, "org.freedesktop.Application",
                           uris ? "Open" : "Activate", g_variant_builder_end (&builder),
-                          NULL, G_DBUS_CALL_FLAGS_NONE, -1, NULL, NULL, NULL);
+                          NULL, G_DBUS_CALL_FLAGS_NONE, -1,
+                          cancellable, callback, user_data);
   g_free (object_path);
 }
 
@@ -2877,10 +2955,13 @@ static gboolean
 g_desktop_app_info_launch_uris_with_dbus (GDesktopAppInfo    *info,
                                           GDBusConnection    *session_bus,
                                           GList              *uris,
-                                          GAppLaunchContext  *launch_context)
+                                          GAppLaunchContext  *launch_context,
+                                          GCancellable       *cancellable,
+                                          GAsyncReadyCallback callback,
+                                          gpointer            user_data)
 {
   GList *ruris = uris;
-  g_autofree char *app_id = NULL;
+  char *app_id = NULL;
 
   g_return_val_if_fail (info != NULL, FALSE);
 
@@ -2894,10 +2975,13 @@ g_desktop_app_info_launch_uris_with_dbus (GDesktopAppInfo    *info,
     }
 #endif
 
-  launch_uris_with_dbus (info, session_bus, ruris, launch_context);
+  launch_uris_with_dbus (info, session_bus, ruris, launch_context,
+                         cancellable, callback, user_data);
 
   if (ruris != uris)
     g_list_free_full (ruris, g_free);
+
+  g_free (app_id);
 
   return TRUE;
 }
@@ -2911,6 +2995,9 @@ g_desktop_app_info_launch_uris_internal (GAppInfo                   *appinfo,
                                          gpointer                    user_setup_data,
                                          GDesktopAppLaunchCallback   pid_callback,
                                          gpointer                    pid_callback_data,
+                                         gint                        stdin_fd,
+                                         gint                        stdout_fd,
+                                         gint                        stderr_fd,
                                          GError                     **error)
 {
   GDesktopAppInfo *info = G_DESKTOP_APP_INFO (appinfo);
@@ -2920,11 +3007,17 @@ g_desktop_app_info_launch_uris_internal (GAppInfo                   *appinfo,
   session_bus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
 
   if (session_bus && info->app_id)
-    g_desktop_app_info_launch_uris_with_dbus (info, session_bus, uris, launch_context);
+    /* This is non-blocking API. Similar to launching via fork()/exec()
+     * we don't wait around to see if the program crashed during startup.
+     * This is what startup-notification's job is...
+     */
+    g_desktop_app_info_launch_uris_with_dbus (info, session_bus, uris, launch_context,
+                                              NULL, NULL, NULL);
   else
     success = g_desktop_app_info_launch_uris_with_spawn (info, session_bus, info->exec, uris, launch_context,
                                                          spawn_flags, user_setup, user_setup_data,
-                                                         pid_callback, pid_callback_data, error);
+                                                         pid_callback, pid_callback_data,
+                                                         stdin_fd, stdout_fd, stderr_fd, error);
 
   if (session_bus != NULL)
     {
@@ -2949,7 +3042,139 @@ g_desktop_app_info_launch_uris (GAppInfo           *appinfo,
                                                   launch_context,
                                                   _SPAWN_FLAGS_DEFAULT,
                                                   NULL, NULL, NULL, NULL,
+                                                  -1, -1, -1,
                                                   error);
+}
+
+typedef struct
+{
+  GAppInfo *appinfo;
+  GList *uris;
+  GAppLaunchContext *context;
+} LaunchUrisData;
+
+static void
+launch_uris_data_free (LaunchUrisData *data)
+{
+  g_clear_object (&data->context);
+  g_list_free_full (data->uris, g_free);
+  g_free (data);
+}
+
+static void
+launch_uris_with_dbus_cb (GObject      *object,
+                          GAsyncResult *result,
+                          gpointer      user_data)
+{
+  GTask *task = G_TASK (user_data);
+  GError *error = NULL;
+
+  g_dbus_connection_call_finish (G_DBUS_CONNECTION (object), result, &error);
+  if (error != NULL)
+    {
+      g_dbus_error_strip_remote_error (error);
+      g_task_return_error (task, g_steal_pointer (&error));
+    }
+  else
+    g_task_return_boolean (task, TRUE);
+
+  g_object_unref (task);
+}
+
+static void
+launch_uris_flush_cb (GObject      *object,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  GTask *task = G_TASK (user_data);
+
+  g_dbus_connection_flush_finish (G_DBUS_CONNECTION (object), result, NULL);
+  g_task_return_boolean (task, TRUE);
+  g_object_unref (task);
+}
+
+static void
+launch_uris_bus_get_cb (GObject      *object,
+                        GAsyncResult *result,
+                        gpointer      user_data)
+{
+  GTask *task = G_TASK (user_data);
+  GDesktopAppInfo *info = G_DESKTOP_APP_INFO (g_task_get_source_object (task));
+  LaunchUrisData *data = g_task_get_task_data (task);
+  GCancellable *cancellable = g_task_get_cancellable (task);
+  GDBusConnection *session_bus;
+  GError *error = NULL;
+
+  session_bus = g_bus_get_finish (result, NULL);
+
+  if (session_bus && info->app_id)
+    {
+      /* FIXME: The g_document_portal_add_documents() function, which is called
+       * from the g_desktop_app_info_launch_uris_with_dbus() function, still
+       * uses blocking calls.
+       */
+      g_desktop_app_info_launch_uris_with_dbus (info, session_bus,
+                                                data->uris, data->context,
+                                                cancellable,
+                                                launch_uris_with_dbus_cb,
+                                                g_steal_pointer (&task));
+    }
+  else
+    {
+      /* FIXME: The D-Bus message from the notify_desktop_launch() function
+       * can be still lost even if flush is called later. See:
+       * https://gitlab.freedesktop.org/dbus/dbus/issues/72
+       */
+      g_desktop_app_info_launch_uris_with_spawn (info, session_bus, info->exec,
+                                                 data->uris, data->context,
+                                                 _SPAWN_FLAGS_DEFAULT, NULL,
+                                                 NULL, NULL, NULL, -1, -1, -1,
+                                                 &error);
+      if (error != NULL)
+        {
+          g_task_return_error (task, g_steal_pointer (&error));
+          g_object_unref (task);
+        }
+      else
+        g_dbus_connection_flush (session_bus,
+                                 cancellable,
+                                 launch_uris_flush_cb,
+                                 g_steal_pointer (&task));
+    }
+
+  g_clear_object (&session_bus);
+}
+
+static void
+g_desktop_app_info_launch_uris_async (GAppInfo           *appinfo,
+                                      GList              *uris,
+                                      GAppLaunchContext  *context,
+                                      GCancellable       *cancellable,
+                                      GAsyncReadyCallback callback,
+                                      gpointer            user_data)
+{
+  GTask *task;
+  LaunchUrisData *data;
+
+  task = g_task_new (appinfo, cancellable, callback, user_data);
+  g_task_set_source_tag (task, g_desktop_app_info_launch_uris_async);
+
+  data = g_new0 (LaunchUrisData, 1);
+  data->uris = g_list_copy_deep (uris, (GCopyFunc) g_strdup, NULL);
+  data->context = (context != NULL) ? g_object_ref (context) : NULL;
+  g_task_set_task_data (task, g_steal_pointer (&data), (GDestroyNotify) launch_uris_data_free);
+
+  g_bus_get (G_BUS_TYPE_SESSION, cancellable, launch_uris_bus_get_cb, task);
+}
+
+static gboolean
+g_desktop_app_info_launch_uris_finish (GAppInfo     *appinfo,
+                                       GAsyncResult *result,
+                                       GError      **error)
+{
+  g_return_val_if_fail (g_task_is_valid (result, appinfo), FALSE);
+
+  return g_task_propagate_boolean (G_TASK (result), error);
 }
 
 static gboolean
@@ -3000,12 +3225,67 @@ g_desktop_app_info_launch (GAppInfo           *appinfo,
 }
 
 /**
+ * g_desktop_app_info_launch_uris_as_manager_with_fds:
+ * @appinfo: a #GDesktopAppInfo
+ * @uris: (element-type utf8): List of URIs
+ * @launch_context: (nullable): a #GAppLaunchContext
+ * @spawn_flags: #GSpawnFlags, used for each process
+ * @user_setup: (scope async) (nullable): a #GSpawnChildSetupFunc, used once
+ *     for each process.
+ * @user_setup_data: (closure user_setup) (nullable): User data for @user_setup
+ * @pid_callback: (scope call) (nullable): Callback for child processes
+ * @pid_callback_data: (closure pid_callback) (nullable): User data for @callback
+ * @stdin_fd: file descriptor to use for child's stdin, or -1
+ * @stdout_fd: file descriptor to use for child's stdout, or -1
+ * @stderr_fd: file descriptor to use for child's stderr, or -1
+ * @error: return location for a #GError, or %NULL
+ *
+ * Equivalent to g_desktop_app_info_launch_uris_as_manager() but allows
+ * you to pass in file descriptors for the stdin, stdout and stderr streams
+ * of the launched process.
+ *
+ * If application launching occurs via some non-spawn mechanism (e.g. D-Bus
+ * activation) then @stdin_fd, @stdout_fd and @stderr_fd are ignored.
+ *
+ * Returns: %TRUE on successful launch, %FALSE otherwise.
+ *
+ * Since: 2.58
+ */
+gboolean
+g_desktop_app_info_launch_uris_as_manager_with_fds (GDesktopAppInfo            *appinfo,
+                                                    GList                      *uris,
+                                                    GAppLaunchContext          *launch_context,
+                                                    GSpawnFlags                 spawn_flags,
+                                                    GSpawnChildSetupFunc        user_setup,
+                                                    gpointer                    user_setup_data,
+                                                    GDesktopAppLaunchCallback   pid_callback,
+                                                    gpointer                    pid_callback_data,
+                                                    gint                        stdin_fd,
+                                                    gint                        stdout_fd,
+                                                    gint                        stderr_fd,
+                                                    GError                    **error)
+{
+  return g_desktop_app_info_launch_uris_internal ((GAppInfo*)appinfo,
+                                                  uris,
+                                                  launch_context,
+                                                  spawn_flags,
+                                                  user_setup,
+                                                  user_setup_data,
+                                                  pid_callback,
+                                                  pid_callback_data,
+                                                  stdin_fd,
+                                                  stdout_fd,
+                                                  stderr_fd,
+                                                  error);
+}
+
+/**
  * g_desktop_app_info_launch_uris_as_manager:
  * @appinfo: a #GDesktopAppInfo
  * @uris: (element-type utf8): List of URIs
  * @launch_context: (nullable): a #GAppLaunchContext
  * @spawn_flags: #GSpawnFlags, used for each process
- * @user_setup: (scope call) (nullable): a #GSpawnChildSetupFunc, used once
+ * @user_setup: (scope async) (nullable): a #GSpawnChildSetupFunc, used once
  *     for each process.
  * @user_setup_data: (closure user_setup) (nullable): User data for @user_setup
  * @pid_callback: (scope call) (nullable): Callback for child processes
@@ -3017,11 +3297,12 @@ g_desktop_app_info_launch (GAppInfo           *appinfo,
  * launch applications.  Ordinary applications should use
  * g_app_info_launch_uris().
  *
- * If the application is launched via traditional UNIX fork()/exec()
- * then @spawn_flags, @user_setup and @user_setup_data are used for the
- * call to g_spawn_async().  Additionally, @pid_callback (with
- * @pid_callback_data) will be called to inform about the PID of the
- * created process.
+ * If the application is launched via GSpawn, then @spawn_flags, @user_setup
+ * and @user_setup_data are used for the call to g_spawn_async().
+ * Additionally, @pid_callback (with @pid_callback_data) will be called to
+ * inform about the PID of the created process. See g_spawn_async_with_pipes()
+ * for information on certain parameter conditions that can enable an
+ * optimized posix_spawn() codepath to be used.
  *
  * If application launching occurs via some other mechanism (eg: D-Bus
  * activation) then @spawn_flags, @user_setup, @user_setup_data,
@@ -3040,15 +3321,16 @@ g_desktop_app_info_launch_uris_as_manager (GDesktopAppInfo            *appinfo,
                                            gpointer                    pid_callback_data,
                                            GError                    **error)
 {
-  return g_desktop_app_info_launch_uris_internal ((GAppInfo*)appinfo,
-                                                  uris,
-                                                  launch_context,
-                                                  spawn_flags,
-                                                  user_setup,
-                                                  user_setup_data,
-                                                  pid_callback,
-                                                  pid_callback_data,
-                                                  error);
+  return g_desktop_app_info_launch_uris_as_manager_with_fds (appinfo,
+                                                             uris,
+                                                             launch_context,
+                                                             spawn_flags,
+                                                             user_setup,
+                                                             user_setup_data,
+                                                             pid_callback,
+                                                             pid_callback_data,
+                                                             -1, -1, -1,
+                                                             error);
 }
 
 /* OnlyShowIn API support {{{2 */
@@ -3117,6 +3399,8 @@ ensure_dir (DirType   type,
     default:
       g_assert_not_reached ();
     }
+
+  g_debug ("%s: Ensuring %s", G_STRFUNC, path);
 
   errno = 0;
   if (g_mkdir_with_parents (path, 0700) == 0)
@@ -3708,7 +3992,7 @@ g_desktop_app_info_delete (GAppInfo *appinfo)
 /* Create for commandline {{{2 */
 /**
  * g_app_info_create_from_commandline:
- * @commandline: the commandline to use
+ * @commandline: (type filename): the commandline to use
  * @application_name: (nullable): the application name, or %NULL to use @commandline
  * @flags: flags that can specify details of the created #GAppInfo
  * @error: a #GError location to store the error occurring, %NULL to ignore.
@@ -3783,6 +4067,8 @@ g_desktop_app_info_iface_init (GAppInfoIface *iface)
   iface->supports_uris = g_desktop_app_info_supports_uris;
   iface->supports_files = g_desktop_app_info_supports_files;
   iface->launch_uris = g_desktop_app_info_launch_uris;
+  iface->launch_uris_async = g_desktop_app_info_launch_uris_async;
+  iface->launch_uris_finish = g_desktop_app_info_launch_uris_finish;
   iface->should_show = g_desktop_app_info_should_show;
   iface->set_as_default_for_type = g_desktop_app_info_set_as_default_for_type;
   iface->set_as_default_for_extension = g_desktop_app_info_set_as_default_for_extension;
@@ -3857,8 +4143,8 @@ g_desktop_app_info_get_desktop_ids_for_content_type (const gchar *content_type,
   desktop_file_dirs_lock ();
 
   for (i = 0; types[i]; i++)
-    for (j = 0; j < n_desktop_file_dirs; j++)
-      desktop_file_dir_mime_lookup (&desktop_file_dirs[j], types[i], hits, blacklist);
+    for (j = 0; j < desktop_file_dirs->len; j++)
+      desktop_file_dir_mime_lookup (g_ptr_array_index (desktop_file_dirs, j), types[i], hits, blacklist);
 
   /* We will keep the hits past unlocking, so we must dup them */
   for (i = 0; i < hits->len; i++)
@@ -4060,21 +4346,21 @@ g_app_info_get_default_for_type (const char *content_type,
   for (i = 0; types[i]; i++)
     {
       /* Collect all the default apps for this type */
-      for (j = 0; j < n_desktop_file_dirs; j++)
-        desktop_file_dir_default_lookup (&desktop_file_dirs[j], types[i], results);
+      for (j = 0; j < desktop_file_dirs->len; j++)
+        desktop_file_dir_default_lookup (g_ptr_array_index (desktop_file_dirs, j), types[i], results);
 
       /* Consider the associations as well... */
-      for (j = 0; j < n_desktop_file_dirs; j++)
-        desktop_file_dir_mime_lookup (&desktop_file_dirs[j], types[i], results, blacklist);
+      for (j = 0; j < desktop_file_dirs->len; j++)
+        desktop_file_dir_mime_lookup (g_ptr_array_index (desktop_file_dirs, j), types[i], results, blacklist);
 
       /* (If any), see if one of those apps is installed... */
       for (j = 0; j < results->len; j++)
         {
           const gchar *desktop_id = g_ptr_array_index (results, j);
 
-          for (k = 0; k < n_desktop_file_dirs; k++)
+          for (k = 0; k < desktop_file_dirs->len; k++)
             {
-              info = (GAppInfo *) desktop_file_dir_get_app (&desktop_file_dirs[k], desktop_id);
+              info = (GAppInfo *) desktop_file_dir_get_app (g_ptr_array_index (desktop_file_dirs, k), desktop_id);
 
               if (info)
                 {
@@ -4153,8 +4439,8 @@ g_desktop_app_info_get_implementations (const gchar *interface)
 
   desktop_file_dirs_lock ();
 
-  for (i = 0; i < n_desktop_file_dirs; i++)
-    desktop_file_dir_get_implementations (&desktop_file_dirs[i], &result, interface);
+  for (i = 0; i < desktop_file_dirs->len; i++)
+    desktop_file_dir_get_implementations (g_ptr_array_index (desktop_file_dirs, i), &result, interface);
 
   desktop_file_dirs_unlock ();
 
@@ -4212,11 +4498,11 @@ g_desktop_app_info_search (const gchar *search_string)
 
   reset_total_search_results ();
 
-  for (i = 0; i < n_desktop_file_dirs; i++)
+  for (i = 0; i < desktop_file_dirs->len; i++)
     {
       for (j = 0; search_tokens[j]; j++)
         {
-          desktop_file_dir_search (&desktop_file_dirs[i], search_tokens[j]);
+          desktop_file_dir_search (g_ptr_array_index (desktop_file_dirs, i), search_tokens[j]);
           merge_token_results (j == 0);
         }
       merge_directory_results ();
@@ -4291,8 +4577,8 @@ g_app_info_get_all (void)
 
   desktop_file_dirs_lock ();
 
-  for (i = 0; i < n_desktop_file_dirs; i++)
-    desktop_file_dir_get_all (&desktop_file_dirs[i], apps);
+  for (i = 0; i < desktop_file_dirs->len; i++)
+    desktop_file_dir_get_all (g_ptr_array_index (desktop_file_dirs, i), apps);
 
   desktop_file_dirs_unlock ();
 
@@ -4316,6 +4602,9 @@ g_app_info_get_all (void)
  *
  * #GDesktopAppInfoLookup is an opaque data structure and can only be accessed
  * using the following functions.
+ *
+ * Deprecated: 2.28: The #GDesktopAppInfoLookup interface is deprecated and
+ *    unused by GIO.
  **/
 
 G_GNUC_BEGIN_IGNORE_DEPRECATIONS
@@ -4336,17 +4625,18 @@ g_desktop_app_info_lookup_default_init (GDesktopAppInfoLookupInterface *iface)
  * @uri_scheme: a string containing a URI scheme.
  *
  * Gets the default application for launching applications
- * using this URI scheme for a particular GDesktopAppInfoLookup
+ * using this URI scheme for a particular #GDesktopAppInfoLookup
  * implementation.
  *
- * The GDesktopAppInfoLookup interface and this function is used
+ * The #GDesktopAppInfoLookup interface and this function is used
  * to implement g_app_info_get_default_for_uri_scheme() backends
  * in a GIO module. There is no reason for applications to use it
  * directly. Applications should use g_app_info_get_default_for_uri_scheme().
  *
  * Returns: (transfer full): #GAppInfo for given @uri_scheme or %NULL on error.
  *
- * Deprecated: The #GDesktopAppInfoLookup interface is deprecated and unused by gio.
+ * Deprecated: 2.28: The #GDesktopAppInfoLookup interface is deprecated and
+ *    unused by GIO.
  */
 GAppInfo *
 g_desktop_app_info_lookup_get_default_for_uri_scheme (GDesktopAppInfoLookup *lookup,
@@ -4411,6 +4701,33 @@ g_desktop_app_info_get_string (GDesktopAppInfo *info,
 }
 
 /**
+ * g_desktop_app_info_get_locale_string:
+ * @info: a #GDesktopAppInfo
+ * @key: the key to look up
+ *
+ * Looks up a localized string value in the keyfile backing @info
+ * translated to the current locale.
+ *
+ * The @key is looked up in the "Desktop Entry" group.
+ *
+ * Returns: (nullable): a newly allocated string, or %NULL if the key
+ *     is not found
+ *
+ * Since: 2.56
+ */
+char *
+g_desktop_app_info_get_locale_string (GDesktopAppInfo *info,
+                                      const char      *key)
+{
+  g_return_val_if_fail (G_IS_DESKTOP_APP_INFO (info), NULL);
+  g_return_val_if_fail (key != NULL && *key != '\0', NULL);
+
+  return g_key_file_get_locale_string (info->keyfile,
+                                       G_KEY_FILE_DESKTOP_GROUP,
+                                       key, NULL, NULL);
+}
+
+/**
  * g_desktop_app_info_get_boolean:
  * @info: a #GDesktopAppInfo
  * @key: the key to look up
@@ -4432,6 +4749,33 @@ g_desktop_app_info_get_boolean (GDesktopAppInfo *info,
 
   return g_key_file_get_boolean (info->keyfile,
                                  G_KEY_FILE_DESKTOP_GROUP, key, NULL);
+}
+
+/**
+ * g_desktop_app_info_get_string_list:
+ * @info: a #GDesktopAppInfo
+ * @key: the key to look up
+ * @length: (out) (optional): return location for the number of returned strings, or %NULL
+ *
+ * Looks up a string list value in the keyfile backing @info.
+ *
+ * The @key is looked up in the "Desktop Entry" group.
+ *
+ * Returns: (array zero-terminated=1 length=length) (element-type utf8) (transfer full):
+ *  a %NULL-terminated string array or %NULL if the specified
+ *  key cannot be found. The array should be freed with g_strfreev().
+ *
+ * Since: 2.60
+ */
+gchar **
+g_desktop_app_info_get_string_list (GDesktopAppInfo *info,
+                                    const char      *key,
+                                    gsize           *length)
+{
+  g_return_val_if_fail (G_IS_DESKTOP_APP_INFO (info), NULL);
+
+  return g_key_file_get_string_list (info->keyfile,
+                                     G_KEY_FILE_DESKTOP_GROUP, key, length, NULL);
 }
 
 /**
@@ -4596,7 +4940,10 @@ g_desktop_app_info_launch_action (GDesktopAppInfo   *info,
 
       if (exec_line)
         g_desktop_app_info_launch_uris_with_spawn (info, session_bus, exec_line, NULL, launch_context,
-                                                   _SPAWN_FLAGS_DEFAULT, NULL, NULL, NULL, NULL, NULL);
+                                                   _SPAWN_FLAGS_DEFAULT, NULL, NULL, NULL, NULL,
+                                                   -1, -1, -1, NULL);
+
+      g_free (exec_line);
     }
 
   if (session_bus != NULL)

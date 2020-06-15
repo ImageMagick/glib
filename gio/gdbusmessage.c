@@ -32,6 +32,8 @@
 #include <sys/mkdev.h>
 #elif MAJOR_IN_SYSMACROS
 #include <sys/sysmacros.h>
+#elif MAJOR_IN_TYPES
+#include <sys/types.h>
 #else
 #define MAJOR_MINOR_NOT_FOUND 1
 #endif
@@ -55,6 +57,10 @@
 #endif
 
 #include "glibintl.h"
+
+/* See https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-marshaling-signature
+ * This is 64 containers plus 1 value within them. */
+#define G_DBUS_MAX_TYPE_DEPTH (64 + 1)
 
 typedef struct _GMemoryBuffer GMemoryBuffer;
 struct _GMemoryBuffer
@@ -871,7 +877,7 @@ g_dbus_message_set_message_type (GDBusMessage      *message,
                                  GDBusMessageType   type)
 {
   g_return_if_fail (G_IS_DBUS_MESSAGE (message));
-  g_return_if_fail (type >=0 && type < 256);
+  g_return_if_fail ((guint) type >= 0 && (guint) type < 256);
 
   if (message->locked)
     {
@@ -918,7 +924,7 @@ g_dbus_message_set_flags (GDBusMessage       *message,
                           GDBusMessageFlags   flags)
 {
   g_return_if_fail (G_IS_DBUS_MESSAGE (message));
-  g_return_if_fail (flags >=0 && flags < 256);
+  g_return_if_fail ((guint) flags >= 0 && (guint) flags < 256);
 
   if (message->locked)
     {
@@ -983,7 +989,10 @@ g_dbus_message_set_serial (GDBusMessage  *message,
  *
  * Gets a header field on @message.
  *
- * Returns: A #GVariant with the value if the header was found, %NULL
+ * The caller is responsible for checking the type of the returned #GVariant
+ * matches what is expected.
+ *
+ * Returns: (transfer none) (nullable): A #GVariant with the value if the header was found, %NULL
  * otherwise. Do not free, it is owned by @message.
  *
  * Since: 2.26
@@ -993,7 +1002,7 @@ g_dbus_message_get_header (GDBusMessage             *message,
                            GDBusMessageHeaderField   header_field)
 {
   g_return_val_if_fail (G_IS_DBUS_MESSAGE (message), NULL);
-  g_return_val_if_fail (header_field >=0 && header_field < 256, NULL);
+  g_return_val_if_fail ((guint) header_field >= 0 && (guint) header_field < 256, NULL);
   return g_hash_table_lookup (message->headers, GUINT_TO_POINTER (header_field));
 }
 
@@ -1015,7 +1024,7 @@ g_dbus_message_set_header (GDBusMessage             *message,
                            GVariant                 *value)
 {
   g_return_if_fail (G_IS_DBUS_MESSAGE (message));
-  g_return_if_fail (header_field >=0 && header_field < 256);
+  g_return_if_fail ((guint) header_field >= 0 && (guint) header_field < 256);
 
   if (message->locked)
     {
@@ -1434,14 +1443,26 @@ read_bytes (GMemoryBuffer  *mbuf,
 static GVariant *
 parse_value_from_blob (GMemoryBuffer       *buf,
                        const GVariantType  *type,
+                       guint                max_depth,
                        gboolean             just_align,
                        guint                indent,
                        GError             **error)
 {
-  GVariant *ret;
-  GError *local_error;
+  GVariant *ret = NULL;
+  GError *local_error = NULL;
+#ifdef DEBUG_SERIALIZER
   gboolean is_leaf;
+#endif /* DEBUG_SERIALIZER */
   const gchar *type_string;
+
+  if (max_depth == 0)
+    {
+      g_set_error_literal (&local_error,
+                           G_IO_ERROR,
+                           G_IO_ERROR_INVALID_ARGUMENT,
+                           _("Value nested too deeply"));
+      goto fail;
+    }
 
   type_string = g_variant_type_peek_string (type);
 
@@ -1458,10 +1479,9 @@ parse_value_from_blob (GMemoryBuffer       *buf,
     }
 #endif /* DEBUG_SERIALIZER */
 
-  ret = NULL;
-
+#ifdef DEBUG_SERIALIZER
   is_leaf = TRUE;
-  local_error = NULL;
+#endif /* DEBUG_SERIALIZER */
   switch (type_string[0])
     {
     case 'b': /* G_VARIANT_TYPE_BOOLEAN */
@@ -1643,8 +1663,8 @@ parse_value_from_blob (GMemoryBuffer       *buf,
 
           array_len = g_memory_buffer_read_uint32 (buf);
 
-          is_leaf = FALSE;
 #ifdef DEBUG_SERIALIZER
+          is_leaf = FALSE;
           g_print (": array spans 0x%04x bytes\n", array_len);
 #endif /* DEBUG_SERIALIZER */
 
@@ -1681,6 +1701,17 @@ parse_value_from_blob (GMemoryBuffer       *buf,
                   goto fail;
                 }
 
+              if (max_depth == 1)
+                {
+                  /* If we had recursed into parse_value_from_blob() again to
+                   * parse the array values, this would have been emitted. */
+                  g_set_error_literal (&local_error,
+                                       G_IO_ERROR,
+                                       G_IO_ERROR_INVALID_ARGUMENT,
+                                       _("Value nested too deeply"));
+                  goto fail;
+                }
+
               ensure_input_padding (buf, fixed_size);
               array_data = read_bytes (buf, array_len, &local_error);
               if (array_data == NULL)
@@ -1705,9 +1736,10 @@ parse_value_from_blob (GMemoryBuffer       *buf,
 
               if (array_len == 0)
                 {
-                  GVariant *item;
+                  GVariant *item G_GNUC_UNUSED  /* when compiling with G_DISABLE_ASSERT */;
                   item = parse_value_from_blob (buf,
                                                 element_type,
+                                                max_depth - 1,
                                                 TRUE,
                                                 indent + 2,
                                                 NULL);
@@ -1722,6 +1754,7 @@ parse_value_from_blob (GMemoryBuffer       *buf,
                       GVariant *item;
                       item = parse_value_from_blob (buf,
                                                     element_type,
+                                                    max_depth - 1,
                                                     FALSE,
                                                     indent + 2,
                                                     &local_error);
@@ -1751,8 +1784,8 @@ parse_value_from_blob (GMemoryBuffer       *buf,
 
           ensure_input_padding (buf, 8);
 
-          is_leaf = FALSE;
 #ifdef DEBUG_SERIALIZER
+          is_leaf = FALSE;
           g_print ("\n");
 #endif /* DEBUG_SERIALIZER */
 
@@ -1761,6 +1794,7 @@ parse_value_from_blob (GMemoryBuffer       *buf,
               key_type = g_variant_type_key (type);
               key = parse_value_from_blob (buf,
                                            key_type,
+                                           max_depth - 1,
                                            FALSE,
                                            indent + 2,
                                            &local_error);
@@ -1769,6 +1803,7 @@ parse_value_from_blob (GMemoryBuffer       *buf,
               value_type = g_variant_type_value (type);
               value = parse_value_from_blob (buf,
                                              value_type,
+                                             max_depth - 1,
                                              FALSE,
                                              indent + 2,
                                              &local_error);
@@ -1786,8 +1821,8 @@ parse_value_from_blob (GMemoryBuffer       *buf,
         {
           ensure_input_padding (buf, 8);
 
-          is_leaf = FALSE;
 #ifdef DEBUG_SERIALIZER
+          is_leaf = FALSE;
           g_print ("\n");
 #endif /* DEBUG_SERIALIZER */
 
@@ -1803,6 +1838,7 @@ parse_value_from_blob (GMemoryBuffer       *buf,
                   GVariant *item;
                   item = parse_value_from_blob (buf,
                                                 element_type,
+                                                max_depth - 1,
                                                 FALSE,
                                                 indent + 2,
                                                 &local_error);
@@ -1821,8 +1857,8 @@ parse_value_from_blob (GMemoryBuffer       *buf,
         }
       else if (g_variant_type_is_variant (type))
         {
-          is_leaf = FALSE;
 #ifdef DEBUG_SERIALIZER
+          is_leaf = FALSE;
           g_print ("\n");
 #endif /* DEBUG_SERIALIZER */
 
@@ -1837,8 +1873,11 @@ parse_value_from_blob (GMemoryBuffer       *buf,
               sig = read_string (buf, (gsize) siglen, &local_error);
               if (sig == NULL)
                 goto fail;
-              if (!g_variant_is_signature (sig))
+              if (!g_variant_is_signature (sig) ||
+                  !g_variant_type_string_is_valid (sig))
                 {
+                  /* A D-Bus signature can contain zero or more complete types,
+                   * but a GVariant has to be exactly one complete type. */
                   g_set_error (&local_error,
                                G_IO_ERROR,
                                G_IO_ERROR_INVALID_ARGUMENT,
@@ -1846,9 +1885,26 @@ parse_value_from_blob (GMemoryBuffer       *buf,
                                sig);
                   goto fail;
                 }
+
+              if (max_depth <= g_variant_type_string_get_depth_ (sig))
+                {
+                  /* Catch the type nesting being too deep without having to
+                   * parse the data. We don’t have to check this for static
+                   * container types (like arrays and tuples, above) because
+                   * the g_variant_type_string_is_valid() check performed before
+                   * the initial parse_value_from_blob() call should check the
+                   * static type nesting. */
+                  g_set_error_literal (&local_error,
+                                       G_IO_ERROR,
+                                       G_IO_ERROR_INVALID_ARGUMENT,
+                                       _("Value nested too deeply"));
+                  goto fail;
+                }
+
               variant_type = g_variant_type_new (sig);
               value = parse_value_from_blob (buf,
                                              variant_type,
+                                             max_depth - 1,
                                              FALSE,
                                              indent + 2,
                                              &local_error);
@@ -1894,8 +1950,6 @@ parse_value_from_blob (GMemoryBuffer       *buf,
           g_free (s);
         }
     }
-#else
-  is_leaf = is_leaf; /* To avoid -Wunused-but-set-variable */
 #endif /* DEBUG_SERIALIZER */
 
   /* sink the reference, if floating */
@@ -1922,7 +1976,7 @@ parse_value_from_blob (GMemoryBuffer       *buf,
 
 /**
  * g_dbus_message_bytes_needed:
- * @blob: (array length=blob_len) (element-type guint8): A blob represent a binary D-Bus message.
+ * @blob: (array length=blob_len) (element-type guint8): A blob representing a binary D-Bus message.
  * @blob_len: The length of @blob (must be at least 16).
  * @error: Return location for error or %NULL.
  *
@@ -1974,7 +2028,7 @@ g_dbus_message_bytes_needed (guchar  *blob,
                    "Unable to determine message blob length - given blob is malformed");
     }
 
-  if (ret > (2<<27))
+  if (ret > (1<<27))
     {
       g_set_error (error,
                    G_IO_ERROR,
@@ -1990,7 +2044,7 @@ g_dbus_message_bytes_needed (guchar  *blob,
 
 /**
  * g_dbus_message_new_from_blob:
- * @blob: (array length=blob_len) (element-type guint8): A blob represent a binary D-Bus message.
+ * @blob: (array length=blob_len) (element-type guint8): A blob representing a binary D-Bus message.
  * @blob_len: The length of @blob.
  * @capabilities: A #GDBusCapabilityFlags describing what protocol features are supported.
  * @error: Return location for error or %NULL.
@@ -1998,6 +2052,9 @@ g_dbus_message_bytes_needed (guchar  *blob,
  * Creates a new #GDBusMessage from the data stored at @blob. The byte
  * order that the message was in can be retrieved using
  * g_dbus_message_get_byte_order().
+ *
+ * If the @blob cannot be parsed, contains invalid fields, or contains invalid
+ * headers, %G_IO_ERROR_INVALID_ARGUMENT will be returned.
  *
  * Returns: A new #GDBusMessage or %NULL if @error is set. Free with
  * g_object_unref().
@@ -2085,6 +2142,7 @@ g_dbus_message_new_from_blob (guchar                *blob,
 #endif /* DEBUG_SERIALIZER */
   headers = parse_value_from_blob (&mbuf,
                                    G_VARIANT_TYPE ("a{yv}"),
+                                   G_DBUS_MAX_TYPE_DEPTH + 2 /* for the a{yv} */,
                                    FALSE,
                                    2,
                                    error);
@@ -2111,6 +2169,15 @@ g_dbus_message_new_from_blob (guchar                *blob,
       const gchar *signature_str;
       gsize signature_str_len;
 
+      if (!g_variant_is_of_type (signature, G_VARIANT_TYPE_SIGNATURE))
+        {
+          g_set_error_literal (error,
+                               G_IO_ERROR,
+                               G_IO_ERROR_INVALID_ARGUMENT,
+                               _("Signature header found but is not of type signature"));
+          goto out;
+        }
+
       signature_str = g_variant_get_string (signature, &signature_str_len);
 
       /* signature but no body */
@@ -2126,18 +2193,20 @@ g_dbus_message_new_from_blob (guchar                *blob,
       else if (signature_str_len > 0)
         {
           GVariantType *variant_type;
-          gchar *tupled_signature_str;
+          gchar *tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
 
-          if (!g_variant_is_signature (signature_str))
+          if (!g_variant_is_signature (signature_str) ||
+              !g_variant_type_string_is_valid (tupled_signature_str))
             {
               g_set_error (error,
                            G_IO_ERROR,
                            G_IO_ERROR_INVALID_ARGUMENT,
                            _("Parsed value “%s” is not a valid D-Bus signature (for body)"),
                            signature_str);
+              g_free (tupled_signature_str);
               goto out;
             }
-          tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
+
           variant_type = g_variant_type_new (tupled_signature_str);
           g_free (tupled_signature_str);
 #ifdef DEBUG_SERIALIZER
@@ -2145,6 +2214,7 @@ g_dbus_message_new_from_blob (guchar                *blob,
 #endif /* DEBUG_SERIALIZER */
           message->body = parse_value_from_blob (&mbuf,
                                                  variant_type,
+                                                 G_DBUS_MAX_TYPE_DEPTH + 1 /* for the surrounding tuple */,
                                                  FALSE,
                                                  2,
                                                  error);
@@ -2321,7 +2391,10 @@ append_value_to_blob (GVariant            *value,
         {
           gsize len;
           const gchar *v;
+#ifndef G_DISABLE_ASSERT
           const gchar *end;
+#endif
+
           v = g_variant_get_string (value, &len);
           g_assert (g_utf8_validate (v, -1, &end) && (end == v + len));
           g_memory_buffer_put_uint32 (mbuf, len);
@@ -2651,7 +2724,7 @@ g_dbus_message_to_blob (GDBusMessage          *message,
       g_set_error (error,
                    G_IO_ERROR,
                    G_IO_ERROR_INVALID_ARGUMENT,
-                   _("Message has %d file descriptors but the header field indicates %d file descriptors"),
+                   _("Number of file descriptors in message (%d) differs from header field (%d)"),
                    num_fds_in_message,
                    num_fds_according_to_header);
       goto out;
@@ -2691,30 +2764,39 @@ g_dbus_message_to_blob (GDBusMessage          *message,
   body_start_offset = mbuf.valid_len;
 
   signature = g_dbus_message_get_header (message, G_DBUS_MESSAGE_HEADER_FIELD_SIGNATURE);
+
+  if (signature != NULL && !g_variant_is_of_type (signature, G_VARIANT_TYPE_SIGNATURE))
+    {
+      g_set_error_literal (error,
+                           G_IO_ERROR,
+                           G_IO_ERROR_INVALID_ARGUMENT,
+                           _("Signature header found but is not of type signature"));
+      goto out;
+    }
+
   signature_str = NULL;
   if (signature != NULL)
       signature_str = g_variant_get_string (signature, NULL);
   if (message->body != NULL)
     {
       gchar *tupled_signature_str;
-      tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
       if (signature == NULL)
         {
           g_set_error (error,
                        G_IO_ERROR,
                        G_IO_ERROR_INVALID_ARGUMENT,
                        _("Message body has signature “%s” but there is no signature header"),
-                       signature_str);
-          g_free (tupled_signature_str);
+                       g_variant_get_type_string (message->body));
           goto out;
         }
-      else if (g_strcmp0 (tupled_signature_str, g_variant_get_type_string (message->body)) != 0)
+      tupled_signature_str = g_strdup_printf ("(%s)", signature_str);
+      if (g_strcmp0 (tupled_signature_str, g_variant_get_type_string (message->body)) != 0)
         {
           g_set_error (error,
                        G_IO_ERROR,
                        G_IO_ERROR_INVALID_ARGUMENT,
                        _("Message body has type signature “%s” but signature in the header field is “%s”"),
-                       tupled_signature_str, g_variant_get_type_string (message->body));
+                       g_variant_get_type_string (message->body), tupled_signature_str);
           g_free (tupled_signature_str);
           goto out;
         }
@@ -3479,10 +3561,10 @@ g_dbus_message_print (GDBusMessage *message,
                 {
 #ifndef MAJOR_MINOR_NOT_FOUND                       
                   g_string_append_printf (fs, "%s" "dev=%d:%d", fs->len > 0 ? "," : "",
-                                          major (statbuf.st_dev), minor (statbuf.st_dev));
+                                          (gint) major (statbuf.st_dev), (gint) minor (statbuf.st_dev));
 #endif                  
                   g_string_append_printf (fs, "%s" "mode=0%o", fs->len > 0 ? "," : "",
-                                          statbuf.st_mode);
+                                          (guint) statbuf.st_mode);
                   g_string_append_printf (fs, "%s" "ino=%" G_GUINT64_FORMAT, fs->len > 0 ? "," : "",
                                           (guint64) statbuf.st_ino);
                   g_string_append_printf (fs, "%s" "uid=%u", fs->len > 0 ? "," : "",
@@ -3491,7 +3573,7 @@ g_dbus_message_print (GDBusMessage *message,
                                           (guint) statbuf.st_gid);
 #ifndef MAJOR_MINOR_NOT_FOUND                     
                   g_string_append_printf (fs, "%s" "rdev=%d:%d", fs->len > 0 ? "," : "",
-                                          major (statbuf.st_rdev), minor (statbuf.st_rdev));
+                                          (gint) major (statbuf.st_rdev), (gint) minor (statbuf.st_rdev));
 #endif                  
                   g_string_append_printf (fs, "%s" "size=%" G_GUINT64_FORMAT, fs->len > 0 ? "," : "",
                                           (guint64) statbuf.st_size);

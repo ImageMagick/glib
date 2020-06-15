@@ -341,6 +341,7 @@ static const GScannerConfig g_scanner_config_template =
   FALSE			/* symbol_2_token */,
   FALSE			/* scope_0_fallback */,
   FALSE			/* store_int64 */,
+  0    			/* padding_dummy */
 };
 
 
@@ -712,7 +713,7 @@ g_scanner_scope_add_symbol (GScanner	*scanner,
 	      c++;
 	    }
 	}
-      g_hash_table_insert (scanner->symbol_table, key, key);
+      g_hash_table_add (scanner->symbol_table, key);
     }
   else
     key->value = value;
@@ -1532,7 +1533,7 @@ g_scanner_unexp_token (GScanner		*scanner,
 		   "%s%s",
 		   need_valid ? "valid " : "",
 		   symbol_spec);
-      /* FIXME: should we attempt to lookup the symbol_name for symbol_2_token? */
+      /* FIXME: should we attempt to look up the symbol_name for symbol_2_token? */
       break;
     case G_TOKEN_CHAR:
       _g_snprintf (expected_string, expected_string_len, "%scharacter",
@@ -1697,12 +1698,7 @@ g_scanner_get_token_i (GScanner	*scanner,
       *token_p = G_TOKEN_FLOAT;
       if (scanner->config->store_int64)
         {
-#ifdef _MSC_VER
-          /* work around error C2520, see gvaluetransform.c */
-          value_p->v_float = (__int64)value_p->v_int64;
-#else
           value_p->v_float = value_p->v_int64;
-#endif
         }
       else
 	value_p->v_float = value_p->v_int;

@@ -37,13 +37,24 @@
  * @see_also: #GParamSpecBoxed, g_param_spec_boxed()
  * @title: Boxed Types
  *
- * GBoxed is a generic wrapper mechanism for arbitrary C structures. The only
- * thing the type system needs to know about the structures is how to copy and
- * free them, beyond that they are treated as opaque chunks of memory.
+ * #GBoxed is a generic wrapper mechanism for arbitrary C structures. The only
+ * thing the type system needs to know about the structures is how to copy them
+ * (a #GBoxedCopyFunc) and how to free them (a #GBoxedFreeFunc) — beyond that
+ * they are treated as opaque chunks of memory.
  *
  * Boxed types are useful for simple value-holder structures like rectangles or
- * points. They can also be used for wrapping structures defined in non-GObject
- * based libraries.
+ * points. They can also be used for wrapping structures defined in non-#GObject
+ * based libraries. They allow arbitrary structures to be handled in a uniform
+ * way, allowing uniform copying (or referencing) and freeing (or unreferencing)
+ * of them, and uniform representation of the type of the contained structure.
+ * In turn, this allows any type which can be boxed to be set as the data in a
+ * #GValue, which allows for polymorphic handling of a much wider range of data
+ * types, and hence usage of such types as #GObject property values.
+ *
+ * #GBoxed is designed so that reference counted types can be boxed. Use the
+ * type’s ‘ref’ function as the #GBoxedCopyFunc, and its ‘unref’ function as the
+ * #GBoxedFreeFunc. For example, for #GBytes, the #GBoxedCopyFunc is
+ * g_bytes_ref(), and the #GBoxedFreeFunc is g_bytes_unref().
  */
 
 static inline void              /* keep this function in sync with gvalue.c */
@@ -100,19 +111,13 @@ _g_boxed_type_init (void)
     NULL,                       /* value_table */
   };
   const GTypeFundamentalInfo finfo = { G_TYPE_FLAG_DERIVABLE, };
-  GType type;
+  GType type G_GNUC_UNUSED  /* when compiling with G_DISABLE_ASSERT */;
 
   /* G_TYPE_BOXED
    */
   type = g_type_register_fundamental (G_TYPE_BOXED, g_intern_static_string ("GBoxed"), &info, &finfo,
 				      G_TYPE_FLAG_ABSTRACT | G_TYPE_FLAG_VALUE_ABSTRACT);
   g_assert (type == G_TYPE_BOXED);
-}
-
-static GDate *
-gdate_copy (GDate *date)
-{
-  return g_date_new_julian (g_date_get_julian (date));
 }
 
 static GString *
@@ -130,7 +135,7 @@ gstring_free (GString *gstring)
 G_DEFINE_BOXED_TYPE (GClosure, g_closure, g_closure_ref, g_closure_unref)
 G_DEFINE_BOXED_TYPE (GValue, g_value, value_copy, value_free)
 G_DEFINE_BOXED_TYPE (GValueArray, g_value_array, g_value_array_copy, g_value_array_free)
-G_DEFINE_BOXED_TYPE (GDate, g_date, gdate_copy, g_date_free)
+G_DEFINE_BOXED_TYPE (GDate, g_date, g_date_copy, g_date_free)
 /* the naming is a bit odd, but GString is obviously not G_TYPE_STRING */
 G_DEFINE_BOXED_TYPE (GString, g_gstring, gstring_copy, gstring_free)
 G_DEFINE_BOXED_TYPE (GHashTable, g_hash_table, g_hash_table_ref, g_hash_table_unref)
@@ -341,8 +346,7 @@ g_boxed_copy (GType         boxed_type,
   g_return_val_if_fail (src_boxed != NULL, NULL);
 
   value_table = g_type_value_table_peek (boxed_type);
-  if (!value_table)
-    g_return_val_if_fail (G_TYPE_IS_VALUE_TYPE (boxed_type), NULL);
+  g_assert (value_table != NULL);
 
   /* check if our proxying implementation is used, we can short-cut here */
   if (value_table->value_copy == boxed_proxy_value_copy)
@@ -399,8 +403,7 @@ g_boxed_free (GType    boxed_type,
   g_return_if_fail (boxed != NULL);
 
   value_table = g_type_value_table_peek (boxed_type);
-  if (!value_table)
-    g_return_if_fail (G_TYPE_IS_VALUE_TYPE (boxed_type));
+  g_assert (value_table != NULL);
 
   /* check if our proxying implementation is used, we can short-cut here */
   if (value_table->value_free == boxed_proxy_value_free)
@@ -534,8 +537,8 @@ g_value_set_boxed_take_ownership (GValue       *value,
  * @v_boxed: (nullable): duplicated unowned boxed value to be set
  *
  * Sets the contents of a %G_TYPE_BOXED derived #GValue to @v_boxed
- * and takes over the ownership of the callers reference to @v_boxed;
- * the caller doesn't have to unref it any more.
+ * and takes over the ownership of the caller’s reference to @v_boxed;
+ * the caller doesn’t have to unref it any more.
  *
  * Since: 2.4
  */

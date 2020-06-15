@@ -31,9 +31,6 @@
 #include "gunixfdlist.h"
 #endif
 
-#ifndef O_PATH
-#define O_PATH 0
-#endif
 #ifndef O_CLOEXEC
 #define O_CLOEXEC 0
 #else
@@ -107,7 +104,7 @@ g_openuri_portal_open_uri (const char  *uri,
 
       path = g_file_get_path (file);
 
-      fd = g_open (path, O_PATH | O_CLOEXEC);
+      fd = g_open (path, O_RDONLY | O_CLOEXEC);
       errsv = errno;
       if (fd == -1)
         {
@@ -197,15 +194,17 @@ open_call_done (GObject      *source,
                 GAsyncResult *result,
                 gpointer      user_data)
 {
-  GDBusConnection *connection = G_DBUS_CONNECTION (source);
+  GXdpOpenURI *openuri = GXDP_OPEN_URI (source);
+  GDBusConnection *connection;
   GTask *task = user_data;
   GError *error = NULL;
   gboolean open_file;
   gboolean res;
-  char *path;
+  char *path = NULL;
   const char *handle;
   guint signal_id;
 
+  connection = g_dbus_proxy_get_connection (G_DBUS_PROXY (openuri));
   open_file = GPOINTER_TO_INT (g_object_get_data (G_OBJECT (task), "open-file"));
 
   if (open_file)
@@ -222,7 +221,7 @@ open_call_done (GObject      *source,
     }
 
   handle = (const char *)g_object_get_data (G_OBJECT (task), "handle");
-  if (strcmp (handle, path) != 0)
+  if (g_strcmp0 (handle, path) != 0)
     {
       signal_id = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (task), "signal-id"));
       g_dbus_connection_signal_unsubscribe (connection, signal_id);
@@ -280,7 +279,7 @@ g_openuri_portal_open_uri_async (const char          *uri,
         if (sender[i] == '.')
           sender[i] = '_';
 
-      handle = g_strdup_printf ("/org/fredesktop/portal/desktop/request/%s/%s", sender, token);
+      handle = g_strdup_printf ("/org/freedesktop/portal/desktop/request/%s/%s", sender, token);
       g_object_set_data_full (G_OBJECT (task), "handle", handle, g_free);
       g_free (sender);
 
@@ -316,7 +315,7 @@ g_openuri_portal_open_uri_async (const char          *uri,
         g_object_set_data (G_OBJECT (task), "open-file", GINT_TO_POINTER (TRUE));
 
       path = g_file_get_path (file);
-      fd = g_open (path, O_PATH | O_CLOEXEC);
+      fd = g_open (path, O_RDONLY | O_CLOEXEC);
       errsv = errno;
       if (fd == -1)
         {

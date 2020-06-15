@@ -38,10 +38,13 @@ poll_source_callback (GPollableInputStream *in,
   gssize nread;
   gboolean *success = user_data;
 
+  g_assert_true (g_pollable_input_stream_is_readable (G_POLLABLE_INPUT_STREAM (in)));
+
   nread = g_pollable_input_stream_read_nonblocking (in, buf, 2, NULL, &error);
   g_assert_no_error (error);
   g_assert_cmpint (nread, ==, 2);
   g_assert_cmpstr (buf, ==, "x");
+  g_assert_false (g_pollable_input_stream_is_readable (G_POLLABLE_INPUT_STREAM (in)));
 
   *success = TRUE;
   return G_SOURCE_REMOVE;
@@ -61,13 +64,17 @@ check_source_readability_callback (gpointer user_data)
 static gboolean
 write_callback (gpointer user_data)
 {
-  char *buf = "x";
+  const char *buf = "x";
   gssize nwrote;
   GError *error = NULL;
+
+  g_assert_true (g_pollable_output_stream_is_writable (G_POLLABLE_OUTPUT_STREAM (out)));
 
   nwrote = g_output_stream_write (out, buf, 2, NULL, &error);
   g_assert_no_error (error);
   g_assert_cmpint (nwrote, ==, 2);
+  g_assert_true (g_pollable_output_stream_is_writable (G_POLLABLE_OUTPUT_STREAM (out)));
+
 /* Give the pipe a few ticks to propagate the write for sockets. On my
  * iMac i7, 40 works, 30 doesn't. */
   g_usleep (80L);

@@ -43,6 +43,7 @@ static gboolean     gtester_quiet = FALSE;
 static gboolean     gtester_verbose = FALSE;
 static gboolean     gtester_list_tests = FALSE;
 static gboolean     gtester_selftest = FALSE;
+static gboolean     gtester_ignore_deprecation = FALSE;
 static gboolean     subtest_running = FALSE;
 static gint         subtest_exitstatus = 0;
 static gboolean     subtest_io_pending = FALSE;
@@ -69,7 +70,7 @@ static const char*
 sindent (guint n)
 {
   static const char spaces[] = "                                                                                                    ";
-  int l = sizeof (spaces) - 1;
+  gsize l = sizeof (spaces) - 1;
   n = MIN (n, l);
   return spaces + l - n;
 }
@@ -102,21 +103,37 @@ testcase_close (long double duration,
                 gint        exit_status,
                 guint       n_forks)
 {
+  gboolean success;
+
   g_return_if_fail (testcase_open > 0);
   test_log_printfe ("%s<duration>%.6Lf</duration>\n", sindent (log_indent), duration);
+  success = exit_status == G_TEST_RUN_SUCCESS || exit_status == G_TEST_RUN_SKIPPED;
   test_log_printfe ("%s<status exit-status=\"%d\" n-forks=\"%d\" result=\"%s\"/>\n",
                     sindent (log_indent), exit_status, n_forks,
-                    exit_status ? "failed" : "success");
+                    success ? "success" : "failed");
   log_indent -= 2;
   test_log_printfe ("%s</testcase>\n", sindent (log_indent));
   testcase_open--;
   if (gtester_verbose)
-    g_print ("%s\n", exit_status ? "FAIL" : "OK");
-  if (exit_status && subtest_last_seed)
+    {
+      switch (exit_status)
+        {
+        case G_TEST_RUN_SUCCESS:
+          g_print ("OK\n");
+          break;
+        case G_TEST_RUN_SKIPPED:
+          g_print ("SKIP\n");
+          break;
+        default:
+          g_print ("FAIL\n");
+          break;
+        }
+    }
+  if (!success && subtest_last_seed)
     g_print ("GTester: last random seed: %s\n", subtest_last_seed);
-  if (exit_status)
+  if (!success)
     testcase_fail_count += 1;
-  if (subtest_mode_fatal && exit_status)
+  if (subtest_mode_fatal && !success)
     terminate();
 }
 
@@ -306,10 +323,8 @@ launch_test_binary (const char *binary,
     argc++;
   if (!subtest_mode_fatal)
     argc++;
-  if (subtest_mode_quick)
-    argc++;
-  else
-    argc++;
+  /* Either -m=quick or -m=slow is always appended. */
+  argc++;
   if (subtest_mode_perf)
     argc++;
   if (!subtest_mode_undefined)
@@ -486,7 +501,7 @@ usage (gboolean just_version)
   g_print ("Help Options:\n");
   g_print ("  -h, --help                    Show this help message\n\n");
   g_print ("Utility Options:\n");
-  g_print ("  -v, --version                 Print version informations\n");
+  g_print ("  -v, --version                 Print version information\n");
   g_print ("  --g-fatal-warnings            Make warnings fatal (abort)\n");
   g_print ("  -k, --keep-going              Continue running after tests failed\n");
   g_print ("  -l                            List paths of available test cases\n");
@@ -646,6 +661,11 @@ parse_args (gint    *argc_p,
             }
           argv[i] = NULL;
         }
+      else if (strcmp ("--i-know-this-is-deprecated", argv[i]) == 0)
+        {
+          gtester_ignore_deprecation = TRUE;
+          argv[i] = NULL;
+        }
     }
   /* collapse argv */
   e = 1;
@@ -663,7 +683,7 @@ int
 main (int    argc,
       char **argv)
 {
-  guint ui;
+  gint ui;
 
   g_set_prgname (argv[0]);
   parse_args (&argc, &argv);
@@ -676,6 +696,10 @@ main (int    argc,
       return 1;
     }
 
+  if (!gtester_ignore_deprecation)
+    g_warning ("Deprecated: Since GLib 2.62, gtester and gtester-report are "
+               "deprecated. Port to TAP.");
+
   if (output_filename)
     {
       int errsv;
@@ -686,6 +710,8 @@ main (int    argc,
     }
 
   test_log_printfe ("<?xml version=\"1.0\"?>\n");
+  test_log_printfe ("<!-- Deprecated: Since GLib 2.62, gtester and "
+                    "gtester-report are deprecated. Port to TAP. -->\n");
   test_log_printfe ("%s<gtester>\n", sindent (log_indent));
   log_indent += 2;
   for (ui = 1; ui < argc; ui++)

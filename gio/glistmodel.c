@@ -24,6 +24,7 @@
 
 #include "glistmodel.h"
 #include "glibintl.h"
+#include "gmarshal-internal.h"
 
 G_DEFINE_INTERFACE (GListModel, g_list_model, G_TYPE_OBJECT)
 
@@ -96,6 +97,22 @@ G_DEFINE_INTERFACE (GListModel, g_list_model, G_TYPE_OBJECT)
  */
 
 /**
+ * GListModelInterface::get_item:
+ * @list: a #GListModel
+ * @position: the position of the item to fetch
+ *
+ * Get the item at @position. If @position is greater than the number of
+ * items in @list, %NULL is returned.
+ *
+ * %NULL is never returned for an index that is smaller than the length
+ * of the list.  See g_list_model_get_n_items().
+ *
+ * Returns: (type GObject) (transfer full) (nullable): the object at @position.
+ *
+ * Since: 2.44
+ */
+
+/**
  * GListModel:
  *
  * #GListModel is an opaque data structure and can only be accessed
@@ -114,9 +131,12 @@ g_list_model_default_init (GListModelInterface *iface)
    * @removed: the number of items removed
    * @added: the number of items added
    *
-   * This signal is emitted whenever items were added or removed to
-   * @list. At @position, @removed items were removed and @added items
-   * were added in their place.
+   * This signal is emitted whenever items were added to or removed
+   * from @list. At @position, @removed items were removed and @added
+   * items were added in their place.
+   *
+   * Note: If @removed != @added, the positions of all later items
+   * in the model change.
    *
    * Since: 2.44
    */
@@ -125,9 +145,12 @@ g_list_model_default_init (GListModelInterface *iface)
                                               G_SIGNAL_RUN_LAST,
                                               0,
                                               NULL, NULL,
-                                              g_cclosure_marshal_generic,
+                                              _g_cclosure_marshal_VOID__UINT_UINT_UINT,
                                               G_TYPE_NONE,
                                               3, G_TYPE_UINT, G_TYPE_UINT, G_TYPE_UINT);
+  g_signal_set_va_marshaller (g_list_model_changed_signal,
+                              G_TYPE_FROM_INTERFACE (iface),
+                              _g_cclosure_marshal_VOID__UINT_UINT_UINTv);
 }
 
 /**
@@ -186,7 +209,7 @@ g_list_model_get_n_items (GListModel *list)
  * %NULL is never returned for an index that is smaller than the length
  * of the list.  See g_list_model_get_n_items().
  *
- * Returns: (transfer full) (nullable) (type GObject): the item at @position.
+ * Returns: (transfer full) (nullable): the item at @position.
  *
  * Since: 2.44
  */

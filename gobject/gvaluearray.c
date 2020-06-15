@@ -55,14 +55,12 @@
  *   GArray *array = g_array_sized_new (FALSE, TRUE, sizeof (GValue), 10);
  *   g_array_set_clear_func (array, (GDestroyNotify) g_value_unset);
  * ]|
+ *
+ * Deprecated: 2.32: Use #GArray instead, if possible for the given use case,
+ *    as described above.
  */
 
-
-#ifdef	DISABLE_MEM_POOLS
-#  define	GROUP_N_VALUES	(1)	/* power of 2 !! */
-#else
-#  define	GROUP_N_VALUES	(8)	/* power of 2 !! */
-#endif
+#define	GROUP_N_VALUES	(8)	/* power of 2 !! */
 
 
 /* --- functions --- */
@@ -108,18 +106,6 @@ value_array_grow (GValueArray *value_array,
     }
 }
 
-static inline void
-value_array_shrink (GValueArray *value_array)
-{
-#ifdef  DISABLE_MEM_POOLS
-  if (value_array->n_prealloced >= value_array->n_values + GROUP_N_VALUES)
-    {
-      value_array->n_prealloced = (value_array->n_values + GROUP_N_VALUES - 1) & ~(GROUP_N_VALUES - 1);
-      value_array->values = g_renew (GValue, value_array->values, value_array->n_prealloced);
-    }
-#endif
-}
-
 /**
  * g_value_array_new:
  * @n_prealloced: number of values to preallocate space for
@@ -147,7 +133,7 @@ g_value_array_new (guint n_prealloced)
 }
 
 /**
- * g_value_array_free:
+ * g_value_array_free: (skip)
  * @value_array: #GValueArray to free
  *
  * Free a #GValueArray including its contents.
@@ -316,7 +302,6 @@ g_value_array_remove (GValueArray *value_array,
   if (index < value_array->n_values)
     memmove (value_array->values + index, value_array->values + index + 1,
              (value_array->n_values - index) * sizeof (value_array->values[0]));
-  value_array_shrink (value_array);
   if (value_array->n_prealloced > value_array->n_values)
     memset (value_array->values + value_array->n_values, 0, sizeof (value_array->values[0]));
 

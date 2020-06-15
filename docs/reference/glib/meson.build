@@ -1,4 +1,4 @@
-if get_option('with-docs') != 'no'
+if get_option('gtk_doc')
   subdir('xml')
 
   ignore_headers = [
@@ -8,6 +8,8 @@ if get_option('with-docs') != 'no'
     'gbsearcharray.h',
     'glib-private.h',
     'gmoduleconf.h',
+    'grcboxprivate.h',
+    'gstdioprivate.h',
     'gthreadprivate.h',
     'gunibreak.h',
     'gunicomp.h',
@@ -34,6 +36,9 @@ if get_option('with-docs') != 'no'
     'glib-init.h',
     'gconstructor.h',
     'valgrind.h',
+    'gutilsprivate.h',
+    'gvalgrind.h',
+    'dirent.h',
   ]
 
   docpath = join_paths(glib_datadir, 'gtk-doc', 'html')
@@ -51,10 +56,7 @@ if get_option('with-docs') != 'no'
                mode : 'none',
                src_dir : [ 'glib', 'gmodule' ],
                dependencies : libglib_dep,
-               scan_args : [
-                 '--rebuild-types',
-                 '--deprecated-guards=G_DISABLE_DEPRECATED',
-                 '--ignore-decorators=GLIB_VAR|G_GNUC_WARN_UNUSED_RESULT',
+               scan_args : gtkdoc_common_scan_args + [
                  '--ignore-headers=' + ' '.join(ignore_headers),
                ],
                content_files : [
@@ -85,12 +87,12 @@ if get_option('with-docs') != 'no'
                ],
                fixxref_args: [
                  '--html-dir=' + docpath,
-                 # TODO: gobject/gio extra dirs
                ],
-               install: true)
+               install: true,
+               check: true)
 endif
 
-if get_option('with-man') != 'no' and xsltproc.found()
+if get_option('man')
   manpages = ['glib-gettextize', 'gtester', 'gtester-report']
   foreach page : manpages
     custom_target(page + '-man',

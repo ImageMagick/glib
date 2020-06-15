@@ -28,7 +28,7 @@
 #include <errno.h>
 
 #include "gio-tool.h"
-
+#include "glib/glib-private.h"
 
 void
 print_error (const gchar *format, ...)
@@ -115,7 +115,7 @@ attribute_type_to_string (GFileAttributeType type)
     case G_FILE_ATTRIBUTE_TYPE_OBJECT:
       return "object";
     default:
-      return "uknown type";
+      return "unknown type";
     }
 }
 
@@ -174,7 +174,7 @@ attribute_flags_to_string (GFileAttributeInfoFlags flags)
         {
           if (!first)
             g_string_append (s, ", ");
-          g_string_append (s, /* gettext */ (flag_descr[i].descr));
+          g_string_append (s, gettext (flag_descr[i].descr));
           first = FALSE;
         }
     }
@@ -221,7 +221,7 @@ static void
 usage (void)
 {
   g_printerr ("%s\n", _("Usage:"));
-  g_printerr ("  gio %s %s\n", _("COMMAND"), _("[ARGS...]"));
+  g_printerr ("  gio %s %s\n", _("COMMAND"), _("[ARGS…]"));
   g_printerr ("\n");
   g_printerr ("%s\n", _("Commands:"));
   g_printerr ("  help     %s\n", _("Print help"));
@@ -247,16 +247,26 @@ usage (void)
   exit (1);
 }
 
-/*
 int
 main (int argc, char **argv)
 {
   const char *command;
   gboolean do_help;
 
-  setlocale (LC_ALL, "");
+#ifdef G_OS_WIN32
+  gchar *localedir;
+#endif
+
+  setlocale (LC_ALL, GLIB_DEFAULT_LOCALE);
   textdomain (GETTEXT_PACKAGE);
+
+#ifdef G_OS_WIN32
+  localedir = _glib_get_locale_dir ();
+  bindtextdomain (GETTEXT_PACKAGE, localedir);
+  g_free (localedir);
+#else
   bindtextdomain (GETTEXT_PACKAGE, GLIB_LOCALE_DIR);
+#endif
 
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -333,4 +343,3 @@ main (int argc, char **argv)
 
   return 1;
 }
-*/

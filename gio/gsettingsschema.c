@@ -27,10 +27,7 @@
 #include <glibintl.h>
 #include <locale.h>
 #include <string.h>
-
-#if (_MSC_VER < 1600)
-#pragma optimize("",off)
-#endif
+#include <stdlib.h>
 
 /**
  * SECTION:gsettingsschema
@@ -72,7 +69,7 @@
  *   ...
  *
  *   plugin->schema_source =
- *     g_settings_new_schema_source_from_directory (dir,
+ *     g_settings_schema_source_new_from_directory (dir,
  *       g_settings_schema_source_get_default (), FALSE, NULL);
  *
  *   ...
@@ -234,7 +231,7 @@ g_settings_schema_source_unref (GSettingsSchemaSource *source)
 
       if (source->parent)
         g_settings_schema_source_unref (source->parent);
-      gvdb_table_unref (source->table);
+      gvdb_table_free (source->table);
       g_free (source->directory);
 
       if (source->text_tables)
@@ -269,6 +266,9 @@ g_settings_schema_source_unref (GSettingsSchemaSource *source)
  * in crashes or inconsistent behaviour in the case of a corrupted file.
  * Generally, you should set @trusted to %TRUE for files installed by the
  * system and to %FALSE for files in the home directory.
+ *
+ * In either case, an empty file or some types of corruption in the file will
+ * result in %G_FILE_ERROR_INVAL being returned.
  *
  * If @parent is non-%NULL then there are two effects.
  *
@@ -345,6 +345,7 @@ initialise_schema_sources (void)
     {
       const gchar * const *dirs;
       const gchar *path;
+      gchar **extra_schema_dirs;
       gint i;
 
       /* iterate in reverse: count up, then count down */
@@ -357,7 +358,15 @@ initialise_schema_sources (void)
       try_prepend_data_dir (g_get_user_data_dir ());
 
       if ((path = g_getenv ("GSETTINGS_SCHEMA_DIR")) != NULL)
-        try_prepend_dir (path);
+        {
+          extra_schema_dirs = g_strsplit (path, G_SEARCHPATH_SEPARATOR_S, 0);
+          for (i = 0; extra_schema_dirs[i]; i++);
+
+          while (i--)
+            try_prepend_dir (extra_schema_dirs[i]);
+
+          g_strfreev (extra_schema_dirs);
+        }
 
       g_once_init_leave (&initialised, TRUE);
     }
@@ -380,11 +389,11 @@ initialise_schema_sources (void)
  * lookups performed against the default source should probably be done
  * recursively.
  *
- * Returns: (transfer none): the default schema source
+ * Returns: (transfer none) (nullable): the default schema source
  *
  * Since: 2.32
  **/
- GSettingsSchemaSource *
+GSettingsSchemaSource *
 g_settings_schema_source_get_default (void)
 {
   initialise_schema_sources ();
@@ -742,9 +751,9 @@ g_settings_schema_source_get_text_tables (GSettingsSchemaSource *source)
  * @source: a #GSettingsSchemaSource
  * @recursive: if we should recurse
  * @non_relocatable: (out) (transfer full) (array zero-terminated=1): the
- *   list of non-relocatable schemas
+ *   list of non-relocatable schemas, in no defined order
  * @relocatable: (out) (transfer full) (array zero-terminated=1): the list
- *   of relocatable schemas
+ *   of relocatable schemas, in no defined order
  *
  * Lists the schemas in a given source.
  *
@@ -789,20 +798,23 @@ g_settings_schema_source_list_schemas (GSettingsSchemaSource   *source,
 
       for (i = 0; list[i]; i++)
         {
-          if (!g_hash_table_lookup (single, list[i]) &&
-              !g_hash_table_lookup (reloc, list[i]))
+          if (!g_hash_table_contains (single, list[i]) &&
+              !g_hash_table_contains (reloc, list[i]))
             {
+              gchar *schema;
               GvdbTable *table;
+
+              schema = g_strdup (list[i]);
 
               table = gvdb_table_get_table (s->table, list[i]);
               g_assert (table != NULL);
 
               if (gvdb_table_has_value (table, ".path"))
-                g_hash_table_insert (single, g_strdup (list[i]), NULL);
+                g_hash_table_add (single, schema);
               else
-                g_hash_table_insert (reloc, g_strdup (list[i]), NULL);
+                g_hash_table_add (reloc, schema);
 
-              gvdb_table_unref (table);
+              gvdb_table_free (table);
             }
         }
 
@@ -851,11 +863,11 @@ ensure_schema_lists (void)
 /**
  * g_settings_list_schemas:
  *
- * <!-- -->
+ * Deprecated.
  *
  * Returns: (element-type utf8) (transfer none):  a list of #GSettings
- *   schemas that are available.  The list must not be modified or
- *   freed.
+ *   schemas that are available, in no defined order.  The list must not be
+ *   modified or freed.
  *
  * Since: 2.26
  *
@@ -875,11 +887,11 @@ g_settings_list_schemas (void)
 /**
  * g_settings_list_relocatable_schemas:
  *
- * <!-- -->
+ * Deprecated.
  *
  * Returns: (element-type utf8) (transfer none): a list of relocatable
- *   #GSettings schemas that are available.  The list must not be
- *   modified or freed.
+ *   #GSettings schemas that are available, in no defined order.  The list must
+ *   not be modified or freed.
  *
  * Since: 2.28
  *
@@ -928,7 +940,7 @@ g_settings_schema_unref (GSettingsSchema *schema)
         g_settings_schema_unref (schema->extends);
 
       g_settings_schema_source_unref (schema->source);
-      gvdb_table_unref (schema->table);
+      gvdb_table_free (schema->table);
       g_free (schema->items);
       g_free (schema->id);
 
@@ -986,7 +998,7 @@ g_settings_schema_get_value (GSettingsSchema *schema,
  * database: those located at the path returned by this function.
  *
  * Relocatable schemas can be referenced by other schemas and can
- * threfore describe multiple sets of keys at different locations.  For
+ * therefore describe multiple sets of keys at different locations.  For
  * relocatable schemas, this function will return %NULL.
  *
  * Returns: (transfer none): the path of the schema, or %NULL
@@ -1032,7 +1044,8 @@ g_settings_schema_has_key (GSettingsSchema *schema,
  * You should free the return value with g_strfreev() when you are done
  * with it.
  *
- * Returns: (transfer full) (element-type utf8): a list of the children on @settings
+ * Returns: (transfer full) (element-type utf8): a list of the children on
+ *    @settings, in no defined order
  *
  * Since: 2.44
  */
@@ -1077,7 +1090,7 @@ g_settings_schema_list_children (GSettingsSchema *schema)
  * function is intended for introspection reasons.
  *
  * Returns: (transfer full) (element-type utf8): a list of the keys on
- *   @schema
+ *   @schema, in no defined order
  *
  * Since: 2.46
  */
@@ -1188,7 +1201,7 @@ g_settings_schema_list (GSettingsSchema *schema,
                   g_hash_table_iter_remove (&iter);
               }
 
-            gvdb_table_unref (child_table);
+            gvdb_table_free (child_table);
           }
 
       /* Now create the list */
@@ -1284,6 +1297,11 @@ g_settings_schema_key_init (GSettingsSchemaKey *key,
           endian_fixup (&key->maximum);
           break;
 
+        case 'd':
+          g_variant_get (data, "@a{sv}", &key->desktop_overrides);
+          endian_fixup (&key->desktop_overrides);
+          break;
+
         default:
           g_warning ("unknown schema extension '%c'", code);
           break;
@@ -1303,6 +1321,9 @@ g_settings_schema_key_clear (GSettingsSchemaKey *key)
 
   if (key->maximum)
     g_variant_unref (key->maximum);
+
+  if (key->desktop_overrides)
+    g_variant_unref (key->desktop_overrides);
 
   g_variant_unref (key->default_value);
 
@@ -1411,11 +1432,40 @@ g_settings_schema_key_get_translated_default (GSettingsSchemaKey *key)
   return value;
 }
 
+GVariant *
+g_settings_schema_key_get_per_desktop_default (GSettingsSchemaKey *key)
+{
+  static const gchar * const *current_desktops;
+  GVariant *value = NULL;
+  gint i;
+
+  if (!key->desktop_overrides)
+    return NULL;
+
+  if (g_once_init_enter (&current_desktops))
+    {
+      const gchar *xdg_current_desktop = g_getenv ("XDG_CURRENT_DESKTOP");
+      gchar **tmp;
+
+      if (xdg_current_desktop != NULL && xdg_current_desktop[0] != '\0')
+        tmp = g_strsplit (xdg_current_desktop, G_SEARCHPATH_SEPARATOR_S, -1);
+      else
+        tmp = g_new0 (gchar *, 0 + 1);
+
+      g_once_init_leave (&current_desktops, (const gchar **) tmp);
+    }
+
+  for (i = 0; value == NULL && current_desktops[i] != NULL; i++)
+    value = g_variant_lookup_value (key->desktop_overrides, current_desktops[i], NULL);
+
+  return value;
+}
+
 gint
 g_settings_schema_key_to_enum (GSettingsSchemaKey *key,
                                GVariant           *value)
 {
-  gboolean it_worked;
+  gboolean it_worked G_GNUC_UNUSED  /* when compiling with G_DISABLE_ASSERT */;
   guint result;
 
   it_worked = strinfo_enum_from_string (key->strinfo, key->strinfo_length,
@@ -1432,6 +1482,7 @@ g_settings_schema_key_to_enum (GSettingsSchemaKey *key,
   return result;
 }
 
+/* Returns a new floating #GVariant. */
 GVariant *
 g_settings_schema_key_from_enum (GSettingsSchemaKey *key,
                                  gint                value)
@@ -1458,7 +1509,7 @@ g_settings_schema_key_to_flags (GSettingsSchemaKey *key,
   g_variant_iter_init (&iter, value);
   while (g_variant_iter_next (&iter, "&s", &flag))
     {
-      gboolean it_worked;
+      gboolean it_worked G_GNUC_UNUSED  /* when compiling with G_DISABLE_ASSERT */;
       guint flag_value;
 
       it_worked = strinfo_enum_from_string (key->strinfo, key->strinfo_length, flag, &flag_value);
@@ -1471,6 +1522,7 @@ g_settings_schema_key_to_flags (GSettingsSchemaKey *key,
   return result;
 }
 
+/* Returns a new floating #GVariant. */
 GVariant *
 g_settings_schema_key_from_flags (GSettingsSchemaKey *key,
                                   guint               value)
@@ -1700,6 +1752,9 @@ g_settings_schema_key_get_default_value (GSettingsSchemaKey *key)
   value = g_settings_schema_key_get_translated_default (key);
 
   if (!value)
+    value = g_settings_schema_key_get_per_desktop_default (key);
+
+  if (!value)
     value = g_variant_ref (key->default_value);
 
   return value;
@@ -1822,7 +1877,3 @@ g_settings_schema_key_range_check (GSettingsSchemaKey *key,
   return strinfo_is_string_valid (key->strinfo, key->strinfo_length,
                                   g_variant_get_string (value, NULL));
 }
-
-#if (_MSC_VER < 1600)
-#pragma optimize("",on)
-#endif

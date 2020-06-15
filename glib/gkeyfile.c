@@ -119,7 +119,7 @@
  * are optional.
  * Space before and after the '=' character are ignored. Newline, tab,
  * carriage return and backslash characters in value are escaped as \n,
- * \t, \r, and \\, respectively. To preserve leading spaces in values,
+ * \t, \r, and \\\\, respectively. To preserve leading spaces in values,
  * these can also be escaped as \s.
  *
  * Key files can store strings (possibly with localized variants), integers,
@@ -152,6 +152,58 @@
  * multiple groups with the same name; they are merged together.
  * Another difference is that keys and group names in key files are not
  * restricted to ASCII characters.
+ *
+ * Here is an example of loading a key file and reading a value:
+ * |[<!-- language="C" -->
+ * g_autoptr(GError) error = NULL;
+ * g_autoptr(GKeyFile) key_file = g_key_file_new ();
+ *
+ * if (!g_key_file_load_from_file (key_file, "key-file.ini", flags, &error))
+ *   {
+ *     if (!g_error_matches (error, G_FILE_ERROR, G_FILE_ERROR_NOENT))
+ *       g_warning ("Error loading key file: %s", error->message);
+ *     return;
+ *   }
+ *
+ * g_autofree gchar *val = g_key_file_get_string (key_file, "Group Name", "SomeKey", &error);
+ * if (val == NULL &&
+ *     !g_error_matches (error, G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_KEY_NOT_FOUND))
+ *   {
+ *     g_warning ("Error finding key in key file: %s", error->message);
+ *     return;
+ *   }
+ * else if (val == NULL)
+ *   {
+ *     // Fall back to a default value.
+ *     val = g_strdup ("default-value");
+ *   }
+ * ]|
+ *
+ * Here is an example of creating and saving a key file:
+ * |[<!-- language="C" -->
+ * g_autoptr(GKeyFile) key_file = g_key_file_new ();
+ * const gchar *val = …;
+ * g_autoptr(GError) error = NULL;
+ *
+ * g_key_file_set_string (key_file, "Group Name", "SomeKey", val);
+ *
+ * // Save as a file.
+ * if (!g_key_file_save_to_file (key_file, "key-file.ini", &error))
+ *   {
+ *     g_warning ("Error saving key file: %s", error->message);
+ *     return;
+ *   }
+ *
+ * // Or store to a GBytes for use elsewhere.
+ * gsize data_len;
+ * g_autofree guint8 *data = (guint8 *) g_key_file_to_data (key_file, &data_len, &error);
+ * if (data == NULL)
+ *   {
+ *     g_warning ("Error saving key file: %s", error->message);
+ *     return;
+ *   }
+ * g_autoptr(GBytes) bytes = g_bytes_new_take (g_steal_pointer (&data), data_len);
+ * ]|
  */
 
 /**
@@ -547,7 +599,8 @@ static gboolean              g_key_file_parse_value_as_boolean (GKeyFile        
 static gchar                *g_key_file_parse_boolean_as_value (GKeyFile               *key_file,
 								gboolean                value);
 static gchar                *g_key_file_parse_value_as_comment (GKeyFile               *key_file,
-                                                                const gchar            *value);
+                                                                const gchar            *value,
+                                                                gboolean                is_final_line);
 static gchar                *g_key_file_parse_comment_as_value (GKeyFile               *key_file,
                                                                 const gchar            *comment);
 static void                  g_key_file_parse_key_value_pair   (GKeyFile               *key_file,
@@ -737,7 +790,7 @@ find_file_in_data_dirs (const gchar   *file,
                              "found in search dirs"));
     }
 
-  if (output_file != NULL && fd > 0)
+  if (output_file != NULL && fd != -1)
     *output_file = g_strdup (path);
 
   g_free (path);
@@ -1139,7 +1192,11 @@ g_key_file_free (GKeyFile *key_file)
   g_return_if_fail (key_file != NULL);
 
   g_key_file_clear (key_file);
-  g_key_file_unref (key_file);
+
+  if (g_atomic_int_dec_and_test (&key_file->ref_count))
+    g_slice_free (GKeyFile, key_file);
+  else
+    g_key_file_init (key_file);
 }
 
 /**
@@ -2131,6 +2188,10 @@ g_key_file_set_locale_string (GKeyFile     *key_file,
  * translated in the given @locale if available.  If @locale is
  * %NULL then the current locale is assumed. 
  *
+ * If @locale is to be non-%NULL, or if the current locale will change over
+ * the lifetime of the #GKeyFile, it must be loaded with
+ * %G_KEY_FILE_KEEP_TRANSLATIONS in order to load strings for all locales.
+ *
  * If @key cannot be found then %NULL is returned and @error is set 
  * to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the value associated
  * with @key cannot be interpreted or no suitable translation can
@@ -2207,6 +2268,71 @@ g_key_file_get_locale_string (GKeyFile     *key_file,
 }
 
 /**
+ * g_key_file_get_locale_for_key:
+ * @key_file: a #GKeyFile
+ * @group_name: a group name
+ * @key: a key
+ * @locale: (nullable): a locale identifier or %NULL
+ *
+ * Returns the actual locale which the result of
+ * g_key_file_get_locale_string() or g_key_file_get_locale_string_list()
+ * came from.
+ *
+ * If calling g_key_file_get_locale_string() or
+ * g_key_file_get_locale_string_list() with exactly the same @key_file,
+ * @group_name, @key and @locale, the result of those functions will
+ * have originally been tagged with the locale that is the result of
+ * this function.
+ *
+ * Returns: (nullable): the locale from the file, or %NULL if the key was not
+ *   found or the entry in the file was was untranslated
+ *
+ * Since: 2.56
+ */
+gchar *
+g_key_file_get_locale_for_key (GKeyFile    *key_file,
+                               const gchar *group_name,
+                               const gchar *key,
+                               const gchar *locale)
+{
+  gchar **languages_allocated = NULL;
+  const gchar * const *languages;
+  gchar *result = NULL;
+  gsize i;
+
+  g_return_val_if_fail (key_file != NULL, NULL);
+  g_return_val_if_fail (group_name != NULL, NULL);
+  g_return_val_if_fail (key != NULL, NULL);
+
+  if (locale != NULL)
+    {
+      languages_allocated = g_get_locale_variants (locale);
+      languages = (const gchar * const *) languages_allocated;
+    }
+  else
+    languages = g_get_language_names ();
+
+  for (i = 0; languages[i] != NULL; i++)
+    {
+      gchar *candidate_key, *translated_value;
+
+      candidate_key = g_strdup_printf ("%s[%s]", key, languages[i]);
+      translated_value = g_key_file_get_string (key_file, group_name, candidate_key, NULL);
+      g_free (translated_value);
+      g_free (candidate_key);
+
+      if (translated_value != NULL)
+        break;
+   }
+
+  result = g_strdup (languages[i]);
+
+  g_strfreev (languages_allocated);
+
+  return result;
+}
+
+/**
  * g_key_file_get_locale_string_list:
  * @key_file: a #GKeyFile
  * @group_name: a group name
@@ -2218,7 +2344,11 @@ g_key_file_get_locale_string (GKeyFile     *key_file,
  * Returns the values associated with @key under @group_name
  * translated in the given @locale if available.  If @locale is
  * %NULL then the current locale is assumed.
-
+ *
+ * If @locale is to be non-%NULL, or if the current locale will change over
+ * the lifetime of the #GKeyFile, it must be loaded with
+ * %G_KEY_FILE_KEEP_TRANSLATIONS in order to load strings for all locales.
+ *
  * If @key cannot be found then %NULL is returned and @error is set 
  * to #G_KEY_FILE_ERROR_KEY_NOT_FOUND. If the values associated
  * with @key cannot be interpreted or no suitable translations
@@ -2989,7 +3119,7 @@ g_key_file_get_double  (GKeyFile     *key_file,
  * @key_file: a #GKeyFile
  * @group_name: a group name
  * @key: a key
- * @value: an double value
+ * @value: a double value
  *
  * Associates a new double value with @key under @group_name.
  * If @key cannot be found then it is created. 
@@ -3187,6 +3317,7 @@ g_key_file_set_key_comment (GKeyFile     *key_file,
   pair->value = g_key_file_parse_comment_as_value (key_file, comment);
   
   key_node = g_list_insert (key_node, pair, 1);
+  (void) key_node;
 
   return TRUE;
 }
@@ -3382,8 +3513,9 @@ g_key_file_get_key_comment (GKeyFile     *key_file,
       
       if (string == NULL)
 	string = g_string_sized_new (512);
-      
-      comment = g_key_file_parse_value_as_comment (key_file, pair->value);
+
+      comment = g_key_file_parse_value_as_comment (key_file, pair->value,
+                                                   (tmp->prev == key_node));
       g_string_append (string, comment);
       g_free (comment);
       
@@ -3440,7 +3572,8 @@ get_group_comment (GKeyFile       *key_file,
       if (string == NULL)
         string = g_string_sized_new (512);
 
-      comment = g_key_file_parse_value_as_comment (key_file, pair->value);
+      comment = g_key_file_parse_value_as_comment (key_file, pair->value,
+                                                   (tmp->prev == NULL));
       g_string_append (string, comment);
       g_free (comment);
 
@@ -3511,7 +3644,9 @@ g_key_file_get_top_comment (GKeyFile  *key_file,
  * @group_name. If both @key and @group_name are %NULL, then
  * @comment will be read from above the first group in the file.
  *
- * Note that the returned string includes the '#' comment markers.
+ * Note that the returned string does not include the '#' comment markers,
+ * but does include any whitespace after them (on each line). It includes
+ * the line breaks between lines, but does not include the final line break.
  *
  * Returns: a comment that should be freed with g_free()
  *
@@ -4417,7 +4552,8 @@ g_key_file_parse_boolean_as_value (GKeyFile *key_file,
 
 static gchar *
 g_key_file_parse_value_as_comment (GKeyFile    *key_file,
-                                   const gchar *value)
+                                   const gchar *value,
+                                   gboolean     is_final_line)
 {
   GString *string;
   gchar **lines;
@@ -4429,12 +4565,21 @@ g_key_file_parse_value_as_comment (GKeyFile    *key_file,
 
   for (i = 0; lines[i] != NULL; i++)
     {
-        if (lines[i][0] != '#')
-           g_string_append_printf (string, "%s\n", lines[i]);
-        else 
-           g_string_append_printf (string, "%s\n", lines[i] + 1);
+      const gchar *line = lines[i];
+
+      if (i != 0)
+        g_string_append_c (string, '\n');
+
+      if (line[0] == '#')
+        line++;
+      g_string_append (string, line);
     }
   g_strfreev (lines);
+
+  /* This function gets called once per line of a comment, but we don’t want
+   * to add a trailing newline. */
+  if (!is_final_line)
+    g_string_append_c (string, '\n');
 
   return g_string_free (string, FALSE);
 }

@@ -612,7 +612,7 @@ _g_file_attribute_value_set_from_pointer (GFileAttributeValue *value,
       break;
 
     default:
-      g_warning ("Unknown type specified in g_file_info_set_attribute\n");
+      g_warning ("Unknown type specified in g_file_info_set_attribute");
       break;
     }
 }
@@ -917,7 +917,7 @@ g_file_attribute_info_list_bsearch (GFileAttributeInfoList *list,
 /**
  * g_file_attribute_info_list_lookup:
  * @list: a #GFileAttributeInfoList.
- * @name: the name of the attribute to lookup.
+ * @name: the name of the attribute to look up.
  *
  * Gets the file attribute with the name @name from @list.
  *

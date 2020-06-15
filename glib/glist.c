@@ -175,6 +175,13 @@ g_list_alloc (void)
  *
  * If list elements contain dynamically-allocated memory, you should
  * either use g_list_free_full() or free them manually first.
+ *
+ * It can be combined with g_steal_pointer() to ensure the list head pointer
+ * is not left dangling:
+ * |[<!-- language="C" -->
+ * GList *list_of_borrowed_things = …;  /<!-- -->* (transfer container) *<!-- -->/
+ * g_list_free (g_steal_pointer (&list_of_borrowed_things));
+ * ]|
  */
 void
 g_list_free (GList *list)
@@ -210,6 +217,18 @@ g_list_free_1 (GList *list)
  *
  * Convenience method, which frees all the memory used by a #GList,
  * and calls @free_func on every element's data.
+ *
+ * @free_func must not modify the list (eg, by removing the freed
+ * element from it).
+ *
+ * It can be combined with g_steal_pointer() to ensure the list head pointer
+ * is not left dangling ­— this also has the nice property that the head pointer
+ * is cleared before any of the list elements are freed, to prevent double frees
+ * from @free_func:
+ * |[<!-- language="C" -->
+ * GList *list_of_owned_things = …;  /<!-- -->* (transfer full) (element-type GObject) *<!-- -->/
+ * g_list_free_full (g_steal_pointer (&list_of_owned_things), g_object_unref);
+ * ]|
  *
  * Since: 2.28
  */
@@ -365,6 +384,64 @@ g_list_insert (GList    *list,
 }
 
 /**
+ * g_list_insert_before_link:
+ * @list: a pointer to a #GList, this must point to the top of the list
+ * @sibling: (nullable): the list element before which the new element
+ *     is inserted or %NULL to insert at the end of the list
+ * @link_: the list element to be added, which must not be part of
+ *     any other list
+ *
+ * Inserts @link_ into the list before the given position.
+ *
+ * Returns: the (possibly changed) start of the #GList
+ *
+ * Since: 2.62
+ */
+GList *
+g_list_insert_before_link (GList *list,
+                           GList *sibling,
+                           GList *link_)
+{
+  g_return_val_if_fail (link_ != NULL, list);
+  g_return_val_if_fail (link_->prev == NULL, list);
+  g_return_val_if_fail (link_->next == NULL, list);
+
+  if (list == NULL)
+    {
+      g_return_val_if_fail (sibling == NULL, list);
+      return link_;
+    }
+  else if (sibling != NULL)
+    {
+      link_->prev = sibling->prev;
+      link_->next = sibling;
+      sibling->prev = link_;
+      if (link_->prev != NULL)
+        {
+          link_->prev->next = link_;
+          return list;
+        }
+      else
+        {
+          g_return_val_if_fail (sibling == list, link_);
+          return link_;
+        }
+    }
+  else
+    {
+      GList *last;
+
+      for (last = list; last->next != NULL; last = last->next) {}
+
+      last->next = link_;
+      last->next->prev = last;
+      last->next->next = NULL;
+
+      return list;
+    }
+}
+
+/**
  * g_list_insert_before:
  * @list: a pointer to a #GList, this must point to the top of the list
  * @sibling: the list element before which the new element 
@@ -380,14 +457,14 @@ g_list_insert_before (GList    *list,
                       GList    *sibling,
                       gpointer  data)
 {
-  if (!list)
+  if (list == NULL)
     {
       list = g_list_alloc ();
       list->data = data;
       g_return_val_if_fail (sibling == NULL, list);
       return list;
     }
-  else if (sibling)
+  else if (sibling != NULL)
     {
       GList *node;
 
@@ -396,7 +473,7 @@ g_list_insert_before (GList    *list,
       node->prev = sibling->prev;
       node->next = sibling;
       sibling->prev = node;
-      if (node->prev)
+      if (node->prev != NULL)
         {
           node->prev->next = node;
           return list;
@@ -411,9 +488,7 @@ g_list_insert_before (GList    *list,
     {
       GList *last;
 
-      last = list;
-      while (last->next)
-        last = last->next;
+      for (last = list; last->next != NULL; last = last->next) {}
 
       last->next = _g_list_alloc ();
       last->next->data = data;
@@ -646,8 +721,10 @@ g_list_copy (GList *list)
  * container itself.
  *
  * @func, as a #GCopyFunc, takes two arguments, the data to be copied
- * and a @user_data pointer. It's safe to pass %NULL as user_data,
- * if the copy function takes only one argument.
+ * and a @user_data pointer. On common processor architectures, it's safe to
+ * pass %NULL as @user_data if the copy function takes only one argument. You
+ * may get compiler warnings from this though if compiling with GCC’s
+ * `-Wcast-function-type` warning.
  *
  * For instance, if @list holds a list of GObjects, you can do:
  * |[<!-- language="C" -->   
@@ -985,6 +1062,9 @@ g_list_length (GList *list)
  * @user_data: user data to pass to the function
  *
  * Calls a function for each element of a #GList.
+ *
+ * It is safe for @func to remove the element from @list, but it must
+ * not modify any part of the list after that element.
  */
 /**
  * GFunc:
@@ -1248,4 +1328,33 @@ g_list_sort_with_data (GList            *list,
                        gpointer          user_data)
 {
   return g_list_sort_real (list, (GFunc) compare_func, user_data);
+}
+
+/**
+ * g_clear_list: (skip)
+ * @list_ptr: (not nullable): a #GList return location
+ * @destroy: (nullable): the function to pass to g_list_free_full() or %NULL to not free elements
+ *
+ * Clears a pointer to a #GList, freeing it and, optionally, freeing its elements using @destroy.
+ *
+ * @list_ptr must be a valid pointer. If @list_ptr points to a null #GList, this does nothing.
+ *
+ * Since: 2.64
+ */
+void
+(g_clear_list) (GList          **list_ptr,
+                GDestroyNotify   destroy)
+{
+  GList *list;
+
+  list = *list_ptr;
+  if (list)
+    {
+      *list_ptr = NULL;
+
+      if (destroy)
+        g_list_free_full (list, destroy);
+      else
+        g_list_free (list);
+    }
 }

@@ -22,9 +22,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -762,12 +760,11 @@ cache_get_mime_type_for_data (const void *data,
 
   for (n = 0; n < n_mime_types; n++)
     {
-      
       if (mime_types[n])
 	return mime_types[n];
     }
 
-  return XDG_MIME_TYPE_UNKNOWN;
+  return NULL;
 }
 
 const char *
@@ -814,6 +811,9 @@ _xdg_mime_cache_get_mime_type_for_file (const char  *file_name,
       statbuf = &buf;
     }
 
+  if (statbuf->st_size == 0)
+    return XDG_MIME_TYPE_EMPTY;
+
   if (!S_ISREG (statbuf->st_mode))
     return XDG_MIME_TYPE_UNKNOWN;
 
@@ -842,6 +842,9 @@ _xdg_mime_cache_get_mime_type_for_file (const char  *file_name,
 
   mime_type = cache_get_mime_type_for_data (data, bytes_read, NULL,
 					    mime_types, n);
+
+  if (!mime_type)
+    mime_type = _xdg_binary_or_text_fallback(data, bytes_read);
 
   free (data);
   fclose (file);
@@ -962,7 +965,9 @@ _xdg_mime_cache_mime_type_subclass (const char *mime,
 	      for (j = 0; j < n_parents; j++)
 		{
 		  parent_offset = GET_UINT32 (cache->buffer, offset + 4 + 4 * j);
-		  if (_xdg_mime_cache_mime_type_subclass (cache->buffer + parent_offset, ubase))
+		  if (strcmp (cache->buffer + parent_offset, mime) != 0 &&
+		      strcmp (cache->buffer + parent_offset, umime) != 0 &&
+		      _xdg_mime_cache_mime_type_subclass (cache->buffer + parent_offset, ubase))
 		    return 1;
 		}
 

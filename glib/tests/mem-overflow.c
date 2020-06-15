@@ -21,8 +21,10 @@
 
 /* We test for errors in optimize-only definitions in gmem.h */
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && __GNUC__ > 6
 #pragma GCC optimize (1)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Walloc-size-larger-than="
 #endif
 
 #include "glib.h"
@@ -196,6 +198,10 @@ empty_alloc (void)
   g_test_trap_subprocess ("/mem/empty-alloc/subprocess", 0, 0);
   g_test_trap_assert_passed ();
 }
+#endif
+
+#if defined(__GNUC__) && __GNUC__ > 6
+#pragma GCC diagnostic pop
 #endif
 
 int

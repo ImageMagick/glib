@@ -38,7 +38,11 @@
 #ifdef G_OS_UNIX
 #include <unistd.h>
 #include "gfiledescriptorbased.h"
+#include <sys/uio.h>
 #endif
+
+#include "glib-private.h"
+#include "gioprivate.h"
 
 #ifdef G_OS_WIN32
 #include <io.h>
@@ -91,6 +95,14 @@ static gssize     g_local_file_output_stream_write        (GOutputStream      *s
 							   gsize               count,
 							   GCancellable       *cancellable,
 							   GError            **error);
+#ifdef G_OS_UNIX
+static gboolean   g_local_file_output_stream_writev       (GOutputStream       *stream,
+							   const GOutputVector *vectors,
+							   gsize                n_vectors,
+							   gsize               *bytes_written,
+							   GCancellable        *cancellable,
+							   GError             **error);
+#endif
 static gboolean   g_local_file_output_stream_close        (GOutputStream      *stream,
 							   GCancellable       *cancellable,
 							   GError            **error);
@@ -140,6 +152,9 @@ g_local_file_output_stream_class_init (GLocalFileOutputStreamClass *klass)
   gobject_class->finalize = g_local_file_output_stream_finalize;
 
   stream_class->write_fn = g_local_file_output_stream_write;
+#ifdef G_OS_UNIX
+  stream_class->writev_fn = g_local_file_output_stream_writev;
+#endif
   stream_class->close_fn = g_local_file_output_stream_close;
   file_stream_class->query_info = g_local_file_output_stream_query_info;
   file_stream_class->get_etag = g_local_file_output_stream_get_etag;
@@ -201,6 +216,89 @@ g_local_file_output_stream_write (GOutputStream  *stream,
   return res;
 }
 
+/* On Windows there is no equivalent API for files. The closest API to that is
+ * WriteFileGather() but it is useless in general: it requires, among other
+ * things, that each chunk is the size of a whole page and in memory aligned
+ * to a page. We can't possibly guarantee that in GLib.
+ */
+#ifdef G_OS_UNIX
+/* Macro to check if struct iovec and GOutputVector have the same ABI */
+#define G_OUTPUT_VECTOR_IS_IOVEC (sizeof (struct iovec) == sizeof (GOutputVector) && \
+      G_SIZEOF_MEMBER (struct iovec, iov_base) == G_SIZEOF_MEMBER (GOutputVector, buffer) && \
+      G_STRUCT_OFFSET (struct iovec, iov_base) == G_STRUCT_OFFSET (GOutputVector, buffer) && \
+      G_SIZEOF_MEMBER (struct iovec, iov_len) == G_SIZEOF_MEMBER (GOutputVector, size) && \
+      G_STRUCT_OFFSET (struct iovec, iov_len) == G_STRUCT_OFFSET (GOutputVector, size))
+
+static gboolean
+g_local_file_output_stream_writev (GOutputStream        *stream,
+				   const GOutputVector  *vectors,
+				   gsize                 n_vectors,
+				   gsize                *bytes_written,
+				   GCancellable         *cancellable,
+				   GError              **error)
+{
+  GLocalFileOutputStream *file;
+  gssize res;
+  struct iovec *iov;
+
+  if (bytes_written)
+    *bytes_written = 0;
+
+  /* Clamp the number of vectors if more given than we can write in one go.
+   * The caller has to handle short writes anyway.
+   */
+  if (n_vectors > G_IOV_MAX)
+    n_vectors = G_IOV_MAX;
+
+  file = G_LOCAL_FILE_OUTPUT_STREAM (stream);
+
+  if (G_OUTPUT_VECTOR_IS_IOVEC)
+    {
+      /* ABI is compatible */
+      iov = (struct iovec *) vectors;
+    }
+  else
+    {
+      gsize i;
+
+      /* ABI is incompatible */
+      iov = g_newa (struct iovec, n_vectors);
+      for (i = 0; i < n_vectors; i++)
+        {
+          iov[i].iov_base = (void *)vectors[i].buffer;
+          iov[i].iov_len = vectors[i].size;
+        }
+    }
+
+  while (1)
+    {
+      if (g_cancellable_set_error_if_cancelled (cancellable, error))
+        return FALSE;
+      res = writev (file->priv->fd, iov, n_vectors);
+      if (res == -1)
+        {
+          int errsv = errno;
+
+          if (errsv == EINTR)
+            continue;
+
+          g_set_error (error, G_IO_ERROR,
+                       g_io_error_from_errno (errsv),
+                       _("Error writing to file: %s"),
+                       g_strerror (errsv));
+        }
+      else if (bytes_written)
+        {
+          *bytes_written = res;
+        }
+
+      break;
+    }
+
+  return res != -1;
+}
+#endif
+
 void
 _g_local_file_output_stream_set_do_close (GLocalFileOutputStream *out,
 					  gboolean do_close)
@@ -234,7 +332,7 @@ _g_local_file_output_stream_really_close (GLocalFileOutputStream *file,
   /* Must close before renaming on Windows, so just do the close first
    * in all cases for now.
    */
-  if (_fstati64 (file->priv->fd, &final_stat) == 0)
+  if (GLIB_PRIVATE_CALL (g_win32_fstat) (file->priv->fd, &final_stat) == 0)
     file->priv->etag = _g_local_file_info_create_etag (&final_stat);
 
   if (!g_close (file->priv->fd, NULL))
@@ -797,7 +895,7 @@ handle_overwrite_open (const char    *filename,
     }
   
 #ifdef G_OS_WIN32
-  res = _fstati64 (fd, &original_stat);
+  res = GLIB_PRIVATE_CALL (g_win32_fstat) (fd, &original_stat);
 #else
   res = fstat (fd, &original_stat);
 #endif
@@ -881,7 +979,7 @@ handle_overwrite_open (const char    *filename,
 	    fchown (tmpfd, original_stat.st_uid, original_stat.st_gid) == -1 ||
 #endif
 #ifdef HAVE_FCHMOD
-	    fchmod (tmpfd, original_stat.st_mode) == -1 ||
+	    fchmod (tmpfd, original_stat.st_mode & ~S_IFMT) == -1 ||
 #endif
 	    0
 	    )
@@ -891,7 +989,7 @@ handle_overwrite_open (const char    *filename,
           int tres;
 
 #ifdef G_OS_WIN32
-          tres = _fstati64 (tmpfd, &tmp_statbuf);
+          tres = GLIB_PRIVATE_CALL (g_win32_fstat) (tmpfd, &tmp_statbuf);
 #else
           tres = fstat (tmpfd, &tmp_statbuf);
 #endif

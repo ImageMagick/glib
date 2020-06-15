@@ -78,7 +78,7 @@ g_drive_default_init (GDriveInterface *iface)
 		G_SIGNAL_RUN_LAST,
 		G_STRUCT_OFFSET (GDriveIface, changed),
 		NULL, NULL,
-		g_cclosure_marshal_VOID__VOID,
+		NULL,
 		G_TYPE_NONE, 0);
 
   /**
@@ -95,7 +95,7 @@ g_drive_default_init (GDriveInterface *iface)
 		G_SIGNAL_RUN_LAST,
 		G_STRUCT_OFFSET (GDriveIface, disconnected),
 		NULL, NULL,
-		g_cclosure_marshal_VOID__VOID,
+		NULL,
 		G_TYPE_NONE, 0);
 
   /**
@@ -110,7 +110,7 @@ g_drive_default_init (GDriveInterface *iface)
 		G_SIGNAL_RUN_LAST,
 		G_STRUCT_OFFSET (GDriveIface, eject_button),
 		NULL, NULL,
-		g_cclosure_marshal_VOID__VOID,
+		NULL,
 		G_TYPE_NONE, 0);
 
   /**
@@ -127,7 +127,7 @@ g_drive_default_init (GDriveInterface *iface)
 		G_SIGNAL_RUN_LAST,
 		G_STRUCT_OFFSET (GDriveIface, stop_button),
 		NULL, NULL,
-		g_cclosure_marshal_VOID__VOID,
+		NULL,
 		G_TYPE_NONE, 0);
 }
 
@@ -611,10 +611,12 @@ g_drive_poll_for_media_finish (GDrive        *drive,
  * @drive: a #GDrive
  * @kind: the kind of identifier to return
  *
- * Gets the identifier of the given kind for @drive.
+ * Gets the identifier of the given kind for @drive. The only
+ * identifier currently available is
+ * #G_DRIVE_IDENTIFIER_KIND_UNIX_DEVICE.
  *
- * Returns: a newly allocated string containing the
- *     requested identfier, or %NULL if the #GDrive
+ * Returns: (nullable) (transfer full): a newly allocated string containing the
+ *     requested identifier, or %NULL if the #GDrive
  *     doesn't have this kind of identifier.
  */
 char *
@@ -921,7 +923,7 @@ g_drive_stop_finish (GDrive        *drive,
  *
  * Gets the sort key for @drive, if any.
  *
- * Returns: Sorting key for @drive or %NULL if no such key is available.
+ * Returns: (nullable): Sorting key for @drive or %NULL if no such key is available.
  *
  * Since: 2.32
  */

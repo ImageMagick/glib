@@ -36,6 +36,7 @@
 #include <gio/gsocketconnection.h>
 #include <gio/ginetsocketaddress.h>
 #include "glibintl.h"
+#include "gmarshal-internal.h"
 
 
 /**
@@ -49,9 +50,16 @@
  * of server sockets and helps you accept sockets from any of the
  * socket, either sync or async.
  *
+ * Add addresses and ports to listen on using g_socket_listener_add_address()
+ * and g_socket_listener_add_inet_port(). These will be listened on until
+ * g_socket_listener_close() is called. Dropping your final reference to the
+ * #GSocketListener will not cause g_socket_listener_close() to be called
+ * implicitly, as some references to the #GSocketListener may be held
+ * internally.
+ *
  * If you want to implement a network server, also look at #GSocketService
- * and #GThreadedSocketService which are subclass of #GSocketListener
- * that makes this even easier.
+ * and #GThreadedSocketService which are subclasses of #GSocketListener
+ * that make this even easier.
  *
  * Since: 2.22
  */
@@ -174,10 +182,14 @@ g_socket_listener_class_init (GSocketListenerClass *klass)
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GSocketListenerClass, event),
-                  NULL, NULL, NULL,
+                  NULL, NULL,
+                  _g_cclosure_marshal_VOID__ENUM_OBJECT,
                   G_TYPE_NONE, 2,
                   G_TYPE_SOCKET_LISTENER_EVENT,
                   G_TYPE_SOCKET);
+  g_signal_set_va_marshaller (signals[EVENT],
+                              G_TYPE_FROM_CLASS (gobject_class),
+                              _g_cclosure_marshal_VOID__ENUM_OBJECTv);
 
   source_quark = g_quark_from_static_string ("g-socket-listener-source");
 }
@@ -309,6 +321,10 @@ g_socket_listener_add_socket (GSocketListener  *listener,
  * requesting a binding to port 0 (ie: "any port").  This address, if
  * requested, belongs to the caller and must be freed.
  *
+ * Call g_socket_listener_close() to stop listening on @address; this will not
+ * be done automatically when you drop your final reference to @listener, as
+ * references may be held internally.
+ *
  * Returns: %TRUE on success, %FALSE on error.
  *
  * Since: 2.22
@@ -403,6 +419,10 @@ g_socket_listener_add_address (GSocketListener  *listener,
  * to accept to identify this particular source, which is
  * useful if you're listening on multiple addresses and do
  * different things depending on what address is connected to.
+ *
+ * Call g_socket_listener_close() to stop listening on @port; this will not
+ * be done automatically when you drop your final reference to @listener, as
+ * references may be held internally.
  *
  * Returns: %TRUE on success, %FALSE on error.
  *
@@ -758,6 +778,19 @@ g_socket_listener_accept (GSocketListener  *listener,
   return connection;
 }
 
+typedef struct
+{
+  GList *sources;  /* (element-type GSource) */
+  gboolean returned_yet;
+} AcceptSocketAsyncData;
+
+static void
+accept_socket_async_data_free (AcceptSocketAsyncData *data)
+{
+  free_sources (data->sources);
+  g_free (data);
+}
+
 static gboolean
 accept_ready (GSocket      *accept_socket,
 	      GIOCondition  condition,
@@ -767,6 +800,12 @@ accept_ready (GSocket      *accept_socket,
   GError *error = NULL;
   GSocket *socket;
   GObject *source_object;
+  AcceptSocketAsyncData *data = g_task_get_task_data (task);
+
+  /* Don’t call g_task_return_*() multiple times if we have multiple incoming
+   * connections in the same #GMainContext iteration. */
+  if (data->returned_yet)
+    return G_SOURCE_REMOVE;
 
   socket = g_socket_accept (accept_socket, g_task_get_cancellable (task), &error);
   if (socket)
@@ -783,8 +822,10 @@ accept_ready (GSocket      *accept_socket,
       g_task_return_error (task, error);
     }
 
+  data->returned_yet = TRUE;
   g_object_unref (task);
-  return FALSE;
+
+  return G_SOURCE_REMOVE;
 }
 
 /**
@@ -809,8 +850,8 @@ g_socket_listener_accept_socket_async (GSocketListener     *listener,
 				       gpointer             user_data)
 {
   GTask *task;
-  GList *sources;
   GError *error = NULL;
+  AcceptSocketAsyncData *data = NULL;
 
   task = g_task_new (listener, cancellable, callback, user_data);
   g_task_set_source_tag (task, g_socket_listener_accept_socket_async);
@@ -822,12 +863,15 @@ g_socket_listener_accept_socket_async (GSocketListener     *listener,
       return;
     }
 
-  sources = add_sources (listener,
+  data = g_new0 (AcceptSocketAsyncData, 1);
+  data->returned_yet = FALSE;
+  data->sources = add_sources (listener,
 			 accept_ready,
 			 task,
 			 cancellable,
 			 g_main_context_get_thread_default ());
-  g_task_set_task_data (task, sources, (GDestroyNotify) free_sources);
+  g_task_set_task_data (task, g_steal_pointer (&data),
+                        (GDestroyNotify) accept_socket_async_data_free);
 }
 
 /**
@@ -926,7 +970,9 @@ g_socket_listener_accept_finish (GSocketListener  *listener,
  * @listener: a #GSocketListener
  * @listen_backlog: an integer
  *
- * Sets the listen backlog on the sockets in the listener.
+ * Sets the listen backlog on the sockets in the listener. This must be called
+ * before adding any sockets, addresses or ports to the #GSocketListener (for
+ * example, by calling g_socket_listener_add_inet_port()) to be effective.
  *
  * See g_socket_set_listen_backlog() for details
  *

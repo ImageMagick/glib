@@ -1,6 +1,6 @@
 /* GLib testing framework examples and tests
  *
- * Copyright (C) 2008-2011 Red Hat, Inc.
+ * Copyright (C) 2008-2018 Red Hat, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,13 @@
 
 #include "gdbus-tests.h"
 
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+#include "gdbus-test-codegen-generated-min-required-2-64.h"
+#else
 #include "gdbus-test-codegen-generated.h"
+#endif
+
+#include "gdbus-test-codegen-generated-interface-info.h"
 
 /* ---------------------------------------------------------------------------------------------------- */
 
@@ -55,7 +61,7 @@ test_annotations (void)
   iface = foo_igen_bar_interface_info ();
   g_assert (iface != NULL);
 
-  /* see Makefile.am for where these annotations are injected */
+  /* see meson.build for where these annotations are injected */
   g_assert_cmpint (count_annotations (iface->annotations), ==, 1);
   g_assert_cmpstr (g_dbus_annotation_info_lookup (iface->annotations, "Key1"), ==, "Value1");
 
@@ -172,7 +178,12 @@ on_handle_test_non_primitive_types (FooiGenBar            *object,
   s = g_strjoinv (", ", (gchar **) array_of_bytestrings);
   g_string_append_printf (str, "array_of_bytestrings: [%s] ", s);
   g_free (s);
-  foo_igen_bar_complete_test_non_primitive_types (object, invocation, str->str);
+  foo_igen_bar_complete_test_non_primitive_types (object, invocation,
+                                                  array_of_strings,
+                                                  array_of_objpaths,
+                                                  array_of_signatures,
+                                                  array_of_bytestrings,
+                                                  str->str);
   g_string_free (str, TRUE);
   return TRUE;
 }
@@ -400,7 +411,7 @@ on_handle_get_self (FooiGenMethodThreads   *object,
                     gpointer                user_data)
 {
   gchar *s;
-  s = g_strdup_printf ("%p", g_thread_self ());
+  s = g_strdup_printf ("%p", (void *)g_thread_self ());
   foo_igen_method_threads_complete_get_self (object, invocation, s);
   g_free (s);
   return TRUE;
@@ -577,10 +588,8 @@ on_name_acquired (GDBusConnection *connection,
                   gpointer         user_data)
 {
   GMainLoop *loop = user_data;
-
-  g_thread_new ("check-proxies",
-                check_proxies_in_thread,
-                loop);
+  GThread *thread = g_thread_new ("check-proxies", check_proxies_in_thread, loop);
+  g_thread_unref (thread);
 }
 
 static void
@@ -700,7 +709,12 @@ check_bar_proxy (FooiGenBar *proxy,
   const gchar *array_of_strings[3] = {"one", "two", NULL};
   const gchar *array_of_strings_2[3] = {"one2", "two2", NULL};
   const gchar *array_of_objpaths[3] = {"/one", "/one/two", NULL};
+  GVariant *array_of_signatures = NULL;
   const gchar *array_of_bytestrings[3] = {"one\xff", "two\xff", NULL};
+  gchar **ret_array_of_strings = NULL;
+  gchar **ret_array_of_objpaths = NULL;
+  GVariant *ret_array_of_signatures = NULL;
+  gchar **ret_array_of_bytestrings = NULL;
   guchar ret_val_byte;
   gboolean ret_val_boolean;
   gint16 ret_val_int16;
@@ -869,6 +883,10 @@ check_bar_proxy (FooiGenBar *proxy,
                                                      "/a/path",
                                                      "asig",
                                                      "bytestring\xff",
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+                                                     G_DBUS_CALL_FLAGS_NONE,
+                                                     -1,
+#endif
                                                      &ret_val_byte,
                                                      &ret_val_boolean,
                                                      &ret_val_int16,
@@ -887,7 +905,13 @@ check_bar_proxy (FooiGenBar *proxy,
   g_assert_no_error (error);
   g_assert (ret);
 
+  g_clear_pointer (&ret_val_string, g_free);
+  g_clear_pointer (&ret_val_objpath, g_free);
+  g_clear_pointer (&ret_val_signature, g_free);
+  g_clear_pointer (&ret_val_bytestring, g_free);
+
   error = NULL;
+  array_of_signatures = g_variant_ref_sink (g_variant_new_parsed ("[@g 'ass', 'git']"));
   ret = foo_igen_bar_call_test_non_primitive_types_sync (proxy,
                                                          g_variant_new_parsed ("{'one': 'red',"
                                                                                " 'two': 'blue'}"),
@@ -896,8 +920,16 @@ check_bar_proxy (FooiGenBar *proxy,
                                                          g_variant_new_parsed ("(42, 'foo', 'bar')"),
                                                          array_of_strings,
                                                          array_of_objpaths,
-                                                         g_variant_new_parsed ("[@g 'ass', 'git']"),
+                                                         array_of_signatures,
                                                          array_of_bytestrings,
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+                                                         G_DBUS_CALL_FLAGS_NONE,
+                                                         -1,
+#endif
+                                                         &ret_array_of_strings,
+                                                         &ret_array_of_objpaths,
+                                                         &ret_array_of_signatures,
+                                                         &ret_array_of_bytestrings,
                                                          &s,
                                                          NULL, /* GCancellable */
                                                          &error);
@@ -905,11 +937,33 @@ check_bar_proxy (FooiGenBar *proxy,
   g_assert_no_error (error);
   g_assert (ret);
 
+  g_assert_nonnull (ret_array_of_strings);
+  g_assert_cmpuint (g_strv_length ((gchar **) ret_array_of_strings), ==,
+                    g_strv_length ((gchar **) array_of_strings));
+  g_assert_nonnull (ret_array_of_objpaths);
+  g_assert_cmpuint (g_strv_length ((gchar **) ret_array_of_objpaths), ==,
+                    g_strv_length ((gchar **) array_of_objpaths));
+  g_assert_nonnull (ret_array_of_signatures);
+  g_assert_cmpvariant (ret_array_of_signatures, array_of_signatures);
+  g_assert_nonnull (ret_array_of_bytestrings);
+  g_assert_cmpuint (g_strv_length ((gchar **) ret_array_of_bytestrings), ==,
+                    g_strv_length ((gchar **) array_of_bytestrings));
+
+  g_clear_pointer (&ret_array_of_strings, g_strfreev);
+  g_clear_pointer (&ret_array_of_objpaths, g_strfreev);
+  g_clear_pointer (&ret_array_of_signatures, g_variant_unref);
+  g_clear_pointer (&ret_array_of_bytestrings, g_strfreev);
+  g_clear_pointer (&s, g_free);
+
   /* Check that org.freedesktop.DBus.Error.UnknownMethod is returned on
    * unimplemented methods.
    */
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_bar_call_unimplemented_method_sync (proxy, G_DBUS_CALL_FLAGS_NONE, -1, NULL /* GCancellable */, &error);
+#else
   ret = foo_igen_bar_call_unimplemented_method_sync (proxy, NULL /* GCancellable */, &error);
+#endif
   g_assert_error (error, G_DBUS_ERROR, G_DBUS_ERROR_UNKNOWN_METHOD);
   g_error_free (error);
   error = NULL;
@@ -920,7 +974,11 @@ check_bar_proxy (FooiGenBar *proxy,
                     G_CALLBACK (on_test_signal),
                     data);
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_bar_call_request_signal_emission_sync (proxy, 0, G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+#else
   ret = foo_igen_bar_call_request_signal_emission_sync (proxy, 0, NULL, &error);
+#endif
   g_assert_no_error (error);
   g_assert (ret);
 
@@ -974,7 +1032,11 @@ check_bar_proxy (FooiGenBar *proxy,
                     G_CALLBACK (on_g_properties_changed),
                     data);
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_bar_call_request_multi_property_mods_sync (proxy, G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+#else
   ret = foo_igen_bar_call_request_multi_property_mods_sync (proxy, NULL, &error);
+#endif
   g_assert_no_error (error);
   g_assert (ret);
   g_main_loop_run (thread_loop);
@@ -1040,6 +1102,10 @@ check_bar_proxy (FooiGenBar *proxy,
    */
   error = NULL;
   foo_igen_bar_call_property_cancellation (proxy,
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+                                           G_DBUS_CALL_FLAGS_NONE,
+                                           -1,
+#endif
                                            NULL, /* GCancellable */
                                            (GAsyncReadyCallback) on_property_cancellation_cb,
                                            data);
@@ -1049,6 +1115,7 @@ check_bar_proxy (FooiGenBar *proxy,
 
   /* cleanup */
   g_free (data);
+  g_variant_unref (array_of_signatures);
 }
 
 /* ---------------------------------------------------------------------------------------------------- */
@@ -1121,6 +1188,10 @@ check_bat_proxy (FooiGenBat *proxy,
                                        g_variant_new_string ("a string"),
                                        g_variant_new_bytestring ("a bytestring\xff"),
                                        g_variant_new ("(i)", 4200),
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+                                       G_DBUS_CALL_FLAGS_NONE,
+                                       -1,
+#endif
                                        &ret_i,
                                        &ret_s,
                                        &ret_ay,
@@ -1153,18 +1224,30 @@ check_authorize_proxy (FooiGenAuthorize *proxy,
   /* Check that g-authorize-method works as intended */
 
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_authorize_call_check_not_authorized_sync (proxy, G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+#else
   ret = foo_igen_authorize_call_check_not_authorized_sync (proxy, NULL, &error);
+#endif
   g_assert_error (error, G_IO_ERROR, G_IO_ERROR_PERMISSION_DENIED);
   g_error_free (error);
   g_assert (!ret);
 
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_authorize_call_check_authorized_sync (proxy, G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+#else
   ret = foo_igen_authorize_call_check_authorized_sync (proxy, NULL, &error);
+#endif
   g_assert_no_error (error);
   g_assert (ret);
 
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_authorize_call_check_not_authorized_from_object_sync (proxy, G_DBUS_CALL_FLAGS_NONE, -1, NULL, &error);
+#else
   ret = foo_igen_authorize_call_check_not_authorized_from_object_sync (proxy, NULL, &error);
+#endif
   g_assert_error (error, G_IO_ERROR, G_IO_ERROR_PENDING);
   g_error_free (error);
   g_assert (!ret);
@@ -1181,7 +1264,11 @@ get_self_via_proxy (FooiGenMethodThreads *proxy_1)
   gpointer self;
 
   error = NULL;
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+  ret = foo_igen_method_threads_call_get_self_sync (proxy_1, G_DBUS_CALL_FLAGS_NONE, -1, &self_str, NULL, &error);
+#else
   ret = foo_igen_method_threads_call_get_self_sync (proxy_1, &self_str, NULL, &error);
+#endif
   g_assert_no_error (error);
   g_assert (ret);
 
@@ -1728,9 +1815,9 @@ on_object_proxy_removed (GDBusObjectManagerClient  *manager,
 }
 
 static void
-property_d_changed (GObject    *object,
-		    GParamSpec *pspec,
-		    gpointer    user_data)
+property_changed (GObject    *object,
+		  GParamSpec *pspec,
+		  gpointer    user_data)
 {
   gboolean *changed = user_data;
 
@@ -1743,6 +1830,8 @@ om_check_property_and_signal_emission (GMainLoop  *loop,
                                        FooiGenBar *proxy)
 {
   gboolean d_changed = FALSE;
+  gboolean quiet_changed = FALSE;
+  gboolean quiet_too_changed = FALSE;
   guint handler;
 
   /* First PropertiesChanged */
@@ -1764,11 +1853,33 @@ om_check_property_and_signal_emission (GMainLoop  *loop,
    * notifications are serialized.
    */
   handler = g_signal_connect (proxy, "notify::d",
-			      G_CALLBACK (property_d_changed), &d_changed);
+			      G_CALLBACK (property_changed), &d_changed);
   foo_igen_bar_set_d (skeleton, 1.0);
   foo_igen_bar_set_i (skeleton, 2);
   _g_assert_property_notify (proxy, "i");
   g_assert (d_changed == FALSE);
+  g_signal_handler_disconnect (proxy, handler);
+
+  /* Verify that re-setting a property with the "EmitsChangedSignal"
+   * set to false doesn't emit a signal. */
+  handler = g_signal_connect (proxy, "notify::quiet",
+			      G_CALLBACK (property_changed), &quiet_changed);
+  foo_igen_bar_set_quiet (skeleton, "hush!");
+  foo_igen_bar_set_i (skeleton, 3);
+  _g_assert_property_notify (proxy, "i");
+  g_assert (quiet_changed == FALSE);
+  g_assert_cmpstr (foo_igen_bar_get_quiet (skeleton), ==, "hush!");
+  g_signal_handler_disconnect (proxy, handler);
+
+  /* Also verify that re-setting a property with the "EmitsChangedSignal"
+   * set to 'const' doesn't emit a signal. */
+  handler = g_signal_connect (proxy, "notify::quiet-too",
+			      G_CALLBACK (property_changed), &quiet_changed);
+  foo_igen_bar_set_quiet_too (skeleton, "hush too!");
+  foo_igen_bar_set_i (skeleton, 4);
+  _g_assert_property_notify (proxy, "i");
+  g_assert (quiet_too_changed == FALSE);
+  g_assert_cmpstr (foo_igen_bar_get_quiet_too (skeleton), ==, "hush too!");
   g_signal_handler_disconnect (proxy, handler);
 
   /* Then just a regular signal */
@@ -2112,7 +2223,7 @@ check_object_manager (void)
    * that ObjectManager.GetManagedObjects() works
    */
   om_check_get_all (c, loop,
-                    "({objectpath '/managed/first': {'com.acme.Coyote': {'Mood': <''>}}, '/managed/second': {'org.project.Bar': {'y': <byte 0x00>, 'b': <false>, 'n': <int16 0>, 'q': <uint16 0>, 'i': <0>, 'u': <uint32 0>, 'x': <int64 0>, 't': <uint64 0>, 'd': <0.0>, 's': <''>, 'o': <objectpath '/'>, 'g': <signature ''>, 'ay': <b''>, 'as': <@as []>, 'aay': <@aay []>, 'ao': <@ao []>, 'ag': <@ag []>, 'FinallyNormalName': <''>, 'ReadonlyProperty': <''>, 'unset_i': <0>, 'unset_d': <0.0>, 'unset_s': <''>, 'unset_o': <objectpath '/'>, 'unset_g': <signature ''>, 'unset_ay': <b''>, 'unset_as': <@as []>, 'unset_ao': <@ao []>, 'unset_ag': <@ag []>, 'unset_struct': <(0, 0.0, '', objectpath '/', signature '', @ay [], @as [], @ao [], @ag [])>}, 'org.project.Bat': {'force_i': <0>, 'force_s': <''>, 'force_ay': <@ay []>, 'force_struct': <(0,)>}}},)");
+                    "({objectpath '/managed/first': {'com.acme.Coyote': {'Mood': <''>}}, '/managed/second': {'org.project.Bar': {'y': <byte 0x00>, 'b': <false>, 'n': <int16 0>, 'q': <uint16 0>, 'i': <0>, 'u': <uint32 0>, 'x': <int64 0>, 't': <uint64 0>, 'd': <0.0>, 's': <''>, 'o': <objectpath '/'>, 'g': <signature ''>, 'ay': <b''>, 'as': <@as []>, 'aay': <@aay []>, 'ao': <@ao []>, 'ag': <@ag []>, 'FinallyNormalName': <''>, 'ReadonlyProperty': <''>, 'quiet': <''>, 'quiet_too': <''>, 'unset_i': <0>, 'unset_d': <0.0>, 'unset_s': <''>, 'unset_o': <objectpath '/'>, 'unset_g': <signature ''>, 'unset_ay': <b''>, 'unset_as': <@as []>, 'unset_ao': <@ao []>, 'unset_ag': <@ag []>, 'unset_struct': <(0, 0.0, '', objectpath '/', signature '', @ay [], @as [], @ao [], @ag [])>}, 'org.project.Bat': {'force_i': <0>, 'force_s': <''>, 'force_ay': <@ay []>, 'force_struct': <(0,)>}}},)");
 
   /* Set connection to NULL, causing everything to be unexported.. verify this.. and
    * then set the connection back.. and then check things still work
@@ -2124,7 +2235,7 @@ check_object_manager (void)
 
   g_dbus_object_manager_server_set_connection (manager, c);
   om_check_get_all (c, loop,
-                    "({objectpath '/managed/first': {'com.acme.Coyote': {'Mood': <''>}}, '/managed/second': {'org.project.Bar': {'y': <byte 0x00>, 'b': <false>, 'n': <int16 0>, 'q': <uint16 0>, 'i': <0>, 'u': <uint32 0>, 'x': <int64 0>, 't': <uint64 0>, 'd': <0.0>, 's': <''>, 'o': <objectpath '/'>, 'g': <signature ''>, 'ay': <b''>, 'as': <@as []>, 'aay': <@aay []>, 'ao': <@ao []>, 'ag': <@ag []>, 'FinallyNormalName': <''>, 'ReadonlyProperty': <''>, 'unset_i': <0>, 'unset_d': <0.0>, 'unset_s': <''>, 'unset_o': <objectpath '/'>, 'unset_g': <signature ''>, 'unset_ay': <b''>, 'unset_as': <@as []>, 'unset_ao': <@ao []>, 'unset_ag': <@ag []>, 'unset_struct': <(0, 0.0, '', objectpath '/', signature '', @ay [], @as [], @ao [], @ag [])>}, 'org.project.Bat': {'force_i': <0>, 'force_s': <''>, 'force_ay': <@ay []>, 'force_struct': <(0,)>}}},)");
+                    "({objectpath '/managed/first': {'com.acme.Coyote': {'Mood': <''>}}, '/managed/second': {'org.project.Bar': {'y': <byte 0x00>, 'b': <false>, 'n': <int16 0>, 'q': <uint16 0>, 'i': <0>, 'u': <uint32 0>, 'x': <int64 0>, 't': <uint64 0>, 'd': <0.0>, 's': <''>, 'o': <objectpath '/'>, 'g': <signature ''>, 'ay': <b''>, 'as': <@as []>, 'aay': <@aay []>, 'ao': <@ao []>, 'ag': <@ag []>, 'FinallyNormalName': <''>, 'ReadonlyProperty': <''>, 'quiet': <''>, 'quiet_too': <''>, 'unset_i': <0>, 'unset_d': <0.0>, 'unset_s': <''>, 'unset_o': <objectpath '/'>, 'unset_g': <signature ''>, 'unset_ay': <b''>, 'unset_as': <@as []>, 'unset_ao': <@ao []>, 'unset_ag': <@ag []>, 'unset_struct': <(0, 0.0, '', objectpath '/', signature '', @ay [], @as [], @ao [], @ag [])>}, 'org.project.Bat': {'force_i': <0>, 'force_s': <''>, 'force_ay': <@ay []>, 'force_struct': <(0,)>}}},)");
 
   /* Also check that the ObjectManagerClient returns these objects - and
    * that they are of the right GType cf. what was requested via
@@ -2346,6 +2457,268 @@ test_property_naming (void)
 
 /* ---------------------------------------------------------------------------------------------------- */
 
+/* autocleanups
+ *
+ * - check that g_autoptr() works for all generated types, if supported by the
+ *   current compiler
+ */
+
+static void
+test_autocleanups (void)
+{
+#ifdef g_autoptr
+  g_autoptr(FooiGenBar) bar = NULL;
+  g_autoptr(FooiGenBarProxy) bar_proxy = NULL;
+  g_autoptr(FooiGenBarSkeleton) bar_skeleton = NULL;
+  g_autoptr(FooiGenObject) object = NULL;
+  g_autoptr(FooiGenObjectProxy) object_proxy = NULL;
+  g_autoptr(FooiGenObjectSkeleton) object_skeleton = NULL;
+  g_autoptr(FooiGenObjectManagerClient) object_manager_client = NULL;
+
+  (void) bar;
+  (void) bar_proxy;
+  (void) bar_skeleton;
+  (void) object;
+  (void) object_proxy;
+  (void) object_skeleton;
+  (void) object_manager_client;
+#elif GLIB_CHECK_VERSION(2, 38, 0)
+  /* This file is compiled twice, once without GLib version guards and once
+   * with
+   *
+   *   -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_36
+   *   -DGLIB_VERSION_MAX_ALLOWED=GLIB_VERSION_2_36
+   *
+   * g_test_skip() was added in 2.38.
+   */
+  g_test_skip ("g_autoptr() not supported on this compiler");
+#else
+  /* Let's just say it passed. */
+#endif
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+/* deprecations
+ */
+
+static void
+test_deprecations (void)
+{
+  {
+    FooiGenOldieInterface *iskel;
+    GParamSpec *pspec;
+
+    G_GNUC_BEGIN_IGNORE_DEPRECATIONS;
+    iskel = foo_igen_oldie_interface_skeleton_new ();
+    G_GNUC_END_IGNORE_DEPRECATIONS;
+
+    pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (iskel), "bat");
+    g_assert_nonnull (pspec);
+    g_assert_cmpint (pspec->flags & G_PARAM_DEPRECATED, ==, G_PARAM_DEPRECATED);
+
+    g_object_unref (iskel);
+  }
+
+  {
+    FooiGenObjectSkeleton *oskel;
+    GParamSpec *pspec;
+
+    oskel = foo_igen_object_skeleton_new ("/objects/first");
+    pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (oskel), "oldie-interface");
+    g_assert_nonnull (pspec);
+    g_assert_cmpint (pspec->flags & G_PARAM_DEPRECATED, ==, G_PARAM_DEPRECATED);
+
+    g_object_unref (oskel);
+  }
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+
+static void
+assert_arg_infos_equal (GDBusArgInfo **a,
+                        GDBusArgInfo **b)
+{
+  if (a == NULL)
+    {
+      g_assert_null (b);
+      return;
+    }
+
+  g_assert_nonnull (b);
+
+  for (; *a != NULL && *b != NULL; a++, b++)
+    {
+      g_assert_cmpstr ((*a)->name, ==, (*b)->name);
+      g_assert_cmpstr ((*a)->signature, ==, (*b)->signature);
+    }
+
+  g_assert_null (*a);
+  g_assert_null (*b);
+}
+
+static void
+assert_annotations_equal (GDBusAnnotationInfo **a,
+                          GDBusAnnotationInfo **b)
+{
+  guint a_len = count_annotations (a);
+  guint b_len = count_annotations (b);
+
+  g_assert_cmpuint (a_len, ==, b_len);
+
+  if (a == NULL || b == NULL)
+    return;
+
+  for (; *a != NULL && *b != NULL; a++, b++)
+    {
+      g_assert_cmpstr ((*a)->key, ==, (*b)->key);
+      g_assert_cmpstr ((*a)->value, ==, (*b)->value);
+      assert_annotations_equal ((*a)->annotations, (*b)->annotations);
+    }
+
+  g_assert_null (*a);
+  g_assert_null (*b);
+}
+
+/* Test that the GDBusInterfaceInfo structure generated by gdbus-codegen
+ * --interface-info-body matches that generated by the other mode.
+ */
+static void
+test_standalone_interface_info (void)
+{
+  GDBusInterfaceSkeleton *skel = G_DBUS_INTERFACE_SKELETON (foo_igen_bar_skeleton_new ());
+  GDBusInterfaceInfo *skel_info = g_dbus_interface_skeleton_get_info (skel);
+  const GDBusInterfaceInfo *slim_info = &org_project_bar_interface;
+  gsize i;
+
+  g_assert_cmpstr (skel_info->name, ==, slim_info->name);
+
+  for (i = 0; skel_info->methods[i] != NULL; i++)
+    {
+      GDBusMethodInfo *skel_method = skel_info->methods[i];
+      GDBusMethodInfo *slim_method = slim_info->methods[i];
+
+      g_assert_nonnull (slim_method);
+      g_assert_cmpstr (skel_method->name, ==, slim_method->name);
+      assert_arg_infos_equal (skel_method->in_args, slim_method->in_args);
+      assert_arg_infos_equal (skel_method->out_args, slim_method->out_args);
+      assert_annotations_equal (skel_method->annotations, slim_method->annotations);
+    }
+  g_assert_null (slim_info->methods[i]);
+
+  for (i = 0; skel_info->signals[i] != NULL; i++)
+    {
+      GDBusSignalInfo *skel_signal = skel_info->signals[i];
+      GDBusSignalInfo *slim_signal = slim_info->signals[i];
+
+      g_assert_nonnull (slim_signal);
+      g_assert_cmpstr (skel_signal->name, ==, slim_signal->name);
+      assert_arg_infos_equal (skel_signal->args, slim_signal->args);
+      assert_annotations_equal (skel_signal->annotations, slim_signal->annotations);
+    }
+  g_assert_null (slim_info->signals[i]);
+
+  for (i = 0; skel_info->properties[i] != NULL; i++)
+    {
+      GDBusPropertyInfo *skel_prop = skel_info->properties[i];
+      GDBusPropertyInfo *slim_prop = slim_info->properties[i];
+
+      g_assert_nonnull (slim_prop);
+
+      g_assert_cmpstr (skel_prop->name, ==, slim_prop->name);
+      g_assert_cmpstr (skel_prop->signature, ==, slim_prop->signature);
+      g_assert_cmpuint (skel_prop->flags, ==, slim_prop->flags);
+      assert_annotations_equal (skel_prop->annotations, slim_prop->annotations);
+    }
+  g_assert_null (slim_info->properties[i]);
+
+  assert_annotations_equal (skel_info->annotations, slim_info->annotations);
+
+  g_clear_object (&skel);
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+static gboolean
+handle_hello_fd (FooiGenFDPassing *object,
+                 GDBusMethodInvocation *invocation,
+                 GUnixFDList *fd_list,
+                 const gchar *arg_greeting)
+{
+  foo_igen_fdpassing_complete_hello_fd (object, invocation, fd_list, arg_greeting);
+  return TRUE;
+}
+
+#if GLIB_VERSION_MIN_REQUIRED >= GLIB_VERSION_2_64
+static gboolean
+handle_no_annotation (FooiGenFDPassing *object,
+                      GDBusMethodInvocation *invocation,
+                      GUnixFDList *fd_list,
+                      GVariant *arg_greeting,
+                      const gchar *arg_greeting_locale)
+{
+  foo_igen_fdpassing_complete_no_annotation (object, invocation, fd_list, arg_greeting, arg_greeting_locale);
+  return TRUE;
+}
+
+static gboolean
+handle_no_annotation_nested (FooiGenFDPassing *object,
+                             GDBusMethodInvocation *invocation,
+                             GUnixFDList *fd_list,
+                             GVariant *arg_files)
+{
+  foo_igen_fdpassing_complete_no_annotation_nested (object, invocation, fd_list);
+  return TRUE;
+}
+#else
+static gboolean
+handle_no_annotation (FooiGenFDPassing *object,
+                      GDBusMethodInvocation *invocation,
+                      GVariant *arg_greeting,
+                      const gchar *arg_greeting_locale)
+{
+  foo_igen_fdpassing_complete_no_annotation (object, invocation, arg_greeting, arg_greeting_locale);
+  return TRUE;
+}
+
+static gboolean
+handle_no_annotation_nested (FooiGenFDPassing *object,
+                             GDBusMethodInvocation *invocation,
+                             GVariant *arg_files)
+{
+  foo_igen_fdpassing_complete_no_annotation_nested (object, invocation);
+  return TRUE;
+}
+#endif
+
+/* Test that generated code for methods includes GUnixFDList arguments
+ * unconditionally if the method is explicitly annotated as C.UnixFD, and only
+ * emits GUnixFDList arguments when there's merely an 'h' parameter if
+ * --glib-min-required=2.64 or greater.
+ */
+static void
+test_unix_fd_list (void)
+{
+  FooiGenFDPassingIface iface;
+
+  g_test_bug ("https://gitlab.gnome.org/GNOME/glib/issues/1726");
+
+  /* This method is explicitly annotated. */
+  iface.handle_hello_fd = handle_hello_fd;
+
+  /* This one is not annotated; even though it's got an in and out 'h'
+   * parameter, for backwards compatibility we cannot emit GUnixFDList
+   * arguments unless --glib-min-required >= 2.64 was used.
+   */
+  iface.handle_no_annotation = handle_no_annotation;
+
+  /* This method has an 'h' inside a complex type. */
+  iface.handle_no_annotation_nested = handle_no_annotation_nested;
+
+  (void) iface;
+}
+
+/* ---------------------------------------------------------------------------------------------------- */
+
 int
 main (int   argc,
       char *argv[])
@@ -2356,6 +2729,10 @@ main (int   argc,
   g_test_add_func ("/gdbus/codegen/interface_stability", test_interface_stability);
   g_test_add_func ("/gdbus/codegen/object-manager", test_object_manager);
   g_test_add_func ("/gdbus/codegen/property-naming", test_property_naming);
+  g_test_add_func ("/gdbus/codegen/autocleanups", test_autocleanups);
+  g_test_add_func ("/gdbus/codegen/deprecations", test_deprecations);
+  g_test_add_func ("/gdbus/codegen/standalone-interface-info", test_standalone_interface_info);
+  g_test_add_func ("/gdbus/codegen/unix-fd-list", test_unix_fd_list);
 
   return session_bus_run ();
 }

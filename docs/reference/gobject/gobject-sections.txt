@@ -279,6 +279,8 @@ g_object_weak_ref
 g_object_weak_unref
 g_object_add_weak_pointer
 g_object_remove_weak_pointer
+g_set_weak_pointer
+g_clear_weak_pointer
 GToggleNotify
 g_object_add_toggle_ref
 g_object_remove_toggle_ref
@@ -319,6 +321,9 @@ g_weak_ref_init
 g_weak_ref_clear
 g_weak_ref_get
 g_weak_ref_set
+
+<SUBSECTION Testing>
+g_assert_finalize_object
 
 <SUBSECTION Standard>
 G_INITIALLY_UNOWNED
@@ -859,6 +864,7 @@ g_signal_get_invocation_hint
 g_signal_type_cclosure_new
 g_signal_accumulator_first_wins
 g_signal_accumulator_true_handled
+g_clear_signal_handler
 <SUBSECTION Private>
 g_signal_handlers_destroy
 </SECTION>

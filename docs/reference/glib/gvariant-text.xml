@@ -38,7 +38,7 @@
 
    <informalexample><programlisting>[[1, 2, 3], [4, 5, 6.0]]</programlisting></informalexample>
 
-   is parsed as a array of arrays of doubles (type '<literal>aad</literal>').
+   is parsed as an array of arrays of doubles (type '<literal>aad</literal>').
   </para>
 
   <para>
@@ -380,7 +380,7 @@
     inferencing in action.
    </para>
    <para>
-    <literal>[(1, 2), (3, 4.0)]</literal> causes the 2 to also be parsed as a double (but the 1 and 4 are still
+    <literal>[(1, 2), (3, 4.0)]</literal> causes the 2 to also be parsed as a double (but the 1 and 3 are still
     integers).
    </para>
    <para>
@@ -465,7 +465,7 @@
     parses successfully.  You would need to specify <literal>[&lt;['']&gt;, &lt;@as []&gt;]</literal>.
    </para>
    <para>
-    <literal>{"title": &lt;"frobit"&gt;, "enabled": &lt;true&gt;, width: &lt;800&gt;}</literal> is an example of
+    <literal>{"title": &lt;"frobit"&gt;, "enabled": &lt;true&gt;, "width": &lt;800&gt;}</literal> is an example of
     perhaps the most pervasive use of both dictionaries and variants.
    </para>
   </refsect2>
@@ -563,7 +563,10 @@
    <title>Bytestrings</title>
    <para>
     The bytestring syntax is a piece of syntactic sugar meant to complement the bytestring APIs in GVariant.  It
-    constructs arrays of non-nul bytes (type '<literal>ay</literal>') with a nul terminator at the end.
+    constructs arrays of non-nul bytes (type '<literal>ay</literal>') with a nul terminator at the end. These are
+    normal C strings with no particular encoding enforced, so the bytes may not be valid UTF-8.
+    Bytestrings are a special case of byte arrays; byte arrays (also type '<literal>ay</literal>'), in the general
+    case, can contain nul at any position, and need not end with nul.
    </para>
    <para>
     Bytestrings are specified with either <literal>b""</literal> or <literal>b''</literal>.  As with strings,
@@ -576,7 +579,7 @@
     forms <literal>\0nnn</literal> and <literal>\xnn</literal>.
    </para>
    <para>
-    <literal>b'abc'</literal> is equivalent to <literal>[byte 0x97, 0x98, 0x99, 0]</literal>.
+    <literal>b'abc'</literal> is equivalent to <literal>[byte 0x61, 0x62, 0x63, 0]</literal>.
    </para>
    <para>
     When formatting arrays of bytes, the printer will choose to display the array as a bytestring if it contains

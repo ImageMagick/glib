@@ -1,11 +1,13 @@
-if get_option('with-docs') != 'no'
+if get_option('gtk_doc')
   subdir('xml')
 
   ignore_headers = [
     'tests',
     'gatomicarray.h',
+    'gobject_probes.h',
     'gobject_trace.h',
-    'gtype-private.h'
+    'gtype-private.h',
+    'glib-enumtypes.h',
   ]
 
   docpath = join_paths(glib_datadir, 'gtk-doc', 'html')
@@ -17,16 +19,17 @@ if get_option('with-docs') != 'no'
     configuration: version_conf
   )
 
+  gtkdocincl = include_directories('.')
+
   gnome.gtkdoc('gobject',
     main_xml : 'gobject-docs.xml',
     namespace : 'g',
-    gobject_typesfile : join_paths(meson.current_source_dir(), 'gobject.types'),
     mode : 'none',
     dependencies : [libgobject_dep, libglib_dep],
+    include_directories : [gtkdocincl],
     src_dir : 'gobject',
-    scan_args : [
-      '--deprecated-guards=G_DISABLE_DEPRECATED',
-      '--ignore-decorators=G_GNUC_INTERNAL|G_GNUC_WARN_UNUSED_RESULT',
+    scan_args : gtkdoc_common_scan_args + [
+      '--rebuild-types',
       '--ignore-headers=' + ' '.join(ignore_headers),
     ],
     content_files : [
@@ -45,13 +48,14 @@ if get_option('with-docs') != 'no'
     ],
     fixxref_args: [
       '--html-dir=' + docpath,
-      '--extra-dir=' + join_paths(meson.current_build_dir(), '../glib/html'),
+      '--extra-dir=' + join_paths('gobject', '..', 'glib', 'html'),
     ],
-    install: true
+    install: true,
+    check: true,
   )
 endif
 
-if get_option('with-man') != 'no' and xsltproc.found()
+if get_option('man')
   manpages = ['glib-mkenums', 'glib-genmarshal', 'gobject-query']
   foreach page : manpages
     custom_target(page + '-man',

@@ -81,6 +81,7 @@
  * - g_file_new_for_commandline_arg() for a command line argument.
  * - g_file_new_tmp() to create a temporary file from a template.
  * - g_file_parse_name() from a UTF-8 string gotten from g_file_get_parse_name().
+ * - g_file_new_build_filename() to create a file from path elements.
  *
  * One way to think of a #GFile is as an abstraction of a pathname. For
  * normal files the system pathname is what is stored internally, but as
@@ -391,7 +392,7 @@ g_file_default_init (GFileIface *iface)
  *
  * Checks to see if a file is native to the platform.
  *
- * A native file s one expressed in the platform-native filename format,
+ * A native file is one expressed in the platform-native filename format,
  * e.g. "C:\Windows" or "/usr/bin/". This does not mean the file is local,
  * as it might be on a locally mounted remote filesystem.
  *
@@ -533,6 +534,75 @@ g_file_get_path (GFile *file)
   return (* iface->get_path) (file);
 }
 
+static const char *
+file_peek_path_generic (GFile *file)
+{
+  const char *path;
+  static GQuark _file_path_quark = 0;
+
+  if (G_UNLIKELY (_file_path_quark) == 0)
+    _file_path_quark = g_quark_from_static_string ("gio-file-path");
+
+  /* We need to be careful about threading, as two threads calling
+   * g_file_peek_path() on the same file could race: both would see
+   * (g_object_get_qdata(…) == NULL) to begin with, both would generate and add
+   * the path, but the second thread to add it would end up freeing the path
+   * set by the first thread. The first thread would still return the pointer
+   * to that freed path, though, resulting an a read-after-free. Handle that
+   * with a compare-and-swap loop. The g_object_*_qdata() functions are atomic. */
+
+  while (TRUE)
+    {
+      gchar *new_path = NULL;
+
+      path = g_object_get_qdata ((GObject*)file, _file_path_quark);
+
+      if (path != NULL)
+        break;
+
+      new_path = g_file_get_path (file);
+      if (new_path == NULL)
+        return NULL;
+
+      /* By passing NULL here, we ensure we never replace existing data: */
+      if (g_object_replace_qdata ((GObject *) file, _file_path_quark,
+                                  NULL, (gpointer) new_path,
+                                  (GDestroyNotify) g_free, NULL))
+        {
+          path = new_path;
+          break;
+        }
+      else
+        g_free (new_path);
+    }
+
+  return path;
+}
+
+/**
+ * g_file_peek_path:
+ * @file: input #GFile
+ *
+ * Exactly like g_file_get_path(), but caches the result via
+ * g_object_set_qdata_full().  This is useful for example in C
+ * applications which mix `g_file_*` APIs with native ones.  It
+ * also avoids an extra duplicated string when possible, so will be
+ * generally more efficient.
+ *
+ * This call does no blocking I/O.
+ *
+ * Returns: (type filename) (nullable): string containing the #GFile's path,
+ *     or %NULL if no such path exists. The returned string is owned by @file.
+ * Since: 2.56
+ */
+const char *
+g_file_peek_path (GFile *file)
+{
+  if (G_IS_LOCAL_FILE (file))
+    return _g_local_file_get_filename ((GLocalFile *) file);
+  return file_peek_path_generic (file);
+}
+
 /**
  * g_file_get_uri:
  * @file: input #GFile
@@ -599,6 +669,11 @@ g_file_get_parse_name (GFile *file)
  * Duplicates a #GFile handle. This operation does not duplicate
  * the actual file or directory represented by the #GFile; see
  * g_file_copy() if attempting to copy a file.
+ *
+ * g_file_dup() is useful when a second handle is needed to the same underlying
+ * file, for use in a separate thread (#GFile is not thread-safe). For use
+ * within the same thread, use g_object_ref() to increment the existing object’s
+ * reference count.
  *
  * This call does no blocking I/O.
  *
@@ -829,7 +904,7 @@ g_file_get_child_for_display_name (GFile      *file,
  * of @prefix.
  *
  * Virtual: prefix_matches
- * Returns:  %TRUE if the @files's parent, grandparent, etc is @prefix,
+ * Returns:  %TRUE if the @file's parent, grandparent, etc is @prefix,
  *     %FALSE otherwise.
  */
 gboolean
@@ -1059,7 +1134,7 @@ g_file_enumerate_children_finish (GFile         *file,
  * Utility function to check if a particular file exists. This is
  * implemented using g_file_query_info() and as such does blocking I/O.
  *
- * Note that in many cases it is racy to first check for file existence
+ * Note that in many cases it is [racy to first check for file existence](https://en.wikipedia.org/wiki/Time_of_check_to_time_of_use)
  * and then execute something based on the outcome of that, because the
  * file might have been created or removed in between the operations. The
  * general approach to handling that is to not check, but just do the
@@ -1432,9 +1507,9 @@ g_file_query_filesystem_info_finish (GFile         *file,
  *
  * Gets a #GMount for the #GFile.
  *
- * If the #GFileIface for @file does not have a mount (e.g.
- * possibly a remote share), @error will be set to %G_IO_ERROR_NOT_FOUND
- * and %NULL will be returned.
+ * #GMount is returned only for user interesting locations, see
+ * #GVolumeMonitor. If the #GFileIface for @file does not have a #mount,
+ * @error will be set to %G_IO_ERROR_NOT_FOUND and %NULL #will be returned.
  *
  * If @cancellable is not %NULL, then the operation can be cancelled by
  * triggering the cancellable object from another thread. If the operation
@@ -2872,7 +2947,7 @@ retry:
 
       if (errsv == EINTR)
         goto retry;
-      else if (errsv == ENOSYS || errsv == EINVAL)
+      else if (errsv == ENOSYS || errsv == EINVAL || errsv == EOPNOTSUPP)
         g_set_error_literal (error, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
                              _("Splice not supported"));
       else
@@ -2897,6 +2972,7 @@ splice_stream_with_progress (GInputStream           *in,
                              GError                **error)
 {
   int buffer[2] = { -1, -1 };
+  int buffer_size;
   gboolean res;
   goffset total_size;
   loff_t offset_in;
@@ -2908,6 +2984,34 @@ splice_stream_with_progress (GInputStream           *in,
 
   if (!g_unix_open_pipe (buffer, FD_CLOEXEC, error))
     return FALSE;
+
+#if defined(F_SETPIPE_SZ) && defined(F_GETPIPE_SZ)
+  /* Try a 1MiB buffer for improved throughput. If that fails, use the default
+   * pipe size. See: https://bugzilla.gnome.org/791457 */
+  buffer_size = fcntl (buffer[1], F_SETPIPE_SZ, 1024 * 1024);
+  if (buffer_size <= 0)
+    {
+      int errsv;
+      buffer_size = fcntl (buffer[1], F_GETPIPE_SZ);
+      errsv = errno;
+
+      if (buffer_size <= 0)
+        {
+          g_set_error (error, G_IO_ERROR, g_io_error_from_errno (errsv),
+                       _("Error splicing file: %s"), g_strerror (errsv));
+          res = FALSE;
+          goto out;
+        }
+    }
+#else
+  /* If #F_GETPIPE_SZ isn’t available, assume we’re on Linux < 2.6.35,
+   * but ≥ 2.6.11, meaning the pipe capacity is 64KiB. Ignore the possibility of
+   * running on Linux < 2.6.11 (where the capacity was the system page size,
+   * typically 4KiB) because it’s ancient. See pipe(7). */
+  buffer_size = 1024 * 64;
+#endif
+
+  g_assert (buffer_size > 0);
 
   total_size = -1;
   /* avoid performance impact of querying total size when it's not needed */
@@ -2932,7 +3036,7 @@ splice_stream_with_progress (GInputStream           *in,
       if (g_cancellable_set_error_if_cancelled (cancellable, error))
         break;
 
-      if (!do_splice (fd_in, &offset_in, buffer[1], NULL, 1024*64, &n_read, error))
+      if (!do_splice (fd_in, &offset_in, buffer[1], NULL, buffer_size, &n_read, error))
         break;
 
       if (n_read == 0)
@@ -3052,6 +3156,7 @@ file_copy_fallback (GFile                  *source,
   const char *target;
   char *attrs_to_read;
   gboolean do_set_attributes = FALSE;
+  GFileCreateFlags create_flags;
 
   /* need to know the file type */
   info = g_file_query_info (source,
@@ -3141,19 +3246,38 @@ file_copy_fallback (GFile                  *source,
    *
    * If a future API like g_file_replace_with_info() is added, switch
    * this code to use that.
+   *
+   * Use %G_FILE_CREATE_PRIVATE unless
+   *  - we were told to create the file with default permissions (i.e. the
+   *    process’ umask),
+   *  - or if the source file is on a file system which doesn’t support
+   *    `unix::mode` (in which case it probably also makes sense to create the
+   *    destination with default permissions because the source cannot be
+   *    private),
+   *  - or if the destination file is a `GLocalFile`, in which case we can
+   *    directly open() it with the permissions from the source file.
    */
+  create_flags = G_FILE_CREATE_NONE;
+  if (!(flags & G_FILE_COPY_TARGET_DEFAULT_PERMS) &&
+      g_file_info_has_attribute (info, G_FILE_ATTRIBUTE_UNIX_MODE) &&
+      !G_IS_LOCAL_FILE (destination))
+    create_flags |= G_FILE_CREATE_PRIVATE;
+  if (flags & G_FILE_COPY_OVERWRITE)
+    create_flags |= G_FILE_CREATE_REPLACE_DESTINATION;
+
   if (G_IS_LOCAL_FILE (destination))
     {
       if (flags & G_FILE_COPY_OVERWRITE)
         out = (GOutputStream*)_g_local_file_output_stream_replace (_g_local_file_get_filename (G_LOCAL_FILE (destination)),
                                                                    FALSE, NULL,
                                                                    flags & G_FILE_COPY_BACKUP,
-                                                                   G_FILE_CREATE_REPLACE_DESTINATION,
-                                                                   info,
+                                                                   create_flags,
+                                                                   (flags & G_FILE_COPY_TARGET_DEFAULT_PERMS) ? NULL : info,
                                                                    cancellable, error);
       else
         out = (GOutputStream*)_g_local_file_output_stream_create (_g_local_file_get_filename (G_LOCAL_FILE (destination)),
-                                                                  FALSE, 0, info,
+                                                                  FALSE, create_flags,
+                                                                  (flags & G_FILE_COPY_TARGET_DEFAULT_PERMS) ? NULL : info,
                                                                   cancellable, error);
     }
   else if (flags & G_FILE_COPY_OVERWRITE)
@@ -3161,12 +3285,12 @@ file_copy_fallback (GFile                  *source,
       out = (GOutputStream *)g_file_replace (destination,
                                              NULL,
                                              flags & G_FILE_COPY_BACKUP,
-                                             G_FILE_CREATE_REPLACE_DESTINATION,
+                                             create_flags,
                                              cancellable, error);
     }
   else
     {
-      out = (GOutputStream *)g_file_create (destination, 0, cancellable, error);
+      out = (GOutputStream *)g_file_create (destination, create_flags, cancellable, error);
     }
 
   if (!out)
@@ -3496,10 +3620,6 @@ g_file_copy_finish (GFile         *file,
  * If the flag #G_FILE_COPY_OVERWRITE is specified an already
  * existing @destination file is overwritten.
  *
- * If the flag #G_FILE_COPY_NOFOLLOW_SYMLINKS is specified then symlinks
- * will be copied as symlinks, otherwise the target of the
- * @source symlink will be copied.
- *
  * If @cancellable is not %NULL, then the operation can be cancelled by
  * triggering the cancellable object from another thread. If the operation
  * was cancelled, the error %G_IO_ERROR_CANCELLED will be returned.
@@ -3603,7 +3723,7 @@ g_file_move (GFile                  *source,
       return FALSE;
     }
 
-  flags |= G_FILE_COPY_ALL_METADATA;
+  flags |= G_FILE_COPY_ALL_METADATA | G_FILE_COPY_NOFOLLOW_SYMLINKS;
   if (!g_file_copy (source, destination, flags, cancellable,
                     progress_callback, progress_callback_data,
                     error))
@@ -3890,7 +4010,7 @@ g_file_make_symbolic_link (GFile         *file,
     {
       g_set_error_literal (error, G_IO_ERROR,
                            G_IO_ERROR_NOT_SUPPORTED,
-                           _("Operation not supported"));
+                           _("Symbolic links not supported"));
       return FALSE;
     }
 
@@ -4366,9 +4486,9 @@ g_file_query_writable_namespaces (GFile         *file,
  *     %NULL to ignore
  * @error: a #GError, or %NULL
  *
- * Sets an attribute in the file with attribute name @attribute to @value.
+ * Sets an attribute in the file with attribute name @attribute to @value_p.
  *
- * Some attributes can be unset by setting @attribute to
+ * Some attributes can be unset by setting @type to
  * %G_FILE_ATTRIBUTE_TYPE_INVALID and @value_p to %NULL.
  *
  * If @cancellable is not %NULL, then the operation can be cancelled by
@@ -6440,6 +6560,41 @@ g_file_parse_name (const char *parse_name)
   return g_vfs_parse_name (g_vfs_get_default (), parse_name);
 }
 
+/**
+ * g_file_new_build_filename:
+ * @first_element: (type filename): the first element in the path
+ * @...: remaining elements in path, terminated by %NULL
+ *
+ * Constructs a #GFile from a series of elements using the correct
+ * separator for filenames.
+ *
+ * Using this function is equivalent to calling g_build_filename(),
+ * followed by g_file_new_for_path() on the result.
+ *
+ * Returns: (transfer full): a new #GFile
+ *
+ * Since: 2.56
+ */
+GFile *
+g_file_new_build_filename (const gchar *first_element,
+                           ...)
+{
+  gchar *str;
+  GFile *file;
+  va_list args;
+
+  g_return_val_if_fail (first_element != NULL, NULL);
+
+  va_start (args, first_element);
+  str = g_build_filename_valist (first_element, &args);
+  va_end (args);
+
+  file = g_file_new_for_path (str);
+  g_free (str);
+
+  return file;
+}
+
 static gboolean
 is_valid_scheme_character (char c)
 {
@@ -6498,7 +6653,7 @@ new_for_cmdline_arg (const gchar *arg,
 
 /**
  * g_file_new_for_commandline_arg:
- * @arg: a command line string
+ * @arg: (type filename): a command line string
  *
  * Creates a #GFile with the given argument from the command line.
  * The value of @arg can be either a URI, an absolute path or a
@@ -6528,7 +6683,7 @@ g_file_new_for_commandline_arg (const char *arg)
 
 /**
  * g_file_new_for_commandline_arg_and_cwd:
- * @arg: a command line string
+ * @arg: (type filename): a command line string
  * @cwd: (type filename): the current working directory of the commandline
  *
  * Creates a #GFile with the given argument from the command line.
@@ -6680,9 +6835,12 @@ g_file_query_default_handler (GFile         *file,
       if (appinfo != NULL)
         return appinfo;
     }
+  else
+    g_free (uri_scheme);
 
   info = g_file_query_info (file,
-                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                            G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                            G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
                             0,
                             cancellable,
                             error);
@@ -6692,6 +6850,8 @@ g_file_query_default_handler (GFile         *file,
   appinfo = NULL;
 
   content_type = g_file_info_get_content_type (info);
+  if (content_type == NULL)
+    content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
   if (content_type)
     {
       /* Don't use is_native(), as we want to support fuse paths if available */
@@ -6712,6 +6872,133 @@ g_file_query_default_handler (GFile         *file,
   return NULL;
 }
 
+static void
+query_default_handler_query_info_cb (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  GFile *file = G_FILE (object);
+  GTask *task = G_TASK (user_data);
+  GError *error = NULL;
+  GFileInfo *info;
+  const char *content_type;
+  GAppInfo *appinfo = NULL;
+
+  info = g_file_query_info_finish (file, result, &error);
+  if (info == NULL)
+    {
+      g_task_return_error (task, g_steal_pointer (&error));
+      g_object_unref (task);
+      return;
+    }
+
+  content_type = g_file_info_get_content_type (info);
+  if (content_type == NULL)
+    content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE);
+  if (content_type)
+    {
+      char *path;
+
+      /* Don't use is_native(), as we want to support fuse paths if available */
+      path = g_file_get_path (file);
+
+      /* FIXME: The following still uses blocking calls. */
+      appinfo = g_app_info_get_default_for_type (content_type,
+                                                 path == NULL);
+      g_free (path);
+    }
+
+  g_object_unref (info);
+
+  if (appinfo != NULL)
+    g_task_return_pointer (task, g_steal_pointer (&appinfo), g_object_unref);
+  else
+    g_task_return_new_error (task,
+                             G_IO_ERROR,
+                             G_IO_ERROR_NOT_SUPPORTED,
+                             _("No application is registered as handling this file"));
+  g_object_unref (task);
+}
+
+/**
+ * g_file_query_default_handler_async:
+ * @file: a #GFile to open
+ * @io_priority: the [I/O priority][io-priority] of the request
+ * @cancellable: optional #GCancellable object, %NULL to ignore
+ * @callback: (nullable): a #GAsyncReadyCallback to call when the request is done
+ * @user_data: (nullable): data to pass to @callback
+ *
+ * Async version of g_file_query_default_handler().
+ *
+ * Since: 2.60
+ */
+void
+g_file_query_default_handler_async (GFile              *file,
+                                    int                 io_priority,
+                                    GCancellable       *cancellable,
+                                    GAsyncReadyCallback callback,
+                                    gpointer            user_data)
+{
+  GTask *task;
+  char *uri_scheme;
+
+  task = g_task_new (file, cancellable, callback, user_data);
+  g_task_set_source_tag (task, g_file_query_default_handler_async);
+
+  uri_scheme = g_file_get_uri_scheme (file);
+  if (uri_scheme && uri_scheme[0] != '\0')
+    {
+      GAppInfo *appinfo;
+
+      /* FIXME: The following still uses blocking calls. */
+      appinfo = g_app_info_get_default_for_uri_scheme (uri_scheme);
+      g_free (uri_scheme);
+
+      if (appinfo != NULL)
+        {
+          g_task_return_pointer (task, g_steal_pointer (&appinfo), g_object_unref);
+          g_object_unref (task);
+          return;
+        }
+    }
+  else
+    g_free (uri_scheme);
+
+  g_file_query_info_async (file,
+                           G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE ","
+                           G_FILE_ATTRIBUTE_STANDARD_FAST_CONTENT_TYPE,
+                           0,
+                           io_priority,
+                           cancellable,
+                           query_default_handler_query_info_cb,
+                           g_steal_pointer (&task));
+}
+
+/**
+ * g_file_query_default_handler_finish:
+ * @file: a #GFile to open
+ * @result: a #GAsyncResult
+ * @error: (nullable): a #GError
+ *
+ * Finishes a g_file_query_default_handler_async() operation.
+ *
+ * Returns: (transfer full): a #GAppInfo if the handle was found,
+ *     %NULL if there were errors.
+ *     When you are done with it, release it with g_object_unref()
+ *
+ * Since: 2.60
+ */
+GAppInfo *
+g_file_query_default_handler_finish (GFile        *file,
+                                     GAsyncResult *result,
+                                     GError      **error)
+{
+  g_return_val_if_fail (G_IS_FILE (file), NULL);
+  g_return_val_if_fail (g_task_is_valid (result, file), NULL);
+
+  return g_task_propagate_pointer (G_TASK (result), error);
+}
+
 #define GET_CONTENT_BLOCK_SIZE 8192
 
 /**
@@ -6727,7 +7014,7 @@ g_file_query_default_handler (GFile         *file,
  *
  * Loads the content of the file into memory. The data is always
  * zero-terminated, but this is not included in the resultant @length.
- * The returned @content should be freed with g_free() when no longer
+ * The returned @contents should be freed with g_free() when no longer
  * needed.
  *
  * If @cancellable is not %NULL, then the operation can be cancelled by
@@ -6957,9 +7244,11 @@ load_contents_open_callback (GObject      *obj,
  * g_file_load_partial_contents_async: (skip)
  * @file: input #GFile
  * @cancellable: optional #GCancellable object, %NULL to ignore
- * @read_more_callback: a #GFileReadMoreCallback to receive partial data
+ * @read_more_callback: (scope call) (closure user_data): a
+ *     #GFileReadMoreCallback to receive partial data
  *     and to specify whether further data should be read
- * @callback: a #GAsyncReadyCallback to call when the request is satisfied
+ * @callback: (scope async) (closure user_data): a #GAsyncReadyCallback to call
+ *     when the request is satisfied
  * @user_data: the data to pass to the callback functions
  *
  * Reads the partial contents of a file. A #GFileReadMoreCallback should
@@ -7014,7 +7303,7 @@ g_file_load_partial_contents_async (GFile                 *file,
  * Finishes an asynchronous partial load operation that was started
  * with g_file_load_partial_contents_async(). The data is always
  * zero-terminated, but this is not included in the resultant @length.
- * The returned @content should be freed with g_free() when no longer
+ * The returned @contents should be freed with g_free() when no longer
  * needed.
  *
  * Returns: %TRUE if the load was successful. If %FALSE and @error is
@@ -7111,7 +7400,7 @@ g_file_load_contents_async (GFile               *file,
  *
  * Finishes an asynchronous load of the @file's contents.
  * The contents are placed in @contents, and @length is set to the
- * size of the @contents string. The @content should be freed with
+ * size of the @contents string. The @contents should be freed with
  * g_free() when no longer needed. If @etag_out is present, it will be
  * set to the new entity tag for the @file.
  *
@@ -7368,7 +7657,7 @@ replace_contents_open_callback (GObject      *obj,
  * If @make_backup is %TRUE, this function will attempt to
  * make a backup of @file.
  *
- * Note that no copy of @content will be made, so it must stay valid
+ * Note that no copy of @contents will be made, so it must stay valid
  * until @callback is called. See g_file_replace_contents_bytes_async()
  * for a #GBytes version that will automatically hold a reference to the
  * contents (without copying) for the duration of the call.
@@ -7665,7 +7954,7 @@ g_file_real_measure_disk_usage_finish (GFile         *file,
  *
  * By default, errors are only reported against the toplevel file
  * itself.  Errors found while recursing are silently ignored, unless
- * %G_FILE_DISK_USAGE_REPORT_ALL_ERRORS is given in @flags.
+ * %G_FILE_MEASURE_REPORT_ANY_ERROR is given in @flags.
  *
  * The returned size, @disk_usage, is in bytes and should be formatted
  * with g_format_size() in order to get something reasonable for showing
@@ -7920,7 +8209,7 @@ g_file_stop_mountable (GFile               *file,
  * @result: a #GAsyncResult
  * @error: a #GError, or %NULL
  *
- * Finishes an stop operation, see g_file_stop_mountable() for details.
+ * Finishes a stop operation, see g_file_stop_mountable() for details.
  *
  * Finish an asynchronous stop operation that was started
  * with g_file_stop_mountable().
@@ -8053,4 +8342,192 @@ g_file_supports_thread_contexts (GFile *file)
 
  iface = G_FILE_GET_IFACE (file);
  return iface->supports_thread_contexts;
+}
+
+/**
+ * g_file_load_bytes:
+ * @file: a #GFile
+ * @cancellable: (nullable): a #GCancellable or %NULL
+ * @etag_out: (out) (nullable) (optional): a location to place the current
+ *     entity tag for the file, or %NULL if the entity tag is not needed
+ * @error: a location for a #GError or %NULL
+ *
+ * Loads the contents of @file and returns it as #GBytes.
+ *
+ * If @file is a resource:// based URI, the resulting bytes will reference the
+ * embedded resource instead of a copy. Otherwise, this is equivalent to calling
+ * g_file_load_contents() and g_bytes_new_take().
+ *
+ * For resources, @etag_out will be set to %NULL.
+ *
+ * The data contained in the resulting #GBytes is always zero-terminated, but
+ * this is not included in the #GBytes length. The resulting #GBytes should be
+ * freed with g_bytes_unref() when no longer in use.
+ *
+ * Returns: (transfer full): a #GBytes or %NULL and @error is set
+ *
+ * Since: 2.56
+ */
+GBytes *
+g_file_load_bytes (GFile         *file,
+                   GCancellable  *cancellable,
+                   gchar        **etag_out,
+                   GError       **error)
+{
+  gchar *contents;
+  gsize len;
+
+  g_return_val_if_fail (G_IS_FILE (file), NULL);
+  g_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  if (etag_out != NULL)
+    *etag_out = NULL;
+
+  if (g_file_has_uri_scheme (file, "resource"))
+    {
+      GBytes *bytes;
+      gchar *uri, *unescaped;
+
+      uri = g_file_get_uri (file);
+      unescaped = g_uri_unescape_string (uri + strlen ("resource://"), NULL);
+      g_free (uri);
+
+      bytes = g_resources_lookup_data (unescaped, G_RESOURCE_LOOKUP_FLAGS_NONE, error);
+      g_free (unescaped);
+
+      return bytes;
+    }
+
+  /* contents is guaranteed to be \0 terminated */
+  if (g_file_load_contents (file, cancellable, &contents, &len, etag_out, error))
+    return g_bytes_new_take (g_steal_pointer (&contents), len);
+
+  return NULL;
+}
+
+static void
+g_file_load_bytes_cb (GObject      *object,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  GFile *file = G_FILE (object);
+  GTask *task = user_data;
+  GError *error = NULL;
+  gchar *etag = NULL;
+  gchar *contents = NULL;
+  gsize len = 0;
+
+  g_file_load_contents_finish (file, result, &contents, &len, &etag, &error);
+  g_task_set_task_data (task, g_steal_pointer (&etag), g_free);
+
+  if (error != NULL)
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task,
+                           g_bytes_new_take (g_steal_pointer (&contents), len),
+                           (GDestroyNotify)g_bytes_unref);
+
+  g_object_unref (task);
+}
+
+/**
+ * g_file_load_bytes_async:
+ * @file: a #GFile
+ * @cancellable: (nullable): a #GCancellable or %NULL
+ * @callback: (scope async): a #GAsyncReadyCallback to call when the
+ *     request is satisfied
+ * @user_data: (closure): the data to pass to callback function
+ *
+ * Asynchronously loads the contents of @file as #GBytes.
+ *
+ * If @file is a resource:// based URI, the resulting bytes will reference the
+ * embedded resource instead of a copy. Otherwise, this is equivalent to calling
+ * g_file_load_contents_async() and g_bytes_new_take().
+ *
+ * @callback should call g_file_load_bytes_finish() to get the result of this
+ * asynchronous operation.
+ *
+ * See g_file_load_bytes() for more information.
+ *
+ * Since: 2.56
+ */
+void
+g_file_load_bytes_async (GFile               *file,
+                         GCancellable        *cancellable,
+                         GAsyncReadyCallback  callback,
+                         gpointer             user_data)
+{
+  GError *error = NULL;
+  GBytes *bytes;
+  GTask *task;
+
+  g_return_if_fail (G_IS_FILE (file));
+  g_return_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable));
+
+  task = g_task_new (file, cancellable, callback, user_data);
+  g_task_set_source_tag (task, g_file_load_bytes_async);
+
+  if (!g_file_has_uri_scheme (file, "resource"))
+    {
+      g_file_load_contents_async (file,
+                                  cancellable,
+                                  g_file_load_bytes_cb,
+                                  g_steal_pointer (&task));
+      return;
+    }
+
+  bytes = g_file_load_bytes (file, cancellable, NULL, &error);
+
+  if (bytes == NULL)
+    g_task_return_error (task, g_steal_pointer (&error));
+  else
+    g_task_return_pointer (task,
+                           g_steal_pointer (&bytes),
+                           (GDestroyNotify)g_bytes_unref);
+
+  g_object_unref (task);
+}
+
+/**
+ * g_file_load_bytes_finish:
+ * @file: a #GFile
+ * @result: a #GAsyncResult provided to the callback
+ * @etag_out: (out) (nullable) (optional): a location to place the current
+ *     entity tag for the file, or %NULL if the entity tag is not needed
+ * @error: a location for a #GError, or %NULL
+ *
+ * Completes an asynchronous request to g_file_load_bytes_async().
+ *
+ * For resources, @etag_out will be set to %NULL.
+ *
+ * The data contained in the resulting #GBytes is always zero-terminated, but
+ * this is not included in the #GBytes length. The resulting #GBytes should be
+ * freed with g_bytes_unref() when no longer in use.
+ *
+ * See g_file_load_bytes() for more information.
+ *
+ * Returns: (transfer full): a #GBytes or %NULL and @error is set
+ *
+ * Since: 2.56
+ */
+GBytes *
+g_file_load_bytes_finish (GFile         *file,
+                          GAsyncResult  *result,
+                          gchar        **etag_out,
+                          GError       **error)
+{
+  GBytes *bytes;
+
+  g_return_val_if_fail (G_IS_FILE (file), NULL);
+  g_return_val_if_fail (G_IS_TASK (result), NULL);
+  g_return_val_if_fail (g_task_is_valid (G_TASK (result), file), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  bytes = g_task_propagate_pointer (G_TASK (result), error);
+
+  if (etag_out != NULL)
+    *etag_out = g_strdup (g_task_get_task_data (G_TASK (result)));
+
+  return bytes;
 }

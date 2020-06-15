@@ -30,6 +30,7 @@
 #include "gtlsdatabase.h"
 #include "gtlsinteraction.h"
 #include "glibintl.h"
+#include "gmarshal-internal.h"
 
 /**
  * SECTION:gdtlsconnection
@@ -112,7 +113,7 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
    *
    * The certificate database to use when verifying this TLS connection.
    * If no certificate database is set, then the default database will be
-   * used. See g_dtls_backend_get_default_database().
+   * used. See g_tls_backend_get_default_database().
    *
    * Since: 2.48
    */
@@ -162,6 +163,8 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
    * g_dtls_connection_set_rehandshake_mode().
    *
    * Since: 2.48
+   *
+   * Deprecated: 2.60: The rehandshake mode is ignored.
    */
   g_object_interface_install_property (iface,
                                        g_param_spec_enum ("rehandshake-mode",
@@ -171,7 +174,8 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
                                                           G_TLS_REHANDSHAKE_NEVER,
                                                           G_PARAM_READWRITE |
                                                           G_PARAM_CONSTRUCT |
-                                                          G_PARAM_STATIC_STRINGS));
+                                                          G_PARAM_STATIC_STRINGS |
+                                                          G_PARAM_DEPRECATED));
   /**
    * GDtlsConnection:certificate:
    *
@@ -227,6 +231,37 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
                                                            0,
                                                            G_PARAM_READABLE |
                                                            G_PARAM_STATIC_STRINGS));
+  /**
+   * GDtlsConnection:advertised-protocols:
+   *
+   * The list of application-layer protocols that the connection
+   * advertises that it is willing to speak. See
+   * g_dtls_connection_set_advertised_protocols().
+   *
+   * Since: 2.60
+   */
+  g_object_interface_install_property (iface,
+                                       g_param_spec_boxed ("advertised-protocols",
+                                                           P_("Advertised Protocols"),
+                                                           P_("Application-layer protocols available on this connection"),
+                                                           G_TYPE_STRV,
+                                                           G_PARAM_READWRITE |
+                                                           G_PARAM_STATIC_STRINGS));
+  /**
+   * GDtlsConnection:negotiated-protocol:
+   *
+   * The application-layer protocol negotiated during the TLS
+   * handshake. See g_dtls_connection_get_negotiated_protocol().
+   *
+   * Since: 2.60
+   */
+  g_object_interface_install_property (iface,
+                                       g_param_spec_string ("negotiated-protocol",
+                                                            P_("Negotiated Protocol"),
+                                                            P_("Application-layer protocol negotiated for this connection"),
+                                                            NULL,
+                                                            G_PARAM_READABLE |
+                                                            G_PARAM_STATIC_STRINGS));
 
   /**
    * GDtlsConnection::accept-certificate:
@@ -259,8 +294,8 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
    * let the user decide whether or not to accept the certificate, you
    * would have to return %FALSE from the signal handler on the first
    * attempt, and then after the connection attempt returns a
-   * %G_TLS_ERROR_HANDSHAKE, you can interact with the user, and if
-   * the user decides to accept the certificate, remember that fact,
+   * %G_TLS_ERROR_BAD_CERTIFICATE, you can interact with the user, and
+   * if the user decides to accept the certificate, remember that fact,
    * create a new connection, and return %TRUE from the signal handler
    * the next time.
    *
@@ -281,10 +316,13 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GDtlsConnectionInterface, accept_certificate),
                   g_signal_accumulator_true_handled, NULL,
-                  NULL,
+                  _g_cclosure_marshal_BOOLEAN__OBJECT_FLAGS,
                   G_TYPE_BOOLEAN, 2,
                   G_TYPE_TLS_CERTIFICATE,
                   G_TYPE_TLS_CERTIFICATE_FLAGS);
+  g_signal_set_va_marshaller (signals[ACCEPT_CERTIFICATE],
+                              G_TYPE_FROM_INTERFACE (iface),
+                              _g_cclosure_marshal_BOOLEAN__OBJECT_FLAGSv);
 }
 
 /**
@@ -294,7 +332,7 @@ g_dtls_connection_default_init (GDtlsConnectionInterface *iface)
  *
  * Sets the certificate database that is used to verify peer certificates.
  * This is set to the default database by default. See
- * g_dtls_backend_get_default_database(). If set to %NULL, then
+ * g_tls_backend_get_default_database(). If set to %NULL, then
  * peer certificate validation will always set the
  * %G_TLS_CERTIFICATE_UNKNOWN_CA error (meaning
  * #GDtlsConnection::accept-certificate will always be emitted on
@@ -575,29 +613,18 @@ g_dtls_connection_get_require_close_notify (GDtlsConnection *conn)
  * @conn: a #GDtlsConnection
  * @mode: the rehandshaking mode
  *
- * Sets how @conn behaves with respect to rehandshaking requests.
- *
- * %G_TLS_REHANDSHAKE_NEVER means that it will never agree to
- * rehandshake after the initial handshake is complete. (For a client,
- * this means it will refuse rehandshake requests from the server, and
- * for a server, this means it will close the connection with an error
- * if the client attempts to rehandshake.)
- *
- * %G_TLS_REHANDSHAKE_SAFELY means that the connection will allow a
- * rehandshake only if the other end of the connection supports the
- * TLS `renegotiation_info` extension. This is the default behavior,
- * but means that rehandshaking will not work against older
- * implementations that do not support that extension.
- *
- * %G_TLS_REHANDSHAKE_UNSAFELY means that the connection will allow
- * rehandshaking even without the `renegotiation_info` extension. On
- * the server side in particular, this is not recommended, since it
- * leaves the server open to certain attacks. However, this mode is
- * necessary if you need to allow renegotiation with older client
- * software.
+ * Since GLib 2.64, changing the rehandshake mode is no longer supported
+ * and will have no effect. With TLS 1.3, rehandshaking has been removed from
+ * the TLS protocol, replaced by separate post-handshake authentication and
+ * rekey operations.
  *
  * Since: 2.48
+ *
+ * Deprecated: 2.60. Changing the rehandshake mode is no longer
+ *   required for compatibility. Also, rehandshaking has been removed
+ *   from the TLS protocol in TLS 1.3.
  */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 void
 g_dtls_connection_set_rehandshake_mode (GDtlsConnection     *conn,
                                         GTlsRehandshakeMode  mode)
@@ -605,9 +632,10 @@ g_dtls_connection_set_rehandshake_mode (GDtlsConnection     *conn,
   g_return_if_fail (G_IS_DTLS_CONNECTION (conn));
 
   g_object_set (G_OBJECT (conn),
-                "rehandshake-mode", mode,
+                "rehandshake-mode", G_TLS_REHANDSHAKE_SAFELY,
                 NULL);
 }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 /**
  * g_dtls_connection_get_rehandshake_mode:
@@ -616,22 +644,31 @@ g_dtls_connection_set_rehandshake_mode (GDtlsConnection     *conn,
  * Gets @conn rehandshaking mode. See
  * g_dtls_connection_set_rehandshake_mode() for details.
  *
- * Returns: @conn's rehandshaking mode
+ * Returns: %G_TLS_REHANDSHAKE_SAFELY
  *
  * Since: 2.48
+ *
+ * Deprecated: 2.64. Changing the rehandshake mode is no longer
+ *   required for compatibility. Also, rehandshaking has been removed
+ *   from the TLS protocol in TLS 1.3.
  */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 GTlsRehandshakeMode
-g_dtls_connection_get_rehandshake_mode (GDtlsConnection       *conn)
+g_dtls_connection_get_rehandshake_mode (GDtlsConnection *conn)
 {
   GTlsRehandshakeMode mode;
 
-  g_return_val_if_fail (G_IS_DTLS_CONNECTION (conn), G_TLS_REHANDSHAKE_NEVER);
+  g_return_val_if_fail (G_IS_DTLS_CONNECTION (conn), G_TLS_REHANDSHAKE_SAFELY);
 
+  /* Continue to call g_object_get(), even though the return value is
+   * ignored, so that behavior doesn’t change for derived classes.
+   */
   g_object_get (G_OBJECT (conn),
                 "rehandshake-mode", &mode,
                 NULL);
-  return mode;
+  return G_TLS_REHANDSHAKE_SAFELY;
 }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 /**
  * g_dtls_connection_handshake:
@@ -643,21 +680,25 @@ g_dtls_connection_get_rehandshake_mode (GDtlsConnection       *conn)
  *
  * On the client side, it is never necessary to call this method;
  * although the connection needs to perform a handshake after
- * connecting (or after sending a "STARTTLS"-type command) and may
- * need to rehandshake later if the server requests it,
- * #GDtlsConnection will handle this for you automatically when you try
- * to send or receive data on the connection. However, you can call
- * g_dtls_connection_handshake() manually if you want to know for sure
- * whether the initial handshake succeeded or failed (as opposed to
- * just immediately trying to write to @conn, in which
- * case if it fails, it may not be possible to tell if it failed
- * before or after completing the handshake).
+ * connecting, #GDtlsConnection will handle this for you automatically
+ * when you try to send or receive data on the connection. You can call
+ * g_dtls_connection_handshake() manually if you want to know whether
+ * the initial handshake succeeded or failed (as opposed to just
+ * immediately trying to use @conn to read or write, in which case,
+ * if it fails, it may not be possible to tell if it failed before
+ * or after completing the handshake), but beware that servers may reject
+ * client authentication after the handshake has completed, so a
+ * successful handshake does not indicate the connection will be usable.
  *
  * Likewise, on the server side, although a handshake is necessary at
  * the beginning of the communication, you do not need to call this
  * function explicitly unless you want clearer error reporting.
- * However, you may call g_dtls_connection_handshake() later on to
- * renegotiate parameters (encryption methods, etc) with the client.
+ *
+ * Previously, calling g_dtls_connection_handshake() after the initial
+ * handshake would trigger a rehandshake; however, this usage was
+ * deprecated in GLib 2.60 because rehandshaking was removed from the
+ * TLS protocol in TLS 1.3. Since GLib 2.64, calling this function after
+ * the initial handshake will no longer do anything.
  *
  * #GDtlsConnection::accept_certificate may be emitted during the
  * handshake.
@@ -972,4 +1013,64 @@ g_dtls_connection_emit_accept_certificate (GDtlsConnection      *conn,
   g_signal_emit (conn, signals[ACCEPT_CERTIFICATE], 0,
                  peer_cert, errors, &accept);
   return accept;
+}
+
+/**
+ * g_dtls_connection_set_advertised_protocols:
+ * @conn: a #GDtlsConnection
+ * @protocols: (array zero-terminated=1) (nullable): a %NULL-terminated
+ *   array of ALPN protocol names (eg, "http/1.1", "h2"), or %NULL
+ *
+ * Sets the list of application-layer protocols to advertise that the
+ * caller is willing to speak on this connection. The
+ * Application-Layer Protocol Negotiation (ALPN) extension will be
+ * used to negotiate a compatible protocol with the peer; use
+ * g_dtls_connection_get_negotiated_protocol() to find the negotiated
+ * protocol after the handshake.  Specifying %NULL for the the value
+ * of @protocols will disable ALPN negotiation.
+ *
+ * See [IANA TLS ALPN Protocol IDs](https://www.iana.org/assignments/tls-extensiontype-values/tls-extensiontype-values.xhtml#alpn-protocol-ids)
+ * for a list of registered protocol IDs.
+ *
+ * Since: 2.60
+ */
+void
+g_dtls_connection_set_advertised_protocols (GDtlsConnection     *conn,
+                                            const gchar * const *protocols)
+{
+  GDtlsConnectionInterface *iface;
+
+  iface = G_DTLS_CONNECTION_GET_INTERFACE (conn);
+  if (iface->set_advertised_protocols == NULL)
+    return;
+
+  iface->set_advertised_protocols (conn, protocols);
+}
+
+/**
+ * g_dtls_connection_get_negotiated_protocol:
+ * @conn: a #GDtlsConnection
+ *
+ * Gets the name of the application-layer protocol negotiated during
+ * the handshake.
+ *
+ * If the peer did not use the ALPN extension, or did not advertise a
+ * protocol that matched one of @conn's protocols, or the TLS backend
+ * does not support ALPN, then this will be %NULL. See
+ * g_dtls_connection_set_advertised_protocols().
+ *
+ * Returns: (nullable): the negotiated protocol, or %NULL
+ *
+ * Since: 2.60
+ */
+const gchar *
+g_dtls_connection_get_negotiated_protocol (GDtlsConnection *conn)
+{
+  GDtlsConnectionInterface *iface;
+
+  iface = G_DTLS_CONNECTION_GET_INTERFACE (conn);
+  if (iface->set_advertised_protocols == NULL)
+    return NULL;
+
+  return iface->get_negotiated_protocol (conn);
 }

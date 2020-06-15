@@ -1,5 +1,5 @@
 /*
- * Mock version of dbus-launch, for gdbus-unix-addresses test
+ * Mock version of dbus-launch, for gdbus-address-get-session test
  *
  * Copyright © 2015 Collabora Ltd.
  *
@@ -38,7 +38,7 @@ write_all (const void *ptr,
 
   while (len > 0)
     {
-      ssize_t done = write (STDOUT_FILENO, p, len);
+      gssize done = write (STDOUT_FILENO, p, len);
       int errsv = errno;
 
       if (done == 0)

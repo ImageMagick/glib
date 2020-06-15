@@ -69,6 +69,38 @@ test_list_sort_with_data (void)
   g_list_free (list);
 }
 
+/* Test that the sort is stable. */
+static void
+test_list_sort_stable (void)
+{
+  GList *list = NULL;  /* (element-type utf8) */
+  GList *copy = NULL;  /* (element-type utf8) */
+  gsize i;
+
+  /* Build a test list, already ordered. */
+  for (i = 0; i < SIZE; i++)
+    list = g_list_append (list, g_strdup_printf ("%" G_GSIZE_FORMAT, i / 5));
+
+  /* Take a copy and sort it. */
+  copy = g_list_copy (list);
+  copy = g_list_sort (copy, (GCompareFunc) g_strcmp0);
+
+  /* Compare the two lists, checking pointers are equal to ensure the elements
+   * have been kept stable. */
+  for (i = 0; i < SIZE; i++)
+    {
+      gpointer p1, p2;
+
+      p1 = g_list_nth_data (list, i);
+      p2 = g_list_nth_data (list, i);
+
+      g_assert (p1 == p2);
+    }
+
+  g_list_free (copy);
+  g_list_free_full (list, g_free);
+}
+
 static void
 test_list_insert_sorted (void)
 {
@@ -516,6 +548,72 @@ test_double_free (void)
   g_test_trap_assert_stderr ("*corrupted double-linked list detected*");
 }
 
+static void
+test_list_insert_before_link (void)
+{
+  GList a = {0};
+  GList b = {0};
+  GList c = {0};
+  GList d = {0};
+  GList e = {0};
+  GList *list;
+
+  list = g_list_insert_before_link (NULL, NULL, &a);
+  g_assert_nonnull (list);
+  g_assert_true (list == &a);
+  g_assert_null (a.prev);
+  g_assert_null (a.next);
+  g_assert_cmpint (g_list_length (list), ==, 1);
+
+  list = g_list_insert_before_link (list, &a, &b);
+  g_assert_nonnull (list);
+  g_assert_true (list == &b);
+  g_assert_null (b.prev);
+  g_assert_true (b.next == &a);
+  g_assert_true (a.prev == &b);
+  g_assert_null (a.next);
+  g_assert_cmpint (g_list_length (list), ==, 2);
+
+  list = g_list_insert_before_link (list, &a, &c);
+  g_assert_nonnull (list);
+  g_assert_true (list == &b);
+  g_assert_null (b.prev);
+  g_assert_true (b.next == &c);
+  g_assert_true (c.next == &a);
+  g_assert_true (c.prev == &b);
+  g_assert_true (a.prev == &c);
+  g_assert_null (a.next);
+  g_assert_cmpint (g_list_length (list), ==, 3);
+
+  list = g_list_insert_before_link (list, &b, &d);
+  g_assert_nonnull (list);
+  g_assert_true (list == &d);
+  g_assert_null (d.prev);
+  g_assert_true (b.prev == &d);
+  g_assert_true (c.prev == &b);
+  g_assert_true (a.prev == &c);
+  g_assert_true (d.next == &b);
+  g_assert_true (b.next == &c);
+  g_assert_true (c.next == &a);
+  g_assert_null (a.next);
+  g_assert_cmpint (g_list_length (list), ==, 4);
+
+  list = g_list_insert_before_link (list, NULL, &e);
+  g_assert_nonnull (list);
+  g_assert_true (list == &d);
+  g_assert_null (d.prev);
+  g_assert_true (b.prev == &d);
+  g_assert_true (c.prev == &b);
+  g_assert_true (a.prev == &c);
+  g_assert_true (d.next == &b);
+  g_assert_true (b.next == &c);
+  g_assert_true (c.next == &a);
+  g_assert_true (a.next == &e);
+  g_assert_true (e.prev == &a);
+  g_assert_null (e.next);
+  g_assert_cmpint (g_list_length (list), ==, 5);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -529,6 +627,8 @@ main (int argc, char *argv[])
 
   g_test_add_func ("/list/sort", test_list_sort);
   g_test_add_func ("/list/sort-with-data", test_list_sort_with_data);
+  g_test_add_func ("/list/sort/stable", test_list_sort_stable);
+  g_test_add_func ("/list/insert-before-link", test_list_insert_before_link);
   g_test_add_func ("/list/insert-sorted", test_list_insert_sorted);
   g_test_add_func ("/list/insert-sorted-with-data", test_list_insert_sorted_with_data);
   g_test_add_func ("/list/reverse", test_list_reverse);

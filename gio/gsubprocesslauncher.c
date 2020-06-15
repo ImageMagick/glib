@@ -227,8 +227,9 @@ g_subprocess_launcher_new (GSubprocessFlags flags)
 
 /**
  * g_subprocess_launcher_set_environ:
- * @self: a #GSubprocess
- * @env: (array zero-terminated=1): the replacement environment
+ * @self: a #GSubprocessLauncher
+ * @env: (array zero-terminated=1) (element-type filename) (transfer none):
+ *     the replacement environment
  *
  * Replace the entire environment of processes launched from this
  * launcher with the given 'environ' variable.
@@ -265,9 +266,10 @@ g_subprocess_launcher_set_environ (GSubprocessLauncher  *self,
 
 /**
  * g_subprocess_launcher_setenv:
- * @self: a #GSubprocess
- * @variable: the environment variable to set, must not contain '='
- * @value: the new value for the variable
+ * @self: a #GSubprocessLauncher
+ * @variable: (type filename): the environment variable to set,
+ *     must not contain '='
+ * @value: (type filename): the new value for the variable
  * @overwrite: whether to change the variable if it already exists
  *
  * Sets the environment variable @variable in the environment of
@@ -290,8 +292,9 @@ g_subprocess_launcher_setenv (GSubprocessLauncher *self,
 
 /**
  * g_subprocess_launcher_unsetenv:
- * @self: a #GSubprocess
- * @variable: the environment variable to unset, must not contain '='
+ * @self: a #GSubprocessLauncher
+ * @variable: (type filename): the environment variable to unset,
+ *     must not contain '='
  *
  * Removes the environment variable @variable from the environment of
  * processes launched from this launcher.
@@ -310,8 +313,8 @@ g_subprocess_launcher_unsetenv (GSubprocessLauncher *self,
 
 /**
  * g_subprocess_launcher_getenv:
- * @self: a #GSubprocess
- * @variable: the environment variable to get
+ * @self: a #GSubprocessLauncher
+ * @variable: (type filename): the environment variable to get
  *
  * Returns the value of the environment variable @variable in the
  * environment of processes launched from this launcher.
@@ -319,7 +322,8 @@ g_subprocess_launcher_unsetenv (GSubprocessLauncher *self,
  * On UNIX, the returned string can be an arbitrary byte string.
  * On Windows, it will be UTF-8.
  *
- * Returns: the value of the environment variable, %NULL if unset
+ * Returns: (type filename): the value of the environment variable,
+ *     %NULL if unset
  *
  * Since: 2.40
  **/
@@ -332,7 +336,7 @@ g_subprocess_launcher_getenv (GSubprocessLauncher *self,
 
 /**
  * g_subprocess_launcher_set_cwd:
- * @self: a #GSubprocess
+ * @self: a #GSubprocessLauncher
  * @cwd: (type filename): the cwd for launched processes
  *
  * Sets the current working directory that processes will be launched
@@ -640,7 +644,7 @@ g_subprocess_launcher_take_fd (GSubprocessLauncher   *self,
 }
 
 /**
- * g_subprocess_launcher_set_child_setup:
+ * g_subprocess_launcher_set_child_setup: (skip)
  * @self: a #GSubprocessLauncher
  * @child_setup: a #GSpawnChildSetupFunc to use as the child setup function
  * @user_data: user data for @child_setup
@@ -724,7 +728,7 @@ g_subprocess_launcher_spawn (GSubprocessLauncher  *launcher,
 /**
  * g_subprocess_launcher_spawnv:
  * @self: a #GSubprocessLauncher
- * @argv: (array zero-terminated=1) (element-type utf8): Command line arguments
+ * @argv: (array zero-terminated=1) (element-type filename): Command line arguments
  * @error: Error
  *
  * Creates a #GSubprocess given a provided array of arguments.

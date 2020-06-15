@@ -8,12 +8,10 @@
 #endif
 
 static void
-test_basic (void)
+test_basic_for_file (GFile       *file,
+                     const gchar *suffix)
 {
-  GFile *file;
   gchar *s;
-
-  file = g_file_new_for_path ("./some/directory/testfile");
 
   s = g_file_get_basename (file);
   g_assert_cmpstr (s, ==, "testfile");
@@ -21,14 +19,36 @@ test_basic (void)
 
   s = g_file_get_uri (file);
   g_assert (g_str_has_prefix (s, "file://"));
-  g_assert (g_str_has_suffix (s, "/some/directory/testfile"));
+  g_assert (g_str_has_suffix (s, suffix));
   g_free (s);
 
   g_assert (g_file_has_uri_scheme (file, "file"));
   s = g_file_get_uri_scheme (file);
   g_assert_cmpstr (s, ==, "file");
   g_free (s);
+}
 
+static void
+test_basic (void)
+{
+  GFile *file;
+
+  file = g_file_new_for_path ("./some/directory/testfile");
+  test_basic_for_file (file, "/some/directory/testfile");
+  g_object_unref (file);
+}
+
+static void
+test_build_filename (void)
+{
+  GFile *file;
+
+  file = g_file_new_build_filename (".", "some", "directory", "testfile", NULL);
+  test_basic_for_file (file, "/some/directory/testfile");
+  g_object_unref (file);
+
+  file = g_file_new_build_filename ("testfile", NULL);
+  test_basic_for_file (file, "/testfile");
   g_object_unref (file);
 }
 
@@ -135,7 +155,7 @@ typedef struct
   gint monitor_changed;
   gchar *monitor_path;
   gint pos;
-  gchar *data;
+  const gchar *data;
   gchar *buffer;
   guint timeout;
 } CreateDeleteData;
@@ -149,9 +169,12 @@ monitor_changed (GFileMonitor      *monitor,
 {
   CreateDeleteData *data = user_data;
   gchar *path;
+  const gchar *peeked_path;
 
   path = g_file_get_path (file);
+  peeked_path = g_file_peek_path (file);
   g_assert_cmpstr (data->monitor_path, ==, path);
+  g_assert_cmpstr (path, ==, peeked_path);
   g_free (path);
 
   if (event_type == G_FILE_MONITOR_EVENT_CREATED)
@@ -454,7 +477,15 @@ test_create_delete (gconstpointer d)
    * that the monitor will notice a create immediately followed by a
    * delete, rather than coalescing them into nothing.
    */
-  if (!strcmp (G_OBJECT_TYPE_NAME (data->monitor), "GPollFileMonitor"))
+  /* This test also doesn't work with GKqueueFileMonitor because of
+   * the same reason. Kqueue is able to return a kevent when a file is
+   * created or deleted in a directory. However, the kernel doesn't tell
+   * the program file names, so GKqueueFileMonitor has to calculate the
+   * difference itself. This is usually too slow for rapid file creation
+   * and deletion tests.
+   */
+  if (strcmp (G_OBJECT_TYPE_NAME (data->monitor), "GPollFileMonitor") == 0 ||
+      strcmp (G_OBJECT_TYPE_NAME (data->monitor), "GKqueueFileMonitor") == 0)
     {
       g_test_skip ("skipping test for this GFileMonitor implementation");
       goto skip;
@@ -466,7 +497,7 @@ test_create_delete (gconstpointer d)
 
   data->loop = g_main_loop_new (NULL, FALSE);
 
-  data->timeout = g_timeout_add (5000, stop_timeout, NULL);
+  data->timeout = g_timeout_add (10000, stop_timeout, NULL);
 
   g_file_create_async (data->file, 0, 0, NULL, created_cb, data);
 
@@ -487,10 +518,15 @@ test_create_delete (gconstpointer d)
  skip:
   g_object_unref (data->monitor);
   g_object_unref (data->file);
-  free (data->monitor_path);
+  g_free (data->monitor_path);
   g_free (data->buffer);
   g_free (data);
 }
+
+static const gchar *original_data =
+    "/**\n"
+    " * g_file_replace_contents_async:\n"
+    "**/\n";
 
 static const gchar *replace_data =
     "/**\n"
@@ -599,7 +635,7 @@ static void
 test_replace_load (void)
 {
   ReplaceLoadData *data;
-  gchar *path;
+  const gchar *path;
   GFileIOStream *iostream;
 
   data = g_new0 (ReplaceLoadData, 1);
@@ -611,7 +647,7 @@ test_replace_load (void)
   g_assert (data->file != NULL);
   g_object_unref (iostream);
 
-  path = g_file_get_path (data->file);
+  path = g_file_peek_path (data->file);
   remove (path);
 
   g_assert (!g_file_query_exists (data->file, NULL));
@@ -633,7 +669,6 @@ test_replace_load (void)
   g_main_loop_unref (data->loop);
   g_object_unref (data->file);
   g_free (data);
-  free (path);
 }
 
 static void
@@ -645,7 +680,8 @@ test_replace_cancel (void)
   GFileInfo *info;
   GCancellable *cancellable;
   gchar *path;
-  gsize nwrote;
+  gchar *contents;
+  gsize nwrote, length;
   guint count;
   GError *error = NULL;
 
@@ -658,8 +694,8 @@ test_replace_cancel (void)
 
   file = g_file_get_child (tmpdir, "file");
   g_file_replace_contents (file,
-                           replace_data,
-                           strlen (replace_data),
+                           original_data,
+                           strlen (original_data),
                            NULL, FALSE, 0, NULL,
                            NULL, &error);
   g_assert_no_error (error);
@@ -747,6 +783,17 @@ test_replace_cancel (void)
   g_object_unref (cancellable);
   g_object_unref (ostream);
 
+  /* Make sure that file contents wasn't actually replaced. */
+  g_file_load_contents (file,
+                        NULL,
+                        &contents,
+                        &length,
+                        NULL,
+                        &error);
+  g_assert_no_error (error);
+  g_assert_cmpstr (contents, ==, original_data);
+  g_free (contents);
+
   g_file_delete (file, NULL, &error);
   g_assert_no_error (error);
   g_object_unref (file);
@@ -799,58 +846,103 @@ test_async_delete (void)
   g_object_unref (file);
 }
 
-#ifdef G_OS_UNIX
 static void
 test_copy_preserve_mode (void)
 {
-  GFile *tmpfile;
-  GFile *dest_tmpfile;
-  GFileInfo *dest_info;
-  GFileIOStream *iostream;
-  GError *local_error = NULL;
-  GError **error = &local_error;
-  guint32 romode = S_IFREG | 0600;
-  guint32 dest_mode;
+#ifdef G_OS_UNIX
+  mode_t current_umask = umask (0);
+  const struct
+    {
+      guint32 source_mode;
+      guint32 expected_destination_mode;
+      gboolean create_destination_before_copy;
+      GFileCopyFlags copy_flags;
+    }
+  vectors[] =
+    {
+      /* Overwriting the destination file should copy the permissions from the
+       * source file, even if %G_FILE_COPY_ALL_METADATA is set: */
+      { 0600, 0600, TRUE, G_FILE_COPY_OVERWRITE | G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA },
+      { 0600, 0600, TRUE, G_FILE_COPY_OVERWRITE | G_FILE_COPY_NOFOLLOW_SYMLINKS },
+      /* The same behaviour should hold if the destination file is not being
+       * overwritten because it doesn’t already exist: */
+      { 0600, 0600, FALSE, G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA },
+      { 0600, 0600, FALSE, G_FILE_COPY_NOFOLLOW_SYMLINKS },
+      /* Anything with %G_FILE_COPY_TARGET_DEFAULT_PERMS should use the current
+       * umask for the destination file: */
+      { 0600, 0666 & ~current_umask, TRUE, G_FILE_COPY_TARGET_DEFAULT_PERMS | G_FILE_COPY_OVERWRITE | G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA },
+      { 0600, 0666 & ~current_umask, TRUE, G_FILE_COPY_TARGET_DEFAULT_PERMS | G_FILE_COPY_OVERWRITE | G_FILE_COPY_NOFOLLOW_SYMLINKS },
+      { 0600, 0666 & ~current_umask, FALSE, G_FILE_COPY_TARGET_DEFAULT_PERMS | G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA },
+      { 0600, 0666 & ~current_umask, FALSE, G_FILE_COPY_TARGET_DEFAULT_PERMS | G_FILE_COPY_NOFOLLOW_SYMLINKS },
+    };
+  gsize i;
 
-  tmpfile = g_file_new_tmp ("tmp-copy-preserve-modeXXXXXX",
-                            &iostream, error);
-  g_assert_no_error (local_error);
-  g_io_stream_close ((GIOStream*)iostream, NULL, error);
-  g_assert_no_error (local_error);
-  g_clear_object (&iostream);
+  /* Reset the umask after querying it above. There’s no way to query it without
+   * changing it. */
+  umask (current_umask);
+  g_test_message ("Current umask: %u", current_umask);
 
-  g_file_set_attribute (tmpfile, G_FILE_ATTRIBUTE_UNIX_MODE, G_FILE_ATTRIBUTE_TYPE_UINT32,
-                        &romode, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                        NULL, error);
-  g_assert_no_error (local_error);
+  for (i = 0; i < G_N_ELEMENTS (vectors); i++)
+    {
+      GFile *tmpfile;
+      GFile *dest_tmpfile;
+      GFileInfo *dest_info;
+      GFileIOStream *iostream;
+      GError *local_error = NULL;
+      guint32 romode = vectors[i].source_mode;
+      guint32 dest_mode;
 
-  dest_tmpfile = g_file_new_tmp ("tmp-copy-preserve-modeXXXXXX",
-                                 &iostream, error);
-  g_assert_no_error (local_error);
-  g_io_stream_close ((GIOStream*)iostream, NULL, error);
-  g_assert_no_error (local_error);
-  g_clear_object (&iostream);
+      g_test_message ("Vector %" G_GSIZE_FORMAT, i);
 
-  g_file_copy (tmpfile, dest_tmpfile, G_FILE_COPY_OVERWRITE | G_FILE_COPY_NOFOLLOW_SYMLINKS | G_FILE_COPY_ALL_METADATA,
-               NULL, NULL, NULL, error);
-  g_assert_no_error (local_error);
+      tmpfile = g_file_new_tmp ("tmp-copy-preserve-modeXXXXXX",
+                                &iostream, &local_error);
+      g_assert_no_error (local_error);
+      g_io_stream_close ((GIOStream*)iostream, NULL, &local_error);
+      g_assert_no_error (local_error);
+      g_clear_object (&iostream);
 
-  dest_info = g_file_query_info (dest_tmpfile, G_FILE_ATTRIBUTE_UNIX_MODE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                 NULL, error);
-  g_assert_no_error (local_error);
+      g_file_set_attribute (tmpfile, G_FILE_ATTRIBUTE_UNIX_MODE, G_FILE_ATTRIBUTE_TYPE_UINT32,
+                            &romode, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                            NULL, &local_error);
+      g_assert_no_error (local_error);
 
-  dest_mode = g_file_info_get_attribute_uint32 (dest_info, G_FILE_ATTRIBUTE_UNIX_MODE);
-  
-  g_assert_cmpint (dest_mode, ==, romode);
+      dest_tmpfile = g_file_new_tmp ("tmp-copy-preserve-modeXXXXXX",
+                                     &iostream, &local_error);
+      g_assert_no_error (local_error);
+      g_io_stream_close ((GIOStream*)iostream, NULL, &local_error);
+      g_assert_no_error (local_error);
+      g_clear_object (&iostream);
 
-  (void) g_file_delete (tmpfile, NULL, NULL);
-  (void) g_file_delete (dest_tmpfile, NULL, NULL);
-  
-  g_clear_object (&tmpfile);
-  g_clear_object (&dest_tmpfile);
-  g_clear_object (&dest_info);
-}
+      if (!vectors[i].create_destination_before_copy)
+        {
+          g_file_delete (dest_tmpfile, NULL, &local_error);
+          g_assert_no_error (local_error);
+        }
+
+      g_file_copy (tmpfile, dest_tmpfile, vectors[i].copy_flags,
+                   NULL, NULL, NULL, &local_error);
+      g_assert_no_error (local_error);
+
+      dest_info = g_file_query_info (dest_tmpfile, G_FILE_ATTRIBUTE_UNIX_MODE, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                     NULL, &local_error);
+      g_assert_no_error (local_error);
+
+      dest_mode = g_file_info_get_attribute_uint32 (dest_info, G_FILE_ATTRIBUTE_UNIX_MODE);
+
+      g_assert_cmpint (dest_mode & ~S_IFMT, ==, vectors[i].expected_destination_mode);
+      g_assert_cmpint (dest_mode & S_IFMT, ==, S_IFREG);
+
+      (void) g_file_delete (tmpfile, NULL, NULL);
+      (void) g_file_delete (dest_tmpfile, NULL, NULL);
+
+      g_clear_object (&tmpfile);
+      g_clear_object (&dest_tmpfile);
+      g_clear_object (&dest_info);
+    }
+#else  /* if !G_OS_UNIX */
+  g_test_skip ("File permissions tests can only be run on Unix")
 #endif
+}
 
 static gchar *
 splice_to_string (GInputStream   *stream,
@@ -875,14 +967,21 @@ splice_to_string (GInputStream   *stream,
   return ret;
 }
 
-static guint64
-get_size_from_du (const gchar *path)
+static gboolean
+get_size_from_du (const gchar *path, guint64 *size)
 {
   GSubprocess *du;
+  gboolean ok;
   gchar *result;
   gchar *endptr;
-  guint64 size;
   GError *error = NULL;
+  gchar *du_path = NULL;
+
+  /* If we can’t find du, don’t try and run the test. */
+  du_path = g_find_program_in_path ("du");
+  if (du_path == NULL)
+    return FALSE;
+  g_free (du_path);
 
   du = g_subprocess_new (G_SUBPROCESS_FLAGS_STDOUT_PIPE,
                          &error,
@@ -892,12 +991,17 @@ get_size_from_du (const gchar *path)
   result = splice_to_string (g_subprocess_get_stdout_pipe (du), &error);
   g_assert_no_error (error);
 
-  size = g_ascii_strtoll (result, &endptr, 10);
+  *size = g_ascii_strtoll (result, &endptr, 10);
+
+  g_subprocess_wait (du, NULL, &error);
+  g_assert_no_error (error);
+
+  ok = g_subprocess_get_successful (du);
 
   g_object_unref (du);
   g_free (result);
 
-  return size;
+  return ok;
 }
 
 static void
@@ -915,13 +1019,9 @@ test_measure (void)
   path = g_test_build_filename (G_TEST_DIST, "desktop-files", NULL);
   file = g_file_new_for_path (path);
 
-  if (g_find_program_in_path ("du"))
+  if (!get_size_from_du (path, &size))
     {
-      size = get_size_from_du (path);
-    }
-  else
-    {
-      g_test_message ("du not found, skipping byte measurement");
+      g_test_message ("du not found or fail to run, skipping byte measurement");
       size = 0;
     }
 
@@ -940,7 +1040,7 @@ test_measure (void)
   if (size > 0)
     g_assert_cmpuint (num_bytes, ==, size);
   g_assert_cmpuint (num_dirs, ==, 6);
-  g_assert_cmpuint (num_files, ==, 30);
+  g_assert_cmpuint (num_files, ==, 31);
 
   g_object_unref (file);
   g_free (path);
@@ -1021,26 +1121,662 @@ test_measure_async (void)
   path = g_test_build_filename (G_TEST_DIST, "desktop-files", NULL);
   file = g_file_new_for_path (path);
 
-  if (g_find_program_in_path ("du"))
+  if (!get_size_from_du (path, &data->expected_bytes))
     {
-      data->expected_bytes = get_size_from_du (path);
-    }
-  else
-    {
-      g_test_message ("du not found, skipping byte measurement");
+      g_test_message ("du not found or fail to run, skipping byte measurement");
       data->expected_bytes = 0;
     }
 
   g_free (path);
 
   data->expected_dirs = 6;
-  data->expected_files = 30;
+  data->expected_files = 31;
 
   g_file_measure_disk_usage_async (file,
                                    G_FILE_MEASURE_APPARENT_SIZE,
                                    0, NULL,
                                    measure_progress, data,
                                    measure_done, data);
+}
+
+static void
+test_load_bytes (void)
+{
+  gchar filename[] = "g_file_load_bytes_XXXXXX";
+  GError *error = NULL;
+  GBytes *bytes;
+  GFile *file;
+  int len;
+  int fd;
+  int ret;
+
+  fd = g_mkstemp (filename);
+  g_assert_cmpint (fd, !=, -1);
+  len = strlen ("test_load_bytes");
+  ret = write (fd, "test_load_bytes", len);
+  g_assert_cmpint (ret, ==, len);
+  close (fd);
+
+  file = g_file_new_for_path (filename);
+  bytes = g_file_load_bytes (file, NULL, NULL, &error);
+  g_assert_no_error (error);
+  g_assert (bytes != NULL);
+  g_assert_cmpint (len, ==, g_bytes_get_size (bytes));
+  g_assert_cmpstr ("test_load_bytes", ==, (gchar *)g_bytes_get_data (bytes, NULL));
+
+  g_file_delete (file, NULL, NULL);
+
+  g_bytes_unref (bytes);
+  g_object_unref (file);
+}
+
+typedef struct
+{
+  GMainLoop *main_loop;
+  GFile *file;
+  GBytes *bytes;
+} LoadBytesAsyncData;
+
+static void
+test_load_bytes_cb (GObject      *object,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  GFile *file = G_FILE (object);
+  LoadBytesAsyncData *data = user_data;
+  GError *error = NULL;
+
+  data->bytes = g_file_load_bytes_finish (file, result, NULL, &error);
+  g_assert_no_error (error);
+  g_assert (data->bytes != NULL);
+
+  g_main_loop_quit (data->main_loop);
+}
+
+static void
+test_load_bytes_async (void)
+{
+  LoadBytesAsyncData data = { 0 };
+  gchar filename[] = "g_file_load_bytes_XXXXXX";
+  int len;
+  int fd;
+  int ret;
+
+  fd = g_mkstemp (filename);
+  g_assert_cmpint (fd, !=, -1);
+  len = strlen ("test_load_bytes_async");
+  ret = write (fd, "test_load_bytes_async", len);
+  g_assert_cmpint (ret, ==, len);
+  close (fd);
+
+  data.main_loop = g_main_loop_new (NULL, FALSE);
+  data.file = g_file_new_for_path (filename);
+
+  g_file_load_bytes_async (data.file, NULL, test_load_bytes_cb, &data);
+  g_main_loop_run (data.main_loop);
+
+  g_assert_cmpint (len, ==, g_bytes_get_size (data.bytes));
+  g_assert_cmpstr ("test_load_bytes_async", ==, (gchar *)g_bytes_get_data (data.bytes, NULL));
+
+  g_file_delete (data.file, NULL, NULL);
+  g_object_unref (data.file);
+  g_bytes_unref (data.bytes);
+  g_main_loop_unref (data.main_loop);
+}
+
+static void
+test_writev_helper (GOutputVector *vectors,
+                    gsize          n_vectors,
+                    gboolean       use_bytes_written,
+                    const guint8  *expected_contents,
+                    gsize          expected_length)
+{
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gsize bytes_written = 0;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  res = g_output_stream_writev_all (ostream, vectors, n_vectors, use_bytes_written ? &bytes_written : NULL, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  if (use_bytes_written)
+    g_assert_cmpuint (bytes_written, ==, expected_length);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+
+  g_assert_cmpmem (contents, length, expected_contents, expected_length);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+}
+
+/* Test that writev() on local file output streams works on a non-empty vector */
+static void
+test_writev (void)
+{
+  GOutputVector vectors[3];
+  const guint8 buffer[] = {1, 2, 3, 4, 5,
+                           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                           1, 2, 3};
+
+  vectors[0].buffer = buffer;
+  vectors[0].size = 5;
+
+  vectors[1].buffer = buffer + 5;
+  vectors[1].size = 12;
+
+  vectors[2].buffer = buffer + 5 + 12;
+  vectors[2].size = 3;
+
+  test_writev_helper (vectors, G_N_ELEMENTS (vectors), TRUE, buffer, sizeof buffer);
+}
+
+/* Test that writev() on local file output streams works on a non-empty vector without returning bytes_written */
+static void
+test_writev_no_bytes_written (void)
+{
+  GOutputVector vectors[3];
+  const guint8 buffer[] = {1, 2, 3, 4, 5,
+                           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                           1, 2, 3};
+
+  vectors[0].buffer = buffer;
+  vectors[0].size = 5;
+
+  vectors[1].buffer = buffer + 5;
+  vectors[1].size = 12;
+
+  vectors[2].buffer = buffer + 5 + 12;
+  vectors[2].size = 3;
+
+  test_writev_helper (vectors, G_N_ELEMENTS (vectors), FALSE, buffer, sizeof buffer);
+}
+
+/* Test that writev() on local file output streams works on 0 vectors */
+static void
+test_writev_no_vectors (void)
+{
+  test_writev_helper (NULL, 0, TRUE, NULL, 0);
+}
+
+/* Test that writev() on local file output streams works on empty vectors */
+static void
+test_writev_empty_vectors (void)
+{
+  GOutputVector vectors[3];
+
+  vectors[0].buffer = NULL;
+  vectors[0].size = 0;
+  vectors[1].buffer = NULL;
+  vectors[1].size = 0;
+  vectors[2].buffer = NULL;
+  vectors[2].size = 0;
+
+  test_writev_helper (vectors, G_N_ELEMENTS (vectors), TRUE, NULL, 0);
+}
+
+/* Test that writev() fails if the sum of sizes in the vector is too big */
+static void
+test_writev_too_big_vectors (void)
+{
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gsize bytes_written = 0;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+  GOutputVector vectors[3];
+
+  vectors[0].buffer = (void*) 1;
+  vectors[0].size = G_MAXSIZE / 2;
+
+  vectors[1].buffer = (void*) 1;
+  vectors[1].size = G_MAXSIZE / 2;
+
+  vectors[2].buffer = (void*) 1;
+  vectors[2].size = G_MAXSIZE / 2;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  res = g_output_stream_writev_all (ostream, vectors, G_N_ELEMENTS (vectors), &bytes_written, NULL, &error);
+  g_assert_error (error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT);
+  g_assert_cmpuint (bytes_written, ==, 0);
+  g_assert_false (res);
+  g_clear_error (&error);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+
+  g_assert_cmpmem (contents, length, NULL, 0);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+}
+
+typedef struct
+{
+  gsize bytes_written;
+  GOutputVector *vectors;
+  gsize n_vectors;
+  GError *error;
+  gboolean done;
+} WritevAsyncData;
+
+static void
+test_writev_async_cb (GObject      *object,
+                      GAsyncResult *result,
+                      gpointer      user_data)
+{
+  GOutputStream *ostream = G_OUTPUT_STREAM (object);
+  WritevAsyncData *data = user_data;
+  GError *error = NULL;
+  gsize bytes_written;
+  gboolean res;
+
+  res = g_output_stream_writev_finish (ostream, result, &bytes_written, &error);
+  g_assert_true (res);
+  g_assert_no_error (error);
+  data->bytes_written += bytes_written;
+
+  /* skip vectors that have been written in full */
+  while (data->n_vectors > 0 && bytes_written >= data->vectors[0].size)
+    {
+      bytes_written -= data->vectors[0].size;
+      ++data->vectors;
+      --data->n_vectors;
+    }
+  /* skip partially written vector data */
+  if (bytes_written > 0 && data->n_vectors > 0)
+    {
+      data->vectors[0].size -= bytes_written;
+      data->vectors[0].buffer = ((guint8 *) data->vectors[0].buffer) + bytes_written;
+    }
+
+  if (data->n_vectors > 0)
+    g_output_stream_writev_async (ostream, data->vectors, data->n_vectors, 0, NULL, test_writev_async_cb, &data);
+}
+
+/* Test that writev_async() on local file output streams works on a non-empty vector */
+static void
+test_writev_async (void)
+{
+  WritevAsyncData data = { 0 };
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputVector vectors[3];
+  const guint8 buffer[] = {1, 2, 3, 4, 5,
+                           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                           1, 2, 3};
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+
+  vectors[0].buffer = buffer;
+  vectors[0].size = 5;
+
+  vectors[1].buffer = buffer + 5;
+  vectors[1].size = 12;
+
+  vectors[2].buffer = buffer + 5  + 12;
+  vectors[2].size = 3;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  data.vectors = vectors;
+  data.n_vectors = G_N_ELEMENTS (vectors);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  g_output_stream_writev_async (ostream, data.vectors, data.n_vectors, 0, NULL, test_writev_async_cb, &data);
+
+  while (data.n_vectors > 0)
+    g_main_context_iteration (NULL, TRUE);
+
+  g_assert_cmpuint (data.bytes_written, ==, sizeof buffer);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+
+  g_assert_cmpmem (contents, length, buffer, sizeof buffer);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+}
+
+static void
+test_writev_all_cb (GObject      *object,
+                    GAsyncResult *result,
+                    gpointer      user_data)
+{
+  GOutputStream *ostream = G_OUTPUT_STREAM (object);
+  WritevAsyncData *data = user_data;
+
+  g_output_stream_writev_all_finish (ostream, result, &data->bytes_written, &data->error);
+  data->done = TRUE;
+}
+
+/* Test that writev_async_all() on local file output streams works on a non-empty vector */
+static void
+test_writev_async_all (void)
+{
+  WritevAsyncData data = { 0 };
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputStream *ostream;
+  GOutputVector vectors[3];
+  const guint8 buffer[] = {1, 2, 3, 4, 5,
+                           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                           1, 2, 3};
+  GError *error = NULL;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+
+  vectors[0].buffer = buffer;
+  vectors[0].size = 5;
+
+  vectors[1].buffer = buffer + 5;
+  vectors[1].size = 12;
+
+  vectors[2].buffer = buffer + 5  + 12;
+  vectors[2].size = 3;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  g_output_stream_writev_all_async (ostream, vectors, G_N_ELEMENTS (vectors), 0, NULL, test_writev_all_cb, &data);
+
+  while (!data.done)
+    g_main_context_iteration (NULL, TRUE);
+
+  g_assert_cmpuint (data.bytes_written, ==, sizeof buffer);
+  g_assert_no_error (data.error);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+
+  g_assert_cmpmem (contents, length, buffer, sizeof buffer);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+}
+
+/* Test that writev_async_all() on local file output streams handles cancellation correctly */
+static void
+test_writev_async_all_cancellation (void)
+{
+  WritevAsyncData data = { 0 };
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputVector vectors[3];
+  const guint8 buffer[] = {1, 2, 3, 4, 5,
+                           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+                           1, 2, 3};
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+  GCancellable *cancellable;
+
+  vectors[0].buffer = buffer;
+  vectors[0].size = 5;
+
+  vectors[1].buffer = buffer + 5;
+  vectors[1].size = 12;
+
+  vectors[2].buffer = buffer + 5  + 12;
+  vectors[2].size = 3;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  cancellable = g_cancellable_new ();
+  g_cancellable_cancel (cancellable);
+
+  g_output_stream_writev_all_async (ostream, vectors, G_N_ELEMENTS (vectors), 0, cancellable, test_writev_all_cb, &data);
+
+  while (!data.done)
+    g_main_context_iteration (NULL, TRUE);
+
+  g_assert_cmpuint (data.bytes_written, ==, 0);
+  g_assert_error (data.error, G_IO_ERROR, G_IO_ERROR_CANCELLED);
+  g_clear_error (&data.error);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_assert_cmpuint (length, ==, 0);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+  g_object_unref (cancellable);
+}
+
+/* Test that writev_async_all() with empty vectors is handled correctly */
+static void
+test_writev_async_all_empty_vectors (void)
+{
+  WritevAsyncData data = { 0 };
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputVector vectors[3];
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+
+  vectors[0].buffer = NULL;
+  vectors[0].size = 0;
+
+  vectors[1].buffer = NULL;
+  vectors[1].size = 0;
+
+  vectors[2].buffer = NULL;
+  vectors[2].size = 0;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  g_output_stream_writev_all_async (ostream, vectors, G_N_ELEMENTS (vectors), 0, NULL, test_writev_all_cb, &data);
+
+  while (!data.done)
+    g_main_context_iteration (NULL, TRUE);
+
+  g_assert_cmpuint (data.bytes_written, ==, 0);
+  g_assert_no_error (data.error);
+  g_clear_error (&data.error);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_assert_cmpuint (length, ==, 0);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+}
+
+/* Test that writev_async_all() with no vectors is handled correctly */
+static void
+test_writev_async_all_no_vectors (void)
+{
+  WritevAsyncData data = { 0 };
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  g_output_stream_writev_all_async (ostream, NULL, 0, 0, NULL, test_writev_all_cb, &data);
+
+  while (!data.done)
+    g_main_context_iteration (NULL, TRUE);
+
+  g_assert_cmpuint (data.bytes_written, ==, 0);
+  g_assert_no_error (data.error);
+  g_clear_error (&data.error);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_assert_cmpuint (length, ==, 0);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
+}
+
+/* Test that writev_async_all() with too big vectors is handled correctly */
+static void
+test_writev_async_all_too_big_vectors (void)
+{
+  WritevAsyncData data = { 0 };
+  GFile *file;
+  GFileIOStream *iostream = NULL;
+  GOutputVector vectors[3];
+  GOutputStream *ostream;
+  GError *error = NULL;
+  gboolean res;
+  guint8 *contents;
+  gsize length;
+
+  vectors[0].buffer = (void*) 1;
+  vectors[0].size = G_MAXSIZE / 2;
+
+  vectors[1].buffer = (void*) 1;
+  vectors[1].size = G_MAXSIZE / 2;
+
+  vectors[2].buffer = (void*) 1;
+  vectors[2].size = G_MAXSIZE / 2;
+
+  file = g_file_new_tmp ("g_file_writev_XXXXXX",
+                         &iostream, NULL);
+  g_assert_nonnull (file);
+  g_assert_nonnull (iostream);
+
+  ostream = g_io_stream_get_output_stream (G_IO_STREAM (iostream));
+
+  g_output_stream_writev_all_async (ostream, vectors, G_N_ELEMENTS (vectors), 0, NULL, test_writev_all_cb, &data);
+
+  while (!data.done)
+    g_main_context_iteration (NULL, TRUE);
+
+  g_assert_cmpuint (data.bytes_written, ==, 0);
+  g_assert_error (data.error, G_IO_ERROR, G_IO_ERROR_INVALID_ARGUMENT);
+  g_clear_error (&data.error);
+
+  res = g_io_stream_close (G_IO_STREAM (iostream), NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_object_unref (iostream);
+
+  res = g_file_load_contents (file, NULL, (gchar **) &contents, &length, NULL, &error);
+  g_assert_no_error (error);
+  g_assert_true (res);
+  g_assert_cmpuint (length, ==, 0);
+
+  g_free (contents);
+
+  g_file_delete (file, NULL, NULL);
+  g_object_unref (file);
 }
 
 int
@@ -1051,6 +1787,7 @@ main (int argc, char *argv[])
   g_test_bug_base ("http://bugzilla.gnome.org/");
 
   g_test_add_func ("/file/basic", test_basic);
+  g_test_add_func ("/file/build-filename", test_build_filename);
   g_test_add_func ("/file/parent", test_parent);
   g_test_add_func ("/file/child", test_child);
   g_test_add_func ("/file/type", test_type);
@@ -1063,11 +1800,22 @@ main (int argc, char *argv[])
   g_test_add_func ("/file/replace-load", test_replace_load);
   g_test_add_func ("/file/replace-cancel", test_replace_cancel);
   g_test_add_func ("/file/async-delete", test_async_delete);
-#ifdef G_OS_UNIX
   g_test_add_func ("/file/copy-preserve-mode", test_copy_preserve_mode);
-#endif
   g_test_add_func ("/file/measure", test_measure);
   g_test_add_func ("/file/measure-async", test_measure_async);
+  g_test_add_func ("/file/load-bytes", test_load_bytes);
+  g_test_add_func ("/file/load-bytes-async", test_load_bytes_async);
+  g_test_add_func ("/file/writev", test_writev);
+  g_test_add_func ("/file/writev/no-bytes-written", test_writev_no_bytes_written);
+  g_test_add_func ("/file/writev/no-vectors", test_writev_no_vectors);
+  g_test_add_func ("/file/writev/empty-vectors", test_writev_empty_vectors);
+  g_test_add_func ("/file/writev/too-big-vectors", test_writev_too_big_vectors);
+  g_test_add_func ("/file/writev/async", test_writev_async);
+  g_test_add_func ("/file/writev/async_all", test_writev_async_all);
+  g_test_add_func ("/file/writev/async_all-empty-vectors", test_writev_async_all_empty_vectors);
+  g_test_add_func ("/file/writev/async_all-no-vectors", test_writev_async_all_no_vectors);
+  g_test_add_func ("/file/writev/async_all-to-big-vectors", test_writev_async_all_too_big_vectors);
+  g_test_add_func ("/file/writev/async_all-cancellation", test_writev_async_all_cancellation);
 
   return g_test_run ();
 }

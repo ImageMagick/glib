@@ -38,6 +38,7 @@
 #include "gfile.h"
 
 #include "glibintl.h"
+#include "gmarshal-internal.h"
 
 #include <string.h>
 
@@ -85,10 +86,11 @@
  * instance and g_application_run() promptly returns. See the code
  * examples below.
  *
- * If used, the expected form of an application identifier is very close
- * to that of of a
- * [D-Bus bus name](http://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names-interface).
- * Examples include: "com.example.MyApp", "org.example.internal-apps.Calculator".
+ * If used, the expected form of an application identifier is the same as
+ * that of of a
+ * [D-Bus well-known bus name](https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names-bus).
+ * Examples include: `com.example.MyApp`, `org.example.internal_apps.Calculator`,
+ * `org._7_zip.Archiver`.
  * For details on valid application identifiers, see g_application_id_is_valid().
  *
  * On Linux, the application identifier is claimed as a well-known bus name
@@ -127,7 +129,7 @@
  * initialization for all of these in a single place.
  *
  * Regardless of which of these entry points is used to start the
- * application, GApplication passes some "platform data from the
+ * application, GApplication passes some ‘platform data’ from the
  * launching instance to the primary instance, in the form of a
  * #GVariant dictionary mapping strings to variants. To use platform
  * data, override the @before_emit or @after_emit virtual functions
@@ -207,10 +209,11 @@
  *     If this function returns %TRUE, registration will proceed; otherwise
  *     registration will abort. Since: 2.34
  * @dbus_unregister: invoked locally during unregistration, if the application
- *     is using its D-Bus backend. Use this to undo anything done by the
- *     @dbus_register vfunc. Since: 2.34
+ *     is using its D-Bus backend. Use this to undo anything done by
+ *     the @dbus_register vfunc. Since: 2.34
  * @handle_local_options: invoked locally after the parsing of the commandline
  *  options has occurred. Since: 2.40
+ * @name_lost: invoked when another instance is taking over the name. Since: 2.60
  *
  * Virtual function table for #GApplication.
  *
@@ -246,6 +249,9 @@ struct _GApplicationPrivate
   GSList             *option_groups;
   GHashTable         *packed_options;
   gboolean            options_parsed;
+  gchar              *parameter_string;
+  gchar              *summary;
+  gchar              *description;
 
   /* Allocated option strings, from g_application_add_main_option() */
   GSList             *option_strings;
@@ -273,6 +279,7 @@ enum
   SIGNAL_ACTION,
   SIGNAL_COMMAND_LINE,
   SIGNAL_HANDLE_LOCAL_OPTIONS,
+  SIGNAL_NAME_LOST,
   NR_SIGNALS
 };
 
@@ -472,6 +479,7 @@ g_application_parse_command_line (GApplication   *application,
 {
   gboolean become_service = FALSE;
   gchar *app_id = NULL;
+  gboolean replace = FALSE;
   GVariantDict *dict = NULL;
   GOptionContext *context;
   GOptionGroup *gapplication_group;
@@ -484,7 +492,9 @@ g_application_parse_command_line (GApplication   *application,
    */
   g_return_val_if_fail (!application->priv->options_parsed, NULL);
 
-  context = g_option_context_new (NULL);
+  context = g_option_context_new (application->priv->parameter_string);
+  g_option_context_set_summary (context, application->priv->summary);
+  g_option_context_set_description (context, application->priv->description);
 
   gapplication_group = g_option_group_new ("gapplication",
                                            _("GApplication options"), _("Show GApplication options"),
@@ -551,6 +561,18 @@ g_application_parse_command_line (GApplication   *application,
       g_option_group_add_entries (gapplication_group, entries);
     }
 
+  /* Allow replacing if the application allows it */
+  if (application->priv->flags & G_APPLICATION_ALLOW_REPLACEMENT)
+    {
+      GOptionEntry entries[] = {
+        { "gapplication-replace", '\0', 0, G_OPTION_ARG_NONE, &replace,
+          N_("Replace the running instance") },
+        { NULL }
+      };
+
+      g_option_group_add_entries (gapplication_group, entries);
+    }
+
   /* Now we parse... */
   if (!g_option_context_parse_strv (context, arguments, error))
     goto out;
@@ -562,6 +584,10 @@ g_application_parse_command_line (GApplication   *application,
   /* Check for --gapplication-app-id */
   if (app_id)
     g_application_set_application_id (application, app_id);
+
+  /* Check for --gapplication-replace */
+  if (replace)
+    application->priv->flags |= G_APPLICATION_REPLACE;
 
   dict = g_variant_dict_new (NULL);
   if (application->priv->packed_options)
@@ -675,14 +701,14 @@ add_packed_option (GApplication *application,
  *
  * It is important to use the proper GVariant format when retrieving
  * the options with g_variant_dict_lookup():
- * - for %G_OPTION_ARG_NONE, use b
- * - for %G_OPTION_ARG_STRING, use &s
- * - for %G_OPTION_ARG_INT, use i
- * - for %G_OPTION_ARG_INT64, use x
- * - for %G_OPTION_ARG_DOUBLE, use d
- * - for %G_OPTION_ARG_FILENAME, use ^ay
- * - for %G_OPTION_ARG_STRING_ARRAY, use &as
- * - for %G_OPTION_ARG_FILENAME_ARRAY, use ^aay
+ * - for %G_OPTION_ARG_NONE, use `b`
+ * - for %G_OPTION_ARG_STRING, use `&s`
+ * - for %G_OPTION_ARG_INT, use `i`
+ * - for %G_OPTION_ARG_INT64, use `x`
+ * - for %G_OPTION_ARG_DOUBLE, use `d`
+ * - for %G_OPTION_ARG_FILENAME, use `^&ay`
+ * - for %G_OPTION_ARG_STRING_ARRAY, use `^a&s`
+ * - for %G_OPTION_ARG_FILENAME_ARRAY, use `^a&ay`
  *
  * Since: 2.40
  */
@@ -813,6 +839,77 @@ g_application_add_option_group (GApplication *application,
 
   application->priv->option_groups = g_slist_prepend (application->priv->option_groups, group);
 }
+
+/**
+ * g_application_set_option_context_parameter_string:
+ * @application: the #GApplication
+ * @parameter_string: (nullable): a string which is displayed
+ *   in the first line of `--help` output, after the usage summary `programname [OPTION...]`.
+ *
+ * Sets the parameter string to be used by the commandline handling of @application.
+ *
+ * This function registers the argument to be passed to g_option_context_new()
+ * when the internal #GOptionContext of @application is created.
+ *
+ * See g_option_context_new() for more information about @parameter_string.
+ *
+ * Since: 2.56
+ */
+void
+g_application_set_option_context_parameter_string (GApplication *application,
+                                                   const gchar  *parameter_string)
+{
+  g_return_if_fail (G_IS_APPLICATION (application));
+
+  g_free (application->priv->parameter_string);
+  application->priv->parameter_string = g_strdup (parameter_string);
+}
+
+/**
+ * g_application_set_option_context_summary:
+ * @application: the #GApplication
+ * @summary: (nullable): a string to be shown in `--help` output
+ *  before the list of options, or %NULL
+ *
+ * Adds a summary to the @application option context.
+ *
+ * See g_option_context_set_summary() for more information.
+ *
+ * Since: 2.56
+ */
+void
+g_application_set_option_context_summary (GApplication *application,
+                                          const gchar  *summary)
+{
+  g_return_if_fail (G_IS_APPLICATION (application));
+
+  g_free (application->priv->summary);
+  application->priv->summary = g_strdup (summary);
+}
+
+/**
+ * g_application_set_option_context_description:
+ * @application: the #GApplication
+ * @description: (nullable): a string to be shown in `--help` output
+ *  after the list of options, or %NULL
+ *
+ * Adds a description to the @application option context.
+ *
+ * See g_option_context_set_description() for more information.
+ *
+ * Since: 2.56
+ */
+void
+g_application_set_option_context_description (GApplication *application,
+                                              const gchar  *description)
+{
+  g_return_if_fail (G_IS_APPLICATION (application));
+
+  g_free (application->priv->description);
+  application->priv->description = g_strdup (description);
+
+}
+
 
 /* vfunc defaults {{{1 */
 static void
@@ -1100,6 +1197,13 @@ g_application_real_dbus_unregister (GApplication    *application,
 {
 }
 
+static gboolean
+g_application_real_name_lost (GApplication *application)
+{
+  g_application_quit (application);
+  return TRUE;
+}
+
 /* GObject implementation stuff {{{1 */
 static void
 g_application_set_property (GObject      *object,
@@ -1269,11 +1373,18 @@ g_application_finalize (GObject *object)
 {
   GApplication *application = G_APPLICATION (object);
 
+  if (application->priv->inactivity_timeout_id)
+    g_source_remove (application->priv->inactivity_timeout_id);
+
   g_slist_free_full (application->priv->option_groups, (GDestroyNotify) g_option_group_unref);
   if (application->priv->main_options)
     g_option_group_unref (application->priv->main_options);
   if (application->priv->packed_options)
     g_hash_table_unref (application->priv->packed_options);
+
+  g_free (application->priv->parameter_string);
+  g_free (application->priv->summary);
+  g_free (application->priv->description);
 
   g_slist_free_full (application->priv->option_strings, g_free);
 
@@ -1286,6 +1397,8 @@ g_application_finalize (GObject *object)
 
   if (application->priv->actions)
     g_object_unref (application->priv->actions);
+
+  g_clear_object (&application->priv->remote_actions);
 
   if (application->priv->notifications)
     g_object_unref (application->priv->notifications);
@@ -1353,6 +1466,7 @@ g_application_class_init (GApplicationClass *class)
   class->add_platform_data = g_application_real_add_platform_data;
   class->dbus_register = g_application_real_dbus_register;
   class->dbus_unregister = g_application_real_dbus_unregister;
+  class->name_lost = g_application_real_name_lost;
 
   g_object_class_install_property (object_class, PROP_APPLICATION_ID,
     g_param_spec_string ("application-id",
@@ -1424,7 +1538,7 @@ g_application_class_init (GApplicationClass *class)
   g_application_signals[SIGNAL_STARTUP] =
     g_signal_new (I_("startup"), G_TYPE_APPLICATION, G_SIGNAL_RUN_FIRST,
                   G_STRUCT_OFFSET (GApplicationClass, startup),
-                  NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+                  NULL, NULL, NULL, G_TYPE_NONE, 0);
 
   /**
    * GApplication::shutdown:
@@ -1436,7 +1550,7 @@ g_application_class_init (GApplicationClass *class)
   g_application_signals[SIGNAL_SHUTDOWN] =
     g_signal_new (I_("shutdown"), G_TYPE_APPLICATION, G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GApplicationClass, shutdown),
-                  NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+                  NULL, NULL, NULL, G_TYPE_NONE, 0);
 
   /**
    * GApplication::activate:
@@ -1448,7 +1562,7 @@ g_application_class_init (GApplicationClass *class)
   g_application_signals[SIGNAL_ACTIVATE] =
     g_signal_new (I_("activate"), G_TYPE_APPLICATION, G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GApplicationClass, activate),
-                  NULL, NULL, g_cclosure_marshal_VOID__VOID, G_TYPE_NONE, 0);
+                  NULL, NULL, NULL, G_TYPE_NONE, 0);
 
 
   /**
@@ -1464,8 +1578,12 @@ g_application_class_init (GApplicationClass *class)
   g_application_signals[SIGNAL_OPEN] =
     g_signal_new (I_("open"), G_TYPE_APPLICATION, G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GApplicationClass, open),
-                  NULL, NULL, NULL,
+                  NULL, NULL,
+                  _g_cclosure_marshal_VOID__POINTER_INT_STRING,
                   G_TYPE_NONE, 3, G_TYPE_POINTER, G_TYPE_INT, G_TYPE_STRING);
+  g_signal_set_va_marshaller (g_application_signals[SIGNAL_OPEN],
+                              G_TYPE_FROM_CLASS (class),
+                              _g_cclosure_marshal_VOID__POINTER_INT_STRINGv);
 
   /**
    * GApplication::command-line:
@@ -1484,8 +1602,11 @@ g_application_class_init (GApplicationClass *class)
     g_signal_new (I_("command-line"), G_TYPE_APPLICATION, G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GApplicationClass, command_line),
                   g_signal_accumulator_first_wins, NULL,
-                  NULL,
+                  _g_cclosure_marshal_INT__OBJECT,
                   G_TYPE_INT, 1, G_TYPE_APPLICATION_COMMAND_LINE);
+  g_signal_set_va_marshaller (g_application_signals[SIGNAL_COMMAND_LINE],
+                              G_TYPE_FROM_CLASS (class),
+                              _g_cclosure_marshal_INT__OBJECTv);
 
   /**
    * GApplication::handle-local-options:
@@ -1544,9 +1665,36 @@ g_application_class_init (GApplicationClass *class)
   g_application_signals[SIGNAL_HANDLE_LOCAL_OPTIONS] =
     g_signal_new (I_("handle-local-options"), G_TYPE_APPLICATION, G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GApplicationClass, handle_local_options),
-                  g_application_handle_local_options_accumulator, NULL, NULL,
+                  g_application_handle_local_options_accumulator, NULL,
+                  _g_cclosure_marshal_INT__BOXED,
                   G_TYPE_INT, 1, G_TYPE_VARIANT_DICT);
+  g_signal_set_va_marshaller (g_application_signals[SIGNAL_HANDLE_LOCAL_OPTIONS],
+                              G_TYPE_FROM_CLASS (class),
+                              _g_cclosure_marshal_INT__BOXEDv);
 
+  /**
+   * GApplication::name-lost:
+   * @application: the application
+   *
+   * The ::name-lost signal is emitted only on the registered primary instance
+   * when a new instance has taken over. This can only happen if the application
+   * is using the %G_APPLICATION_ALLOW_REPLACEMENT flag.
+   *
+   * The default handler for this signal calls g_application_quit().
+   *
+   * Returns: %TRUE if the signal has been handled
+   *
+   * Since: 2.60
+   */
+  g_application_signals[SIGNAL_NAME_LOST] =
+    g_signal_new (I_("name-lost"), G_TYPE_APPLICATION, G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (GApplicationClass, name_lost),
+                  g_signal_accumulator_true_handled, NULL,
+                  _g_cclosure_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+  g_signal_set_va_marshaller (g_application_signals[SIGNAL_NAME_LOST],
+                              G_TYPE_FROM_CLASS (class),
+                              _g_cclosure_marshal_BOOLEAN__VOIDv);
 }
 
 /* Application ID validity {{{1 */
@@ -1560,67 +1708,54 @@ g_application_class_init (GApplicationClass *class)
  * A valid ID is required for calls to g_application_new() and
  * g_application_set_application_id().
  *
+ * Application identifiers follow the same format as
+ * [D-Bus well-known bus names](https://dbus.freedesktop.org/doc/dbus-specification.html#message-protocol-names-bus).
  * For convenience, the restrictions on application identifiers are
  * reproduced here:
  *
- * - Application identifiers must contain only the ASCII characters
- *   "[A-Z][a-z][0-9]_-." and must not begin with a digit.
+ * - Application identifiers are composed of 1 or more elements separated by a
+ *   period (`.`) character. All elements must contain at least one character.
  *
- * - Application identifiers must contain at least one '.' (period)
- *   character (and thus at least three elements).
+ * - Each element must only contain the ASCII characters `[A-Z][a-z][0-9]_-`,
+ *   with `-` discouraged in new application identifiers. Each element must not
+ *   begin with a digit.
  *
- * - Application identifiers must not begin or end with a '.' (period)
- *   character.
+ * - Application identifiers must contain at least one `.` (period) character
+ *   (and thus at least two elements).
  *
- * - Application identifiers must not contain consecutive '.' (period)
- *   characters.
+ * - Application identifiers must not begin with a `.` (period) character.
  *
  * - Application identifiers must not exceed 255 characters.
+ *
+ * Note that the hyphen (`-`) character is allowed in application identifiers,
+ * but is problematic or not allowed in various specifications and APIs that
+ * refer to D-Bus, such as
+ * [Flatpak application IDs](http://docs.flatpak.org/en/latest/introduction.html#identifiers),
+ * the
+ * [`DBusActivatable` interface in the Desktop Entry Specification](https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html#dbus),
+ * and the convention that an application's "main" interface and object path
+ * resemble its application identifier and bus name. To avoid situations that
+ * require special-case handling, it is recommended that new application
+ * identifiers consistently replace hyphens with underscores.
+ *
+ * Like D-Bus interface names, application identifiers should start with the
+ * reversed DNS domain name of the author of the interface (in lower-case), and
+ * it is conventional for the rest of the application identifier to consist of
+ * words run together, with initial capital letters.
+ *
+ * As with D-Bus interface names, if the author's DNS domain name contains
+ * hyphen/minus characters they should be replaced by underscores, and if it
+ * contains leading digits they should be escaped by prepending an underscore.
+ * For example, if the owner of 7-zip.org used an application identifier for an
+ * archiving application, it might be named `org._7_zip.Archiver`.
  *
  * Returns: %TRUE if @application_id is valid
  */
 gboolean
 g_application_id_is_valid (const gchar *application_id)
 {
-  gsize len;
-  gboolean allow_dot;
-  gboolean has_dot;
-
-  len = strlen (application_id);
-
-  if (len > 255)
-    return FALSE;
-
-  if (!g_ascii_isalpha (application_id[0]))
-    return FALSE;
-
-  if (application_id[len-1] == '.')
-    return FALSE;
-
-  application_id++;
-  allow_dot = TRUE;
-  has_dot = FALSE;
-  for (; *application_id; application_id++)
-    {
-      if (g_ascii_isalnum (*application_id) ||
-          (*application_id == '-') ||
-          (*application_id == '_'))
-        {
-          allow_dot = TRUE;
-        }
-      else if (allow_dot && *application_id == '.')
-        {
-          has_dot = TRUE;
-          allow_dot = FALSE;
-        }
-      else
-        return FALSE;
-    }
-
-  if (!has_dot)
-    return FALSE;
-
-  return TRUE;
+  return g_dbus_is_name (application_id) &&
+         !g_dbus_is_unique_name (application_id);
 }
 
 /* Public Constructor {{{1 */
@@ -2218,7 +2353,8 @@ g_application_open (GApplication  *application,
  * g_application_run:
  * @application: a #GApplication
  * @argc: the argc from main() (or 0 if @argv is %NULL)
- * @argv: (array length=argc) (nullable): the argv from main(), or %NULL
+ * @argv: (array length=argc) (element-type filename) (nullable):
+ *     the argv from main(), or %NULL
  *
  * Runs the application.
  *
@@ -2342,6 +2478,28 @@ g_application_run (GApplication  *application,
                  &arguments[new_argc - argc],
                  sizeof (arguments[0]) * (argc + 1));
       }
+  }
+#elif defined(__APPLE__)
+  {
+    gint i, j;
+
+    /*
+     * OSX adds an unexpected parameter on the format -psn_X_XXXXXX
+     * when opening the application using Launch Services. In order
+     * to avoid that GOption fails to parse this parameter we just
+     * skip it if it was provided.
+     * See: https://gitlab.gnome.org/GNOME/glib/issues/1784
+     */
+    arguments = g_new (gchar *, argc + 1);
+    for (i = 0, j = 0; i < argc; i++)
+      {
+        if (!g_str_has_prefix (argv[i], "-psn_"))
+          {
+            arguments[j] = g_strdup (argv[i]);
+            j++;
+          }
+      }
+    arguments[j] = NULL;
   }
 #else
   {
@@ -2624,6 +2782,10 @@ g_application_set_default (GApplication *application)
  * calling only the 'shutdown' function before doing so.
  *
  * The hold count is ignored.
+ * Take care if your code has called g_application_hold() on the application and
+ * is therefore still expecting it to exist.
+ * (Note that you may have called g_application_hold() indirectly, for example
+ * through gtk_application_add_window().)
  *
  * The result of calling g_application_run() again after it returns is
  * unspecified.

@@ -20,8 +20,7 @@
 #include "config.h"
 
 #include "glib-init.h"
-
-#include "glib-private.h"
+#include "gmacros.h"
 #include "gtypes.h"
 #include "gutils.h"     /* for GDebugKey */
 #include "gconstructor.h"
@@ -40,10 +39,10 @@ G_STATIC_ASSERT (CHAR_BIT == 8);
 
 /* We assume that data pointers are the same size as function pointers... */
 G_STATIC_ASSERT (sizeof (gpointer) == sizeof (GFunc));
-G_STATIC_ASSERT (_g_alignof (gpointer) == _g_alignof (GFunc));
+G_STATIC_ASSERT (G_ALIGNOF (gpointer) == G_ALIGNOF (GFunc));
 /* ... and that all function pointers are the same size. */
 G_STATIC_ASSERT (sizeof (GFunc) == sizeof (GCompareDataFunc));
-G_STATIC_ASSERT (_g_alignof (GFunc) == _g_alignof (GCompareDataFunc));
+G_STATIC_ASSERT (G_ALIGNOF (GFunc) == G_ALIGNOF (GCompareDataFunc));
 
 /* We assume that "small" enums (those where all values fit in INT32_MIN
  * to INT32_MAX) are exactly int-sized. In particular, we assume that if
@@ -64,9 +63,9 @@ typedef enum {
 G_STATIC_ASSERT (sizeof (TestChar) == sizeof (int));
 G_STATIC_ASSERT (sizeof (TestShort) == sizeof (int));
 G_STATIC_ASSERT (sizeof (TestInt) == sizeof (int));
-G_STATIC_ASSERT (_g_alignof (TestChar) == _g_alignof (int));
-G_STATIC_ASSERT (_g_alignof (TestShort) == _g_alignof (int));
-G_STATIC_ASSERT (_g_alignof (TestInt) == _g_alignof (int));
+G_STATIC_ASSERT (G_ALIGNOF (TestChar) == G_ALIGNOF (int));
+G_STATIC_ASSERT (G_ALIGNOF (TestShort) == G_ALIGNOF (int));
+G_STATIC_ASSERT (G_ALIGNOF (TestInt) == G_ALIGNOF (int));
 
 /**
  * g_mem_gc_friendly:
@@ -74,11 +73,8 @@ G_STATIC_ASSERT (_g_alignof (TestInt) == _g_alignof (int));
  * This variable is %TRUE if the `G_DEBUG` environment variable
  * includes the key `gc-friendly`.
  */
-#ifdef ENABLE_GC_FRIENDLY_DEFAULT
-gboolean g_mem_gc_friendly = TRUE;
-#else
 gboolean g_mem_gc_friendly = FALSE;
-#endif
+
 GLogLevelFlags g_log_msg_prefix = G_LOG_LEVEL_ERROR | G_LOG_LEVEL_WARNING |
                                   G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_DEBUG;
 GLogLevelFlags g_log_always_fatal = G_LOG_FATAL_MASK;
@@ -275,13 +271,13 @@ glib_init (void)
 
 #if defined (G_OS_WIN32)
 
-/* BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+BOOL WINAPI DllMain (HINSTANCE hinstDLL,
                      DWORD     fdwReason,
-                     LPVOID    lpvReserved); */
+                     LPVOID    lpvReserved);
 
-HMODULE glib_dll = NULL;
+HMODULE glib_dll;
 
-/* BOOL WINAPI
+BOOL WINAPI
 DllMain (HINSTANCE hinstDLL,
          DWORD     fdwReason,
          LPVOID    lpvReserved)
@@ -290,11 +286,14 @@ DllMain (HINSTANCE hinstDLL,
     {
     case DLL_PROCESS_ATTACH:
       glib_dll = hinstDLL;
+      g_crash_handler_win32_init ();
       g_clock_win32_init ();
 #ifdef THREADS_WIN32
       g_thread_win32_init ();
 #endif
       glib_init ();
+      /* must go after glib_init */
+      g_console_win32_init ();
       break;
 
     case DLL_THREAD_DETACH:
@@ -308,38 +307,30 @@ DllMain (HINSTANCE hinstDLL,
       if (lpvReserved == NULL)
         g_thread_win32_process_detach ();
 #endif
+      g_crash_handler_win32_deinit ();
       break;
 
     default:
-       do nothing 
+      /* do nothing */
       ;
     }
 
   return TRUE;
-} 
+}
 
-#elif defined (G_HAS_CONSTRUCTORS) */
+#elif defined (G_HAS_CONSTRUCTORS)
 
 #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(glib_init_ctor)
 #endif
 G_DEFINE_CONSTRUCTOR(glib_init_ctor)
-G_DEFINE_DESTRUCTOR(glib_init_dtor)
 
 static void
 glib_init_ctor (void)
 {
-  g_clock_win32_init();
-  g_thread_win32_init();
-  glib_init();
-  gobject_init_ctor();
+  glib_init ();
 }
 
-static void
-glib_init_dtor(void)
-{
-  g_thread_win32_thread_detach();
-}
 #else
 # error Your platform/compiler is missing constructor support
 #endif

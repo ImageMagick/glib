@@ -64,7 +64,7 @@
  * duplicating, and manipulating strings.
  *
  * Note that the functions g_printf(), g_fprintf(), g_sprintf(),
- * g_snprintf(), g_vprintf(), g_vfprintf(), g_vsprintf() and g_vsnprintf()
+ * g_vprintf(), g_vfprintf(), g_vsprintf() and g_vasprintf()
  * are declared in the header `gprintf.h` which is not included in `glib.h`
  * (otherwise using `glib.h` would drag in `stdio.h`), so you'll have to
  * explicitly include `<glib/gprintf.h>` in order to use the GLib
@@ -491,7 +491,7 @@ g_stpcpy (gchar       *dest,
 
 /**
  * g_strdup_vprintf:
- * @format: a standard printf() format string, but notice
+ * @format: (not nullable): a standard printf() format string, but notice
  *     [string precision pitfalls][string-precision]
  * @args: the list of parameters to insert into the format string
  *
@@ -499,6 +499,10 @@ g_stpcpy (gchar       *dest,
  * calculates the maximum space required and allocates memory to hold
  * the result. The returned string should be freed with g_free() when
  * no longer needed.
+ *
+ * The returned string is guaranteed to be non-NULL, unless @format
+ * contains `%lc` or `%ls` conversions, which can fail if no multibyte
+ * representation is available for the given character.
  *
  * See also g_vasprintf(), which offers the same functionality, but
  * additionally returns the length of the allocated string.
@@ -518,7 +522,7 @@ g_strdup_vprintf (const gchar *format,
 
 /**
  * g_strdup_printf:
- * @format: a standard printf() format string, but notice
+ * @format: (not nullable): a standard printf() format string, but notice
  *     [string precision pitfalls][string-precision]
  * @...: the parameters to insert into the format string
  *
@@ -526,6 +530,10 @@ g_strdup_vprintf (const gchar *format,
  * calculates the maximum space required and allocates memory to hold
  * the result. The returned string should be freed with g_free() when no
  * longer needed.
+ *
+ * The returned string is guaranteed to be non-NULL, unless @format
+ * contains `%lc` or `%ls` conversions, which can fail if no multibyte
+ * representation is available for the given character.
  *
  * Returns: a newly-allocated string holding the result
  */
@@ -703,7 +711,7 @@ g_ascii_strtod (const gchar *nptr,
   struct lconv *locale_data;
 #endif
   const char *decimal_point;
-  int decimal_point_len;
+  gsize decimal_point_len;
   const char *p, *decimal_point_pos;
   const char *end = NULL; /* Silence gcc */
   int strtod_errno;
@@ -920,7 +928,7 @@ g_ascii_formatd (gchar       *buffer,
   struct lconv *locale_data;
 #endif
   const char *decimal_point;
-  int decimal_point_len;
+  gsize decimal_point_len;
   gchar *p;
   int rest_len;
   gchar format_char;
@@ -980,8 +988,8 @@ g_ascii_formatd (gchar       *buffer,
           p++;
           if (decimal_point_len > 1)
             {
-              rest_len = strlen (p + (decimal_point_len-1));
-              memmove (p, p + (decimal_point_len-1), rest_len);
+              rest_len = strlen (p + (decimal_point_len - 1));
+              memmove (p, p + (decimal_point_len - 1), rest_len);
               p[rest_len] = 0;
             }
         }
@@ -1140,6 +1148,11 @@ g_parse_long_long (const gchar  *nptr,
  * changing the current locale, since that would not be
  * thread-safe.
  *
+ * Note that input with a leading minus sign (`-`) is accepted, and will return
+ * the negation of the parsed number, unless that would overflow a #guint64.
+ * Critically, this means you cannot assume that a short fixed length input will
+ * never result in a low return value, as the input could have a leading `-`.
+ *
  * This function is typically used when reading configuration
  * files or other non-user input that should be locale independent.
  * To handle input from the user you should normally use the
@@ -1297,7 +1310,7 @@ g_strerror (gint errnum)
       g_strlcpy (buf, strerror (errnum), sizeof (buf));
       msg = buf;
 #endif
-      if (!g_get_charset (NULL))
+      if (!g_get_console_charset (NULL))
         {
           msg = g_locale_to_utf8 (msg, -1, NULL, NULL, &error);
           if (error)
@@ -1337,7 +1350,7 @@ g_strsignal (gint signum)
 
 #ifdef HAVE_STRSIGNAL
   msg = strsignal (signum);
-  if (!g_get_charset (NULL))
+  if (!g_get_console_charset (NULL))
     msg = tofree = g_locale_to_utf8 (msg, -1, NULL, NULL, NULL);
 #endif
 
@@ -1522,9 +1535,9 @@ g_ascii_strdown (const gchar *str,
   g_return_val_if_fail (str != NULL, NULL);
 
   if (len < 0)
-    len = strlen (str);
+    len = (gssize) strlen (str);
 
-  result = g_strndup (str, len);
+  result = g_strndup (str, (gsize) len);
   for (s = result; *s; s++)
     *s = g_ascii_tolower (*s);
 
@@ -1552,9 +1565,9 @@ g_ascii_strup (const gchar *str,
   g_return_val_if_fail (str != NULL, NULL);
 
   if (len < 0)
-    len = strlen (str);
+    len = (gssize) strlen (str);
 
-  result = g_strndup (str, len);
+  result = g_strndup (str, (gsize) len);
   for (s = result; *s; s++)
     *s = g_ascii_toupper (*s);
 
@@ -1575,7 +1588,7 @@ g_ascii_strup (const gchar *str,
 gboolean
 g_str_is_ascii (const gchar *str)
 {
-  gint i;
+  gsize i;
 
   for (i = 0; str[i]; i++)
     if (str[i] & 0x80)
@@ -1983,8 +1996,15 @@ g_strncasecmp (const gchar *s1,
  * changed to the @new_delimiter character. Modifies @string in place,
  * and returns @string itself, not a copy. The return value is to
  * allow nesting such as
- * |[<!-- language="C" --> 
+ * |[<!-- language="C" -->
  *   g_ascii_strup (g_strdelimit (str, "abc", '?'))
+ * ]|
+ *
+ * In order to modify a copy, you may use `g_strdup()`:
+ * |[<!-- language="C" -->
+ *   reformatted = g_strdelimit (g_strdup (const_str), "abc", '?');
+ *   ...
+ *   g_free (reformatted);
  * ]|
  *
  * Returns: @string
@@ -2020,8 +2040,15 @@ g_strdelimit (gchar       *string,
  * replaces the character with @substitutor. Modifies @string in place,
  * and return @string itself, not a copy. The return value is to allow
  * nesting such as
- * |[<!-- language="C" --> 
+ * |[<!-- language="C" -->
  *   g_ascii_strup (g_strcanon (str, "abc", '?'))
+ * ]|
+ *
+ * In order to modify a copy, you may use `g_strdup()`:
+ * |[<!-- language="C" -->
+ *   reformatted = g_strcanon (g_strdup (const_str), "abc", '?');
+ *   ...
+ *   g_free (reformatted);
  * ]|
  *
  * Returns: @string
@@ -2312,7 +2339,7 @@ g_strchomp (gchar *string)
  *
  * As a special case, the result of splitting the empty string "" is an empty
  * vector, not a vector containing a single string. The reason for this
- * special case is that being able to represent a empty vector is typically
+ * special case is that being able to represent an empty vector is typically
  * more useful than consistent handling of empty elements. If you do need
  * to represent empty elements, you'll need to check for the empty string
  * before calling g_strsplit().
@@ -2394,7 +2421,7 @@ g_strsplit (const gchar *string,
  *
  * As a special case, the result of splitting the empty string "" is an empty
  * vector, not a vector containing a single string. The reason for this
- * special case is that being able to represent a empty vector is typically
+ * special case is that being able to represent an empty vector is typically
  * more useful than consistent handling of empty elements. If you do need
  * to represent empty elements, you'll need to check for the empty string
  * before calling g_strsplit_set().
@@ -2491,7 +2518,7 @@ g_strfreev (gchar **str_array)
 {
   if (str_array)
     {
-      int i;
+      gsize i;
 
       for (i = 0; str_array[i] != NULL; i++)
         g_free (str_array[i]);
@@ -2516,7 +2543,7 @@ g_strdupv (gchar **str_array)
 {
   if (str_array)
     {
-      gint i;
+      gsize i;
       gchar **retval;
 
       i = 0;
@@ -2570,7 +2597,7 @@ g_strjoinv (const gchar  *separator,
 
   if (*str_array)
     {
-      gint i;
+      gsize i;
       gsize len;
       gsize separator_len;
 
@@ -2695,13 +2722,14 @@ g_strstr_len (const gchar *haystack,
     {
       const gchar *p = haystack;
       gsize needle_len = strlen (needle);
+      gsize haystack_len_unsigned = haystack_len;
       const gchar *end;
       gsize i;
 
       if (needle_len == 0)
         return (gchar *)haystack;
 
-      if (haystack_len < needle_len)
+      if (haystack_len_unsigned < needle_len)
         return NULL;
 
       end = haystack + haystack_len - needle_len;
@@ -2841,8 +2869,8 @@ gboolean
 g_str_has_suffix (const gchar *str,
                   const gchar *suffix)
 {
-  int str_len;
-  int suffix_len;
+  gsize str_len;
+  gsize suffix_len;
 
   g_return_val_if_fail (str != NULL, FALSE);
   g_return_val_if_fail (suffix != NULL, FALSE);
@@ -2882,7 +2910,7 @@ g_str_has_prefix (const gchar *str,
  * @str_array: a %NULL-terminated array of strings
  *
  * Returns the length of the given %NULL-terminated
- * string array @str_array.
+ * string array @str_array. @str_array must not be %NULL.
  *
  * Returns: length of @str_array.
  *
@@ -3095,11 +3123,11 @@ g_str_tokenize_and_fold (const gchar   *string,
  * call g_str_tokenize_and_fold() on the search term and
  * perform lookups into that index.
  *
- * As some examples, searching for "fred" would match the potential hit
- * "Smith, Fred" and also "Frédéric".  Searching for "Fréd" would match
- * "Frédéric" but not "Frederic" (due to the one-directional nature of
- * accent matching).  Searching "fo" would match "Foo" and "Bar Foo
- * Baz", but not "SFO" (because no word as "fo" as a prefix).
+ * As some examples, searching for ‘fred’ would match the potential hit
+ * ‘Smith, Fred’ and also ‘Frédéric’.  Searching for ‘Fréd’ would match
+ * ‘Frédéric’ but not ‘Frederic’ (due to the one-directional nature of
+ * accent matching).  Searching ‘fo’ would match ‘Foo’ and ‘Bar Foo
+ * Baz’, but not ‘SFO’ (because no word has ‘fo’ as a prefix).
  *
  * Returns: %TRUE if @potential_hit is a hit
  *
@@ -3174,6 +3202,40 @@ g_strv_contains (const gchar * const *strv,
     }
 
   return FALSE;
+}
+
+/**
+ * g_strv_equal:
+ * @strv1: a %NULL-terminated array of strings
+ * @strv2: another %NULL-terminated array of strings
+ *
+ * Checks if @strv1 and @strv2 contain exactly the same elements in exactly the
+ * same order. Elements are compared using g_str_equal(). To match independently
+ * of order, sort the arrays first (using g_qsort_with_data() or similar).
+ *
+ * Two empty arrays are considered equal. Neither @strv1 not @strv2 may be
+ * %NULL.
+ *
+ * Returns: %TRUE if @strv1 and @strv2 are equal
+ * Since: 2.60
+ */
+gboolean
+g_strv_equal (const gchar * const *strv1,
+              const gchar * const *strv2)
+{
+  g_return_val_if_fail (strv1 != NULL, FALSE);
+  g_return_val_if_fail (strv2 != NULL, FALSE);
+
+  if (strv1 == strv2)
+    return TRUE;
+
+  for (; *strv1 != NULL && *strv2 != NULL; strv1++, strv2++)
+    {
+      if (!g_str_equal (*strv1, *strv2))
+        return FALSE;
+    }
+
+  return (*strv1 == NULL && *strv2 == NULL);
 }
 
 static gboolean
@@ -3304,7 +3366,8 @@ g_ascii_string_to_signed (const gchar  *str,
  * @base that is within inclusive bounds limited by @min and @max. If
  * this is true, then the converted number is stored in @out_num. An
  * empty string is not a valid input. A string with leading or
- * trailing whitespace is also an invalid input.
+ * trailing whitespace is also an invalid input. A string with a leading sign
+ * (`-` or `+`) is not a valid input for the unsigned parser.
  *
  * @base can be between 2 and 36 inclusive. Hexadecimal numbers must
  * not be prefixed with "0x" or "0X". Such a problem does not exist

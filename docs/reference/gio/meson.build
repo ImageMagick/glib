@@ -1,4 +1,7 @@
-if get_option('with-docs') != 'no'
+if get_option('gtk_doc')
+  if installed_tests_enabled
+    subdir('gdbus-object-manager-example')
+  endif
   subdir('xml')
 
   ignore_headers = [
@@ -28,6 +31,7 @@ if get_option('with-docs') != 'no'
     'gdbusdaemon.h',
     'gdbusprivate.h',
     'gdelayedsettingsbackend.h',
+    'gdocumentportal.h',
     'gdummyfile.h',
     'gdummyproxyresolver.h',
     'gdummytlsbackend.h',
@@ -37,6 +41,9 @@ if get_option('with-docs') != 'no'
     'giomodule-priv.h',
     'gioprivate.h',
     'giowin32-priv.h',
+    'gio_probes.h',
+    'gio_trace.h',
+    'gio-tool.h',
     'glocaldirectorymonitor.h',
     'glocalfileenumerator.h',
     'glocalfile.h',
@@ -46,15 +53,21 @@ if get_option('with-docs') != 'no'
     'glocalfilemonitor.h',
     'glocalfileoutputstream.h',
     'glocalvfs.h',
+    'gmemorymonitordbus.h',
+    'gmemorymonitorportal.h',
     'gmountprivate.h',
     'gnativevolumemonitor.h',
     'gnetworkingprivate.h',
     'gnetworkmonitorbase.h',
     'gnetworkmonitornetlink.h',
     'gnetworkmonitornm.h',
+    'gnetworkmonitorportal.h',
     'gnotificationbackend.h',
     'gnotification-private.h',
+    'gopenuriportal.h',
     'gpollfilemonitor.h',
+    'gportalsupport.h',
+    'gproxyresolverportal.h',
     'gregistrysettingsbackend.h',
     'gresourcefile.h',
     'gsettingsbackendinternal.h',
@@ -67,24 +80,60 @@ if get_option('with-docs') != 'no'
     'gsocks5proxy.h',
     'gsubprocesslauncher-private.h',
     'gthreadedresolver.h',
+    'gtrashportal.h',
     'gunionvolumemonitor.h',
     'gunixmount.h',
     'gunixresolver.h',
     'gunixvolume.h',
     'gunixvolumemonitor.h',
+    'gwin32networkmonitor.h',
     'gwin32appinfo.h',
-    'gwin32inputstream.h',
     'gwin32mount.h',
-    'gwin32outputstream.h',
-    'gwin32registrykey.h',
     'gwin32resolver.h',
     'gwin32volumemonitor.h',
     'thumbnail-verify.h',
     'xdp-dbus.h',
   ]
-  # FIXME: More win32 headers were added to fix building gio-scan
 
-  # FIXME: ExampleAnimal docs aren't built
+  sections_files = files('gio-sections-common.txt')
+
+  if host_system == 'windows'
+    ignore_headers += [
+      'gfiledescriptorbased.h',
+      'gunixconnection.h',
+      'gunixcredentialsmessage.h',
+      'gunixmounts.h',
+      'gunixfdlist.h',
+      'gunixfdmessage.h',
+      'gunixinputstream.h',
+      'gunixoutputstream.h',
+      'gunixsocketaddress.h',
+      'gdesktopappinfo.h',
+      'gosxappinfo.h',
+    ]
+    sections_files += files('gio-sections-win32.txt')
+    platform_file = files('gio-docs-win32.xml')
+  else
+    if glib_have_cocoa
+      ignore_headers += ['gdesktopappinfo.h']
+    else
+      ignore_headers += ['gosxappinfo.h']
+    endif
+
+    ignore_headers += [
+      'gwin32inputstream.h',
+      'gwin32outputstream.h',
+      'gwin32registrykey.h',
+    ]
+    platform_file = files('gio-docs-unix.xml')
+  endif
+
+  ignore_sources = [
+    'kqueue',
+    'tests',
+    'gdbus-daemon-generated.c',
+    'xdp-dbus.c',
+  ]
 
   docpath = join_paths(glib_datadir, 'gtk-doc', 'html')
   version_conf = configuration_data()
@@ -95,34 +144,62 @@ if get_option('with-docs') != 'no'
     configuration: version_conf
   )
 
+  # FIXME: configure_file() does not support more than one file in input
+  # argument. If input argument is omitted then meson checks that all items in
+  # the command array are strings. But if we have an input then extra files
+  # can be passed in command array.
+  # See https://github.com/mesonbuild/meson/issues/5893
+  concat_files_helper = find_program('concat-files-helper.py')
+  configure_file(
+    output : 'gio-sections.txt',
+    input : sections_files[0],
+    command : [concat_files_helper, '@OUTPUT@'] + sections_files,
+  )
+
+  configure_file(
+    output : 'gio-docs-platform.xml',
+    input : platform_file,
+    copy : true,
+  )
+
+  content_files = [
+    'overview.xml',
+    'migrating-posix.xml',
+    'migrating-gnome-vfs.xml',
+    'migrating-gconf.xml',
+    'migrating-gdbus.xml',
+    'gio-querymodules.xml',
+    'glib-compile-schemas.xml',
+    'glib-compile-resources.xml',
+    'gapplication.xml',
+    'gsettings.xml',
+    'gresource.xml',
+    'gdbus.xml',
+    'gdbus-codegen.xml',
+  ]
+
+  if installed_tests_enabled
+    content_files += [
+      gdbus_example_objectmanager_xml,
+      gdbus_example_objectmanager_sources,
+      gdbus_object_manager_example_doc
+    ]
+  endif
+
   gnome.gtkdoc('gio',
     main_xml : 'gio-docs.xml',
     namespace : 'g',
-    gobject_typesfile : 'gio.types',
     mode : 'none',
     dependencies : [libgio_dep, libgobject_dep, libglib_dep],
     src_dir : 'gio',
-    scan_args : [
+    scan_args : gtkdoc_common_scan_args + [
       '--rebuild-types',
-      '--deprecated-guards=G_DISABLE_DEPRECATED',
-      '--ignore-decorators=G_GNUC_WARN_UNUSED_RESULT',
       '--ignore-headers=' + ' '.join(ignore_headers),
     ],
-    content_files : [
-      'overview.xml',
-      'migrating-posix.xml',
-      'migrating-gnome-vfs.xml',
-      'migrating-gconf.xml',
-      'migrating-gdbus.xml',
-      'gio-querymodules.xml',
-      'glib-compile-schemas.xml',
-      'glib-compile-resources.xml',
-      'gapplication.xml',
-      'gsettings.xml',
-      'gresource.xml',
-      'gdbus.xml',
-      'gdbus-codegen.xml',
+    mkdb_args : [
+      '--ignore-files=' + ' '.join(ignore_sources),
     ],
+    content_files : content_files,
     expand_content_files : [
       'overview.xml',
       'migrating-posix.xml',
@@ -138,15 +215,16 @@ if get_option('with-docs') != 'no'
     ],
     fixxref_args: [
       '--html-dir=' + docpath,
-      '--extra-dir=' + join_paths(meson.current_build_dir(), '../glib/html'),
-      '--extra-dir=' + join_paths(meson.current_build_dir(), '../gobject/html'),
+      '--extra-dir=' + join_paths('gio', '..', 'glib', 'html'),
+      '--extra-dir=' + join_paths('gio', '..', 'gobject', 'html'),
     ],
-    install: true
+    install: true,
+    check: true,
   )
 endif
 
 
-if get_option('with-man') != 'no' and xsltproc.found()
+if get_option('man')
   manpages = ['gapplication', 'gio-querymodules', 'glib-compile-schemas',
               'glib-compile-resources', 'gsettings', 'gresource', 'gdbus',
               'gio', 'gdbus-codegen']

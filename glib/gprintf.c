@@ -20,6 +20,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 
 #include "gprintf.h"
 #include "gprintfint.h"
@@ -37,6 +38,8 @@
  * As with the standard printf(), this does not automatically append a trailing
  * new-line character to the message, so typically @format should end with its
  * own new-line character.
+ *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
  *
  * Returns: the number of bytes printed.
  *
@@ -65,6 +68,8 @@ g_printf (gchar const *format,
  *
  * An implementation of the standard fprintf() function which supports 
  * positional parameters, as specified in the Single Unix Specification.
+ *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
  *
  * Returns: the number of bytes printed.
  *
@@ -99,6 +104,8 @@ g_fprintf (FILE        *file,
  *
  * Note that it is usually better to use g_snprintf(), to avoid the
  * risk of buffer overflow.
+ *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
  *
  * See also g_strdup_printf().
  *
@@ -176,6 +183,8 @@ g_snprintf (gchar	*string,
  * An implementation of the standard vprintf() function which supports 
  * positional parameters, as specified in the Single Unix Specification.
  *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
+ *
  * Returns: the number of bytes printed.
  *
  * Since: 2.2
@@ -198,6 +207,8 @@ g_vprintf (gchar const *format,
  *
  * An implementation of the standard fprintf() function which supports 
  * positional parameters, as specified in the Single Unix Specification.
+ *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
  *
  * Returns: the number of bytes printed.
  *
@@ -222,6 +233,8 @@ g_vfprintf (FILE        *file,
  *
  * An implementation of the standard vsprintf() function which supports 
  * positional parameters, as specified in the Single Unix Specification.
+ *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
  *
  * Returns: the number of bytes printed.
  *
@@ -282,8 +295,8 @@ g_vsnprintf (gchar	 *string,
 
 /**
  * g_vasprintf:
- * @string: the return location for the newly-allocated string.
- * @format: a standard printf() format string, but notice
+ * @string: (not optional) (nullable): the return location for the newly-allocated string.
+ * @format: (not nullable): a standard printf() format string, but notice
  *          [string precision pitfalls][string-precision]
  * @args: the list of arguments to insert in the output.
  *
@@ -292,6 +305,12 @@ g_vsnprintf (gchar	 *string,
  * This function is similar to g_vsprintf(), except that it allocates a 
  * string to hold the output, instead of putting the output in a buffer 
  * you allocate in advance.
+ *
+ * The returned value in @string is guaranteed to be non-NULL, unless
+ * @format contains `%lc` or `%ls` conversions, which can fail if no
+ * multibyte representation is available for the given character.
+ *
+ * `glib/gprintf.h` must be explicitly included in order to use this function.
  *
  * Returns: the number of bytes printed.
  *
@@ -305,7 +324,7 @@ g_vasprintf (gchar      **string,
   gint len;
   g_return_val_if_fail (string != NULL, -1);
 
-#if !defined(HAVE_GOOD_PRINTF)
+#if !defined(USE_SYSTEM_PRINTF)
 
   len = _g_gnulib_vasprintf (string, format, args);
   if (len < 0)
@@ -313,9 +332,18 @@ g_vasprintf (gchar      **string,
 
 #elif defined (HAVE_VASPRINTF)
 
-  len = vasprintf (string, format, args);
-  if (len < 0)
-    *string = NULL;
+  {
+    int saved_errno;
+    len = vasprintf (string, format, args);
+    saved_errno = errno;
+    if (len < 0)
+      {
+        if (saved_errno == ENOMEM)
+          g_error ("%s: failed to allocate memory", G_STRLOC);
+        else
+          *string = NULL;
+      }
+  }
 
 #else
 

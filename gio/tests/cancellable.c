@@ -188,6 +188,12 @@ test_cancel_multiple_concurrent (void)
   GCancellable *cancellable;
   guint i, iterations;
 
+  if (!g_test_thorough ())
+    {
+      g_test_skip ("Not running timing heavy test");
+      return;
+    }
+
   cancellable = g_cancellable_new ();
   loop = g_main_loop_new (NULL, FALSE);
 
@@ -216,12 +222,19 @@ test_cancel_multiple_concurrent (void)
   g_main_loop_unref (loop);
 }
 
+static void
+test_cancel_null (void)
+{
+  g_cancellable_cancel (NULL);
+}
+
 int
 main (int argc, char *argv[])
 {
   g_test_init (&argc, &argv, NULL);
 
   g_test_add_func ("/cancellable/multiple-concurrent", test_cancel_multiple_concurrent);
+  g_test_add_func ("/cancellable/null", test_cancel_null);
 
   return g_test_run ();
 }

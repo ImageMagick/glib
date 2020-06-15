@@ -78,7 +78,7 @@ G_DEFINE_BOXED_TYPE (GResource, g_resource, g_resource_ref, g_resource_unref)
  *
  * `to-pixdata` which will use the gdk-pixbuf-pixdata command to convert
  * images to the GdkPixdata format, which allows you to create pixbufs directly using the data inside
- * the resource file, rather than an (uncompressed) copy if it. For this, the gdk-pixbuf-pixdata
+ * the resource file, rather than an (uncompressed) copy of it. For this, the gdk-pixbuf-pixdata
  * program must be in the PATH, or the `GDK_PIXBUF_PIXDATA` environment variable must be
  * set to the full path to the gdk-pixbuf-pixdata executable; otherwise the resource compiler will
  * abort.
@@ -151,7 +151,7 @@ G_DEFINE_BOXED_TYPE (GResource, g_resource, g_resource_ref, g_resource_unref)
  * When debugging a program or testing a change to an installed version, it is often useful to be able to
  * replace resources in the program or library, without recompiling, for debugging or quick hacking and testing
  * purposes. Since GLib 2.50, it is possible to use the `G_RESOURCE_OVERLAYS` environment variable to selectively overlay
- * resources with replacements from the filesystem.  It is a colon-separated list of substitutions to perform
+ * resources with replacements from the filesystem.  It is a %G_SEARCHPATH_SEPARATOR-separated list of substitutions to perform
  * during resource lookups.
  *
  * A substitution has the form
@@ -285,6 +285,27 @@ enumerate_overlay_dir (const gchar *candidate,
   return FALSE;
 }
 
+typedef struct {
+  gsize size;
+  guint32 flags;
+} InfoData;
+
+static gboolean
+get_overlay_info (const gchar *candidate,
+                  gpointer     user_data)
+{
+  InfoData *info = user_data;
+  GStatBuf buf;
+
+  if (g_stat (candidate, &buf) < 0)
+    return FALSE;
+
+  info->size = buf.st_size;
+  info->flags = G_RESOURCE_FLAGS_NONE;
+
+  return TRUE;
+}
+
 static gboolean
 g_resource_find_overlay (const gchar    *path,
                          CheckCandidate  check,
@@ -311,7 +332,7 @@ g_resource_find_overlay (const gchar    *path,
           gchar **parts;
           gint i, j;
 
-          parts = g_strsplit (envvar, ":", 0);
+          parts = g_strsplit (envvar, G_SEARCHPATH_SEPARATOR_S, 0);
 
           /* Sanity check the parts, dropping those that are invalid.
            * 'i' may grow faster than 'j'.
@@ -357,9 +378,9 @@ g_resource_find_overlay (const gchar    *path,
                   continue;
                 }
 
-              if (eq[1] != '/')
+              if (!g_path_is_absolute (eq + 1))
                 {
-                  g_critical ("G_RESOURCE_OVERLAYS segment '%s' lacks leading '/' after '='.  Ignoring", part);
+                  g_critical ("G_RESOURCE_OVERLAYS segment '%s' does not have an absolute path after '='.  Ignoring", part);
                   g_free (part);
                   continue;
                 }
@@ -489,7 +510,7 @@ g_resource_unref (GResource *resource)
 {
   if (g_atomic_int_dec_and_test (&resource->ref_count))
     {
-      gvdb_table_unref (resource->table);
+      gvdb_table_free (resource->table);
       g_free (resource);
     }
 }
@@ -512,6 +533,19 @@ g_resource_new_from_table (GvdbTable *table)
   return resource;
 }
 
+static void
+g_resource_error_from_gvdb_table_error (GError **g_resource_error,
+                                        GError  *gvdb_table_error  /* (transfer full) */)
+{
+  if (g_error_matches (gvdb_table_error, G_FILE_ERROR, G_FILE_ERROR_INVAL))
+    g_set_error_literal (g_resource_error,
+                         G_RESOURCE_ERROR, G_RESOURCE_ERROR_INTERNAL,
+                         gvdb_table_error->message);
+  else
+    g_propagate_error (g_resource_error, g_steal_pointer (&gvdb_table_error));
+  g_clear_error (&gvdb_table_error);
+}
+
 /**
  * g_resource_new_from_data:
  * @data: A #GBytes
@@ -524,6 +558,12 @@ g_resource_new_from_table (GvdbTable *table)
  * If you want to use this resource in the global resource namespace you need
  * to register it with g_resources_register().
  *
+ * Note: @data must be backed by memory that is at least pointer aligned.
+ * Otherwise this function will internally create a copy of the memory since
+ * GLib 2.56, or in older versions fail and exit the process.
+ *
+ * If @data is empty or corrupt, %G_RESOURCE_ERROR_INTERNAL will be returned.
+ *
  * Returns: (transfer full): a new #GResource, or %NULL on error
  *
  * Since: 2.32
@@ -533,17 +573,26 @@ g_resource_new_from_data (GBytes  *data,
                           GError **error)
 {
   GvdbTable *table;
+  gboolean unref_data = FALSE;
+  GError *local_error = NULL;
 
-  table = gvdb_table_new_from_data (g_bytes_get_data (data, NULL),
-                                    g_bytes_get_size (data),
-                                    TRUE,
-                                    g_bytes_ref (data),
-                                    (GvdbRefFunc)g_bytes_ref,
-                                    (GDestroyNotify)g_bytes_unref,
-                                    error);
+  if (((guintptr) g_bytes_get_data (data, NULL)) % sizeof (gpointer) != 0)
+    {
+      data = g_bytes_new (g_bytes_get_data (data, NULL),
+                          g_bytes_get_size (data));
+      unref_data = TRUE;
+    }
+
+  table = gvdb_table_new_from_bytes (data, TRUE, &local_error);
+
+  if (unref_data)
+    g_bytes_unref (data);
 
   if (table == NULL)
-    return NULL;
+    {
+      g_resource_error_from_gvdb_table_error (error, g_steal_pointer (&local_error));
+      return NULL;
+    }
 
   return g_resource_new_from_table (table);
 }
@@ -559,6 +608,11 @@ g_resource_new_from_data (GBytes  *data,
  * If you want to use this resource in the global resource namespace you need
  * to register it with g_resources_register().
  *
+ * If @filename is empty or the data in it is corrupt,
+ * %G_RESOURCE_ERROR_INTERNAL will be returned. If @filename doesn’t exist, or
+ * there is an error in reading it, an error from g_mapped_file_new() will be
+ * returned.
+ *
  * Returns: (transfer full): a new #GResource, or %NULL on error
  *
  * Since: 2.32
@@ -568,31 +622,36 @@ g_resource_load (const gchar  *filename,
                  GError      **error)
 {
   GvdbTable *table;
+  GError *local_error = NULL;
 
-  table = gvdb_table_new (filename, FALSE, error);
+  table = gvdb_table_new (filename, FALSE, &local_error);
   if (table == NULL)
-    return NULL;
+    {
+      g_resource_error_from_gvdb_table_error (error, g_steal_pointer (&local_error));
+      return NULL;
+    }
 
   return g_resource_new_from_table (table);
 }
 
-static
-gboolean do_lookup (GResource             *resource,
-                    const gchar           *path,
-                    GResourceLookupFlags   lookup_flags,
-                    gsize                 *size,
-                    guint32               *flags,
-                    const void           **data,
-                    gsize                 *data_size,
-                    GError               **error)
+static gboolean
+do_lookup (GResource             *resource,
+           const gchar           *path,
+           GResourceLookupFlags   lookup_flags,
+           gsize                 *size,
+           guint32               *flags,
+           const void           **data,
+           gsize                 *data_size,
+           GError               **error)
 {
   char *free_path = NULL;
   gsize path_len;
   gboolean res = FALSE;
   GVariant *value;
 
+  /* Drop any trailing slash. */
   path_len = strlen (path);
-  if (path[path_len-1] == '/')
+  if (path_len >= 1 && path[path_len-1] == '/')
     {
       path = free_path = g_strdup (path);
       free_path[path_len-1] = 0;
@@ -847,9 +906,17 @@ g_resource_enumerate_children (GResource             *resource,
                                GResourceLookupFlags   lookup_flags,
                                GError               **error)
 {
+  gchar local_str[256];
+  const gchar *path_with_slash;
   gchar **children;
+  gchar *free_path = NULL;
   gsize path_len;
-  char *path_with_slash;
+
+  /*
+   * Size of 256 is arbitrarily chosen based on being large enough
+   * for pretty much everything we come across, but not cumbersome
+   * on the stack. It also matches common cacheline sizes.
+   */
 
   if (*path == 0)
     {
@@ -860,13 +927,35 @@ g_resource_enumerate_children (GResource             *resource,
     }
 
   path_len = strlen (path);
-  if (path[path_len-1] != '/')
-    path_with_slash = g_strconcat (path, "/", NULL);
+
+  if G_UNLIKELY (path[path_len-1] != '/')
+    {
+      if (path_len < sizeof (local_str) - 2)
+        {
+          /*
+           * We got a path that does not have a trailing /. It is not the
+           * ideal use of this API as we require trailing / for our lookup
+           * into gvdb. Some degenerate application configurations can hit
+           * this code path quite a bit, so we try to avoid using the
+           * g_strconcat()/g_free().
+           */
+          memcpy (local_str, path, path_len);
+          local_str[path_len] = '/';
+          local_str[path_len+1] = 0;
+          path_with_slash = local_str;
+        }
+      else
+        {
+          path_with_slash = free_path = g_strconcat (path, "/", NULL);
+        }
+    }
   else
-    path_with_slash = g_strdup (path);
+    {
+      path_with_slash = path;
+    }
 
   children = gvdb_table_list (resource->table, path_with_slash);
-  g_free (path_with_slash);
+  g_free (free_path);
 
   if (children == NULL)
     {
@@ -1183,6 +1272,17 @@ g_resources_get_info (const gchar           *path,
   gboolean res = FALSE;
   GList *l;
   gboolean r_res;
+  InfoData info;
+
+  if (g_resource_find_overlay (path, get_overlay_info, &info))
+    {
+      if (size)
+        *size = info.size;
+      if (flags)
+        *flags = info.flags;
+
+      return TRUE;
+    }
 
   register_lazy_static_resources ();
 

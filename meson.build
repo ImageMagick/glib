@@ -1,14 +1,18 @@
 project('glib', 'c', 'cpp',
-  version : '2.53.6',
-  meson_version : '>= 0.38.1',
+  version : '2.64.3',
+  # NOTE: We keep this pinned at 0.49 because that's what Debian 10 ships
+  meson_version : '>= 0.49.2',
   default_options : [
+    'buildtype=debugoptimized',
     'warning_level=1',
-    'c_std=gnu89'
+    'c_std=gnu99'
   ]
 )
 
 cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
+
+cc_can_run = not meson.is_cross_build() or meson.has_exe_wrapper()
 
 if cc.get_id() == 'msvc'
   # Ignore several spurious warnings for things glib does very commonly
@@ -20,6 +24,8 @@ if cc.get_id() == 'msvc'
   # Disable SAFESEH with MSVC for plugins and libs that use external deps that
   # are built with MinGW
   noseh_link_args = ['/SAFESEH:NO']
+  # Set the input and exec encoding to utf-8, like is the default with GCC
+  add_project_arguments(cc.get_supported_arguments(['/utf-8']), language: 'c')
 else
   noseh_link_args = []
   # -mms-bitfields vs -fnative-struct ?
@@ -40,7 +46,9 @@ binary_age = 100 * minor_version + micro_version
 soversion = 0
 # Maintain compatibility with previous libtool versioning
 # current = minor * 100 + micro
-library_version = '@0@.@1@.@2@'.format(soversion, binary_age - interface_age, interface_age)
+current = binary_age - interface_age
+library_version = '@0@.@1@.@2@'.format(soversion, current, interface_age)
+darwin_versions = [current + 1, '@0@.@1@'.format(current + 1, interface_age)]
 
 configinc = include_directories('.')
 glibinc = include_directories('glib')
@@ -51,14 +59,40 @@ gioinc = include_directories('gio')
 glib_prefix = get_option('prefix')
 glib_bindir = join_paths(glib_prefix, get_option('bindir'))
 glib_libdir = join_paths(glib_prefix, get_option('libdir'))
+glib_libexecdir = join_paths(glib_prefix, get_option('libexecdir'))
 glib_datadir = join_paths(glib_prefix, get_option('datadir'))
 glib_pkgdatadir = join_paths(glib_datadir, 'glib-2.0')
 glib_includedir = join_paths(glib_prefix, get_option('includedir'))
-glib_giomodulesdir = join_paths(glib_libdir, 'gio', 'modules')
+if get_option('gio_module_dir') != ''
+  glib_giomodulesdir = join_paths(glib_prefix, get_option('gio_module_dir'))
+else
+  glib_giomodulesdir = join_paths(glib_libdir, 'gio', 'modules')
+endif
 
 glib_pkgconfigreldir = join_paths(glib_libdir, 'pkgconfig')
 
+if get_option('charsetalias_dir') != ''
+  glib_charsetaliasdir = join_paths(glib_prefix, get_option('charsetalias_dir'))
+else
+  glib_charsetaliasdir = glib_libdir
+endif
+
+installed_tests_metadir = join_paths(glib_datadir, 'installed-tests', meson.project_name())
+installed_tests_execdir = join_paths(glib_libexecdir, 'installed-tests', meson.project_name())
+installed_tests_enabled = get_option('installed_tests')
+installed_tests_template = files('template.test.in')
+installed_tests_template_tap = files('template-tap.test.in')
+
+# Don’t build the tests unless we can run them (either natively, in an exe wrapper, or by installing them for later use)
+build_tests = not meson.is_cross_build() or (meson.is_cross_build() and meson.has_exe_wrapper()) or installed_tests_enabled
+
 add_project_arguments('-D_GNU_SOURCE', language: 'c')
+
+# Disable strict aliasing;
+# see https://bugzilla.gnome.org/show_bug.cgi?id=791622
+if cc.has_argument('-fno-strict-aliasing')
+  add_project_arguments('-fno-strict-aliasing', language: 'c')
+endif
 
 ########################
 # Configuration begins #
@@ -70,14 +104,13 @@ glibconfig_conf = configuration_data()
 # use them later in test programs (autoconf does this automatically)
 glib_conf_prefix = ''
 
-glib_conf.set('GLIB_VERSION', glib_version)
 glib_conf.set('GLIB_MAJOR_VERSION', major_version)
 glib_conf.set('GLIB_MINOR_VERSION', minor_version)
 glib_conf.set('GLIB_MICRO_VERSION', micro_version)
 glib_conf.set('GLIB_INTERFACE_AGE', interface_age)
 glib_conf.set('GLIB_BINARY_AGE', binary_age)
 glib_conf.set_quoted('GETTEXT_PACKAGE', 'glib20')
-glib_conf.set_quoted('PACKAGE_BUGREPORT', 'http://bugzilla.gnome.org/enter_bug.cgi?product=glib')
+glib_conf.set_quoted('PACKAGE_BUGREPORT', 'https://gitlab.gnome.org/GNOME/glib/issues/new')
 glib_conf.set_quoted('PACKAGE_NAME', 'glib')
 glib_conf.set_quoted('PACKAGE_STRING', 'glib @0@'.format(meson.project_version()))
 glib_conf.set_quoted('PACKAGE_TARNAME', 'glib')
@@ -85,16 +118,8 @@ glib_conf.set_quoted('PACKAGE_URL', '')
 glib_conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 glib_conf.set('ENABLE_NLS', 1)
 
-# Variables used in glib-gettextize and pkg-config files
-# These should not contain " quotes around the values
-glib_conf.set('PACKAGE', 'glib')
-glib_conf.set('VERSION', meson.project_version())
-glib_conf.set('prefix', glib_prefix)
-glib_conf.set('exec_prefix', glib_prefix)
-glib_conf.set('libdir', glib_libdir)
-glib_conf.set('includedir', glib_includedir)
-glib_conf.set('datadir', glib_datadir)
-glib_conf.set('datarootdir', glib_datadir)
+# used by the .rc.in files
+glibconfig_conf.set('LT_CURRENT_MINUS_AGE', soversion)
 
 glib_conf.set('_GNU_SOURCE', 1)
 
@@ -103,12 +128,55 @@ if host_system == 'windows'
   glib_conf.set('BROKEN_POLL', true)
 endif
 
+if host_system == 'windows' and cc.get_id() != 'msvc' and cc.get_id() != 'clang-cl'
+  # FIXME: Ideally we shouldn't depend on this on Windows and should use
+  # 64 bit capable Windows API that also works with MSVC.
+  # The autotools build did set this for mingw and while meson sets it
+  # for gcc/clang by default, it doesn't do so on Windows.
+  glib_conf.set('_FILE_OFFSET_BITS', 64)
+endif
+
+# Check for GNU visibility attributes
+g_have_gnuc_visibility = cc.compiles('''
+  void
+  __attribute__ ((visibility ("hidden")))
+       f_hidden (void)
+  {
+  }
+  void
+  __attribute__ ((visibility ("internal")))
+       f_internal (void)
+  {
+  }
+  void
+  __attribute__ ((visibility ("default")))
+       f_default (void)
+  {
+  }
+  int main (void)
+  {
+    f_hidden();
+    f_internal();
+    f_default();
+    return 0;
+  }
+  ''',
+  # Not supported by MSVC, but MSVC also won't support visibility,
+  # so it's OK to pass -Werror explicitly. Replace with
+  # override_options : 'werror=true' once that is supported
+  args: ['-Werror'],
+  name : 'GNU C visibility attributes test')
+
+if g_have_gnuc_visibility
+  glibconfig_conf.set('G_HAVE_GNUC_VISIBILITY', '1')
+endif
+
 # Detect and set symbol visibility
 glib_hidden_visibility_args = []
 if get_option('default_library') != 'static'
-  if host_system == 'windows'
+  if host_system == 'windows' or host_system == 'cygwin'
     glib_conf.set('DLL_EXPORT', true)
-    if cc.get_id() == 'msvc'
+    if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
       glib_conf.set('_GLIB_EXTERN', '__declspec(dllexport) extern')
     elif cc.has_argument('-fvisibility=hidden')
       glib_conf.set('_GLIB_EXTERN', '__attribute__((visibility("default"))) __declspec(dllexport) extern')
@@ -120,10 +188,23 @@ if get_option('default_library') != 'static'
   endif
 endif
 
-# FIXME: what about Cygwin (G_WITH_CYGWIN)
+if get_option('default_library') == 'static'
+    glibconfig_conf.set('GLIB_STATIC_COMPILATION', '1')
+    glibconfig_conf.set('GOBJECT_STATIC_COMPILATION', '1')
+endif
+
+# Cygwin glib port maintainers made it clear
+# (via the patches they apply) that they want no
+# part of glib W32 code, therefore we do not define
+# G_PLATFORM_WIN32 for host_system == 'cygwin'.
+# This makes G_PLATFORM_WIN32 a synonym for
+# G_OS_WIN32.
 if host_system == 'windows'
   glib_os = '''#define G_OS_WIN32
 #define G_PLATFORM_WIN32'''
+elif host_system == 'cygwin'
+  glib_os = '''#define G_OS_UNIX
+#define G_WITH_CYGWIN'''
 else
   glib_os = '#define G_OS_UNIX'
 endif
@@ -133,57 +214,67 @@ glibconfig_conf.set('glib_os', glib_os)
 # for dependencies that don't normally come with pkg-config files for Visual Studio builds
 buildtype = get_option('buildtype')
 
+glib_debug_cflags = []
+if buildtype.startswith('debug')
+  glib_debug_cflags += ['-DG_ENABLE_DEBUG']
+elif buildtype == 'release'
+  glib_debug_cflags += ['-DG_DISABLE_CAST_CHECKS']
+endif
+
+add_project_arguments(glib_debug_cflags, language: 'c')
+
 # check for header files
 
 headers = [
+  'alloca.h',
+  'crt_externs.h',
+  'dirent.h', # MSC does not come with this by default
+  'float.h',
+  'fstab.h',
+  'grp.h',
+  'inttypes.h',
+  'limits.h',
+  'linux/magic.h',
+  'locale.h',
+  'mach/mach_time.h',
+  'memory.h',
+  'mntent.h',
+  'poll.h',
+  'pwd.h',
+  'sched.h',
+  'spawn.h',
+  'stdint.h',
   'stdlib.h',
   'string.h',
   'strings.h',
-  'memory.h',
-  'alloca.h',
-  'locale.h',
-  'xlocale.h',
-  'float.h',
-  'limits.h',
-  'pwd.h',
-  'grp.h',
-  'poll.h',
-  'termios.h',
+  'sys/auxv.h',
+  'sys/event.h',
+  'sys/filio.h',
+  'sys/inotify.h',
+  'sys/mkdev.h',
+  'sys/mntctl.h',
+  'sys/mnttab.h',
+  'sys/mount.h',
   'sys/param.h',
   'sys/resource.h',
-  'mach/mach_time.h',
   'sys/select.h',
-  'stdint.h',
-  'inttypes.h',
-  'sched.h',
-  'malloc.h',
-  'sys/vfs.h',
-  'sys/vmount.h',
   'sys/statfs.h',
+  'sys/stat.h',
   'sys/statvfs.h',
-  'sys/filio.h',
-  'mntent.h',
-  'sys/mnttab.h',
-  'sys/vfstab.h',
-  'sys/mntctl.h',
-  'fstab.h',
-  'linux/magic.h',
-  'termios.h',
-  'dirent.h', # MSC does not come with this by default
+  'sys/sysctl.h',
   'sys/time.h', # MSC does not come with this by default
   'sys/times.h',
-  'sys/wait.h',
-  'unistd.h',
-  'values.h',
   'sys/types.h',
   'sys/uio.h',
-  'sys/mkdev.h',
-  'sys/mount.h',
-  'sys/sysctl.h',
-  'crt_externs.h',
-  'sys/inotify.h',
-  'sys/event.h',
-  'sys/stat.h',
+  'sys/vfs.h',
+  'sys/vfstab.h',
+  'sys/vmount.h',
+  'sys/wait.h',
+  'termios.h',
+  'unistd.h',
+  'values.h',
+  'wchar.h',
+  'xlocale.h',
 ]
 
 foreach h : headers
@@ -193,6 +284,13 @@ foreach h : headers
     glib_conf_prefix = glib_conf_prefix + '#define @0@ 1\n'.format(define)
   endif
 endforeach
+
+# FIXME: Use cc.check_header from Meson 0.47.
+# FreeBSD includes a malloc.h which always throw compilation error.
+if cc.compiles('#include <malloc.h>', name : 'malloc.h')
+  glib_conf.set('HAVE_MALLOC_H', 1)
+  glib_conf_prefix = glib_conf_prefix + '#define HAVE_MALLOC_H 1\n'
+endif
 
 if cc.has_header('linux/netlink.h')
   glib_conf.set('HAVE_NETLINK', 1)
@@ -238,6 +336,10 @@ struct_members = [
   [ 'statfs', 'f_bavail', struct_stat_blkprefix ],
   [ 'dirent', 'd_type', '''#include <sys/types.h>
                            #include <dirent.h>''' ],
+  [ 'statvfs', 'f_basetype', '#include <sys/statvfs.h>' ],
+  [ 'statvfs', 'f_fstypename', '#include <sys/statvfs.h>' ],
+  [ 'tm', 'tm_gmtoff', '#include <time.h>' ],
+  [ 'tm', '__tm_gmtoff', '#include <time.h>' ],
 ]
 
 foreach m : struct_members
@@ -255,69 +357,130 @@ foreach m : struct_members
   endif
 endforeach
 
-# Windows Support (Vista+)
+# Compiler flags
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+  warning_c_args = [
+    '-Wduplicated-branches',
+    '-Wimplicit-fallthrough',
+    '-Wmisleading-indentation',
+    '-Wstrict-prototypes',
+    '-Wunused',
+    # Due to maintained deprecated code, we do not want to see unused parameters
+    '-Wno-unused-parameter',
+    # Due to pervasive use of things like GPOINTER_TO_UINT(), we do not support
+    # building with -Wbad-function-cast.
+    '-Wno-bad-function-cast',
+    '-Wno-cast-function-type',
+    # Due to function casts through (void*) we cannot support -Wpedantic:
+    # https://wiki.gnome.org/Projects/GLib/CompilerRequirements#Function_pointer_conversions.
+    '-Wno-pedantic',
+    # A zero-length format string shouldn't be considered an issue.
+    '-Wno-format-zero-length',
+    '-Werror=declaration-after-statement',
+    '-Werror=format=2',
+    '-Werror=implicit-function-declaration',
+    '-Werror=init-self',
+    '-Werror=missing-include-dirs',
+    '-Werror=missing-prototypes',
+    '-Werror=pointer-arith',
+  ]
+  warning_c_link_args = [
+    '-Wl,-z,nodelete',
+  ]
+  if get_option('bsymbolic_functions')
+    warning_c_link_args += ['-Wl,-Bsymbolic-functions']
+  endif
+else
+  warning_c_args = []
+  warning_c_link_args = []
+endif
+
+add_project_arguments(cc.get_supported_arguments(warning_c_args), language: 'c')
+
+# FIXME: We cannot build some of the GResource tests with -z nodelete, which
+# means we cannot use that flag in add_project_link_arguments(), and must add
+# it to the relevant targets manually. We do the same with -Bsymbolic-functions
+# because that is what the autotools build did.
+# See https://github.com/mesonbuild/meson/pull/3520 for a way to eventually
+# improve this.
+glib_link_flags = cc.get_supported_link_arguments(warning_c_link_args)
+
+# Windows SDK requirements and checks
 if host_system == 'windows'
-  glib_conf.set('_WIN32_WINNT', '0x0601')
+  # Check whether we're building for UWP apps
+  code = '''
+  #include <windows.h>
+  #if !(WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_APP) && !WINAPI_FAMILY_PARTITION(WINAPI_PARTITION_DESKTOP))
+  #error "Not building for UWP"
+  #endif'''
+  if cc.compiles(code, name : 'building for UWP')
+    glib_conf.set('G_WINAPI_ONLY_APP', true)
+    # We require Windows 10+ on WinRT
+    glib_conf.set('_WIN32_WINNT', '0x0A00')
+  else
+    # We require Windows 7+ on Win32
+    glib_conf.set('_WIN32_WINNT', '0x0601')
+  endif
 endif
 
 functions = [
-  'alloca',
-  'mmap',
-  'posix_memalign',
-  'memalign',
-  'valloc',
-  'fsync',
-  'pipe2',
-  'issetugid',
-  'timegm',
-  'gmtime_r',
-  'strerror_r',
-  'lstat',
-  'strsignal',
-  'vsnprintf',
-  'stpcpy',
-  'poll',
-  'vasprintf',
-  'setenv',
-  'unsetenv',
-  'getc_unlocked',
-  'readlink',
-  'symlink',
-  'fdwalk',
-  'lchmod',
-  'lchown',
+  'endmntent',
+  'endservent',
+  'fallocate',
   'fchmod',
   'fchown',
-  'utimes',
-  'getresuid',
-  'getmntent_r',
-  'setmntent',
-  'endmntent',
-  'hasmntopt',
+  'fdwalk',
+  'fsync',
+  'getauxval',
+  'getc_unlocked',
   'getfsstat',
-  'getvfsstat',
-  'fallocate',
-  'localtime_r',
-  'gmtime_r',
-  'getpwuid_r',
   'getgrgid_r',
-  'prlimit',
-  'strnlen',
-  'wcslen',
-  'wcsnlen',
+  'getmntent_r',
+  'getpwuid_r',
+  'getresuid',
+  'getvfsstat',
+  'gmtime_r',
+  'hasmntopt',
+  'inotify_init1',
+  'issetugid',
+  'kevent',
+  'kqueue',
+  'lchmod',
+  'lchown',
+  'link',
+  'localtime_r',
+  'lstat',
   'mbrtowc',
-  'wcrtomb',
+  'memalign',
+  'mmap',
   'newlocale',
-  'uselocale',
+  'pipe2',
+  'poll',
+  'prlimit',
+  'readlink',
+  'recvmmsg',
+  'sendmmsg',
+  'setenv',
+  'setmntent',
+  'strerror_r',
+  'strnlen',
+  'strsignal',
   'strtod_l',
   'strtoll_l',
   'strtoull_l',
-  'inotify_init1',
-  'kqueue',
-  'kevent',
-  'endservent',
-  'sendmmsg',
-  'recvmmsg',
+  'symlink',
+  'timegm',
+  'unsetenv',
+  'uselocale',
+  'utimes',
+  'valloc',
+  'vasprintf',
+  'vsnprintf',
+  'wcrtomb',
+  'wcslen',
+  'wcsnlen',
+  'sysctlbyname',
+  '_NSGetEnviron',
 ]
 
 if glib_conf.has('HAVE_SYS_STATVFS_H')
@@ -335,8 +498,11 @@ if host_system == 'windows'
   iphlpapi_dep = cc.find_library('iphlpapi')
   iphlpapi_funcs = ['if_nametoindex', 'if_indextoname']
   foreach ifunc : iphlpapi_funcs
+    iphl_prefix =  '''#define _WIN32_WINNT @0@
+      #include <winsock2.h>
+      #include <iphlpapi.h>'''.format(glib_conf.get('_WIN32_WINNT'))
     if cc.has_function(ifunc,
-                       prefix : '#define _WIN32_WINNT 0x0601\n#include <winsock2.h>\n#include <iphlpapi.h>',
+                       prefix : iphl_prefix,
                        dependencies : iphlpapi_dep)
       idefine = 'HAVE_' + ifunc.underscorify().to_upper()
       glib_conf.set(idefine, 1)
@@ -365,6 +531,31 @@ foreach f : functions
     set_variable('have_func_' + f, false)
   endif
 endforeach
+
+# Check that stpcpy() is usable; must use header.
+# cc.has_function() in some cases (clang, gcc 10+) assumes that if the
+# compiler provides a builtin of the same name that the function exists, while
+# it's in fact not provided by any header or library. This is true for
+# stpcpy() on Windows using clang and gcc as well as posix_memalign() using
+# gcc on Windows. Skip these checks on Windows for now to avoid false
+# positives. See https://github.com/mesonbuild/meson/pull/7116,
+# https://github.com/mesonbuild/meson/issues/3672 and
+# https://github.com/mesonbuild/meson/issues/5628.
+# FIXME: Once meson no longer returns success for stpcpy() and
+# posix_memalign() on Windows using GCC and clang we can remove this.
+if host_system != 'windows' and cc.has_function('stpcpy', prefix : '#include <string.h>')
+  glib_conf.set('HAVE_STPCPY', 1)
+endif
+
+# Check that posix_memalign() is usable; must use header
+if host_system != 'windows' and cc.has_function('posix_memalign', prefix : '#include <stdlib.h>')
+  glib_conf.set('HAVE_POSIX_MEMALIGN', 1)
+endif
+
+# Check that posix_spawn() is usable; must use header
+if cc.has_function('posix_spawn', prefix : '#include <spawn.h>')
+  glib_conf.set('HAVE_POSIX_SPAWN', 1)
+endif
 
 # Check whether strerror_r returns char *
 if have_func_strerror_r
@@ -415,6 +606,8 @@ if cc.has_header_symbol('sys/sysmacros.h', 'major')
   glib_conf.set('MAJOR_IN_SYSMACROS', 1)
 elif cc.has_header_symbol('sys/mkdev.h', 'major')
   glib_conf.set('MAJOR_IN_MKDEV', 1)
+elif cc.has_header_symbol('sys/types.h', 'major')
+  glib_conf.set('MAJOR_IN_TYPES', 1)
 endif
 
 if cc.has_header_symbol('dlfcn.h', 'RTLD_LAZY')
@@ -427,6 +620,12 @@ endif
 
 if cc.has_header_symbol('dlfcn.h', 'RTLD_GLOBAL')
   glib_conf.set('HAVE_RTLD_GLOBAL', 1)
+endif
+
+have_rtld_next = false
+if cc.has_header_symbol('dlfcn.h', 'RTLD_NEXT', args: '-D_GNU_SOURCE')
+  have_rtld_next = true
+  glib_conf.set('HAVE_RTLD_NEXT', 1)
 endif
 
 # Check whether to use statfs or statvfs
@@ -451,36 +650,55 @@ else
 endif
 message('Checking whether to use statfs or statvfs .. ' + stat_func_to_use)
 
-# Mac OS X Carbon support
-glib_have_carbon = cc.compiles('''#include <Carbon/Carbon.h>
-                                  #include <CoreServices/CoreServices.h>''',
-                               name : 'Mac OS X Carbon support')
-
-glib_have_os_x_9_or_later = false
-
-if glib_have_carbon
-  glib_conf.set('HAVE_CARBON', true)
-  CARBON_LIBS='-Wl,-framework,Carbon' # FIXME: propagate to .pc files as well
-  glib_have_os_x_9_or_later = cc.compiles('''#include <AvailabilityMacros.h>
-                                             #if MAC_OS_X_VERSION_MIN_REQUIRED < 1090
-                                             #error Compiling for minimum OS X version before 10.9
-                                             #endif''', name : 'OS X 9 or later')
-else
-  CARBON_LIBS=''
+if host_system == 'linux'
+  if cc.has_function('mkostemp',
+                     prefix: '''#define _GNU_SOURCE
+                                #include <stdlib.h>''')
+    glib_conf.set('HAVE_MKOSTEMP', 1)
+  endif
 endif
 
-# Mac OS X Cocoa support
-glib_have_cocoa = cc.compiles('''#include <Cocoa/Cocoa.h>
-                                 #ifdef GNUSTEP_BASE_VERSION
-                                 #error "Detected GNUstep, not Cocoa"
-                                 #endif''',
-                              name : 'Mac OS X Cocoa support')
+osx_ldflags = []
+glib_have_os_x_9_or_later = false
+glib_have_carbon = false
+glib_have_cocoa = false
+if host_system == 'darwin'
+  add_languages('objc')
+  objcc = meson.get_compiler('objc')
 
-if glib_have_cocoa
-  glib_conf.set('HAVE_COCOA', true)
-  COCOA_LIBS='-Wl,-framework,Foundation' # FIXME: propagate to .pc files as well
-else
-  COCOA_LIBS=''
+  osx_ldflags += ['-Wl,-framework,CoreFoundation']
+
+  # Mac OS X Carbon support
+  glib_have_carbon = objcc.compiles('''#include <Carbon/Carbon.h>
+                                       #include <CoreServices/CoreServices.h>''',
+                                    name : 'Mac OS X Carbon support')
+
+  if glib_have_carbon
+    glib_conf.set('HAVE_CARBON', true)
+    osx_ldflags += '-Wl,-framework,Carbon'
+    glib_have_os_x_9_or_later = objcc.compiles('''#include <AvailabilityMacros.h>
+                                                  #if MAC_OS_X_VERSION_MIN_REQUIRED < 1090
+                                                  #error Compiling for minimum OS X version before 10.9
+                                                  #endif''',
+                                               name : 'OS X 9 or later')
+  endif
+
+  # Mac OS X Cocoa support
+  glib_have_cocoa = objcc.compiles('''#include <Cocoa/Cocoa.h>
+                                      #ifdef GNUSTEP_BASE_VERSION
+                                      #error "Detected GNUstep, not Cocoa"
+                                      #endif''',
+                                   name : 'Mac OS X Cocoa support')
+
+  if glib_have_cocoa
+    glib_conf.set('HAVE_COCOA', true)
+    osx_ldflags += ['-Wl,-framework,Foundation', '-Wl,-framework,AppKit']
+  endif
+
+  # FIXME: libgio mix C and objC source files and there is no way to reliably
+  # know which language flags it's going to use to link. Add to both languages
+  # for now. See https://github.com/mesonbuild/meson/issues/3585.
+  add_project_link_arguments(osx_ldflags, language : ['objc', 'c'])
 endif
 
 # Check for futex(2)
@@ -516,6 +734,28 @@ if cc.links(clock_gettime_test_code, name : 'clock_gettime')
 elif cc.links(clock_gettime_test_code, args : '-lrt', name : 'clock_gettime in librt')
   glib_conf.set('HAVE_CLOCK_GETTIME', 1)
   librt = cc.find_library('rt')
+endif
+
+dlopen_dlsym_test_code = '''
+#include <dlfcn.h>
+int glib_underscore_test (void) { return 42; }
+int main (int argc, char ** argv) {
+  void *f1 = (void*)0, *f2 = (void*)0, *handle;
+  handle = dlopen ((void*)0, 0);
+  if (handle) {
+    f1 = dlsym (handle, "glib_underscore_test");
+    f2 = dlsym (handle, "_glib_underscore_test");
+  }
+  return (!f2 || f1);
+}'''
+libdl_dep = []
+if cc.links(dlopen_dlsym_test_code, name : 'dlopen() and dlsym() in system libraries')
+  have_dlopen_dlsym = true
+elif cc.links(dlopen_dlsym_test_code, args : '-ldl', name : 'dlopen() and dlsym() in libdl')
+  have_dlopen_dlsym = true
+  libdl_dep = cc.find_library('dl')
+else
+  have_dlopen_dlsym = false
 endif
 
 # if statfs() takes 2 arguments (Posix) or 4 (Solaris)
@@ -567,7 +807,7 @@ endif
 #AC_MSG_CHECKING([])
 if cc.compiles('''#include <fcntl.h>
                   #include <sys/types.h>
-                  #include <sys/stat.h>],
+                  #include <sys/stat.h>
                   void some_func (void) {
                     open(0, O_DIRECTORY, 0);
                   }''', name : 'open() option O_DIRECTORY')
@@ -575,22 +815,25 @@ if cc.compiles('''#include <fcntl.h>
 endif
 
 # Check whether there is a vsnprintf() function with C99 semantics installed.
-# AC_FUNC_VSNPRINTF_C99
+# (similar tests to AC_FUNC_VSNPRINTF_C99)
 # Check whether there is a snprintf() function with C99 semantics installed.
-# AC_FUNC_SNPRINTF_C99
-
+# (similar tests to AC_FUNC_SNPRINTF_C99)
+# Check whether there is a printf() function with Unix98 semantics installed.
+# (similar tests to AC_FUNC_PRINTF_UNIX98)
 have_good_vsnprintf = false
 have_good_snprintf = false
+have_good_printf = false
 
-if host_system == 'windows'
-  # Unfortunately the mingw and Visual Studio 2015+ implementations of C99-style
-  # snprintf and vsnprintf don't seem to be quite good enough, at least not in
-  # mingw-runtime-3.14.  (Sorry, I don't know exactly what is the problem,
+if host_system == 'windows' and (cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl')
+  # Unfortunately the Visual Studio 2015+ implementations of C99-style
+  # snprintf and vsnprintf don't seem to be quite good enough.
+  # (Sorry, I don't know exactly what is the problem,
   # but it is related to floating point formatting and decimal point vs. comma.)
   # The simple tests in AC_FUNC_VSNPRINTF_C99 and AC_FUNC_SNPRINTF_C99 aren't
   # rigorous enough to notice, though.
   glib_conf.set('HAVE_C99_SNPRINTF', false)
   glib_conf.set('HAVE_C99_VSNPRINTF', false)
+  glib_conf.set('HAVE_UNIX98_PRINTF', false)
 else
   vsnprintf_c99_test_code = '''
 #include <stdio.h>
@@ -630,10 +873,15 @@ main(void)
   exit(1);
 }'''
 
-  rres = cc.run(vsnprintf_c99_test_code, name : 'C99 vsnprintf')
-  if rres.compiled() and rres.returncode() == 0
-    glib_conf.set('HAVE_C99_VSNPRINTF', 1)
-    have_good_vsnprintf = true
+  if cc_can_run
+    rres = cc.run(vsnprintf_c99_test_code, name : 'C99 vsnprintf')
+    if rres.compiled() and rres.returncode() == 0
+      glib_conf.set('HAVE_C99_VSNPRINTF', 1)
+      have_good_vsnprintf = true
+    endif
+  else
+      have_good_vsnprintf = meson.get_cross_property('have_c99_vsnprintf', false)
+      glib_conf.set('HAVE_C99_VSNPRINTF', have_good_vsnprintf)
   endif
 
   snprintf_c99_test_code = '''
@@ -672,10 +920,40 @@ main(void)
   exit(1);
 }'''
 
-  rres = cc.run(snprintf_c99_test_code, name : 'C99 snprintf')
-  if rres.compiled() and rres.returncode() == 0
-    glib_conf.set('HAVE_C99_SNPRINTF', 1)
-    have_good_snprintf = true
+  if cc_can_run
+    rres = cc.run(snprintf_c99_test_code, name : 'C99 snprintf')
+    if rres.compiled() and rres.returncode() == 0
+      glib_conf.set('HAVE_C99_SNPRINTF', 1)
+      have_good_snprintf = true
+    endif
+  else
+      have_good_snprintf = meson.get_cross_property('have_c99_snprintf', false)
+      glib_conf.set('HAVE_C99_SNPRINTF', have_good_snprintf)
+  endif
+
+  printf_unix98_test_code = '''
+#include <stdio.h>
+
+int
+main (void)
+{
+  char buffer[128];
+
+  sprintf (buffer, "%2\$d %3\$d %1\$d", 1, 2, 3);
+  if (strcmp ("2 3 1", buffer) == 0)
+    exit (0);
+  exit (1);
+}'''
+
+  if cc_can_run
+    rres = cc.run(printf_unix98_test_code, name : 'Unix98 printf positional parameters')
+    if rres.compiled() and rres.returncode() == 0
+      glib_conf.set('HAVE_UNIX98_PRINTF', 1)
+      have_good_printf = true
+    endif
+  else
+      have_good_printf = meson.get_cross_property('have_unix98_printf', false)
+      glib_conf.set('HAVE_UNIX98_PRINTF', have_good_printf)
   endif
 endif
 
@@ -685,20 +963,17 @@ else
   glib_conf.set('EXEEXT', '')
 endif
 
-if have_good_vsnprintf and have_good_snprintf
-  # Our printf is 'good' only if vsnpintf()/snprintf() supports C99 well enough
-  glib_conf.set('HAVE_GOOD_PRINTF', 1) # FIXME: Check for HAVE_UNIX98_PRINTF?
-else
+# Our printf is 'good' only if vsnpintf()/snprintf()/printf() supports C99 well enough
+use_system_printf = have_good_vsnprintf and have_good_snprintf and have_good_printf
+glib_conf.set('USE_SYSTEM_PRINTF', use_system_printf)
+glibconfig_conf.set('GLIB_USING_SYSTEM_PRINTF', use_system_printf)
+
+if not use_system_printf
+  # gnulib has vasprintf so override the previous check
   glib_conf.set('HAVE_VASPRINTF', 1)
 endif
 
-# Check whether the printf() family supports Unix98 %n$ positional parameters
-# AC_FUNC_PRINTF_UNIX98
-# Nothing uses HAVE_UNIX98_PRINTF
-
-
 # Check for nl_langinfo and CODESET
-# FIXME: Check for HAVE_BIND_TEXTDOMAIN_CODESET
 if cc.links('''#include <langinfo.h>
                int main (int argc, char ** argv) {
                  char *codeset = nl_langinfo (CODESET);
@@ -743,6 +1018,54 @@ if cc.links('''#include <langinfo.h>
   glib_conf.set('HAVE_LANGINFO_OUTDIGIT', 1)
 endif
 
+# Check for nl_langinfo and alternative month names
+if cc.links('''#ifndef _GNU_SOURCE
+              # define _GNU_SOURCE
+              #endif
+              #include <langinfo.h>
+               int main (int argc, char ** argv) {
+                 char *str;
+                 str = nl_langinfo (ALTMON_1);
+                 str = nl_langinfo (ALTMON_2);
+                 str = nl_langinfo (ALTMON_3);
+                 str = nl_langinfo (ALTMON_4);
+                 str = nl_langinfo (ALTMON_5);
+                 str = nl_langinfo (ALTMON_6);
+                 str = nl_langinfo (ALTMON_7);
+                 str = nl_langinfo (ALTMON_8);
+                 str = nl_langinfo (ALTMON_9);
+                 str = nl_langinfo (ALTMON_10);
+                 str = nl_langinfo (ALTMON_11);
+                 str = nl_langinfo (ALTMON_12);
+                 return 0;
+               }''', name : 'nl_langinfo (ALTMON_n)')
+  glib_conf.set('HAVE_LANGINFO_ALTMON', 1)
+endif
+
+# Check for nl_langinfo and abbreviated alternative month names
+if cc.links('''#ifndef _GNU_SOURCE
+              # define _GNU_SOURCE
+              #endif
+              #include <langinfo.h>
+               int main (int argc, char ** argv) {
+                 char *str;
+                 str = nl_langinfo (_NL_ABALTMON_1);
+                 str = nl_langinfo (_NL_ABALTMON_2);
+                 str = nl_langinfo (_NL_ABALTMON_3);
+                 str = nl_langinfo (_NL_ABALTMON_4);
+                 str = nl_langinfo (_NL_ABALTMON_5);
+                 str = nl_langinfo (_NL_ABALTMON_6);
+                 str = nl_langinfo (_NL_ABALTMON_7);
+                 str = nl_langinfo (_NL_ABALTMON_8);
+                 str = nl_langinfo (_NL_ABALTMON_9);
+                 str = nl_langinfo (_NL_ABALTMON_10);
+                 str = nl_langinfo (_NL_ABALTMON_11);
+                 str = nl_langinfo (_NL_ABALTMON_12);
+                 return 0;
+               }''', name : 'nl_langinfo (_NL_ABALTMON_n)')
+  glib_conf.set('HAVE_LANGINFO_ABALTMON', 1)
+endif
+
 # Check if C compiler supports the 'signed' keyword
 if not cc.compiles('''signed char x;''', name : 'signed')
   glib_conf.set('signed', '/* NOOP */')
@@ -763,9 +1086,8 @@ if cc.links('''#include <signal.h>
   glib_conf.set('HAVE_SIG_ATOMIC_T', 1)
 endif
 
-# Check if 'long long' works and what format can be used to print it
+# Check if 'long long' works
 # jm_AC_TYPE_LONG_LONG
-# Nothing uses HAVE_LONG_LONG_FORMAT and HAVE_INT64_AND_I64
 if cc.compiles('''long long ll = 1LL;
                   int i = 63;
                   int some_func (void) {
@@ -787,7 +1109,7 @@ if cc.compiles('''/* The Stardent Vistra knows sizeof(long double), but does not
   glib_conf.set('HAVE_LONG_DOUBLE', 1)
 endif
 
-#dnl Test whether <stddef.h> has the 'wchar_t' type.
+# Test whether <stddef.h> has the 'wchar_t' type.
 if cc.has_header_symbol('stddef.h', 'wchar_t')
   glib_conf.set('HAVE_WCHAR_T', 1)
 endif
@@ -846,20 +1168,46 @@ else
   long_long_size = 0
 endif
 sizet_size = cc.sizeof('size_t')
-if cc.get_id() == 'msvc'
+if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
   ssizet_size = cc.sizeof('SSIZE_T', prefix : '#include <BaseTsd.h>')
 else
   ssizet_size = cc.sizeof('ssize_t')
 endif
 
-# On Windows, MSVC supports both ll and I64 as format specifiers for 64-bit
-# integers, but some versions (at least 4.7.x) of MinGW only support I64.
-if host_system == 'windows'
-  int64_m = 'I64'
-else
-  int64_m = 'll'
+# Some platforms (Apple) hard-code int64_t to long long instead of
+# using long on 64-bit architectures. This can cause type mismatch
+# warnings when trying to interface with code using the standard
+# library type. Test for the warnings and set gint64 to whichever
+# works.
+if long_long_size == long_size
+  if cc.compiles('''#if defined(_AIX) && !defined(__GNUC__)
+                    #pragma options langlvl=stdc99
+                    #endif
+                    #pragma GCC diagnostic error "-Wincompatible-pointer-types"
+                    #include <stdint.h>
+                    #include <stdio.h>
+                    int main () {
+                      int64_t i1 = 1;
+                      long *i2 = &i1;
+                      return 1;
+                    }''', name : 'int64_t is long')
+    int64_t_typedef = 'long'
+  elif cc.compiles('''#if defined(_AIX) && !defined(__GNUC__)
+                      #pragma options langlvl=stdc99
+                      #endif
+                      #pragma GCC diagnostic error "-Wincompatible-pointer-types"
+                      #include <stdint.h>
+                      #include <stdio.h>
+                      int main () {
+                        int64_t i1 = 1;
+                        long long *i2 = &i1;
+                        return 1;
+                      }''', name : 'int64_t is long long')
+    int64_t_typedef = 'long long'
+  endif
 endif
 
+int64_m = 'll'
 char_align = cc.alignment('char')
 short_align = cc.alignment('short')
 int_align = cc.alignment('int')
@@ -880,6 +1228,7 @@ glib_conf.set('SIZEOF_LONG_LONG', long_long_size)
 glib_conf.set('SIZEOF_SIZE_T', sizet_size)
 glib_conf.set('SIZEOF_SSIZE_T', ssizet_size)
 glib_conf.set('SIZEOF_VOID_P', voidp_size)
+glib_conf.set('SIZEOF_WCHAR_T', cc.sizeof('wchar_t', prefix: '#include <stddef.h>'))
 
 if short_size == 2
   gint16 = 'short'
@@ -935,7 +1284,7 @@ if int_size == 8
   gint64_constant='(val)'
   guint64_constant='(val)'
   guint64_align = int_align
-elif long_size == 8
+elif long_size == 8 and (long_long_size != long_size or int64_t_typedef == 'long')
   gint64 = 'long'
   glib_extension=''
   gint64_modifier='l'
@@ -944,7 +1293,7 @@ elif long_size == 8
   gint64_constant='(val##L)'
   guint64_constant='(val##UL)'
   guint64_align = long_align
-elif long_long_size == 8
+elif long_long_size == 8 and (long_long_size != long_size or int64_t_typedef == 'long long')
   gint64 = 'long long'
   glib_extension='G_GNUC_EXTENSION '
   gint64_modifier=int64_m
@@ -969,38 +1318,100 @@ if host_system == 'windows'
   glibconfig_conf.set('g_pid_type', 'void*')
   glibconfig_conf.set_quoted('g_pid_format', 'p')
   if host_machine.cpu_family() == 'x86_64'
-    glibconfig_conf.set_quoted('g_pollfd_format', '%#I64x')
+    glibconfig_conf.set_quoted('g_pollfd_format', '%#' + int64_m + 'x')
   else
     glibconfig_conf.set_quoted('g_pollfd_format', '%#x')
   endif
+  glibconfig_conf.set('g_dir_separator', '\\\\')
+  glibconfig_conf.set('g_searchpath_separator', ';')
 else
   glibconfig_conf.set('g_pid_type', 'int')
   glibconfig_conf.set_quoted('g_pid_format', 'i')
   glibconfig_conf.set_quoted('g_pollfd_format', '%d')
+  glibconfig_conf.set('g_dir_separator', '/')
+  glibconfig_conf.set('g_searchpath_separator', ':')
 endif
 
-if sizet_size == short_size
+g_sizet_compatibility = {
+  'short': sizet_size == short_size,
+  'int': sizet_size == int_size,
+  'long': sizet_size == long_size,
+  'long long': sizet_size == long_long_size,
+}
+
+# Do separate checks for gcc/clang (and ignore other compilers for now), since
+# we need to explicitly pass -Werror to the compilers.
+# FIXME: https://github.com/mesonbuild/meson/issues/5399
+# We can’t simplify these checks using a foreach loop because dictionary keys
+# have to be string literals.
+# FIXME: https://github.com/mesonbuild/meson/issues/5231
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+  g_sizet_compatibility += {
+    'short': g_sizet_compatibility['short'] and cc.compiles(
+        '''#include <stddef.h>
+        size_t f (size_t *i) { return *i + 1; }
+        int main (void) {
+          unsigned short i = 0;
+          f (&i);
+          return 0;
+        }''',
+        args: ['-Werror'],
+        name : 'GCC size_t typedef is short'),
+    'int': g_sizet_compatibility['int'] and cc.compiles(
+        '''#include <stddef.h>
+        size_t f (size_t *i) { return *i + 1; }
+        int main (void) {
+          unsigned int i = 0;
+          f (&i);
+          return 0;
+        }''',
+        args: ['-Werror'],
+        name : 'GCC size_t typedef is int'),
+    'long': g_sizet_compatibility['long'] and cc.compiles(
+        '''#include <stddef.h>
+        size_t f (size_t *i) { return *i + 1; }
+        int main (void) {
+          unsigned long i = 0;
+          f (&i);
+          return 0;
+        }''',
+        args: ['-Werror'],
+        name : 'GCC size_t typedef is long'),
+    'long long': g_sizet_compatibility['long long'] and cc.compiles(
+        '''#include <stddef.h>
+        size_t f (size_t *i) { return *i + 1; }
+        int main (void) {
+          unsigned long long i = 0;
+          f (&i);
+          return 0;
+        }''',
+        args: ['-Werror'],
+        name : 'GCC size_t typedef is long long'),
+  }
+endif
+
+if g_sizet_compatibility['short']
   glibconfig_conf.set('glib_size_type_define', 'short')
   glibconfig_conf.set_quoted('gsize_modifier', 'h')
   glibconfig_conf.set_quoted('gssize_modifier', 'h')
   glibconfig_conf.set_quoted('gsize_format', 'hu')
   glibconfig_conf.set_quoted('gssize_format', 'hi')
   glibconfig_conf.set('glib_msize_type', 'SHRT')
-elif sizet_size == int_size
+elif g_sizet_compatibility['int']
   glibconfig_conf.set('glib_size_type_define', 'int')
   glibconfig_conf.set_quoted('gsize_modifier', '')
   glibconfig_conf.set_quoted('gssize_modifier', '')
   glibconfig_conf.set_quoted('gsize_format', 'u')
   glibconfig_conf.set_quoted('gssize_format', 'i')
   glibconfig_conf.set('glib_msize_type', 'INT')
-elif sizet_size == long_size
+elif g_sizet_compatibility['long']
   glibconfig_conf.set('glib_size_type_define', 'long')
   glibconfig_conf.set_quoted('gsize_modifier', 'l')
   glibconfig_conf.set_quoted('gssize_modifier', 'l')
   glibconfig_conf.set_quoted('gsize_format', 'lu')
   glibconfig_conf.set_quoted('gssize_format', 'li')
   glibconfig_conf.set('glib_msize_type', 'LONG')
-elif sizet_size == long_long_size
+elif g_sizet_compatibility['long long']
   glibconfig_conf.set('glib_size_type_define', 'long long')
   glibconfig_conf.set_quoted('gsize_modifier', int64_m)
   glibconfig_conf.set_quoted('gssize_modifier', int64_m)
@@ -1045,11 +1456,9 @@ glibconfig_conf.set('glongbits', long_size * 8)
 glibconfig_conf.set('gsizebits', sizet_size * 8)
 glibconfig_conf.set('gssizebits', ssizet_size * 8)
 
-# FIXME: maybe meson should tell us the libsuffix?
+# XXX: https://gitlab.gnome.org/GNOME/glib/issues/1413
 if host_system == 'windows'
   g_module_suffix = 'dll'
-elif host_system == 'darwin'
-  g_module_suffix = 'dylib'
 else
   g_module_suffix = 'so'
 endif
@@ -1058,6 +1467,7 @@ glibconfig_conf.set('g_module_suffix', g_module_suffix)
 glibconfig_conf.set('GLIB_MAJOR_VERSION', major_version)
 glibconfig_conf.set('GLIB_MINOR_VERSION', minor_version)
 glibconfig_conf.set('GLIB_MICRO_VERSION', micro_version)
+glibconfig_conf.set('GLIB_VERSION', glib_version)
 
 glibconfig_conf.set('glib_void_p', voidp_size)
 glibconfig_conf.set('glib_long', long_size)
@@ -1123,16 +1533,13 @@ va_list_val_copy_prog = '''
     return 0;
   }'''
 
-# We do this in two steps so if compilation fails already it looks less alarming
-glib_va_val_copy = false
-if cc.compiles(va_list_val_copy_prog, name : 'va_lists can be copied as values')
-  # FIXME: what to do when cross-compiling?
-  if cc.run(va_list_val_copy_prog, name : 'va_lists can be copied as values').returncode() == 0
-    glib_va_val_copy = true
-  endif
+if cc_can_run
+  rres = cc.run(va_list_val_copy_prog, name : 'va_lists can be copied as values')
+  glib_va_val_copy = rres.returncode() == 0
+else
+  glib_va_val_copy = meson.get_cross_property('va_val_copy', true)
 endif
 if not glib_va_val_copy
-  glib_va_val_copy = false
   glib_vacopy = glib_vacopy + '\n#define G_VA_COPY_AS_ARRAY 1'
   glib_conf.set('G_VA_COPY_AS_ARRAY', 1)
 endif
@@ -1185,54 +1592,56 @@ endif
 has_winsock2 = cc.has_header('winsock2.h')
 
 if has_syspoll and has_systypes
-  templ = '''#include<sys/poll.h>
-#include<sys/types.h>
-#include<stdio.h>
-int main(int argc, char **argv) {
-  printf("%d\n", (int)@0@);
-  return 0;
-}'''
+  poll_includes = '''
+      #include<sys/poll.h>
+      #include<sys/types.h>'''
 elif has_winsock2
-  templ = '''#define _WIN32_WINNT 0x0600
-#include <stdio.h>
-#include <winsock2.h>
-int main(int argc, char **argv) {
-  printf("%d\n", (int)@0@);
-  return 0;
-}'''
+  poll_includes = '''
+      #define _WIN32_WINNT @0@
+      #include <winsock2.h>'''.format(glib_conf.get('_WIN32_WINNT'))
 else
   # FIXME?
   error('FIX POLL* defines')
 endif
 
-value_POLLIN = cc.run(templ.format('POLLIN'), name : 'POLLIN value').stdout().strip()
-value_POLLOUT = cc.run(templ.format('POLLOUT'), name : 'POLLOUT value').stdout().strip()
-value_POLLPRI = cc.run(templ.format('POLLPRI'), name : 'POLLPRI value').stdout().strip()
-value_POLLERR = cc.run(templ.format('POLLERR'), name : 'POLLERR value').stdout().strip()
-value_POLLHUP = cc.run(templ.format('POLLHUP'), name : 'POLLHUP value').stdout().strip()
-value_POLLNVAL = cc.run(templ.format('POLLNVAL'), name : 'POLLNVAL value').stdout().strip()
+poll_defines = [
+  [ 'POLLIN', 'g_pollin', 1 ],
+  [ 'POLLOUT', 'g_pollout', 4 ],
+  [ 'POLLPRI', 'g_pollpri', 2 ],
+  [ 'POLLERR', 'g_pollerr', 8 ],
+  [ 'POLLHUP', 'g_pollhup', 16 ],
+  [ 'POLLNVAL', 'g_pollnval', 32 ],
+]
 
-glibconfig_conf.set('g_pollin', value_POLLIN)
-glibconfig_conf.set('g_pollout', value_POLLOUT)
-glibconfig_conf.set('g_pollpri', value_POLLPRI)
-glibconfig_conf.set('g_pollerr', value_POLLERR)
-glibconfig_conf.set('g_pollhup', value_POLLHUP)
-glibconfig_conf.set('g_pollnval', value_POLLNVAL)
+if has_syspoll and has_systypes
+  foreach d : poll_defines
+    val = cc.compute_int(d[0], prefix: poll_includes)
+    glibconfig_conf.set(d[1], val)
+  endforeach
+elif has_winsock2
+  # Due to a missed bug in configure.ac the poll test
+  # never succeeded on Windows and used some pre-defined
+  # values as a fallback. Keep using them to maintain
+  # ABI compatibility with autotools builds of glibs
+  # and with *any* glib-using code compiled against them,
+  # since these values end up in a public header glibconfig.h.
+  foreach d : poll_defines
+    glibconfig_conf.set(d[1], d[2])
+  endforeach
+endif
 
 # Internet address families
 # FIXME: what about Cygwin (G_WITH_CYGWIN)
 if host_system == 'windows'
-  glib_inet_includes= '''
-#include <winsock2.h>
-'''
+  inet_includes = '''
+      #include <winsock2.h>'''
 else
-  glib_inet_includes='''
-#include <sys/types.h>
-#include <sys/socket.h>
-'''
+  inet_includes = '''
+      #include <sys/types.h>
+      #include <sys/socket.h>'''
 endif
 
-net_defines = [
+inet_defines = [
   [ 'AF_UNIX', 'g_af_unix' ],
   [ 'AF_INET', 'g_af_inet' ],
   [ 'AF_INET6', 'g_af_inet6' ],
@@ -1240,70 +1649,95 @@ net_defines = [
   [ 'MSG_PEEK', 'g_msg_peek' ],
   [ 'MSG_DONTROUTE', 'g_msg_dontroute' ],
 ]
-foreach d : net_defines
-  templ = '''@0@
-#include <stdio.h>
-int main(int argc, char **argv) {
-  printf("%d\n", (int)@1@);
-  return 0;
-}'''
-  # FIXME: fix for cross-compilation
-  if not meson.has_exe_wrapper()
-    error('Fix sys define detection for cross build')
-  endif
-  val = cc.run(templ.format(glib_inet_includes, d[0]), name : d[0] + ' value').stdout().strip()
+foreach d : inet_defines
+  val = cc.compute_int(d[0], prefix: inet_includes)
   glibconfig_conf.set(d[1], val)
 endforeach
 
-glibconfig_conf.set('GLIB_USING_SYSTEM_PRINTF', true) # FIXME!
-
 # We need a more robust approach here...
 host_cpu_family = host_machine.cpu_family()
-if host_cpu_family == 'x86' or host_cpu_family == 'x86_64' or host_cpu_family == 's390' or host_cpu_family == 's390x' or host_cpu_family.startswith('arm') or host_cpu_family.startswith('crisv32') or host_cpu_family.startswith('etrax')
+if host_cpu_family == 'x86' or host_cpu_family == 'x86_64' or host_cpu_family == 's390' or host_cpu_family == 's390x' or host_cpu_family.startswith('arm') or host_cpu_family == 'aarch64' or host_cpu_family.startswith('crisv32') or host_cpu_family.startswith('etrax')
   glib_memory_barrier_needed = false
 elif host_cpu_family.startswith('sparc') or host_cpu_family.startswith('alpha') or host_cpu_family.startswith('powerpc') or host_cpu_family == 'ia64'
   glib_memory_barrier_needed = true
 else
-  error('Unknown host cpu: ' + host_cpu_family)
+  warning('Unknown host cpu: ' + host_cpu_family)
   glib_memory_barrier_needed = true
 endif
 glibconfig_conf.set('G_ATOMIC_OP_MEMORY_BARRIER_NEEDED', glib_memory_barrier_needed)
 
+# We need to decide at configure time if GLib will use real atomic
+# operations ("lock free") or emulated ones with a mutex.  This is
+# because we must put this information in glibconfig.h so we know if
+# it is safe or not to inline using compiler intrinsics directly from
+# the header.
+#
+# We also publish the information via G_ATOMIC_LOCK_FREE in case the
+# user is interested in knowing if they can use the atomic ops across
+# processes.
+#
+# We can currently support the atomic ops natively when building GLib
+# with recent versions of GCC or MSVC.
+#
 # Note that the atomic ops are only available with GCC on x86 when
 # using -march=i486 or higher.  If we detect that the atomic ops are
 # not available but would be available given the right flags, we want
 # to abort and advise the user to fix their CFLAGS.  It's better to do
 # that then to silently fall back on emulated atomic ops just because
 # the user had the wrong build environment.
-atomictest = '''void func() {
+atomictest = '''int main() {
   volatile int atomic = 2;
   __sync_bool_compare_and_swap (&atomic, 2, 3);
+  return 0;
 }
 '''
-if cc.compiles(atomictest)
-  glibconfig_conf.set('G_ATOMIC_LOCK_FREE', true)
+
+atomicdefine = '''
+#ifndef __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
+#error "compiler has atomic ops, but doesn't define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4"
+#endif
+'''
+
+# We know that we can always use real ("lock free") atomic operations with MSVC
+if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl' or cc.links(atomictest, name : 'atomic ops')
+  have_atomic_lock_free = true
+  if cc.get_id() == 'gcc' and not cc.compiles(atomicdefine, name : 'atomic ops define')
+    # Old gcc release may provide
+    # __sync_bool_compare_and_swap but doesn't define
+    # __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
+    glib_conf.set('__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4', true)
+  endif
 else
-  if host_machine.cpu_family() == 'x86' and cc.compiles(atomictest, args : '-march=i486')
+  have_atomic_lock_free = false
+  if host_machine.cpu_family() == 'x86' and cc.links(atomictest, args : '-march=i486')
     error('GLib must be built with -march=i486 or later.')
   endif
-  glibconfig_conf.set('G_ATOMIC_LOCK_FREE', false)
 endif
+glibconfig_conf.set('G_ATOMIC_LOCK_FREE', have_atomic_lock_free)
 
 # === Threads ===
 
-# Let meson figure out all this business and whether -pthread or whatnot is needed
-# FIXME: probably needs more tweaking in meson for things like -D_REENTRANT etc.
-thread_dep = dependency('threads')
-
 # Determination of thread implementation
-if host_system == 'windows'
+if host_system == 'windows' and not get_option('force_posix_threads')
+  thread_dep = []
+  threads_implementation = 'win32'
   glibconfig_conf.set('g_threads_impl_def', 'WIN32')
   glib_conf.set('THREADS_WIN32', 1)
 else
+  thread_dep = dependency('threads')
+  threads_implementation = 'posix'
+  pthread_prefix = '''
+      #ifndef _GNU_SOURCE
+      # define _GNU_SOURCE
+      #endif
+      #include <pthread.h>'''
   glibconfig_conf.set('g_threads_impl_def', 'POSIX')
   glib_conf.set('THREADS_POSIX', 1)
   if cc.has_header_symbol('pthread.h', 'pthread_attr_setstacksize')
     glib_conf.set('HAVE_PTHREAD_ATTR_SETSTACKSIZE', 1)
+  endif
+  if cc.has_header_symbol('pthread.h', 'pthread_attr_setinheritsched')
+    glib_conf.set('HAVE_PTHREAD_ATTR_SETINHERITSCHED', 1)
   endif
   if cc.has_header_symbol('pthread.h', 'pthread_condattr_setclock')
     glib_conf.set('HAVE_PTHREAD_CONDATTR_SETCLOCK', 1)
@@ -1311,33 +1745,55 @@ else
   if cc.has_header_symbol('pthread.h', 'pthread_cond_timedwait_relative_np')
     glib_conf.set('HAVE_PTHREAD_COND_TIMEDWAIT_RELATIVE_NP', 1)
   endif
+  if cc.has_header_symbol('pthread.h', 'pthread_getname_np', prefix : pthread_prefix)
+    glib_conf.set('HAVE_PTHREAD_GETNAME_NP', 1)
+  endif
+
+  if cc.has_header_symbol('sys/syscall.h', 'SYS_sched_getattr')
+    glib_conf.set('HAVE_SYS_SCHED_GETATTR', 1)
+  endif
+
   # Assume that pthread_setname_np is available in some form; same as configure
-  if cc.links('''#ifndef _GNU_SOURCE
-              # define _GNU_SOURCE
-              #endif
-              #include <pthread.h>
+  if cc.links(pthread_prefix + '''
               int main() {
                 pthread_setname_np("example");
+                return 0;
               }''',
               name : 'pthread_setname_np(const char*)',
               dependencies : thread_dep)
     # macOS and iOS
     glib_conf.set('HAVE_PTHREAD_SETNAME_NP_WITHOUT_TID', 1)
-  elif cc.links('''#ifndef _GNU_SOURCE
-                # define _GNU_SOURCE
-                #endif
-                #include <pthread.h>
+  elif cc.links(pthread_prefix + '''
                 int main() {
                   pthread_setname_np(pthread_self(), "example");
+                  return 0;
                 }''',
                 name : 'pthread_setname_np(pthread_t, const char*)',
                 dependencies : thread_dep)
     # Linux, Solaris, etc.
     glib_conf.set('HAVE_PTHREAD_SETNAME_NP_WITH_TID', 1)
+  elif cc.links(pthread_prefix + '''
+                int main() {
+                  pthread_setname_np(pthread_self(), "%s", "example");
+                  return 0;
+                }''',
+                name : 'pthread_setname_np(pthread_t, const char*, void*)',
+                dependencies : thread_dep)
+    # NetBSD
+    glib_conf.set('HAVE_PTHREAD_SETNAME_NP_WITH_TID_AND_ARG', 1)
+  elif cc.links(pthread_prefix + '''
+                #include <pthread_np.h>
+                int main() {
+                  pthread_set_name_np(pthread_self(), "example");
+                  return 0;
+                }''',
+                name : 'pthread_set_name_np(pthread_t, const char*)',
+                dependencies : thread_dep)
+    # FreeBSD, DragonFlyBSD, OpenBSD, etc.
+    glib_conf.set('HAVE_PTHREAD_SET_NAME_NP', 1)
   endif
 endif
 
-# FIXME: how to do this when cross-compiling?
 # FIXME: we should make it print the result and always return 0, so that
 # the output in meson shows up as green
 stack_grows_check_prog = '''
@@ -1355,51 +1811,52 @@ stack_grows_check_prog = '''
     f (100);
     return b > a ? 0 : 1;
   }'''
-stack_grows_run_result = cc.run(stack_grows_check_prog, name : 'stack grows check')
-if stack_grows_run_result.compiled() and stack_grows_run_result.returncode() == 0
-  glibconfig_conf.set('G_HAVE_GROWING_STACK', 1)
+
+if cc_can_run
+  rres = cc.run(stack_grows_check_prog, name : 'stack grows check')
+  growing_stack = rres.returncode() == 0
 else
-  glibconfig_conf.set('G_HAVE_GROWING_STACK', 0)
+  growing_stack = meson.get_cross_property('growing_stack', false)
 endif
+
+glibconfig_conf.set10('G_HAVE_GROWING_STACK', growing_stack)
 
 # Tests for iconv
 #
-# First, we check if the C library provides iconv, then GNU libiconv, then
-# a native implementation
-# FIXME: add option as well
-#
-# USE_LIBICONV_GNU: Using GNU libiconv
-# USE_LIBICONV_NATIVE: Using a native impl of iconv in a separate library
-#
-# We should never use the MinGW C library's iconv. On Windows we use the
-# GNU implementation that ships with MinGW.
-
-# On Windows, just always use the built-in implementation
+# We should never use the MinGW C library's iconv because it may not be
+# available in the actual runtime environment. On Windows, we always use
+# the built-in implementation
+iconv_opt = get_option('iconv')
 if host_system == 'windows'
   libiconv = []
-  glib_conf.set('USE_LIBICONV_NATIVE', true)
-# Check C library; never check MinGW C library
-elif cc.has_function('iconv_open')
-  libiconv = []
-# Check for libiconv
-elif cc.has_header_symbol('iconv.h', 'libiconv_open')
-  glib_conf.set('USE_LIBICONV_GNU', true)
-  libiconv = [cc.find_library('iconv')]
-# Check for a custom iconv implementation
-elif cc.has_header_symbol('iconv.h', 'iconv_open')
-  glib_conf.set('USE_LIBICONV_NATIVE', true)
-  libiconv = [cc.find_library('iconv')]
+  # We have a #include "win_iconv.c" in gconvert.c on Windows, so we don't need
+  # any external library for it
+  if iconv_opt != 'auto'
+    warning('-Diconv was set to @0@, which was ignored')
+  endif
 else
-  error('No iconv() implementation found in C library or libiconv')
+  found_iconv = false
+  if ['auto', 'libc'].contains(iconv_opt) and cc.has_function('iconv_open')
+    libiconv = []
+    found_iconv = true
+  endif
+  if not found_iconv and ['auto', 'external'].contains(iconv_opt) and cc.has_header_symbol('iconv.h', 'iconv_open')
+    libiconv = [cc.find_library('iconv')]
+    found_iconv = true
+  endif
+
+  if not found_iconv
+    error('iconv implementation "@0@" not found'.format(iconv_opt))
+  endif
 endif
 
-if get_option('with-pcre') == 'internal'
+if get_option('internal_pcre')
   pcre = []
   use_system_pcre = false
 else
-  pcre = dependency('libpcre', required : false) # Should check for Unicode support, too. FIXME
+  pcre = dependency('libpcre', version: '>= 8.31', required : false) # Should check for Unicode support, too. FIXME
   if not pcre.found()
-    if cc.get_id() == 'msvc'
+    if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl'
     # MSVC: Search for the PCRE library by the configuration, which corresponds
     # to the output of CMake builds of PCRE.  Note that debugoptimized
     # is really a Release build with .PDB files.
@@ -1437,99 +1894,240 @@ endif
 
 libm = cc.find_library('m', required : false)
 libffi_dep = dependency('libffi', version : '>= 3.0.0', fallback : ['libffi', 'ffi_dep'])
-zlib_libname = '-lz'
-if cc.get_id() != 'msvc'
-  libz_dep = dependency('zlib', fallback : ['zlib', 'zlib_dep'])
-else
-  # MSVC: Don't use the bundled ZLib sources until we are sure that we can't
-  # find the ZLib .lib
-  libz_dep = dependency('zlib', required : false)
 
-  # MSVC: Search for the ZLib .lib, which corresponds to the results of
-  # of using ZLib's win32/makefile.msc.
-  if not libz_dep.found()
+# Don't use the bundled ZLib sources until we are sure that we can't find it on
+# the system
+libz_dep = dependency('zlib', required : false)
+if not libz_dep.found()
+  if cc.get_id() != 'msvc' and cc.get_id() != 'clang-cl'
+    libz_dep = cc.find_library('z', required : false)
+  else
     libz_dep = cc.find_library('zlib1', required : false)
-    if libz_dep.found()
-      zlib_libname = '-lzlib1'
-    else
+    if not libz_dep.found()
       libz_dep = cc.find_library('zlib', required : false)
-      if libz_dep.found()
-        zlib_libname = '-lzlib'
-      else
-        zlib_dep = subproject('zlib').get_variable('zlib_dep')
-      endif
     endif
+  endif
+  if not libz_dep.found() or not cc.has_header('zlib.h')
+    libz_dep = subproject('zlib').get_variable('zlib_dep')
   endif
 endif
 
-# Only used on non-glibc targets
-libintl = cc.find_library('intl', required : false)
-if host_system == 'windows' and not libintl.found()
-  # Used only when the gettext library is not available (MSVC, not MinGW)
-  libintl = subproject('proxy-libintl').get_variable('intl_dep')
-  glib_conf.set('HAVE_DCGETTEXT', 1)
+# First check in libc, fallback to libintl, and as last chance build
+# proxy-libintl subproject.
+# FIXME: glib-gettext.m4 has much more checks to detect broken/uncompatible
+# implementations. This could be extended if issues are found in some platforms.
+if cc.has_function('ngettext')
+  libintl = []
+  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
 else
-  glib_conf.set('HAVE_DCGETTEXT', cc.has_header_symbol('libintl.h', 'dcgettext'))
+  libintl = cc.find_library('intl', required : false)
+  if not libintl.found()
+    libintl = subproject('proxy-libintl').get_variable('intl_dep')
+    have_bind_textdomain_codeset = true  # proxy-libintl supports it
+  else
+    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
+                                                   dependencies : libintl)
+  endif
 endif
+
+glib_conf.set('HAVE_BIND_TEXTDOMAIN_CODESET', have_bind_textdomain_codeset)
+
 # We require gettext to always be present
+glib_conf.set('HAVE_DCGETTEXT', 1)
 glib_conf.set('HAVE_GETTEXT', 1)
+
 glib_conf.set_quoted('GLIB_LOCALE_DIR', join_paths(glib_datadir, 'locale'))
-# xgettext is optional (on Windows for instance)
-xgettext = find_program('xgettext', required : false)
 
 # libmount is only used by gio, but we need to fetch the libs to generate the
 # pkg-config file below
 libmount_dep = []
-libmount_opt = get_option('enable-libmount')
-if host_system == 'linux' and libmount_opt != 'no'
-  libmount_dep = [dependency('mount', version : '>=2.28', required : false)]
-  if not libmount_dep[0].found()
-    libmount_dep = [cc.find_library('mount')]
-    libmount_h = cc.has_header('libmount/libmount.h')
-    libmount_needed = libmount_opt == 'yes' and host_system == 'linux'
-    if libmount_needed and (not libmount_dep[0].found() or not libmount_h)
-      error('Need libmount but couldn\'t find it')
-    endif
-  endif
+if host_system == 'linux'
+  libmount_dep = dependency('mount', version : '>=2.23', required : get_option('libmount'))
+  glib_conf.set('HAVE_LIBMOUNT', libmount_dep.found())
 endif
 
 if host_system == 'windows'
   winsock2 = cc.find_library('ws2_32')
 endif
 
-python = import('python3').find_python()
+selinux_dep = []
+if host_system == 'linux'
+  selinux_dep = dependency('libselinux', required: get_option('selinux'))
 
-# FIXME: defines in config.h that are not actually used anywhere
-# (we add them for now to minimise the diff)
-glib_conf.set('HAVE_DLFCN_H', 1)
-glib_conf.set('__EXTENSIONS__', 1)
-glib_conf.set('STDC_HEADERS', 1)
-# THREADS_NONE
-glib_conf.set('SIZEOF___INT64', 8)
+  glib_conf.set('HAVE_SELINUX', selinux_dep.found())
+endif
 
-# Various substs needed for our pkg-config files
-# FIXME: Derive these from the dependency() objects (Meson support needed)
-glib_conf.set('ZLIB_LIBS', zlib_libname)
-glib_conf.set('LIBFFI_LIBS', '-lffi')
-if libintl.found()
-  glib_conf.set('INTLLIBS', '-lintl')
+xattr_dep = []
+if host_system != 'windows' and get_option('xattr')
+  # either glibc or libattr can provide xattr support
+  # for both of them, we check for getxattr being in
+  # the library and a valid xattr header.
+
+  # try glibc
+  if cc.has_function('getxattr') and cc.has_header('sys/xattr.h')
+    glib_conf.set('HAVE_SYS_XATTR_H', 1)
+    glib_conf_prefix = glib_conf_prefix + '#define @0@ 1\n'.format('HAVE_SYS_XATTR_H')
+  #failure. try libattr
+  elif cc.has_header_symbol('attr/xattr.h', 'getxattr')
+    glib_conf.set('HAVE_ATTR_XATTR_H', 1)
+    glib_conf_prefix = glib_conf_prefix + '#define @0@ 1\n'.format('HAVE_ATTR_XATTR_H')
+    xattr_dep = [cc.find_library('xattr')]
+  else
+    error('No getxattr implementation found in C library or libxattr')
+  endif
+
+  glib_conf.set('HAVE_XATTR', 1)
+  if cc.compiles(glib_conf_prefix + '''
+                 #include <stdio.h>
+                 #ifdef HAVE_SYS_TYPES_H
+                 #include <sys/types.h>
+                 #endif
+                 #ifdef HAVE_SYS_XATTR_H
+                 #include <sys/xattr.h>
+                 #elif HAVE_ATTR_XATTR_H
+                 #include <attr/xattr.h>
+                 #endif
+
+                 int main (void) {
+                   ssize_t len = getxattr("", "", NULL, 0, 0, XATTR_NOFOLLOW);
+                   return len;
+                 }''',
+                 name : 'XATTR_NOFOLLOW')
+    glib_conf.set('HAVE_XATTR_NOFOLLOW', 1)
+  endif
 endif
-if libiconv.length() != 0
-  glib_conf.set('ICONV_LIBS', '-liconv')
+
+# If strlcpy is present (BSD and similar), check that it conforms to the BSD
+# specification. Specifically Solaris 8's strlcpy() does not, see
+# https://bugzilla.gnome.org/show_bug.cgi?id=53933 for further context.
+if cc.has_function('strlcpy')
+  if cc_can_run
+    rres = cc.run('''#include <stdlib.h>
+                    #include <string.h>
+                    int main() {
+                      char p[10];
+                      (void) strlcpy (p, "hi", 10);
+                      if (strlcat (p, "bye", 0) != 3)
+                        return 1;
+                      return 0;
+                    }''',
+                  name : 'OpenBSD strlcpy/strlcat')
+    if rres.compiled() and rres.returncode() == 0
+      glib_conf.set('HAVE_STRLCPY', 1)
+    endif
+  elif meson.get_cross_property('have_strlcpy', false)
+    glib_conf.set('HAVE_STRLCPY', 1)
+  endif
 endif
-if use_system_pcre
-  glib_conf.set('PCRE_LIBS', '-lpcre')
+
+cmdline_test_code = '''
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <stdlib.h>
+#undef NDEBUG
+#include <assert.h>
+
+static int
+__getcmdline (void)
+{
+/* This code is a dumbed-down version of g_file_get_contents() */
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+#define BUFSIZE 1024
+  char result[BUFSIZE];
+  struct stat stat_buf;
+
+  int fd = open ("/proc/self/cmdline", O_RDONLY|O_BINARY);
+  assert (fd >= 0);
+  assert (fstat (fd, &stat_buf) == 0);
+
+  if (stat_buf.st_size > 0 && S_ISREG (stat_buf.st_mode))
+    assert (read (fd, result, BUFSIZE) > 0);
+  else
+    {
+      FILE *f = fdopen (fd, "r");
+      assert (f != NULL);
+      assert (fread (result, 1, BUFSIZE, f) > 0);
+    }
+
+  return 0;
+}
+
+int
+main (void)
+{
+  exit (__getcmdline ());
+}'''
+
+if cc_can_run
+  rres = cc.run(cmdline_test_code, name : '/proc/self/cmdline')
+  have_proc_self_cmdline = rres.compiled() and rres.returncode() == 0
+else
+  have_proc_self_cmdline = meson.get_cross_property('have_proc_self_cmdline', false)
 endif
-if libmount_dep.length() == 1 and libmount_dep[0].found()
-  glib_conf.set('LIBMOUNT_LIBS', '-lmount')
+
+glib_conf.set('HAVE_PROC_SELF_CMDLINE', have_proc_self_cmdline)
+
+python = import('python').find_installation('python3')
+# used for '#!/usr/bin/env <name>'
+python_name = 'python3'
+
+python_version = python.language_version()
+python_version_req = '>=3.5'
+if not python_version.version_compare(python_version_req)
+  error('Requires Python @0@, @1@ found.'.format(python_version_req, python_version))
 endif
-glib_conf.set('GIO_MODULE_DIR', '${libdir}/gio/modules')
-# FIXME: Missing:
-# @G_MODULE_LIBS@ @SELINUX_LIBS@ @COCOA_LIBS@ @CARBON_LIBS@ @G_LIBS_EXTRA@
-# @PCRE_REQUIRES@ @GLIB_EXTRA_CFLAGS@ @G_THREAD_CFLAGS@
+
+# Determine which user environment-dependent files that we want to install
+have_bash = find_program('bash', required : false).found() # For completion scripts
+have_sh = find_program('sh', required : false).found() # For glib-gettextize
+
+# Some installed tests require a custom environment
+env_program = find_program('env', required: installed_tests_enabled)
+
+# FIXME: How to detect Solaris? https://github.com/mesonbuild/meson/issues/1578
+if host_system == 'sunos'
+  glib_conf.set('_XOPEN_SOURCE_EXTENDED', 1)
+  glib_conf.set('_XOPEN_SOURCE', 2)
+  glib_conf.set('__EXTENSIONS__',1)
+endif
+
+# Sadly Meson does not expose this value:
+# https://github.com/mesonbuild/meson/pull/3460
+if host_system == 'windows'
+  # Autotools explicitly removed --Wl,--export-all-symbols from windows builds,
+  # with no explanation. Do the same here for now but this could be revisited if
+  # if causes issues.
+  export_dynamic_ldflags = []
+elif host_system == 'cygwin'
+  export_dynamic_ldflags = ['-Wl,--export-all-symbols']
+elif host_system == 'darwin'
+  export_dynamic_ldflags = []
+elif host_system == 'sunos'
+  export_dynamic_ldflags = []
+else
+  export_dynamic_ldflags = ['-Wl,--export-dynamic']
+endif
+
+win32_cflags = []
+win32_ldflags = []
+if host_system == 'windows' and cc.get_id() != 'msvc' and cc.get_id() != 'clang-cl'
+  # Ensure MSVC-compatible struct packing convention is used when
+  # compiling for Win32 with gcc. It is used for the whole project and exposed
+  # in glib-2.0.pc.
+  win32_cflags = ['-mms-bitfields']
+  add_project_arguments(win32_cflags, language : 'c')
+
+  # Win32 API libs, used only by libglib and exposed in glib-2.0.pc
+  win32_ldflags = ['-lws2_32', '-lole32', '-lwinmm', '-lshlwapi']
+elif host_system == 'cygwin'
+  win32_ldflags = ['-luser32', '-lkernel32']
+endif
 
 # Tracing: dtrace
-want_dtrace = get_option('enable-dtrace')
+want_dtrace = get_option('dtrace')
 enable_dtrace = false
 
 # Since dtrace support is opt-in we just error out if it was requested but
@@ -1556,85 +2154,75 @@ if want_dtrace
 endif
 
 # systemtap
-want_systemtap = get_option('enable-systemtap')
+want_systemtap = get_option('systemtap')
 enable_systemtap = false
 
 if want_systemtap and enable_dtrace
-  tapset_install_dir = get_option('tapset-install-dir')
+  tapset_install_dir = get_option('tapset_install_dir')
   if tapset_install_dir == ''
-    tapset_install_dir = join_paths(get_option('datadir'), 'systemtap/tapset')
+    tapset_install_dir = join_paths(get_option('datadir'), 'systemtap/tapset', host_machine.cpu_family())
   endif
   stp_cdata = configuration_data()
   stp_cdata.set('ABS_GLIB_RUNTIME_LIBDIR', glib_libdir)
-  stp_cdata.set('LT_CURRENT', minor_version.to_int() * 100)
-  stp_cdata.set('LT_REVISION', micro_version.to_int())
+  stp_cdata.set('LT_CURRENT', minor_version * 100)
+  stp_cdata.set('LT_REVISION', micro_version)
   enable_systemtap = true
 endif
 
+test_timeout = 60
+test_timeout_slow = 180
 
+pkg = import('pkgconfig')
+windows = import('windows')
 subdir('glib')
 subdir('gobject')
 subdir('gthread')
 subdir('gmodule')
 subdir('gio')
-if xgettext.found()
+subdir('fuzzing')
+if build_tests
+  subdir('tests')
+endif
+
+# xgettext is optional (on Windows for instance)
+if find_program('xgettext', required : get_option('nls')).found()
   subdir('po')
 endif
-subdir('tests')
 
-# Configure and install pkg-config files
-pc_files = [
-  'gobject-2.0.pc',
-  'glib-2.0.pc',
-  'gthread-2.0.pc',
-  'gmodule-2.0.pc',
-  'gmodule-export-2.0.pc',
-  'gmodule-no-export-2.0.pc',
-  'gio-2.0.pc',
-]
-if host_system == 'windows'
-  pc_files += ['gio-windows-2.0.pc']
-else
-  pc_files += ['gio-unix-2.0.pc']
+# Install glib-gettextize executable, if a UNIX-style shell is found
+if have_sh
+  # These should not contain " quotes around the values
+  gettextize_conf = configuration_data()
+  gettextize_conf.set('PACKAGE', 'glib')
+  gettextize_conf.set('VERSION', meson.project_version())
+  gettextize_conf.set('prefix', glib_prefix)
+  gettextize_conf.set('datarootdir', glib_datadir)
+  gettextize_conf.set('datadir', glib_datadir)
+  configure_file(input : 'glib-gettextize.in',
+    install_dir : glib_bindir,
+    output : 'glib-gettextize',
+    configuration : gettextize_conf)
 endif
-
-foreach pc : pc_files
-  configure_file(input : pc + '.in',
-    install : true,
-    install_dir : glib_pkgconfigreldir,
-    output : pc,
-    configuration : glib_conf)
-endforeach
-
-# NOTE: We skip glib-zip.in because the filenames it assumes don't match ours
-
-# Install glib-gettextize executable
-configure_file(input : 'glib-gettextize.in',
-  install : true,
-  install_dir : 'bin',
-  output : 'glib-gettextize',
-  configuration : glib_conf)
 
 # Install m4 macros that other projects use
 install_data('m4macros/glib-2.0.m4', 'm4macros/glib-gettext.m4', 'm4macros/gsettings.m4',
   install_dir : join_paths(get_option('datadir'), 'aclocal'))
-# Install Valgrind suppression file
-install_data('glib.supp',
-  install_dir : join_paths(get_option('datadir'), 'glib-2.0', 'valgrind'))
 
-configure_file(input : 'config.h.meson',
-  output : 'config.h',
-  configuration : glib_conf)
+if host_system != 'windows'
+  # Install Valgrind suppression file (except on Windows,
+  # as Valgrind is currently not supported on Windows)
+  install_data('glib.supp',
+    install_dir : join_paths(get_option('datadir'), 'glib-2.0', 'valgrind'))
+endif
+
+configure_file(output : 'config.h', configuration : glib_conf)
 
 if host_system == 'windows'
   install_headers([ 'msvc_recommended_pragmas.h' ], subdir : 'glib-2.0')
 endif
 
-if get_option('with-man') != 'no'
-  xsltproc = find_program('xsltproc', required : false)
-  if not xsltproc.found() and get_option('with-man') == 'yes'
-    error('man pages enabled and xsltproc not found')
-  endif
+if get_option('man')
+  xsltproc = find_program('xsltproc', required : true)
   xsltproc_command = [
     xsltproc,
     '--nonet',
@@ -1647,10 +2235,8 @@ if get_option('with-man') != 'no'
     'http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl',
     '@INPUT@',
   ]
-  man1_dir = get_option('mandir') + '/man1'
+  man1_dir = join_paths(glib_prefix, get_option('mandir'), 'man1')
 endif
 
 gnome = import('gnome')
-subdir('docs/reference/glib')
-subdir('docs/reference/gobject')
-subdir('docs/reference/gio')
+subdir('docs/reference')

@@ -13,7 +13,7 @@ const gchar * glib_pgettext (const gchar *msgctxtid,
 
 #ifdef ENABLE_NLS
 
-/* #include <libintl.h> */
+#include <libintl.h>
 #define _(String) glib_gettext(String)
 /* Split out this in the code, but keep it in the same domain for now */
 #define P_(String) glib_gettext(String)

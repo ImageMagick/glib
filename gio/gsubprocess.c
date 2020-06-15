@@ -575,7 +575,7 @@ initable_init (GInitable     *initable,
 
   {
     guint64 identifier;
-    gint s;
+    gint s G_GNUC_UNUSED  /* when compiling with G_DISABLE_ASSERT */;
 
 #ifdef G_OS_WIN32
     identifier = (guint64) GetProcessId (self->pid);
@@ -717,7 +717,7 @@ g_subprocess_new (GSubprocessFlags   flags,
 
 /**
  * g_subprocess_newv: (rename-to g_subprocess_new)
- * @argv: (array zero-terminated=1) (element-type utf8): commandline arguments for the subprocess
+ * @argv: (array zero-terminated=1) (element-type filename): commandline arguments for the subprocess
  * @flags: flags that define the behaviour of the subprocess
  * @error: (nullable): return location for an error, or %NULL
  *
@@ -749,6 +749,11 @@ g_subprocess_newv (const gchar * const  *argv,
  *
  * On UNIX, returns the process ID as a decimal string.
  * On Windows, returns the result of GetProcessId() also as a string.
+ * If the subprocess has terminated, this will return %NULL.
+ *
+ * Returns: (nullable): the subprocess identifier, or %NULL if the subprocess
+ *    has terminated
+ * Since: 2.40
  */
 const gchar *
 g_subprocess_get_identifier (GSubprocess *subprocess)
@@ -830,21 +835,51 @@ g_subprocess_get_stderr_pipe (GSubprocess *subprocess)
   return subprocess->stderr_pipe;
 }
 
+/* Remove the first list element containing @data, and return %TRUE. If no
+ * such element is found, return %FALSE. */
+static gboolean
+slist_remove_if_present (GSList        **list,
+                         gconstpointer   data)
+{
+  GSList *l, *prev;
+
+  for (l = *list, prev = NULL; l != NULL; prev = l, l = prev->next)
+    {
+      if (l->data == data)
+        {
+          if (prev != NULL)
+            prev->next = l->next;
+          else
+            *list = l->next;
+
+          g_slist_free_1 (l);
+
+          return TRUE;
+        }
+    }
+
+  return FALSE;
+}
+
 static void
 g_subprocess_wait_cancelled (GCancellable *cancellable,
                              gpointer      user_data)
 {
   GTask *task = user_data;
   GSubprocess *self;
+  gboolean task_was_pending;
 
   self = g_task_get_source_object (task);
 
   g_mutex_lock (&self->pending_waits_lock);
-  self->pending_waits = g_slist_remove (self->pending_waits, task);
+  task_was_pending = slist_remove_if_present (&self->pending_waits, task);
   g_mutex_unlock (&self->pending_waits_lock);
 
-  g_task_return_boolean (task, FALSE);
-  g_object_unref (task);
+  if (task_was_pending)
+    {
+      g_task_return_boolean (task, FALSE);
+      g_object_unref (task);  /* ref from pending_waits */
+    }
 }
 
 /**
@@ -1498,7 +1533,8 @@ g_subprocess_communicate_made_progress (GObject      *source_object,
 }
 
 static gboolean
-g_subprocess_communicate_cancelled (gpointer user_data)
+g_subprocess_communicate_cancelled (GCancellable *cancellable,
+                                    gpointer      user_data)
 {
   CommunicateState *state = user_data;
 
@@ -1550,7 +1586,9 @@ g_subprocess_communicate_internal (GSubprocess         *subprocess,
     {
       state->cancellable_source = g_cancellable_source_new (cancellable);
       /* No ref held here, but we unref the source from state's free function */
-      g_source_set_callback (state->cancellable_source, g_subprocess_communicate_cancelled, state, NULL);
+      g_source_set_callback (state->cancellable_source,
+                             G_SOURCE_FUNC (g_subprocess_communicate_cancelled),
+                             state, NULL);
       g_source_attach (state->cancellable_source, g_main_context_get_thread_default ());
     }
 
@@ -1598,8 +1636,8 @@ g_subprocess_communicate_internal (GSubprocess         *subprocess,
  * @subprocess: a #GSubprocess
  * @stdin_buf: (nullable): data to send to the stdin of the subprocess, or %NULL
  * @cancellable: a #GCancellable
- * @stdout_buf: (out): data read from the subprocess stdout
- * @stderr_buf: (out): data read from the subprocess stderr
+ * @stdout_buf: (out) (nullable) (optional) (transfer full): data read from the subprocess stdout
+ * @stderr_buf: (out) (nullable) (optional) (transfer full): data read from the subprocess stderr
  * @error: a pointer to a %NULL #GError pointer, or %NULL
  *
  * Communicate with the subprocess until it terminates, and all input
@@ -1703,8 +1741,8 @@ g_subprocess_communicate_async (GSubprocess         *subprocess,
  * g_subprocess_communicate_finish:
  * @subprocess: Self
  * @result: Result
- * @stdout_buf: (out): Return location for stdout data
- * @stderr_buf: (out): Return location for stderr data
+ * @stdout_buf: (out) (nullable) (optional) (transfer full): Return location for stdout data
+ * @stderr_buf: (out) (nullable) (optional) (transfer full): Return location for stderr data
  * @error: Error
  *
  * Complete an invocation of g_subprocess_communicate_async().
@@ -1731,9 +1769,9 @@ g_subprocess_communicate_finish (GSubprocess   *subprocess,
   if (success)
     {
       if (stdout_buf)
-        *stdout_buf = g_memory_output_stream_steal_as_bytes (state->stdout_buf);
+        *stdout_buf = (state->stdout_buf != NULL) ? g_memory_output_stream_steal_as_bytes (state->stdout_buf) : NULL;
       if (stderr_buf)
-        *stderr_buf = g_memory_output_stream_steal_as_bytes (state->stderr_buf);
+        *stderr_buf = (state->stderr_buf != NULL) ? g_memory_output_stream_steal_as_bytes (state->stderr_buf) : NULL;
     }
 
   g_object_unref (result);
@@ -1745,12 +1783,15 @@ g_subprocess_communicate_finish (GSubprocess   *subprocess,
  * @subprocess: a #GSubprocess
  * @stdin_buf: (nullable): data to send to the stdin of the subprocess, or %NULL
  * @cancellable: a #GCancellable
- * @stdout_buf: (out): data read from the subprocess stdout
- * @stderr_buf: (out): data read from the subprocess stderr
+ * @stdout_buf: (out) (nullable) (optional) (transfer full): data read from the subprocess stdout
+ * @stderr_buf: (out) (nullable) (optional) (transfer full): data read from the subprocess stderr
  * @error: a pointer to a %NULL #GError pointer, or %NULL
  *
  * Like g_subprocess_communicate(), but validates the output of the
  * process as UTF-8, and returns it as a regular NUL terminated string.
+ *
+ * On error, @stdout_buf and @stderr_buf will be set to undefined values and
+ * should not be used.
  */
 gboolean
 g_subprocess_communicate_utf8 (GSubprocess   *subprocess,
@@ -1835,6 +1876,7 @@ communicate_result_validate_utf8 (const char            *stream_name,
       if (!g_utf8_validate (*return_location, -1, &end))
         {
           g_free (*return_location);
+          *return_location = NULL;
           g_set_error (error, G_IO_ERROR, G_IO_ERROR_FAILED,
                        "Invalid UTF-8 in child %s at offset %lu",
                        stream_name,
@@ -1852,8 +1894,8 @@ communicate_result_validate_utf8 (const char            *stream_name,
  * g_subprocess_communicate_utf8_finish:
  * @subprocess: Self
  * @result: Result
- * @stdout_buf: (out): Return location for stdout data
- * @stderr_buf: (out): Return location for stderr data
+ * @stdout_buf: (out) (nullable) (optional) (transfer full): Return location for stdout data
+ * @stderr_buf: (out) (nullable) (optional) (transfer full): Return location for stderr data
  * @error: Error
  *
  * Complete an invocation of g_subprocess_communicate_utf8_async().
@@ -1867,6 +1909,7 @@ g_subprocess_communicate_utf8_finish (GSubprocess   *subprocess,
 {
   gboolean ret = FALSE;
   CommunicateState *state;
+  gchar *local_stdout_buf = NULL, *local_stderr_buf = NULL;
 
   g_return_val_if_fail (G_IS_SUBPROCESS (subprocess), FALSE);
   g_return_val_if_fail (g_task_is_valid (result, subprocess), FALSE);
@@ -1880,11 +1923,11 @@ g_subprocess_communicate_utf8_finish (GSubprocess   *subprocess,
 
   /* TODO - validate UTF-8 while streaming, rather than all at once.
    */
-  if (!communicate_result_validate_utf8 ("stdout", stdout_buf,
+  if (!communicate_result_validate_utf8 ("stdout", &local_stdout_buf,
                                          state->stdout_buf,
                                          error))
     goto out;
-  if (!communicate_result_validate_utf8 ("stderr", stderr_buf,
+  if (!communicate_result_validate_utf8 ("stderr", &local_stderr_buf,
                                          state->stderr_buf,
                                          error))
     goto out;
@@ -1892,5 +1935,14 @@ g_subprocess_communicate_utf8_finish (GSubprocess   *subprocess,
   ret = TRUE;
  out:
   g_object_unref (result);
+
+  if (ret && stdout_buf != NULL)
+    *stdout_buf = g_steal_pointer (&local_stdout_buf);
+  if (ret && stderr_buf != NULL)
+    *stderr_buf = g_steal_pointer (&local_stderr_buf);
+
+  g_free (local_stderr_buf);
+  g_free (local_stdout_buf);
+
   return ret;
 }

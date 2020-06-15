@@ -373,6 +373,7 @@ g_binding_unbind_internal (GBinding *binding,
                            gboolean  unref_binding)
 {
   gboolean source_is_target = binding->source == binding->target;
+  gboolean binding_was_removed = FALSE;
 
   /* dispose of the transformation data */
   if (binding->notify != NULL)
@@ -392,6 +393,7 @@ g_binding_unbind_internal (GBinding *binding,
 
       binding->source_notify = 0;
       binding->source = NULL;
+      binding_was_removed = TRUE;
     }
 
   if (binding->target != NULL)
@@ -404,9 +406,10 @@ g_binding_unbind_internal (GBinding *binding,
 
       binding->target_notify = 0;
       binding->target = NULL;
+      binding_was_removed = TRUE;
     }
 
-  if (unref_binding)
+  if (binding_was_removed && unref_binding)
     g_object_unref (binding);
 }
 
@@ -418,6 +421,53 @@ g_binding_finalize (GObject *gobject)
   g_binding_unbind_internal (binding, FALSE);
 
   G_OBJECT_CLASS (g_binding_parent_class)->finalize (gobject);
+}
+
+/* @key must have already been validated with is_valid()
+ * Modifies @key in place. */
+static void
+canonicalize_key (gchar *key)
+{
+  gchar *p;
+
+  for (p = key; *p != 0; p++)
+    {
+      gchar c = *p;
+
+      if (c == '_')
+        *p = '-';
+    }
+}
+
+/* @key must have already been validated with is_valid() */
+static gboolean
+is_canonical (const gchar *key)
+{
+  return (strchr (key, '_') == NULL);
+}
+
+static gboolean
+is_valid_property_name (const gchar *key)
+{
+  const gchar *p;
+
+  /* First character must be a letter. */
+  if ((key[0] < 'A' || key[0] > 'Z') &&
+      (key[0] < 'a' || key[0] > 'z'))
+    return FALSE;
+
+  for (p = key; *p != 0; p++)
+    {
+      const gchar c = *p;
+
+      if (c != '-' && c != '_' &&
+          (c < '0' || c > '9') &&
+          (c < 'A' || c > 'Z') &&
+          (c < 'a' || c > 'z'))
+        return FALSE;
+    }
+
+  return TRUE;
 }
 
 static void
@@ -434,17 +484,35 @@ g_binding_set_property (GObject      *gobject,
       binding->source = g_value_get_object (value);
       break;
 
-    case PROP_SOURCE_PROPERTY:
-      binding->source_property = g_intern_string (g_value_get_string (value));
-      break;
-
     case PROP_TARGET:
       binding->target = g_value_get_object (value);
       break;
 
+    case PROP_SOURCE_PROPERTY:
     case PROP_TARGET_PROPERTY:
-      binding->target_property = g_intern_string (g_value_get_string (value));
-      break;
+      {
+        gchar *name_copy = NULL;
+        const gchar *name = g_value_get_string (value);
+        const gchar **dest;
+
+        /* Ensure the name we intern is canonical. */
+        if (!is_canonical (name))
+          {
+            name_copy = g_value_dup_string (value);
+            canonicalize_key (name_copy);
+            name = name_copy;
+          }
+
+        if (prop_id == PROP_SOURCE_PROPERTY)
+          dest = &binding->source_property;
+        else
+          dest = &binding->target_property;
+
+        *dest = g_intern_string (name);
+
+        g_free (name_copy);
+        break;
+      }
 
     case PROP_FLAGS:
       binding->flags = g_value_get_flags (value);
@@ -471,7 +539,8 @@ g_binding_get_property (GObject    *gobject,
       break;
 
     case PROP_SOURCE_PROPERTY:
-      g_value_set_string (value, binding->source_property);
+      /* @source_property is interned, so we don’t need to take a copy */
+      g_value_set_static_string (value, binding->source_property);
       break;
 
     case PROP_TARGET:
@@ -479,7 +548,8 @@ g_binding_get_property (GObject    *gobject,
       break;
 
     case PROP_TARGET_PROPERTY:
-      g_value_set_string (value, binding->target_property);
+      /* @target_property is interned, so we don’t need to take a copy */
+      g_value_set_static_string (value, binding->target_property);
       break;
 
     case PROP_FLAGS:
@@ -603,7 +673,10 @@ g_binding_class_init (GBindingClass *klass)
    * GBinding:source-property:
    *
    * The name of the property of #GBinding:source that should be used
-   * as the source of the binding
+   * as the source of the binding.
+   *
+   * This should be in [canonical form][canonical-parameter-names] to get the
+   * best performance.
    *
    * Since: 2.26
    */
@@ -619,7 +692,10 @@ g_binding_class_init (GBindingClass *klass)
    * GBinding:target-property:
    *
    * The name of the property of #GBinding:target that should be used
-   * as the target of the binding
+   * as the target of the binding.
+   *
+   * This should be in [canonical form][canonical-parameter-names] to get the
+   * best performance.
    *
    * Since: 2.26
    */
@@ -781,8 +857,8 @@ g_binding_unbind (GBinding *binding)
  *     from the @target to the @source, or %NULL to use the default
  * @user_data: custom data to be passed to the transformation functions,
  *     or %NULL
- * @notify: function to be called when disposing the binding, to free the
- *     resources used by the transformation functions
+ * @notify: (nullable): a function to call when disposing the binding, to free
+ *     resources used by the transformation functions, or %NULL if not required
  *
  * Complete version of g_object_bind_property().
  *
@@ -796,9 +872,11 @@ g_binding_unbind (GBinding *binding)
  * of bidirectional bindings, otherwise it will be ignored
  *
  * The binding will automatically be removed when either the @source or the
- * @target instances are finalized. To remove the binding without affecting the
- * @source and the @target you can just call g_object_unref() on the returned
- * #GBinding instance.
+ * @target instances are finalized. This will release the reference that is
+ * being held on the #GBinding instance; if you want to hold on to the
+ * #GBinding instance, you will need to hold a reference to it.
+ *
+ * To remove the binding, call g_binding_unbind().
  *
  * A #GObject can have multiple bindings.
  *
@@ -830,8 +908,10 @@ g_object_bind_property_full (gpointer               source,
 
   g_return_val_if_fail (G_IS_OBJECT (source), NULL);
   g_return_val_if_fail (source_property != NULL, NULL);
+  g_return_val_if_fail (is_valid_property_name (source_property), NULL);
   g_return_val_if_fail (G_IS_OBJECT (target), NULL);
   g_return_val_if_fail (target_property != NULL, NULL);
+  g_return_val_if_fail (is_valid_property_name (target_property), NULL);
 
   if (source == target && g_strcmp0 (source_property, target_property) == 0)
     {

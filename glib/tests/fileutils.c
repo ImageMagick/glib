@@ -28,19 +28,31 @@
 
 #include <glib.h>
 
-/* Test our stdio wrappers here */
-#define G_STDIO_NO_WRAP_ON_UNIX
+/* Test our stdio wrappers here; this disables redefining (e.g.) g_open() to open() */
+#define G_STDIO_WRAP_ON_UNIX
 #include <glib/gstdio.h>
 
 #ifdef G_OS_UNIX
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <utime.h>
+
+#define G_TEST_DIR_MODE 0555
 #endif
 #include <fcntl.h>
-#include <utime.h>
 #ifdef G_OS_WIN32
 #include <windows.h>
+#include <sys/utime.h>
+#include <io.h>
+#ifndef S_ISDIR
+#define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
+#endif
+#ifndef F_OK
+#define F_OK 0
+#endif
+
+#define G_TEST_DIR_MODE (S_IWRITE | S_IREAD)
 #endif
 
 #define S G_DIR_SEPARATOR_S
@@ -268,36 +280,36 @@ test_build_filename (void)
 #ifdef G_OS_WIN32
 
   /* Test also using the slash as file name separator */
-#define U "/"
+#define Z "/"
   /* check_string (g_build_filename (NULL), ""); */
-  check_string (g_build_filename (U, NULL), U);
-  check_string (g_build_filename (U"x", NULL), U"x");
-  check_string (g_build_filename ("x"U, NULL), "x"U);
-  check_string (g_build_filename ("", U"x", NULL), U"x");
-  check_string (g_build_filename ("", U"x", NULL), U"x");
-  check_string (g_build_filename (U, "x", NULL), U"x");
-  check_string (g_build_filename (U U, "x", NULL), U U"x");
-  check_string (g_build_filename (U S, "x", NULL), U S"x");
-  check_string (g_build_filename ("x"U, "", NULL), "x"U);
-  check_string (g_build_filename ("x"S"y", "z"U"a", NULL), "x"S"y"S"z"U"a");
-  check_string (g_build_filename ("x", U, NULL), "x"U);
-  check_string (g_build_filename ("x", U U, NULL), "x"U U);
-  check_string (g_build_filename ("x", S U, NULL), "x"S U);
-  check_string (g_build_filename (U"x", "y", NULL), U"x"U"y");
-  check_string (g_build_filename ("x", "y"U, NULL), "x"U"y"U);
-  check_string (g_build_filename (U"x"U, U"y"U, NULL), U"x"U"y"U);
-  check_string (g_build_filename (U"x"U U, U U"y"U, NULL), U"x"U"y"U);
-  check_string (g_build_filename ("x", U, "y",  NULL), "x"U"y");
-  check_string (g_build_filename ("x", U U, "y",  NULL), "x"U"y");
-  check_string (g_build_filename ("x", U S, "y",  NULL), "x"S"y");
-  check_string (g_build_filename ("x", S U, "y",  NULL), "x"U"y");
-  check_string (g_build_filename ("x", U "y", "z", NULL), "x"U"y"U"z");
+  check_string (g_build_filename (Z, NULL), Z);
+  check_string (g_build_filename (Z"x", NULL), Z"x");
+  check_string (g_build_filename ("x"Z, NULL), "x"Z);
+  check_string (g_build_filename ("", Z"x", NULL), Z"x");
+  check_string (g_build_filename ("", Z"x", NULL), Z"x");
+  check_string (g_build_filename (Z, "x", NULL), Z"x");
+  check_string (g_build_filename (Z Z, "x", NULL), Z Z"x");
+  check_string (g_build_filename (Z S, "x", NULL), Z S"x");
+  check_string (g_build_filename ("x"Z, "", NULL), "x"Z);
+  check_string (g_build_filename ("x"S"y", "z"Z"a", NULL), "x"S"y"S"z"Z"a");
+  check_string (g_build_filename ("x", Z, NULL), "x"Z);
+  check_string (g_build_filename ("x", Z Z, NULL), "x"Z Z);
+  check_string (g_build_filename ("x", S Z, NULL), "x"S Z);
+  check_string (g_build_filename (Z"x", "y", NULL), Z"x"Z"y");
+  check_string (g_build_filename ("x", "y"Z, NULL), "x"Z"y"Z);
+  check_string (g_build_filename (Z"x"Z, Z"y"Z, NULL), Z"x"Z"y"Z);
+  check_string (g_build_filename (Z"x"Z Z, Z Z"y"Z, NULL), Z"x"Z"y"Z);
+  check_string (g_build_filename ("x", Z, "y",  NULL), "x"Z"y");
+  check_string (g_build_filename ("x", Z Z, "y",  NULL), "x"Z"y");
+  check_string (g_build_filename ("x", Z S, "y",  NULL), "x"S"y");
+  check_string (g_build_filename ("x", S Z, "y",  NULL), "x"Z"y");
+  check_string (g_build_filename ("x", Z "y", "z", NULL), "x"Z"y"Z"z");
   check_string (g_build_filename ("x", S "y", "z", NULL), "x"S"y"S"z");
-  check_string (g_build_filename ("x", S "y", "z", U, "a", "b", NULL), "x"S"y"S"z"U"a"U"b");
-  check_string (g_build_filename (U"x"U, U"y"U, U"z"U, NULL), U"x"U"y"U"z"U);
-  check_string (g_build_filename (U U"x"U U, U U"y"U U, U U"z"U U, NULL), U U"x"U"y"U"z"U U);
+  check_string (g_build_filename ("x", S "y", "z", Z, "a", "b", NULL), "x"S"y"S"z"Z"a"Z"b");
+  check_string (g_build_filename (Z"x"Z, Z"y"Z, Z"z"Z, NULL), Z"x"Z"y"Z"z"Z);
+  check_string (g_build_filename (Z Z"x"Z Z, Z Z"y"Z Z, Z Z"z"Z Z, NULL), Z Z"x"Z"y"Z"z"Z Z);
 
-#undef U
+#undef Z
 
 #endif /* G_OS_WIN32 */
 
@@ -358,64 +370,64 @@ test_build_filenamev (void)
 #ifdef G_OS_WIN32
 
   /* Test also using the slash as file name separator */
-#define U "/"
+#define Z "/"
   args[0] = NULL;
   check_string (g_build_filenamev (args), "");
-  args[0] = U; args[1] = NULL;
-  check_string (g_build_filenamev (args), U);
-  args[0] = U"x"; args[1] = NULL;
-  check_string (g_build_filenamev (args), U"x");
-  args[0] = "x"U; args[1] = NULL;
-  check_string (g_build_filenamev (args), "x"U);
-  args[0] = ""; args[1] = U"x"; args[2] = NULL;
-  check_string (g_build_filenamev (args), U"x");
-  args[0] = ""; args[1] = U"x"; args[2] = NULL;
-  check_string (g_build_filenamev (args), U"x");
-  args[0] = U; args[1] = "x"; args[2] = NULL;
-  check_string (g_build_filenamev (args), U"x");
-  args[0] = U U; args[1] = "x"; args[2] = NULL;
-  check_string (g_build_filenamev (args), U U"x");
-  args[0] = U S; args[1] = "x"; args[2] = NULL;
-  check_string (g_build_filenamev (args), U S"x");
-  args[0] = "x"U; args[1] = ""; args[2] = NULL;
-  check_string (g_build_filenamev (args), "x"U);
-  args[0] = "x"S"y"; args[1] = "z"U"a"; args[2] = NULL;
-  check_string (g_build_filenamev (args), "x"S"y"S"z"U"a");
-  args[0] = "x"; args[1] = U; args[2] = NULL;
-  check_string (g_build_filenamev (args), "x"U);
-  args[0] = "x"; args[1] = U U; args[2] = NULL;
-  check_string (g_build_filenamev (args), "x"U U);
-  args[0] = "x"; args[1] = S U; args[2] = NULL;
-  check_string (g_build_filenamev (args), "x"S U);
-  args[0] = U"x"; args[1] = "y"; args[2] = NULL;
-  check_string (g_build_filenamev (args), U"x"U"y");
-  args[0] = "x"; args[1] = "y"U; args[2] = NULL;
-  check_string (g_build_filenamev (args), "x"U"y"U);
-  args[0] = U"x"U; args[1] = U"y"U; args[2] = NULL;
-  check_string (g_build_filenamev (args), U"x"U"y"U);
-  args[0] = U"x"U U; args[1] = U U"y"U; args[2] = NULL;
-  check_string (g_build_filenamev (args), U"x"U"y"U);
-  args[0] = "x"; args[1] = U; args[2] = "y", args[3] = NULL;
-  check_string (g_build_filenamev (args), "x"U"y");
-  args[0] = "x"; args[1] = U U; args[2] = "y", args[3] = NULL;
-  check_string (g_build_filenamev (args), "x"U"y");
-  args[0] = "x"; args[1] = U S; args[2] = "y", args[3] = NULL;
+  args[0] = Z; args[1] = NULL;
+  check_string (g_build_filenamev (args), Z);
+  args[0] = Z"x"; args[1] = NULL;
+  check_string (g_build_filenamev (args), Z"x");
+  args[0] = "x"Z; args[1] = NULL;
+  check_string (g_build_filenamev (args), "x"Z);
+  args[0] = ""; args[1] = Z"x"; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z"x");
+  args[0] = ""; args[1] = Z"x"; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z"x");
+  args[0] = Z; args[1] = "x"; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z"x");
+  args[0] = Z Z; args[1] = "x"; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z Z"x");
+  args[0] = Z S; args[1] = "x"; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z S"x");
+  args[0] = "x"Z; args[1] = ""; args[2] = NULL;
+  check_string (g_build_filenamev (args), "x"Z);
+  args[0] = "x"S"y"; args[1] = "z"Z"a"; args[2] = NULL;
+  check_string (g_build_filenamev (args), "x"S"y"S"z"Z"a");
+  args[0] = "x"; args[1] = Z; args[2] = NULL;
+  check_string (g_build_filenamev (args), "x"Z);
+  args[0] = "x"; args[1] = Z Z; args[2] = NULL;
+  check_string (g_build_filenamev (args), "x"Z Z);
+  args[0] = "x"; args[1] = S Z; args[2] = NULL;
+  check_string (g_build_filenamev (args), "x"S Z);
+  args[0] = Z"x"; args[1] = "y"; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z"x"Z"y");
+  args[0] = "x"; args[1] = "y"Z; args[2] = NULL;
+  check_string (g_build_filenamev (args), "x"Z"y"Z);
+  args[0] = Z"x"Z; args[1] = Z"y"Z; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z"x"Z"y"Z);
+  args[0] = Z"x"Z Z; args[1] = Z Z"y"Z; args[2] = NULL;
+  check_string (g_build_filenamev (args), Z"x"Z"y"Z);
+  args[0] = "x"; args[1] = Z; args[2] = "y", args[3] = NULL;
+  check_string (g_build_filenamev (args), "x"Z"y");
+  args[0] = "x"; args[1] = Z Z; args[2] = "y", args[3] = NULL;
+  check_string (g_build_filenamev (args), "x"Z"y");
+  args[0] = "x"; args[1] = Z S; args[2] = "y", args[3] = NULL;
   check_string (g_build_filenamev (args), "x"S"y");
-  args[0] = "x"; args[1] = S U; args[2] = "y", args[3] = NULL;
-  check_string (g_build_filenamev (args), "x"U"y");
-  args[0] = "x"; args[1] = U "y"; args[2] = "z", args[3] = NULL;
-  check_string (g_build_filenamev (args), "x"U"y"U"z");
+  args[0] = "x"; args[1] = S Z; args[2] = "y", args[3] = NULL;
+  check_string (g_build_filenamev (args), "x"Z"y");
+  args[0] = "x"; args[1] = Z "y"; args[2] = "z", args[3] = NULL;
+  check_string (g_build_filenamev (args), "x"Z"y"Z"z");
   args[0] = "x"; args[1] = S "y"; args[2] = "z", args[3] = NULL;
   check_string (g_build_filenamev (args), "x"S"y"S"z");
-  args[0] = "x"; args[1] = S "y"; args[2] = "z", args[3] = U;
+  args[0] = "x"; args[1] = S "y"; args[2] = "z", args[3] = Z;
   args[4] = "a"; args[5] = "b"; args[6] = NULL;
-  check_string (g_build_filenamev (args), "x"S"y"S"z"U"a"U"b");
-  args[0] = U"x"U; args[1] = U"y"U; args[2] = U"z"U, args[3] = NULL;
-  check_string (g_build_filenamev (args), U"x"U"y"U"z"U);
-  args[0] = U U"x"U U; args[1] = U U"y"U U; args[2] = U U"z"U U, args[3] = NULL;
-  check_string (g_build_filenamev (args), U U"x"U"y"U"z"U U);
+  check_string (g_build_filenamev (args), "x"S"y"S"z"Z"a"Z"b");
+  args[0] = Z"x"Z; args[1] = Z"y"Z; args[2] = Z"z"Z, args[3] = NULL;
+  check_string (g_build_filenamev (args), Z"x"Z"y"Z"z"Z);
+  args[0] = Z Z"x"Z Z; args[1] = Z Z"y"Z Z; args[2] = Z Z"z"Z Z, args[3] = NULL;
+  check_string (g_build_filenamev (args), Z Z"x"Z"y"Z"z"Z Z);
 
-#undef U
+#undef Z
 
 #endif /* G_OS_WIN32 */
 }
@@ -435,47 +447,47 @@ test_mkdir_with_parents_1 (const gchar *base)
   g_remove (p0);
 
   if (g_file_test (p0, G_FILE_TEST_EXISTS))
-    g_error ("failed, %s exists, cannot test g_mkdir_with_parents\n", p0);
+    g_error ("failed, %s exists, cannot test g_mkdir_with_parents", p0);
 
   if (g_file_test (p1, G_FILE_TEST_EXISTS))
-    g_error ("failed, %s exists, cannot test g_mkdir_with_parents\n", p1);
+    g_error ("failed, %s exists, cannot test g_mkdir_with_parents", p1);
 
   if (g_file_test (p2, G_FILE_TEST_EXISTS))
-    g_error ("failed, %s exists, cannot test g_mkdir_with_parents\n", p2);
+    g_error ("failed, %s exists, cannot test g_mkdir_with_parents", p2);
 
   if (g_mkdir_with_parents (p2, 0777) == -1)
     {
       int errsv = errno;
-      g_error ("failed, g_mkdir_with_parents(%s) failed: %s\n", p2, g_strerror (errsv));
+      g_error ("failed, g_mkdir_with_parents(%s) failed: %s", p2, g_strerror (errsv));
     }
 
   if (!g_file_test (p2, G_FILE_TEST_IS_DIR))
-    g_error ("failed, g_mkdir_with_parents(%s) succeeded, but %s is not a directory\n", p2, p2);
+    g_error ("failed, g_mkdir_with_parents(%s) succeeded, but %s is not a directory", p2, p2);
 
   if (!g_file_test (p1, G_FILE_TEST_IS_DIR))
-    g_error ("failed, g_mkdir_with_parents(%s) succeeded, but %s is not a directory\n", p2, p1);
+    g_error ("failed, g_mkdir_with_parents(%s) succeeded, but %s is not a directory", p2, p1);
 
   if (!g_file_test (p0, G_FILE_TEST_IS_DIR))
-    g_error ("failed, g_mkdir_with_parents(%s) succeeded, but %s is not a directory\n", p2, p0);
+    g_error ("failed, g_mkdir_with_parents(%s) succeeded, but %s is not a directory", p2, p0);
 
   g_rmdir (p2);
   if (g_file_test (p2, G_FILE_TEST_EXISTS))
-    g_error ("failed, did g_rmdir(%s), but %s is still there\n", p2, p2);
+    g_error ("failed, did g_rmdir(%s), but %s is still there", p2, p2);
 
   g_rmdir (p1);
   if (g_file_test (p1, G_FILE_TEST_EXISTS))
-    g_error ("failed, did g_rmdir(%s), but %s is still there\n", p1, p1);
+    g_error ("failed, did g_rmdir(%s), but %s is still there", p1, p1);
 
   f = g_fopen (p1, "w");
   if (f == NULL)
-    g_error ("failed, couldn't create file %s\n", p1);
+    g_error ("failed, couldn't create file %s", p1);
   fclose (f);
 
   if (g_mkdir_with_parents (p1, 0666) == 0)
-    g_error ("failed, g_mkdir_with_parents(%s) succeeded, even if %s is a file\n", p1, p1);
+    g_error ("failed, g_mkdir_with_parents(%s) succeeded, even if %s is a file", p1, p1);
 
   if (g_mkdir_with_parents (p2, 0666) == 0)
-    g_error("failed, g_mkdir_with_parents(%s) succeeded, even if %s is a file\n", p2, p1);
+    g_error("failed, g_mkdir_with_parents(%s) succeeded, even if %s is a file", p2, p1);
 
   g_remove (p2);
   g_remove (p1);
@@ -510,6 +522,121 @@ test_mkdir_with_parents (void)
   g_assert_cmpint (errno, ==, EINVAL);
 }
 
+#ifdef G_OS_UNIX
+/*
+ * check_cap_dac_override:
+ * @tmpdir: A temporary directory in which we can create and delete files
+ *
+ * Check whether the current process can bypass DAC permissions.
+ *
+ * Traditionally, "privileged" processes (those with effective uid 0)
+ * could do this (and bypass many other checks), and "unprivileged"
+ * processes could not.
+ *
+ * In Linux, the special powers of euid 0 are divided into many
+ * capabilities: see `capabilities(7)`. The one we are interested in
+ * here is `CAP_DAC_OVERRIDE`.
+ *
+ * We do this generically instead of actually looking at the capability
+ * bits, so that the right thing will happen on non-Linux Unix
+ * implementations, in particular if they have something equivalent to
+ * but not identical to Linux permissions.
+ *
+ * Returns: %TRUE if we have Linux `CAP_DAC_OVERRIDE` or equivalent
+ *  privileges
+ */
+static gboolean
+check_cap_dac_override (const char *tmpdir)
+{
+  gchar *dac_denies_write;
+  gchar *inside;
+  gboolean have_cap;
+
+  dac_denies_write = g_build_filename (tmpdir, "dac-denies-write", NULL);
+  inside = g_build_filename (dac_denies_write, "inside", NULL);
+
+  g_assert_cmpint (mkdir (dac_denies_write, S_IRWXU) == 0 ? 0 : errno, ==, 0);
+  g_assert_cmpint (chmod (dac_denies_write, 0) == 0 ? 0 : errno, ==, 0);
+
+  if (mkdir (inside, S_IRWXU) == 0)
+    {
+      g_test_message ("Looks like we have CAP_DAC_OVERRIDE or equivalent");
+      g_assert_cmpint (rmdir (inside) == 0 ? 0 : errno, ==, 0);
+      have_cap = TRUE;
+    }
+  else
+    {
+      int saved_errno = errno;
+
+      g_test_message ("We do not have CAP_DAC_OVERRIDE or equivalent");
+      g_assert_cmpint (saved_errno, ==, EACCES);
+      have_cap = FALSE;
+    }
+
+  g_assert_cmpint (chmod (dac_denies_write, S_IRWXU) == 0 ? 0 : errno, ==, 0);
+  g_assert_cmpint (rmdir (dac_denies_write) == 0 ? 0 : errno, ==, 0);
+  g_free (dac_denies_write);
+  g_free (inside);
+  return have_cap;
+}
+#endif
+
+/* Reproducer for https://gitlab.gnome.org/GNOME/glib/issues/1852 */
+static void
+test_mkdir_with_parents_permission (void)
+{
+#ifdef G_OS_UNIX
+  gchar *tmpdir;
+  gchar *subdir;
+  gchar *subdir2;
+  gchar *subdir3;
+  GError *error = NULL;
+  int result;
+  int saved_errno;
+  gboolean have_cap_dac_override;
+
+  tmpdir = g_dir_make_tmp ("test-fileutils.XXXXXX", &error);
+  g_assert_no_error (error);
+  g_assert_nonnull (tmpdir);
+
+  have_cap_dac_override = check_cap_dac_override (tmpdir);
+
+  subdir = g_build_filename (tmpdir, "sub", NULL);
+  subdir2 = g_build_filename (subdir, "sub2", NULL);
+  subdir3 = g_build_filename (subdir2, "sub3", NULL);
+  g_assert_cmpint (g_mkdir (subdir, 0700) == 0 ? 0 : errno, ==, 0);
+  g_assert_cmpint (g_chmod (subdir, 0) == 0 ? 0 : errno, ==, 0);
+
+  if (have_cap_dac_override)
+    {
+      g_test_skip ("have CAP_DAC_OVERRIDE or equivalent, cannot test");
+    }
+  else
+    {
+      result = g_mkdir_with_parents (subdir2, 0700);
+      saved_errno = errno;
+      g_assert_cmpint (result, ==, -1);
+      g_assert_cmpint (saved_errno, ==, EACCES);
+
+      result = g_mkdir_with_parents (subdir3, 0700);
+      saved_errno = errno;
+      g_assert_cmpint (result, ==, -1);
+      g_assert_cmpint (saved_errno, ==, EACCES);
+
+      g_assert_cmpint (g_chmod (subdir, 0700) == 0 ? 0 : errno, ==, 0);
+    }
+
+  g_assert_cmpint (g_remove (subdir) == 0 ? 0 : errno, ==, 0);
+  g_assert_cmpint (g_remove (tmpdir) == 0 ? 0 : errno, ==, 0);
+  g_free (subdir3);
+  g_free (subdir2);
+  g_free (subdir);
+  g_free (tmpdir);
+#else
+  g_test_skip ("cannot test without Unix-style permissions");
+#endif
+}
+
 static void
 test_format_size_for_display (void)
 {
@@ -530,27 +657,58 @@ test_format_size_for_display (void)
   check_string (g_format_size (0), "0 bytes");
   check_string (g_format_size (1), "1 byte");
   check_string (g_format_size (2), "2 bytes");
-  check_string (g_format_size (1000ULL), "1.0 kB");
-  check_string (g_format_size (1000ULL * 1000), "1.0 MB");
-  check_string (g_format_size (1000ULL * 1000 * 1000), "1.0 GB");
-  check_string (g_format_size (1000ULL * 1000 * 1000 * 1000), "1.0 TB");
-  check_string (g_format_size (1000ULL * 1000 * 1000 * 1000 * 1000), "1.0 PB");
-  check_string (g_format_size (1000ULL * 1000 * 1000 * 1000 * 1000 * 1000), "1.0 EB");
+  /* '\302\240' is a no-break space, to keep quantity and unit symbol together at line breaks*/
+  check_string (g_format_size (1000ULL), "1.0\302\240kB");
+  check_string (g_format_size (1000ULL * 1000), "1.0\302\240MB");
+  check_string (g_format_size (1000ULL * 1000 * 1000), "1.0\302\240GB");
+  check_string (g_format_size (1000ULL * 1000 * 1000 * 1000), "1.0\302\240TB");
+  check_string (g_format_size (1000ULL * 1000 * 1000 * 1000 * 1000), "1.0\302\240PB");
+  check_string (g_format_size (1000ULL * 1000 * 1000 * 1000 * 1000 * 1000), "1.0\302\240EB");
 
   check_string (g_format_size_full (0, G_FORMAT_SIZE_IEC_UNITS), "0 bytes");
   check_string (g_format_size_full (1, G_FORMAT_SIZE_IEC_UNITS), "1 byte");
   check_string (g_format_size_full (2, G_FORMAT_SIZE_IEC_UNITS), "2 bytes");
 
-  check_string (g_format_size_full (2048ULL, G_FORMAT_SIZE_IEC_UNITS), "2.0 KiB");
-  check_string (g_format_size_full (2048ULL * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0 MiB");
-  check_string (g_format_size_full (2048ULL * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0 GiB");
-  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0 TiB");
-  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0 PiB");
-  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024 * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0 EiB");
+  check_string (g_format_size_full (2048ULL, G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240KiB");
+  check_string (g_format_size_full (2048ULL * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240MiB");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240GiB");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240TiB");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240PiB");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024 * 1024 * 1024, G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240EiB");
 
-  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_IEC_UNITS), "227.4 MiB");
-  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_DEFAULT), "238.5 MB");
-  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_LONG_FORMAT), "238.5 MB (238472938 bytes)");
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_IEC_UNITS), "227.4\302\240MiB");
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_DEFAULT), "238.5\302\240MB");
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_LONG_FORMAT), "238.5\302\240MB (238472938 bytes)");
+
+
+  check_string (g_format_size_full (0, G_FORMAT_SIZE_BITS), "0 bits");
+  check_string (g_format_size_full (1, G_FORMAT_SIZE_BITS), "1 bit");
+  check_string (g_format_size_full (2, G_FORMAT_SIZE_BITS), "2 bits");
+
+  check_string (g_format_size_full (2000ULL, G_FORMAT_SIZE_BITS), "2.0\302\240kb");
+  check_string (g_format_size_full (2000ULL * 1000, G_FORMAT_SIZE_BITS), "2.0\302\240Mb");
+  check_string (g_format_size_full (2000ULL * 1000 * 1000, G_FORMAT_SIZE_BITS), "2.0\302\240Gb");
+  check_string (g_format_size_full (2000ULL * 1000 * 1000 * 1000, G_FORMAT_SIZE_BITS), "2.0\302\240Tb");
+  check_string (g_format_size_full (2000ULL * 1000 * 1000 * 1000 * 1000, G_FORMAT_SIZE_BITS), "2.0\302\240Pb");
+  check_string (g_format_size_full (2000ULL * 1000 * 1000 * 1000 * 1000 * 1000, G_FORMAT_SIZE_BITS), "2.0\302\240Eb");
+
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_BITS), "238.5\302\240Mb");
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_LONG_FORMAT), "238.5\302\240Mb (238472938 bits)");
+
+
+  check_string (g_format_size_full (0, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "0 bits");
+  check_string (g_format_size_full (1, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "1 bit");
+  check_string (g_format_size_full (2, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2 bits");
+
+  check_string (g_format_size_full (2048ULL, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240Kib");
+  check_string (g_format_size_full (2048ULL * 1024, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240Mib");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240Gib");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240Tib");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024 * 1024, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240Pib");
+  check_string (g_format_size_full (2048ULL * 1024 * 1024 * 1024 * 1024 * 1024, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "2.0\302\240Eib");
+
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS), "227.4\302\240Mib");
+  check_string (g_format_size_full (238472938, G_FORMAT_SIZE_BITS | G_FORMAT_SIZE_IEC_UNITS | G_FORMAT_SIZE_LONG_FORMAT), "227.4\302\240Mib (238472938 bits)");
 }
 
 static void
@@ -769,6 +927,7 @@ test_set_contents (void)
   fd = g_file_open_tmp (NULL, &name, &error);
   g_assert_no_error (error);
   write (fd, "a", 1);
+  g_assert_cmpint (g_fsync (fd), ==, 0);
   close (fd);
 
   ret = g_file_get_contents (name, &buf, &len, &error);
@@ -849,6 +1008,11 @@ test_stdio_wrappers (void)
   gint ret;
   struct utimbuf ut;
   GError *error = NULL;
+  GStatBuf path_statbuf, cwd_statbuf;
+  time_t now;
+#ifdef G_OS_UNIX
+  gboolean have_cap_dac_override;
+#endif
 
   g_remove ("mkdir-test/test-create");
   ret = g_rmdir ("mkdir-test");
@@ -864,20 +1028,48 @@ test_stdio_wrappers (void)
 
   cwd = g_get_current_dir ();
   path = g_build_filename (cwd, "mkdir-test", NULL);
+#ifdef G_OS_UNIX
+  have_cap_dac_override = check_cap_dac_override (cwd);
+#endif
   g_free (cwd);
-  ret = g_chdir (path);
-  g_assert_cmpint (errno, ==, EACCES);
-  g_assert_cmpint (ret, ==, -1);
+
+  /* 0666 on directories means nothing to Windows, it only obeys ACLs.
+   * It doesn't necessarily mean anything on Unix either: if we have
+   * Linux CAP_DAC_OVERRIDE or equivalent (in particular if we're root),
+   * then we ignore filesystem permissions. */
+#ifdef G_OS_UNIX
+  if (have_cap_dac_override)
+    {
+      g_test_message ("Cannot test g_chdir() failing with EACCES: we "
+                      "probably have CAP_DAC_OVERRIDE or equivalent");
+    }
+  else
+    {
+      ret = g_chdir (path);
+      g_assert_cmpint (ret == 0 ? 0 : errno, ==, EACCES);
+      g_assert_cmpint (ret, ==, -1);
+    }
+#else
+  g_test_message ("Cannot test g_chdir() failing with EACCES: "
+                  "it's Unix-specific behaviour");
+#endif
+
   ret = g_chmod (path, 0777);
   g_assert_cmpint (ret, ==, 0);
   ret = g_chdir (path);
   g_assert_cmpint (ret, ==, 0);
   cwd = g_get_current_dir ();
-  g_assert_true (g_str_equal (cwd, path));
+  /* We essentially want to check that cwd == path, but we can’t compare the
+   * paths directly since the tests might be running under a symlink (for
+   * example, /tmp is sometimes a symlink). Compare the inode numbers instead. */
+  g_assert_cmpint (g_stat (cwd, &cwd_statbuf), ==, 0);
+  g_assert_cmpint (g_stat (path, &path_statbuf), ==, 0);
+  g_assert_true (cwd_statbuf.st_dev == path_statbuf.st_dev &&
+                 cwd_statbuf.st_ino == path_statbuf.st_ino);
   g_free (cwd);
   g_free (path);
 
-  ret = g_creat ("test-creat", 0555);
+  ret = g_creat ("test-creat", G_TEST_DIR_MODE);
   g_close (ret, &error);
   g_assert_no_error (error);
 
@@ -891,19 +1083,440 @@ test_stdio_wrappers (void)
   g_close (ret, &error);
   g_assert_no_error (error);
 
-  ut.actime = ut.modtime = (time_t)0;
+#ifdef G_OS_WIN32
+  /* On Windows the 5 permission bit results in a read-only file
+   * that cannot be modified in any way (attribute changes included).
+   * Remove the read-only attribute via chmod().
+   */
+  ret = g_chmod ("test-create", 0666);
+  g_assert_cmpint (ret, ==, 0);
+#endif
+
+  now = time (NULL);
+
+  ut.actime = ut.modtime = now;
   ret = g_utime ("test-create", &ut);
   g_assert_cmpint (ret, ==, 0);
 
   ret = g_lstat ("test-create", &buf);
   g_assert_cmpint (ret, ==, 0);
-  g_assert_cmpint (buf.st_atime, ==, (time_t)0);
-  g_assert_cmpint (buf.st_mtime, ==, (time_t)0);
+  g_assert_cmpint (buf.st_atime, ==, now);
+  g_assert_cmpint (buf.st_mtime, ==, now);
 
   g_chdir ("..");
   g_remove ("mkdir-test/test-create");
   g_rmdir ("mkdir-test");
 }
+
+/* Win32 does not support "wb+", but g_fopen() should automatically
+ * translate this mode to its alias "w+b".
+ * Also check various other file open modes for correct support accross
+ * platforms.
+ * See: https://gitlab.gnome.org/GNOME/glib/merge_requests/119
+ */
+static void
+test_fopen_modes (void)
+{
+  char        *path = g_build_filename ("temp-fopen", NULL);
+  gsize        i;
+  const gchar *modes[] =
+    {
+      "w",
+      "r",
+      "a",
+      "w+",
+      "r+",
+      "a+",
+      "wb",
+      "rb",
+      "ab",
+      "w+b",
+      "r+b",
+      "a+b",
+      "wb+",
+      "rb+",
+      "ab+"
+    };
+
+  g_test_bug ("119");
+
+  if (g_file_test (path, G_FILE_TEST_EXISTS))
+    g_error ("failed, %s exists, cannot test g_fopen()", path);
+
+  for (i = 0; i < G_N_ELEMENTS (modes); i++)
+    {
+      FILE *f;
+
+      g_test_message ("Testing fopen() mode '%s'", modes[i]);
+
+      f = g_fopen (path, modes[i]);
+      g_assert_nonnull (f);
+      fclose (f);
+    }
+
+  g_remove (path);
+  g_free (path);
+}
+
+#ifdef G_OS_WIN32
+#include "../gstdio-private.c"
+
+static int
+g_wcscmp0 (const gunichar2 *str1,
+           const gunichar2 *str2)
+{
+  if (!str1)
+    return -(str1 != str2);
+  if (!str2)
+    return str1 != str2;
+  return wcscmp (str1, str2);
+}
+
+#define g_assert_cmpwcs(s1, cmp, s2, s1u8, s2u8) \
+G_STMT_START { \
+  const gunichar2 *__s1 = (s1), *__s2 = (s2); \
+  if (g_wcscmp0 (__s1, __s2) cmp 0) ; else \
+    g_assertion_message_cmpstr (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                #s1u8 " " #cmp " " #s2u8, s1u8, #cmp, s2u8); \
+} G_STMT_END
+
+static void
+test_win32_pathstrip (void)
+{
+  gunichar2 *buf;
+  gsize i;
+#define IDENTITY_TEST(x) { x, x, FALSE }
+  struct
+  {
+    gunichar2 *in;
+    gunichar2 *out;
+    gboolean   result;
+  } testcases[] = {
+    IDENTITY_TEST (L"\\\\?\\V"),
+    IDENTITY_TEST (L"\\\\?\\Vo"),
+    IDENTITY_TEST (L"\\\\?\\Volume{0700f3d3-6d24-11e3-8b2f-806e6f6e6963}\\"),
+    IDENTITY_TEST (L"\\??\\V"),
+    IDENTITY_TEST (L"\\??\\Vo"),
+    IDENTITY_TEST (L"\\??\\Volume{0700f3d3-6d24-11e3-8b2f-806e6f6e6963}\\"),
+    IDENTITY_TEST (L"\\\\?\\\x0441:\\"),
+    IDENTITY_TEST (L"\\??\\\x0441:\\"),
+    IDENTITY_TEST (L"a:\\"),
+    IDENTITY_TEST (L"a:\\b\\c"),
+    IDENTITY_TEST (L"x"),
+#undef IDENTITY_TEST
+    {
+      L"\\\\?\\c:\\",
+             L"c:\\",
+      TRUE,
+    },
+    {
+      L"\\\\?\\C:\\",
+             L"C:\\",
+      TRUE,
+    },
+    {
+      L"\\\\?\\c:\\",
+             L"c:\\",
+      TRUE,
+    },
+    {
+      L"\\\\?\\C:\\",
+             L"C:\\",
+      TRUE,
+    },
+    {
+      L"\\\\?\\C:\\",
+             L"C:\\",
+      TRUE,
+    },
+    { 0, }
+  };
+
+  for (i = 0; testcases[i].in; i++)
+    {
+      gsize str_len = wcslen (testcases[i].in) + 1;
+      gchar *in_u8 = g_utf16_to_utf8 (testcases[i].in, -1, NULL, NULL, NULL);
+      gchar *out_u8 = g_utf16_to_utf8 (testcases[i].out, -1, NULL, NULL, NULL);
+
+      g_assert_nonnull (in_u8);
+      g_assert_nonnull (out_u8);
+
+      buf = g_new0 (gunichar2, str_len);
+      memcpy (buf, testcases[i].in, str_len * sizeof (gunichar2));
+      _g_win32_strip_extended_ntobjm_prefix (buf, &str_len);
+      g_assert_cmpwcs (buf, ==, testcases[i].out, in_u8, out_u8);
+      g_free (buf);
+      g_free (in_u8);
+      g_free (out_u8);
+    }
+  /* Check for correct behaviour on non-NUL-terminated strings */
+  for (i = 0; testcases[i].in; i++)
+    {
+      gsize str_len = wcslen (testcases[i].in) + 1;
+      wchar_t old_endchar;
+      gchar *in_u8 = g_utf16_to_utf8 (testcases[i].in, -1, NULL, NULL, NULL);
+      gchar *out_u8 = g_utf16_to_utf8 (testcases[i].out, -1, NULL, NULL, NULL);
+
+      g_assert_nonnull (in_u8);
+      g_assert_nonnull (out_u8);
+
+      buf = g_new0 (gunichar2, str_len);
+      memcpy (buf, testcases[i].in, (str_len) * sizeof (gunichar2));
+
+      old_endchar = buf[wcslen (testcases[i].out)];
+      str_len -= 1;
+
+      if (testcases[i].result)
+        {
+          /* Given "\\\\?\\C:\\" (len 7, unterminated),
+           * we should get "C:\\" (len 3, unterminated).
+           * Put a character different from "\\" (4-th character of the buffer)
+           * at the end of the unterminated source buffer, into a position
+           * where NUL-terminator would normally be. Then later test that 4-th character
+           * in the buffer is still the old "\\".
+           * After that terminate the string and use normal g_wcscmp0().
+           */
+          buf[str_len] = old_endchar - 1;
+        }
+
+      _g_win32_strip_extended_ntobjm_prefix (buf, &str_len);
+      g_assert_cmpuint (old_endchar, ==, buf[wcslen (testcases[i].out)]);
+      buf[str_len] = L'\0';
+      g_assert_cmpwcs (buf, ==, testcases[i].out, in_u8, out_u8);
+      g_free (buf);
+      g_free (in_u8);
+      g_free (out_u8);
+    }
+}
+
+#define g_assert_memcmp(m1, cmp, m2, memlen, m1hex, m2hex, testcase_num) \
+G_STMT_START { \
+  if (memcmp (m1, m2, memlen) cmp 0); else \
+    g_assertion_message_cmpstr (G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                                #m1hex " " #cmp " " #m2hex, m1hex, #cmp, m2hex); \
+} G_STMT_END
+
+static gchar *
+to_hex (const guchar *buf,
+        gsize        len)
+{
+  gsize i;
+  GString *s = g_string_new (NULL);
+  if (len > 0)
+    g_string_append_printf (s, "%02x", buf[0]);
+  for (i = 1; i < len; i++)
+    g_string_append_printf (s, " %02x", buf[i]);
+  return g_string_free (s, FALSE);
+}
+
+static void
+test_win32_zero_terminate_symlink (void)
+{
+  gsize i;
+#define TESTCASE(data, len_mod, use_buf, buf_size, terminate, reported_len, returned_string) \
+ { (const guchar *) data, wcslen (data) * 2 + len_mod, use_buf, buf_size, terminate, reported_len, (guchar *) returned_string},
+
+  struct
+  {
+    const guchar *data;
+    gsize         data_size;
+    gboolean      use_buf;
+    gsize         buf_size;
+    gboolean      terminate;
+    int           reported_len;
+    const guchar *returned_string;
+  } testcases[] = {
+    TESTCASE (L"foobar", +2, TRUE, 12 + 4, FALSE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 3, FALSE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 2, FALSE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 1, FALSE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 0, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 - 1, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", +2, TRUE, 12 - 2, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 - 3, FALSE, 12 - 3, "f\0o\0o\0b\0a")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 4, FALSE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 3, FALSE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 2, FALSE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 1, FALSE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 0, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 - 1, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", +1, TRUE, 12 - 2, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 - 3, FALSE, 12 - 3, "f\0o\0o\0b\0a")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 4, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 3, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 2, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 1, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 0, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 - 1, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", +0, TRUE, 12 - 2, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 - 3, FALSE, 12 - 3, "f\0o\0o\0b\0a")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 3, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 2, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 1, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 0, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 1, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 2, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 3, FALSE, 12 - 3, "f\0o\0o\0b\0a")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 4, FALSE, 12 - 4, "f\0o\0o\0b\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 + 2, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 + 1, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 + 0, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 1, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 2, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 3, FALSE, 12 - 3, "f\0o\0o\0b\0a")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 4, FALSE, 12 - 4, "f\0o\0o\0b\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 5, FALSE, 12 - 5, "f\0o\0o\0b")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 4, TRUE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 3, TRUE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 2, TRUE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 1, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 + 0, TRUE, 12 + 0, "f\0o\0o\0b\0a\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 - 1, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 - 2, TRUE, 12 - 2, "f\0o\0o\0b\0\0\0")
+    TESTCASE (L"foobar", +2, TRUE, 12 - 3, TRUE, 12 - 3, "f\0o\0o\0b\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 4, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 3, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 2, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 1, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 + 0, TRUE, 12 + 0, "f\0o\0o\0b\0a\0\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 - 1, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 - 2, TRUE, 12 - 2, "f\0o\0o\0b\0\0\0")
+    TESTCASE (L"foobar", +1, TRUE, 12 - 3, TRUE, 12 - 3, "f\0o\0o\0b\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 4, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 3, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 2, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 1, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 + 0, TRUE, 12 + 0, "f\0o\0o\0b\0a\0\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 - 1, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 - 2, TRUE, 12 - 2, "f\0o\0o\0b\0\0\0")
+    TESTCASE (L"foobar", +0, TRUE, 12 - 3, TRUE, 12 - 3, "f\0o\0o\0b\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 3, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 2, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 1, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 + 0, TRUE, 12 + 0, "f\0o\0o\0b\0a\0\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 1, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 2, TRUE, 12 - 2, "f\0o\0o\0b\0\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 3, TRUE, 12 - 3, "f\0o\0o\0b\0\0")
+    TESTCASE (L"foobar", -1, TRUE, 12 - 4, TRUE, 12 - 4, "f\0o\0o\0\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 + 2, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 + 1, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 + 0, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 1, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 2, TRUE, 12 - 2, "f\0o\0o\0b\0\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 3, TRUE, 12 - 3, "f\0o\0o\0b\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 4, TRUE, 12 - 4, "f\0o\0o\0\0\0")
+    TESTCASE (L"foobar", -2, TRUE, 12 - 5, TRUE, 12 - 5, "f\0o\0o\0\0")
+    TESTCASE (L"foobar", +2, FALSE, 0, FALSE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +1, FALSE, 0, FALSE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +0, FALSE, 0, FALSE, 12 + 0, "f\0o\0o\0b\0a\0r\0")
+    TESTCASE (L"foobar", -1, FALSE, 0, FALSE, 12 - 1, "f\0o\0o\0b\0a\0r")
+    TESTCASE (L"foobar", -2, FALSE, 0, FALSE, 12 - 2, "f\0o\0o\0b\0a\0")
+    TESTCASE (L"foobar", +2, FALSE, 0, TRUE, 12 + 2, "f\0o\0o\0b\0a\0r\0\0\0")
+    TESTCASE (L"foobar", +1, FALSE, 0, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", +0, FALSE, 0, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", -1, FALSE, 0, TRUE, 12 + 1, "f\0o\0o\0b\0a\0r\0\0")
+    TESTCASE (L"foobar", -2, FALSE, 0, TRUE, 12 - 1, "f\0o\0o\0b\0a\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 4, FALSE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 3, FALSE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 2, FALSE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 1, FALSE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 0, FALSE, 2 + 0, "x\0")
+    TESTCASE (L"x", +2, TRUE, 2 - 1, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", +2, TRUE, 2 - 2, FALSE, 2 - 2, "")
+    TESTCASE (L"x", +1, TRUE, 2 + 3, FALSE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 + 2, FALSE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 + 1, FALSE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 + 0, FALSE, 2 + 0, "x\0")
+    TESTCASE (L"x", +1, TRUE, 2 - 1, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", +1, TRUE, 2 - 2, FALSE, 2 - 2, "")
+    TESTCASE (L"x", +0, TRUE, 2 + 2, FALSE, 2 + 0, "x\0")
+    TESTCASE (L"x", +0, TRUE, 2 + 1, FALSE, 2 + 0, "x\0")
+    TESTCASE (L"x", +0, TRUE, 2 + 0, FALSE, 2 + 0, "x\0")
+    TESTCASE (L"x", +0, TRUE, 2 - 1, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", +0, TRUE, 2 - 2, FALSE, 2 - 2, "")
+    TESTCASE (L"x", -1, TRUE, 2 + 1, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", -1, TRUE, 2 + 0, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", -1, TRUE, 2 - 1, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", -1, TRUE, 2 - 2, FALSE, 2 - 2, "")
+    TESTCASE (L"x", -2, TRUE, 2 + 0, FALSE, 2 - 2, "")
+    TESTCASE (L"x", -2, TRUE, 2 - 1, FALSE, 2 - 2, "")
+    TESTCASE (L"x", -2, TRUE, 2 - 2, FALSE, 2 - 2, "")
+    TESTCASE (L"x", +2, TRUE, 2 + 4, TRUE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 3, TRUE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 2, TRUE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 1, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 + 0, TRUE, 2 + 0, "\0\0")
+    TESTCASE (L"x", +2, TRUE, 2 - 1, TRUE, 2 - 1, "\0")
+    TESTCASE (L"x", +2, TRUE, 2 - 2, TRUE, 2 - 2, "")
+    TESTCASE (L"x", +1, TRUE, 2 + 3, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 + 2, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 + 1, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 + 0, TRUE, 2 + 0, "\0\0")
+    TESTCASE (L"x", +1, TRUE, 2 - 1, TRUE, 2 - 1, "\0")
+    TESTCASE (L"x", +1, TRUE, 2 - 2, TRUE, 2 - 2, "")
+    TESTCASE (L"x", +0, TRUE, 2 + 2, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +0, TRUE, 2 + 1, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +0, TRUE, 2 + 0, TRUE, 2 + 0, "\0\0")
+    TESTCASE (L"x", +0, TRUE, 2 - 1, TRUE, 2 - 1, "\0")
+    TESTCASE (L"x", +0, TRUE, 2 - 2, TRUE, 2 - 2, "")
+    TESTCASE (L"x", -1, TRUE, 2 + 1, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", -1, TRUE, 2 + 0, TRUE, 2 + 0, "\0\0")
+    TESTCASE (L"x", -1, TRUE, 2 - 1, TRUE, 2 - 1, "\0")
+    TESTCASE (L"x", -1, TRUE, 2 - 2, TRUE, 2 - 2, "")
+    TESTCASE (L"x", -2, TRUE, 2 + 0, TRUE, 2 - 2, "")
+    TESTCASE (L"x", -2, TRUE, 2 - 1, TRUE, 2 - 2, "")
+    TESTCASE (L"x", -2, TRUE, 2 - 2, TRUE, 2 - 2, "")
+    TESTCASE (L"x", +2, FALSE, 0, FALSE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +1, FALSE, 0, FALSE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +0, FALSE, 0, FALSE, 2 + 0, "x\0")
+    TESTCASE (L"x", -1, FALSE, 0, FALSE, 2 - 1, "x")
+    TESTCASE (L"x", -2, FALSE, 0, FALSE, 2 - 2, "")
+    TESTCASE (L"x", +2, FALSE, 0, TRUE, 2 + 2, "x\0\0\0")
+    TESTCASE (L"x", +1, FALSE, 0, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", +0, FALSE, 0, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", -1, FALSE, 0, TRUE, 2 + 1, "x\0\0")
+    TESTCASE (L"x", -2, FALSE, 0, TRUE, 2 - 2, "")
+    { 0, },
+  };
+#undef TESTCASE
+
+  for (i = 0; testcases[i].data != NULL; i++)
+    {
+      gunichar2 *buf;
+      int result;
+      gchar *buf_hex, *expected_hex;
+      if (testcases[i].use_buf)
+        buf = g_malloc0 (testcases[i].buf_size + 1); /* +1 to ensure it succeeds with buf_size == 0 */
+      else
+        buf = NULL;
+      result = _g_win32_copy_and_maybe_terminate (testcases[i].data,
+                                                  testcases[i].data_size,
+                                                  testcases[i].use_buf ? buf : NULL,
+                                                  testcases[i].buf_size,
+                                                  testcases[i].use_buf ? NULL : &buf,
+                                                  testcases[i].terminate);
+      if (testcases[i].reported_len != result)
+        g_error ("Test %" G_GSIZE_FORMAT " failed, result %d != %d", i, result, testcases[i].reported_len);
+      if (buf == NULL && testcases[i].buf_size != 0)
+        g_error ("Test %" G_GSIZE_FORMAT " failed, buf == NULL", i);
+      g_assert_cmpint (testcases[i].reported_len, ==, result);
+      if ((testcases[i].use_buf && testcases[i].buf_size != 0) ||
+          (!testcases[i].use_buf && testcases[i].reported_len != 0))
+        {
+          g_assert_nonnull (buf);
+          buf_hex = to_hex ((const guchar *) buf, result);
+          expected_hex = to_hex (testcases[i].returned_string, testcases[i].reported_len);
+          if (memcmp (buf, testcases[i].returned_string, result) != 0)
+            g_error ("Test %" G_GSIZE_FORMAT " failed:\n%s !=\n%s", i, buf_hex, expected_hex);
+          g_assert_memcmp (buf, ==, testcases[i].returned_string, testcases[i].reported_len, buf_hex, expected_hex, testcases[i].line);
+          g_free (buf_hex);
+          g_free (expected_hex);
+        }
+      g_free (buf);
+    }
+}
+
+#endif
 
 int
 main (int   argc,
@@ -912,11 +1525,18 @@ main (int   argc,
   g_setenv ("LC_ALL", "C", TRUE);
   g_test_init (&argc, &argv, NULL);
 
+  g_test_bug_base ("https://gitlab.gnome.org/GNOME/glib/merge_requests/");
+
+#ifdef G_OS_WIN32
+  g_test_add_func ("/fileutils/stdio-win32-pathstrip", test_win32_pathstrip);
+  g_test_add_func ("/fileutils/stdio-win32-zero-terminate-symlink", test_win32_zero_terminate_symlink);
+#endif
   g_test_add_func ("/fileutils/build-path", test_build_path);
   g_test_add_func ("/fileutils/build-pathv", test_build_pathv);
   g_test_add_func ("/fileutils/build-filename", test_build_filename);
   g_test_add_func ("/fileutils/build-filenamev", test_build_filenamev);
   g_test_add_func ("/fileutils/mkdir-with-parents", test_mkdir_with_parents);
+  g_test_add_func ("/fileutils/mkdir-with-parents-permission", test_mkdir_with_parents_permission);
   g_test_add_func ("/fileutils/format-size-for-display", test_format_size_for_display);
   g_test_add_func ("/fileutils/errors", test_file_errors);
   g_test_add_func ("/fileutils/basename", test_basename);
@@ -927,6 +1547,7 @@ main (int   argc,
   g_test_add_func ("/fileutils/set-contents", test_set_contents);
   g_test_add_func ("/fileutils/read-link", test_read_link);
   g_test_add_func ("/fileutils/stdio-wrappers", test_stdio_wrappers);
+  g_test_add_func ("/fileutils/fopen-modes", test_fopen_modes);
 
   return g_test_run ();
 }

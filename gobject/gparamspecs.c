@@ -912,8 +912,11 @@ param_value_array_validate (GParamSpec *pspec,
 		  g_param_value_set_default (element_spec, element);
 		  changed++;
 		}
-	      /* validate array value against element_spec */
-	      changed += g_param_value_validate (element_spec, element);
+              else
+                {
+	          /* validate array value against element_spec */
+	          changed += g_param_value_validate (element_spec, element);
+                }
 	    }
 	}
     }
@@ -1147,6 +1150,20 @@ param_variant_validate (GParamSpec *pspec,
   return FALSE;
 }
 
+/* g_variant_compare() can only be used with scalar types. */
+static gboolean
+variant_is_incomparable (GVariant *v)
+{
+  GVariantClass v_class = g_variant_classify (v);
+
+  return (v_class == G_VARIANT_CLASS_HANDLE ||
+          v_class == G_VARIANT_CLASS_VARIANT ||
+          v_class ==  G_VARIANT_CLASS_MAYBE||
+          v_class == G_VARIANT_CLASS_ARRAY ||
+          v_class ==  G_VARIANT_CLASS_TUPLE ||
+          v_class == G_VARIANT_CLASS_DICT_ENTRY);
+}
+
 static gint
 param_variant_values_cmp (GParamSpec   *pspec,
                           const GValue *value1,
@@ -1155,7 +1172,19 @@ param_variant_values_cmp (GParamSpec   *pspec,
   GVariant *v1 = value1->data[0].v_pointer;
   GVariant *v2 = value2->data[0].v_pointer;
 
-  return v1 < v2 ? -1 : v2 > v1;
+  if (v1 == NULL && v2 == NULL)
+    return 0;
+  else if (v1 == NULL && v2 != NULL)
+    return -1;
+  else if (v1 != NULL && v2 == NULL)
+    return 1;
+
+  if (!g_variant_type_equal (g_variant_get_type (v1), g_variant_get_type (v2)) ||
+      variant_is_incomparable (v1) ||
+      variant_is_incomparable (v2))
+    return g_variant_equal (v1, v2) ? 0 : (v1 < v2 ? -1 : 1);
+
+  return g_variant_compare (v1, v2);
 }
 
 /* --- type initialization --- */
@@ -1165,11 +1194,16 @@ void
 _g_param_spec_types_init (void)	
 {
   const guint n_types = 23;
-  GType type, *spec_types, *spec_types_bound;
+  GType type, *spec_types;
+#ifndef G_DISABLE_ASSERT
+  GType *spec_types_bound;
+#endif
 
   g_param_spec_types = g_new0 (GType, n_types);
   spec_types = g_param_spec_types;
+#ifndef G_DISABLE_ASSERT
   spec_types_bound = g_param_spec_types + n_types;
+#endif
   
   /* G_TYPE_PARAM_CHAR
    */
@@ -2061,7 +2095,10 @@ g_param_spec_enum (const gchar *name,
 				 blurb,
 				 flags);
   if (espec == NULL)
-    return NULL;
+    {
+      g_type_class_unref (enum_class);
+      return NULL;
+    }
   
   espec->enum_class = enum_class;
   espec->default_value = default_value;
@@ -2109,7 +2146,10 @@ g_param_spec_flags (const gchar *name,
 				 blurb,
 				 flags);
   if (fspec == NULL)
-    return NULL;
+    {
+      g_type_class_unref (flags_class);
+      return NULL;
+    }
   
   fspec->flags_class = flags_class;
   fspec->default_value = default_value;

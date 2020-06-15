@@ -21,7 +21,7 @@
 
 #include "config.h"
 
-#include "../glib/valgrind.h"
+#include "../glib/gvalgrind.h"
 #include <string.h>
 
 #include "gtype.h"
@@ -76,7 +76,7 @@
  *
  * Type instance and class structs are limited to a total of 64 KiB,
  * including all parent types. Similarly, type instances' private data
- * (as created by g_type_class_add_private()) are limited to a total of
+ * (as created by G_ADD_PRIVATE()) are limited to a total of
  * 64 KiB. If a type instance needs a large static buffer, allocate it
  * separately (typically by using #GArray or #GPtrArray) and put a pointer
  * to the buffer in the structure.
@@ -380,7 +380,10 @@ static GQuark          static_quark_type_flags = 0;
 static GQuark          static_quark_iface_holder = 0;
 static GQuark          static_quark_dependants_array = 0;
 static guint           type_registration_serial = 0;
+
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 GTypeDebugFlags	       _g_type_debug_flags = 0;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 /* --- type nodes --- */
 static GHashTable       *static_type_nodes_ht = NULL;
@@ -1132,11 +1135,7 @@ type_data_make_W (TypeNode              *node,
       data->instance.class_private_size = 0;
       if (pnode)
         data->instance.class_private_size = pnode->data->instance.class_private_size;
-#ifdef	DISABLE_MEM_POOLS
-      data->instance.n_preallocs = 0;
-#else	/* !DISABLE_MEM_POOLS */
       data->instance.n_preallocs = MIN (info->n_preallocs, 1024);
-#endif	/* !DISABLE_MEM_POOLS */
       data->instance.instance_init = info->instance_init;
     }
   else if (node->is_classed) /* only classed */
@@ -1831,6 +1830,7 @@ g_type_create_instance (GType type)
   private_size = node->data->instance.private_size;
   ivar_size = node->data->instance.instance_size;
 
+#ifdef ENABLE_VALGRIND
   if (private_size && RUNNING_ON_VALGRIND)
     {
       private_size += ALIGN_STRUCT (1);
@@ -1845,6 +1845,7 @@ g_type_create_instance (GType type)
       VALGRIND_MALLOCLIKE_BLOCK (allocated + ALIGN_STRUCT (1), private_size - ALIGN_STRUCT (1), 0, TRUE);
     }
   else
+#endif
     allocated = g_slice_alloc0 (private_size + ivar_size);
 
   instance = (GTypeInstance *) (allocated + private_size);
@@ -1923,6 +1924,7 @@ g_type_free_instance (GTypeInstance *instance)
   memset (allocated, 0xaa, ivar_size + private_size);
 #endif
 
+#ifdef ENABLE_VALGRIND
   /* See comment in g_type_create_instance() about what's going on here.
    * We're basically unwinding what we put into motion there.
    */
@@ -1940,6 +1942,7 @@ g_type_free_instance (GTypeInstance *instance)
       VALGRIND_FREELIKE_BLOCK (instance, 0);
     }
   else
+#endif
     g_slice_free1 (private_size + ivar_size, allocated);
 
 #ifdef	G_ENABLE_DEBUG
@@ -2822,7 +2825,7 @@ g_type_register_dynamic (GType        parent_type,
  * @info: #GInterfaceInfo structure for this
  *        (@instance_type, @interface_type) combination
  *
- * Adds the static @interface_type to @instantiable_type.
+ * Adds @interface_type to the static @instantiable_type.
  * The information contained in the #GInterfaceInfo structure
  * pointed to by @info is used to manage the relationship.
  */
@@ -2858,7 +2861,7 @@ g_type_add_interface_static (GType                 instance_type,
  * @interface_type: #GType value of an interface type
  * @plugin: #GTypePlugin structure to retrieve the #GInterfaceInfo from
  *
- * Adds the dynamic @interface_type to @instantiable_type. The information
+ * Adds @interface_type to the dynamic @instantiable_type. The information
  * contained in the #GTypePlugin structure pointed to by @plugin
  * is used to manage the relationship.
  */
@@ -3267,7 +3270,7 @@ g_type_default_interface_peek (GType g_type)
 /**
  * g_type_default_interface_unref:
  * @g_iface: (type GObject.TypeInterface): the default vtable
- *     structure for a interface, as returned by g_type_default_interface_ref()
+ *     structure for an interface, as returned by g_type_default_interface_ref()
  *
  * Decrements the reference count for the type corresponding to the
  * interface default vtable @g_iface. If the type is dynamic, then
@@ -3337,9 +3340,9 @@ g_type_qname (GType type)
 
 /**
  * g_type_from_name:
- * @name: type name to lookup
+ * @name: type name to look up
  *
- * Lookup the type ID from a given type name, returning 0 if no type
+ * Look up the type ID from a given type name, returning 0 if no type
  * has been registered under this name (this is the preferred method
  * to find out by name whether a specific type has been registered
  * yet).
@@ -4193,14 +4196,14 @@ g_type_check_is_value_type (GType type)
 }
 
 gboolean
-g_type_check_value (GValue *value)
+g_type_check_value (const GValue *value)
 {
   return value && type_check_is_value_type_U (value->g_type);
 }
 
 gboolean
-g_type_check_value_holds (GValue *value,
-			  GType   type)
+g_type_check_value_holds (const GValue *value,
+			  GType         type)
 {
   return value && type_check_is_value_type_U (value->g_type) && g_type_is_a (value->g_type, type);
 }
@@ -4332,6 +4335,7 @@ _g_type_boxed_init (GType          type,
  *
  * Deprecated: 2.36: the type system is now initialised automatically
  */
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
 void
 g_type_init_with_debug_flags (GTypeDebugFlags debug_flags)
 {
@@ -4340,6 +4344,7 @@ g_type_init_with_debug_flags (GTypeDebugFlags debug_flags)
   if (debug_flags)
     g_message ("g_type_init_with_debug_flags() is no longer supported.  Use the GOBJECT_DEBUG environment variable.");
 }
+G_GNUC_END_IGNORE_DEPRECATIONS
 
 /**
  * g_type_init:
@@ -4362,7 +4367,7 @@ gobject_init (void)
   const gchar *env_string;
   GTypeInfo info;
   TypeNode *node;
-  GType type;
+  GType type G_GNUC_UNUSED  /* when compiling with G_DISABLE_ASSERT */;
 
   /* Ensure GLib is initialized first, see
    * https://bugzilla.gnome.org/show_bug.cgi?id=756139
@@ -4451,7 +4456,7 @@ gobject_init (void)
   _g_signal_init ();
 }
 
-/* #if defined (G_OS_WIN32)
+#if defined (G_OS_WIN32)
 
 BOOL WINAPI DllMain (HINSTANCE hinstDLL,
                      DWORD     fdwReason,
@@ -4469,28 +4474,28 @@ DllMain (HINSTANCE hinstDLL,
       break;
 
     default:
-      do nothing
+      /* do nothing */
       ;
     }
 
   return TRUE;
 }
 
-#elif defined (G_HAS_CONSTRUCTORS) */
+#elif defined (G_HAS_CONSTRUCTORS)
 #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(gobject_init_ctor)
 #endif
-/* G_DEFINE_CONSTRUCTOR(gobject_init_ctor) */
+G_DEFINE_CONSTRUCTOR(gobject_init_ctor)
 
-/* static */ void
+static void
 gobject_init_ctor (void)
 {
   gobject_init ();
 }
 
-/* #else
+#else
 # error Your platform/compiler is missing constructor support
-#endif */
+#endif
 
 /**
  * g_type_class_add_private:
@@ -4562,6 +4567,8 @@ gobject_init_ctor (void)
  * ]|
  *
  * Since: 2.4
+ * Deprecated: 2.58: Use the G_ADD_PRIVATE() macro with the `G_DEFINE_*`
+ *   family of macros to add instance private data to a type
  */
 void
 g_type_class_add_private (gpointer g_class,
@@ -4775,7 +4782,7 @@ g_type_class_get_instance_private_offset (gpointer g_class)
 
 /**
  * g_type_add_class_private:
- * @class_type: GType of an classed type
+ * @class_type: GType of a classed type
  * @private_size: size of private structure
  *
  * Registers a private class structure for a classed type;

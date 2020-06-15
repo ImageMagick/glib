@@ -41,11 +41,12 @@
 
 #include "gthread.h"
 
-#include "gthreadprivate.h"
-#include "gslice.h"
-#include "gmessages.h"
-#include "gstrfuncs.h"
 #include "gmain.h"
+#include "gmessages.h"
+#include "gslice.h"
+#include "gstrfuncs.h"
+#include "gtestutils.h"
+#include "gthreadprivate.h"
 #include "gutils.h"
 
 #include <stdlib.h>
@@ -57,11 +58,18 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#ifdef HAVE_PTHREAD_SET_NAME_NP
+#include <pthread_np.h>
+#endif
 #ifdef HAVE_SCHED_H
 #include <sched.h>
 #endif
 #ifdef G_OS_WIN32
 #include <windows.h>
+#endif
+
+#if defined(HAVE_SYS_SCHED_GETATTR)
+#include <sys/syscall.h>
 #endif
 
 /* clang defines __ATOMIC_SEQ_CST but doesn't support the GCC extension */
@@ -105,7 +113,7 @@ g_mutex_impl_new (void)
   if G_UNLIKELY ((status = pthread_mutex_init (mutex, pattr)) != 0)
     g_thread_abort (status, "pthread_mutex_init");
 
-#ifdef PTHREAD_ADAPTIVE_MUTEX_NP
+#ifdef PTHREAD_ADAPTIVE_MUTEX_INITIALIZER_NP
   pthread_mutexattr_destroy (&attr);
 #endif
 
@@ -246,7 +254,7 @@ g_mutex_unlock (GMutex *mutex)
  * non-recursive.  As such, calling g_mutex_lock() on a #GMutex that has
  * already been locked by the same thread results in undefined behaviour
  * (including but not limited to deadlocks or arbitrary return values).
-
+ *
  * Returns: %TRUE if @mutex could be locked
  */
 gboolean
@@ -538,7 +546,10 @@ g_rw_lock_clear (GRWLock *rw_lock)
 void
 g_rw_lock_writer_lock (GRWLock *rw_lock)
 {
-  pthread_rwlock_wrlock (g_rw_lock_get_impl (rw_lock));
+  int retval = pthread_rwlock_wrlock (g_rw_lock_get_impl (rw_lock));
+
+  if (retval != 0)
+    g_critical ("Failed to get RW lock %p: %s", rw_lock, g_strerror (retval));
 }
 
 /**
@@ -584,18 +595,24 @@ g_rw_lock_writer_unlock (GRWLock *rw_lock)
  * @rw_lock: a #GRWLock
  *
  * Obtain a read lock on @rw_lock. If another thread currently holds
- * the write lock on @rw_lock or blocks waiting for it, the current
- * thread will block. Read locks can be taken recursively.
+ * the write lock on @rw_lock, the current thread will block. If another thread
+ * does not hold the write lock, but is waiting for it, it is implementation
+ * defined whether the reader or writer will block. Read locks can be taken
+ * recursively.
  *
  * It is implementation-defined how many threads are allowed to
- * hold read locks on the same lock simultaneously.
+ * hold read locks on the same lock simultaneously. If the limit is hit,
+ * or if a deadlock is detected, a critical warning will be emitted.
  *
  * Since: 2.32
  */
 void
 g_rw_lock_reader_lock (GRWLock *rw_lock)
 {
-  pthread_rwlock_rdlock (g_rw_lock_get_impl (rw_lock));
+  int retval = pthread_rwlock_rdlock (g_rw_lock_get_impl (rw_lock));
+
+  if (retval != 0)
+    g_critical ("Failed to get RW lock %p: %s", rw_lock, g_strerror (retval));
 }
 
 /**
@@ -944,7 +961,7 @@ g_cond_wait_until (GCond  *cond,
  * A macro to assist with the static initialisation of a #GPrivate.
  *
  * This macro is useful for the case that a #GDestroyNotify function
- * should be associated the key.  This is needed when the key will be
+ * should be associated with the key.  This is needed when the key will be
  * used to point at memory that should be deallocated when the thread
  * exits.
  *
@@ -1125,6 +1142,11 @@ typedef struct
   pthread_t system_thread;
   gboolean  joined;
   GMutex    lock;
+
+  void *(*proxy) (void *);
+
+  /* Must be statically allocated and valid forever */
+  const GThreadSchedulerSettings *scheduler_settings;
 } GThreadPosix;
 
 void
@@ -1140,16 +1162,123 @@ g_system_thread_free (GRealThread *thread)
   g_slice_free (GThreadPosix, pt);
 }
 
+gboolean
+g_system_thread_get_scheduler_settings (GThreadSchedulerSettings *scheduler_settings)
+{
+  /* FIXME: Implement the same for macOS and the BSDs so it doesn't go through
+   * the fallback code using an additional thread. */
+#if defined(HAVE_SYS_SCHED_GETATTR)
+  pid_t tid;
+  int res;
+  /* FIXME: The struct definition does not seem to be possible to pull in
+   * via any of the normal system headers and it's only declared in the
+   * kernel headers. That's why we hardcode 56 here right now. */
+  guint size = 56; /* Size as of Linux 5.3.9 */
+  guint flags = 0;
+
+  tid = (pid_t) syscall (SYS_gettid);
+
+  scheduler_settings->attr = g_malloc0 (size);
+
+  do
+    {
+      int errsv;
+
+      res = syscall (SYS_sched_getattr, tid, scheduler_settings->attr, size, flags);
+      errsv = errno;
+      if (res == -1)
+        {
+          if (errsv == EAGAIN)
+            {
+              continue;
+            }
+          else if (errsv == E2BIG)
+            {
+              g_assert (size < G_MAXINT);
+              size *= 2;
+              scheduler_settings->attr = g_realloc (scheduler_settings->attr, size);
+              /* Needs to be zero-initialized */
+              memset (scheduler_settings->attr, 0, size);
+            }
+          else
+            {
+              g_debug ("Failed to get thread scheduler attributes: %s", g_strerror (errsv));
+              g_free (scheduler_settings->attr);
+
+              return FALSE;
+            }
+        }
+    }
+  while (res == -1);
+
+  /* Try setting them on the current thread to see if any system policies are
+   * in place that would disallow doing so */
+  res = syscall (SYS_sched_setattr, tid, scheduler_settings->attr, flags);
+  if (res == -1)
+    {
+      int errsv = errno;
+
+      g_debug ("Failed to set thread scheduler attributes: %s", g_strerror (errsv));
+      g_free (scheduler_settings->attr);
+
+      return FALSE;
+    }
+
+  return TRUE;
+#else
+  return FALSE;
+#endif
+}
+
+#if defined(HAVE_SYS_SCHED_GETATTR)
+static void *
+linux_pthread_proxy (void *data)
+{
+  GThreadPosix *thread = data;
+
+  /* Set scheduler settings first if requested */
+  if (thread->scheduler_settings)
+    {
+      pid_t tid = 0;
+      guint flags = 0;
+      int res;
+      int errsv;
+
+      tid = (pid_t) syscall (SYS_gettid);
+      res = syscall (SYS_sched_setattr, tid, thread->scheduler_settings->attr, flags);
+      errsv = errno;
+      if (res == -1)
+        g_critical ("Failed to set scheduler settings: %s", g_strerror (errsv));
+    }
+
+  return thread->proxy (data);
+}
+#endif
+
 GRealThread *
-g_system_thread_new (GThreadFunc   thread_func,
-                     gulong        stack_size,
-                     GError      **error)
+g_system_thread_new (GThreadFunc proxy,
+                     gulong stack_size,
+                     const GThreadSchedulerSettings *scheduler_settings,
+                     const char *name,
+                     GThreadFunc func,
+                     gpointer data,
+                     GError **error)
 {
   GThreadPosix *thread;
+  GRealThread *base_thread;
   pthread_attr_t attr;
   gint ret;
 
   thread = g_slice_new0 (GThreadPosix);
+  base_thread = (GRealThread*)thread;
+  base_thread->ref_count = 2;
+  base_thread->ours = TRUE;
+  base_thread->thread.joinable = TRUE;
+  base_thread->thread.func = func;
+  base_thread->thread.data = data;
+  base_thread->name = g_strdup (name);
+  thread->scheduler_settings = scheduler_settings;
+  thread->proxy = proxy;
 
   posix_check_cmd (pthread_attr_init (&attr));
 
@@ -1159,7 +1288,7 @@ g_system_thread_new (GThreadFunc   thread_func,
 #ifdef _SC_THREAD_STACK_MIN
       long min_stack_size = sysconf (_SC_THREAD_STACK_MIN);
       if (min_stack_size >= 0)
-        stack_size = MAX (min_stack_size, stack_size);
+        stack_size = MAX ((gulong) min_stack_size, stack_size);
 #endif /* _SC_THREAD_STACK_MIN */
       /* No error check here, because some systems can't do it and
        * we simply don't want threads to fail because of that. */
@@ -1167,7 +1296,19 @@ g_system_thread_new (GThreadFunc   thread_func,
     }
 #endif /* HAVE_PTHREAD_ATTR_SETSTACKSIZE */
 
-  ret = pthread_create (&thread->system_thread, &attr, (void* (*)(void*))thread_func, thread);
+#ifdef HAVE_PTHREAD_ATTR_SETINHERITSCHED
+  if (!scheduler_settings)
+    {
+      /* While this is the default, better be explicit about it */
+      pthread_attr_setinheritsched (&attr, PTHREAD_INHERIT_SCHED);
+    }
+#endif /* HAVE_PTHREAD_ATTR_SETINHERITSCHED */
+
+#if defined(HAVE_SYS_SCHED_GETATTR)
+  ret = pthread_create (&thread->system_thread, &attr, linux_pthread_proxy, thread);
+#else
+  ret = pthread_create (&thread->system_thread, &attr, (void* (*)(void*))proxy, thread);
+#endif
 
   posix_check_cmd (pthread_attr_destroy (&attr));
 
@@ -1225,10 +1366,14 @@ g_system_thread_exit (void)
 void
 g_system_thread_set_name (const gchar *name)
 {
-#if defined(HAVE_PTHREAD_SETNAME_NP_WITH_TID)
-  pthread_setname_np (pthread_self(), name); /* on Linux and Solaris */
-#elif defined(HAVE_PTHREAD_SETNAME_NP_WITHOUT_TID)
+#if defined(HAVE_PTHREAD_SETNAME_NP_WITHOUT_TID)
   pthread_setname_np (name); /* on OS X and iOS */
+#elif defined(HAVE_PTHREAD_SETNAME_NP_WITH_TID)
+  pthread_setname_np (pthread_self (), name); /* on Linux and Solaris */
+#elif defined(HAVE_PTHREAD_SETNAME_NP_WITH_TID_AND_ARG)
+  pthread_setname_np (pthread_self (), "%s", (gchar *) name); /* on NetBSD */
+#elif defined(HAVE_PTHREAD_SET_NAME_NP)
+  pthread_set_name_np (pthread_self (), name); /* on FreeBSD, DragonFlyBSD, OpenBSD */
 #endif
 }
 
@@ -1389,7 +1534,7 @@ void
 g_cond_wait (GCond  *cond,
              GMutex *mutex)
 {
-  guint sampled = g_atomic_int_get (&cond->i[0]);
+  guint sampled = (guint) g_atomic_int_get (&cond->i[0]);
 
   g_mutex_unlock (mutex);
   syscall (__NR_futex, &cond->i[0], (gsize) FUTEX_WAIT_PRIVATE, (gsize) sampled, NULL);
@@ -1421,6 +1566,7 @@ g_cond_wait_until (GCond  *cond,
   struct timespec span;
   guint sampled;
   int res;
+  gboolean success;
 
   if (end_time < 0)
     return FALSE;
@@ -1440,9 +1586,10 @@ g_cond_wait_until (GCond  *cond,
   sampled = cond->i[0];
   g_mutex_unlock (mutex);
   res = syscall (__NR_futex, &cond->i[0], (gsize) FUTEX_WAIT_PRIVATE, (gsize) sampled, &span);
+  success = (res < 0 && errno == ETIMEDOUT) ? FALSE : TRUE;
   g_mutex_lock (mutex);
 
-  return (res < 0 && errno == ETIMEDOUT) ? FALSE : TRUE;
+  return success;
 }
 
 #endif

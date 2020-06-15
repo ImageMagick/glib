@@ -114,6 +114,13 @@
  * function (the file being opened, or whatever - though in the
  * g_file_get_contents() case, the @message already contains a filename).
  *
+ * Note, however, that many error messages are too technical to display to the
+ * user in an application, so prefer to use g_error_matches() to categorize errors
+ * from called functions, and build an appropriate error message for the context
+ * within your application. Error messages from a #GError are more appropriate
+ * to be printed in system logs or on the command line. They are typically
+ * translated.
+ *
  * When implementing a function that can report errors, the basic
  * tool is g_set_error(). Typically, if a fatal error occurs you
  * want to g_set_error(), then return immediately. g_set_error()
@@ -125,6 +132,8 @@
  * {
  *   gint fd;
  *   int saved_errno;
+ *
+ *   g_return_val_if_fail (error == NULL || *error == NULL, -1);
  *
  *   fd = open ("file.txt", O_RDONLY);
  *   saved_errno = errno;
@@ -255,11 +264,7 @@
  *   |[<!-- language="C" -->
  *   #define G_SPAWN_ERROR g_spawn_error_quark ()
  *
- *   GQuark
- *   g_spawn_error_quark (void)
- *   {
- *       return g_quark_from_static_string ("g-spawn-error-quark");
- *   }
+ *   G_DEFINE_QUARK (g-spawn-error-quark, g_spawn_error)
  *   ]|
  *
  * - The quark function for the error domain is called
@@ -705,8 +710,7 @@ g_error_add_prefix (gchar       **string,
  * nothing.
  *
  * If *@err is %NULL (ie: an error variable is present but there is no
- * error condition) then also do nothing. Whether or not it makes sense
- * to take advantage of this feature is up to you.
+ * error condition) then also do nothing.
  *
  * Since: 2.16
  */

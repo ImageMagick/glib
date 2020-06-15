@@ -212,7 +212,7 @@ struct _ViewerFile
   GObject parent_instance;
 
   /* Other members, including private data. */
-}
+};
 </programlisting></informalexample>
     </para>
 
@@ -357,7 +357,7 @@ viewer_file_class_init (ViewerFileClass *klass)
                          "Filename",
                          "Name of the file to load and display from.",
                          NULL  /* default value */,
-                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 
   obj_properties[PROP_ZOOM_LEVEL] =
     g_param_spec_uint ("zoom-level",
@@ -366,7 +366,7 @@ viewer_file_class_init (ViewerFileClass *klass)
                        0  /* minimum value */,
                        10 /* maximum value */,
                        2  /* default value */,
-                       G_PARAM_READWRITE));
+                       G_PARAM_READWRITE);
 
   g_object_class_install_properties (object_class,
                                      N_PROPERTIES,
@@ -379,7 +379,7 @@ viewer_file_class_init (ViewerFileClass *klass)
     </para>
 
     <para>
-      Some people sometimes need to complete the initialization of a instance
+      Some people sometimes need to complete the initialization of an instance
       of a type only after the properties passed to the constructors have been
       set. This is possible through the use of the <function>constructor()</function>
       class method as described in <xref linkend="gobject-instantiation"/> or,
@@ -860,7 +860,7 @@ b_method_to_call (B *obj, gint some_param)
 
   <para>
     The first step is to get the header right. This interface
-    defines two methods:
+    defines three methods:
 <informalexample><programlisting>
 /*
  * Copyright/Licensing information.
@@ -1069,6 +1069,20 @@ viewer_file_init (ViewerFile *self)
 {
   /* Instance variable initialisation code. */
 }
+</programlisting></informalexample>
+    </para>
+    <para>
+      If the object is not of final type, e.g. was declared using
+      <function><link linkend="G-DECLARE-DERIVABLE-TYPE:CAPS">G_DECLARE_DERIVABLE_TYPE</link></function>
+      then
+      <function><link linkend="G-ADD-PRIVATE:CAPS">G_ADD_PRIVATE</link></function>
+      macro should be added. The private structure should be declared exactly
+      as for a normal derivable object, see <xref linkend="howto-gobject-code"/>.
+<informalexample><programlisting>
+G_DEFINE_TYPE_WITH_CODE (ViewerFile, viewer_file, G_TYPE_OBJECT,
+                         G_ADD_PRIVATE (ViewerFile)
+                         G_IMPLEMENT_INTERFACE (VIEWER_TYPE_EDITABLE,
+                                                viewer_file_editable_interface_init))
 </programlisting></informalexample>
     </para>
   </sect1>
@@ -1367,7 +1381,7 @@ viewer_audio_file_init (ViewerAudioFile *self)
 
     <para>
       To call the base class implementation of an interface
-      method from an derived class where than interface method has been
+      method from a derived class where than interface method has been
       overridden, stash away the pointer returned from
       <function><link linkend="g-type-interface-peek-parent">g_type_interface_peek_parent</link></function>
       in a global variable.

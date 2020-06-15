@@ -36,7 +36,7 @@
  * fixed-size.
  *
  * #GSeekable on fixed-sized streams is approximately the same as POSIX
- * lseek() on a block device (for example: attmepting to seek past the
+ * lseek() on a block device (for example: attempting to seek past the
  * end of the device is an error).  Fixed streams typically cannot be
  * truncated.
  *
@@ -141,7 +141,8 @@ g_seekable_seek (GSeekable     *seekable,
  * g_seekable_can_truncate:
  * @seekable: a #GSeekable.
  * 
- * Tests if the stream can be truncated.
+ * Tests if the length of the stream can be adjusted with
+ * g_seekable_truncate().
  * 
  * Returns: %TRUE if the stream can be truncated, %FALSE otherwise.
  **/
@@ -158,14 +159,16 @@ g_seekable_can_truncate (GSeekable *seekable)
 }
 
 /**
- * g_seekable_truncate:
+ * g_seekable_truncate: (virtual truncate_fn)
  * @seekable: a #GSeekable.
- * @offset: a #goffset.
+ * @offset: new length for @seekable, in bytes.
  * @cancellable: (nullable): optional #GCancellable object, %NULL to ignore. 
  * @error: a #GError location to store the error occurring, or %NULL to 
  * ignore.
  * 
- * Truncates a stream with a given #offset. 
+ * Sets the length of the stream to @offset. If the stream was previously
+ * larger than @offset, the extra data is discarded. If the stream was
+ * previouly shorter than @offset, it is extended with NUL ('\0') bytes.
  * 
  * If @cancellable is not %NULL, then the operation can be cancelled by
  * triggering the cancellable object from another thread. If the operation
@@ -173,7 +176,6 @@ g_seekable_can_truncate (GSeekable *seekable)
  * operation was partially finished when the operation was cancelled the
  * partial result will be returned, without an error.
  *
- * Virtual: truncate_fn
  * Returns: %TRUE if successful. If an error
  *     has occurred, this function will return %FALSE and set @error
  *     appropriately if present. 

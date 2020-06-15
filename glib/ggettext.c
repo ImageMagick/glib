@@ -40,7 +40,7 @@
 
 #include <string.h>
 #include <locale.h>
-/* #include <libintl.h> */
+#include <libintl.h>
 
 #ifdef G_OS_WIN32
 
@@ -498,7 +498,7 @@ g_dngettext (const gchar *domain,
  *   // Rest of your application.
  * }
  * ]|
- * where `DATADIR` is as typically provided by automake.
+ * where `DATADIR` is as typically provided by automake or Meson.
  *
  * For a library, you only have to call bindtextdomain() and
  * bind_textdomain_codeset() in your initialization function. If your library

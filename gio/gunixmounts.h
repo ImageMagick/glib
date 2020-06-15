@@ -79,8 +79,12 @@ GLIB_AVAILABLE_IN_ALL
 const char *   g_unix_mount_get_mount_path          (GUnixMountEntry    *mount_entry);
 GLIB_AVAILABLE_IN_ALL
 const char *   g_unix_mount_get_device_path         (GUnixMountEntry    *mount_entry);
+GLIB_AVAILABLE_IN_2_60
+const char *   g_unix_mount_get_root_path           (GUnixMountEntry    *mount_entry);
 GLIB_AVAILABLE_IN_ALL
 const char *   g_unix_mount_get_fs_type             (GUnixMountEntry    *mount_entry);
+GLIB_AVAILABLE_IN_2_58
+const char *   g_unix_mount_get_options             (GUnixMountEntry    *mount_entry);
 GLIB_AVAILABLE_IN_ALL
 gboolean       g_unix_mount_is_readonly             (GUnixMountEntry    *mount_entry);
 GLIB_AVAILABLE_IN_ALL
@@ -96,6 +100,8 @@ GIcon *        g_unix_mount_guess_icon              (GUnixMountEntry    *mount_e
 GLIB_AVAILABLE_IN_ALL
 GIcon *        g_unix_mount_guess_symbolic_icon     (GUnixMountEntry    *mount_entry);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GUnixMountEntry, g_unix_mount_free)
+G_DEFINE_AUTOPTR_CLEANUP_FUNC(GUnixMountPoint, g_unix_mount_point_free)
 
 GLIB_AVAILABLE_IN_ALL
 gint           g_unix_mount_point_compare           (GUnixMountPoint    *mount1,
@@ -151,6 +157,10 @@ void               g_unix_mount_monitor_set_rate_limit (GUnixMountMonitor *mount
 
 GLIB_AVAILABLE_IN_ALL
 gboolean g_unix_is_mount_path_system_internal (const char *mount_path);
+GLIB_AVAILABLE_IN_2_56
+gboolean g_unix_is_system_fs_type             (const char *fs_type);
+GLIB_AVAILABLE_IN_2_56
+gboolean g_unix_is_system_device_path         (const char *device_path);
 
 G_END_DECLS
 

@@ -27,6 +27,7 @@
 #include "gdbusprivate.h"
 #include "gdbusmethodinvocation.h"
 #include "gdbusconnection.h"
+#include "gmarshal-internal.h"
 #include "gtask.h"
 #include "gioerror.h"
 
@@ -97,7 +98,7 @@ g_dbus_interface_skeleton_finalize (GObject *object)
 {
   GDBusInterfaceSkeleton *interface = G_DBUS_INTERFACE_SKELETON (object);
 
-  /* Hold the lock just incase any code we call verifies that the lock is held */
+  /* Hold the lock just in case any code we call verifies that the lock is held */
   g_mutex_lock (&interface->priv->lock);
 
   /* unexport from all connections if we're exported anywhere */
@@ -248,10 +249,13 @@ g_dbus_interface_skeleton_class_init (GDBusInterfaceSkeletonClass *klass)
                   G_STRUCT_OFFSET (GDBusInterfaceSkeletonClass, g_authorize_method),
                   _g_signal_accumulator_false_handled,
                   NULL,
-                  NULL,
+                  _g_cclosure_marshal_BOOLEAN__OBJECT,
                   G_TYPE_BOOLEAN,
                   1,
                   G_TYPE_DBUS_METHOD_INVOCATION);
+  g_signal_set_va_marshaller (signals[G_AUTHORIZE_METHOD_SIGNAL],
+                              G_TYPE_FROM_CLASS (klass),
+                              _g_cclosure_marshal_BOOLEAN__OBJECTv);
 }
 
 static void
@@ -381,7 +385,7 @@ g_dbus_interface_skeleton_get_properties (GDBusInterfaceSkeleton *interface_)
  *
  * For example, an exported D-Bus interface may queue up property
  * changes and emit the
- * `org.freedesktop.DBus.Properties::PropertiesChanged`
+ * `org.freedesktop.DBus.Properties.PropertiesChanged`
  * signal later (e.g. in an idle handler). This technique is useful
  * for collapsing multiple property changes into one.
  *

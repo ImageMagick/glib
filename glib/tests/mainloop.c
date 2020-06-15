@@ -25,25 +25,29 @@
 #include <stdio.h>
 #include <string.h>
 
-static gboolean cb (gpointer data)
+static gboolean
+cb (gpointer data)
 {
   return FALSE;
 }
 
-static gboolean prepare (GSource *source, gint *time)
+static gboolean
+prepare (GSource *source, gint *time)
 {
   return FALSE;
 }
-static gboolean check (GSource *source)
+static gboolean
+check (GSource *source)
 {
   return FALSE;
 }
-static gboolean dispatch (GSource *source, GSourceFunc cb, gpointer date)
+static gboolean
+dispatch (GSource *source, GSourceFunc cb, gpointer date)
 {
   return FALSE;
 }
 
-GSourceFuncs funcs = {
+static GSourceFuncs funcs = {
   prepare,
   check,
   dispatch,
@@ -60,35 +64,35 @@ test_maincontext_basic (void)
 
   ctx = g_main_context_new ();
 
-  g_assert (!g_main_context_pending (ctx));
-  g_assert (!g_main_context_iteration (ctx, FALSE));
+  g_assert_false (g_main_context_pending (ctx));
+  g_assert_false (g_main_context_iteration (ctx, FALSE));
 
   source = g_source_new (&funcs, sizeof (GSource));
   g_assert_cmpint (g_source_get_priority (source), ==, G_PRIORITY_DEFAULT);
-  g_assert (!g_source_is_destroyed (source));
+  g_assert_false (g_source_is_destroyed (source));
 
-  g_assert (!g_source_get_can_recurse (source));
-  g_assert (g_source_get_name (source) == NULL);
+  g_assert_false (g_source_get_can_recurse (source));
+  g_assert_null (g_source_get_name (source));
 
   g_source_set_can_recurse (source, TRUE);
   g_source_set_name (source, "d");
 
-  g_assert (g_source_get_can_recurse (source));
+  g_assert_true (g_source_get_can_recurse (source));
   g_assert_cmpstr (g_source_get_name (source), ==, "d");
 
-  g_assert (g_main_context_find_source_by_user_data (ctx, NULL) == NULL);
-  g_assert (g_main_context_find_source_by_funcs_user_data (ctx, &funcs, NULL) == NULL);
+  g_assert_null (g_main_context_find_source_by_user_data (ctx, NULL));
+  g_assert_null (g_main_context_find_source_by_funcs_user_data (ctx, &funcs, NULL));
 
   id = g_source_attach (source, ctx);
   g_assert_cmpint (g_source_get_id (source), ==, id);
-  g_assert (g_main_context_find_source_by_id (ctx, id) == source);
+  g_assert_true (g_main_context_find_source_by_id (ctx, id) == source);
 
   g_source_set_priority (source, G_PRIORITY_HIGH);
   g_assert_cmpint (g_source_get_priority (source), ==, G_PRIORITY_HIGH);
 
   g_source_destroy (source);
-  g_assert (g_source_get_context (source) == ctx);
-  g_assert (g_main_context_find_source_by_id (ctx, id) == NULL);
+  g_assert_true (g_source_get_context (source) == ctx);
+  g_assert_null (g_main_context_find_source_by_id (ctx, id));
 
   g_main_context_unref (ctx);
 
@@ -96,7 +100,7 @@ test_maincontext_basic (void)
     {
       g_test_expect_message (G_LOG_DOMAIN, G_LOG_LEVEL_CRITICAL,
                              "*assertion*source->context != NULL*failed*");
-      g_assert (g_source_get_context (source) == NULL);
+      g_assert_null (g_source_get_context (source));
       g_test_assert_expected_messages ();
     }
 
@@ -110,19 +114,19 @@ test_maincontext_basic (void)
   g_source_unref (source);
   g_source_set_name_by_id (id, "e");
   g_assert_cmpstr (g_source_get_name (source), ==, "e");
-  g_assert (g_source_get_context (source) == ctx);
-  g_assert (g_source_remove_by_funcs_user_data (&funcs, data));
+  g_assert_true (g_source_get_context (source) == ctx);
+  g_assert_true (g_source_remove_by_funcs_user_data (&funcs, data));
 
   source = g_source_new (&funcs, sizeof (GSource));
   g_source_set_funcs (source, &funcs);
   g_source_set_callback (source, cb, data, NULL);
   id = g_source_attach (source, ctx);
   g_source_unref (source);
-  g_assert (g_source_remove_by_user_data (data));
-  g_assert (!g_source_remove_by_user_data ((gpointer)0x1234));
+  g_assert_true (g_source_remove_by_user_data (data));
+  g_assert_false (g_source_remove_by_user_data ((gpointer)0x1234));
 
   g_idle_add (cb, data);
-  g_assert (g_idle_remove_by_data (data));
+  g_assert_true (g_idle_remove_by_data (data));
 }
 
 static void
@@ -133,12 +137,12 @@ test_mainloop_basic (void)
 
   loop = g_main_loop_new (NULL, FALSE);
 
-  g_assert (!g_main_loop_is_running (loop));
+  g_assert_false (g_main_loop_is_running (loop));
 
   g_main_loop_ref (loop);
 
   ctx = g_main_loop_get_context (loop);
-  g_assert (ctx == g_main_context_default ());
+  g_assert_true (ctx == g_main_context_default ());
 
   g_main_loop_unref (loop);
 
@@ -167,6 +171,12 @@ test_timeouts (void)
   GMainContext *ctx;
   GMainLoop *loop;
   GSource *source;
+
+  if (!g_test_thorough ())
+    {
+      g_test_skip ("Not running timing heavy test");
+      return;
+    }
 
   a = b = c = 0;
 
@@ -233,24 +243,24 @@ test_priorities (void)
   g_source_attach (sourceb, ctx);
   g_source_unref (sourceb);
 
-  g_assert (g_main_context_pending (ctx));
-  g_assert (g_main_context_iteration (ctx, FALSE));
+  g_assert_true (g_main_context_pending (ctx));
+  g_assert_true (g_main_context_iteration (ctx, FALSE));
   g_assert_cmpint (a, ==, 0);
   g_assert_cmpint (b, ==, 1);
 
-  g_assert (g_main_context_iteration (ctx, FALSE));
+  g_assert_true (g_main_context_iteration (ctx, FALSE));
   g_assert_cmpint (a, ==, 0);
   g_assert_cmpint (b, ==, 2);
 
   g_source_destroy (sourceb);
 
-  g_assert (g_main_context_iteration (ctx, FALSE));
+  g_assert_true (g_main_context_iteration (ctx, FALSE));
   g_assert_cmpint (a, ==, 1);
   g_assert_cmpint (b, ==, 2);
 
-  g_assert (g_main_context_pending (ctx));
+  g_assert_true (g_main_context_pending (ctx));
   g_source_destroy (sourcea);
-  g_assert (!g_main_context_pending (ctx));
+  g_assert_false (g_main_context_pending (ctx));
 
   g_main_context_unref (ctx);
 }
@@ -271,7 +281,7 @@ static gboolean
 func (gpointer data)
 {
   if (data != NULL)
-    g_assert (data == g_thread_self ());
+    g_assert_true (data == g_thread_self ());
 
   count++;
 
@@ -695,7 +705,9 @@ typedef struct {
 
   GSource *timeout1, *timeout2;
   gint64 time1;
-  GTimeVal tv;
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+  GTimeVal tv;  /* needed for g_source_get_current_time() */
+G_GNUC_END_IGNORE_DEPRECATIONS
 } TimeTestData;
 
 static gboolean
@@ -706,12 +718,12 @@ timeout1_callback (gpointer user_data)
   gint64 mtime1, mtime2, time2;
 
   source = g_main_current_source ();
-  g_assert (source == data->timeout1);
+  g_assert_true (source == data->timeout1);
 
   if (data->time1 == -1)
     {
       /* First iteration */
-      g_assert (!g_source_is_destroyed (data->timeout2));
+      g_assert_false (g_source_is_destroyed (data->timeout2));
 
       mtime1 = g_get_monotonic_time ();
       data->time1 = g_source_get_time (source);
@@ -730,10 +742,12 @@ G_GNUC_END_IGNORE_DEPRECATIONS
     }
   else
     {
+G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       GTimeVal tv;
+G_GNUC_END_IGNORE_DEPRECATIONS
 
       /* Second iteration */
-      g_assert (g_source_is_destroyed (data->timeout2));
+      g_assert_true (g_source_is_destroyed (data->timeout2));
 
       /* g_source_get_time() MAY change between iterations; in this
        * case we know for sure that it did because of the g_usleep()
@@ -746,9 +760,9 @@ G_GNUC_BEGIN_IGNORE_DEPRECATIONS
       g_source_get_current_time (source, &tv);
 G_GNUC_END_IGNORE_DEPRECATIONS
 
-      g_assert (tv.tv_sec > data->tv.tv_sec ||
-                (tv.tv_sec == data->tv.tv_sec &&
-                 tv.tv_usec > data->tv.tv_usec));
+      g_assert_true (tv.tv_sec > data->tv.tv_sec ||
+                     (tv.tv_sec == data->tv.tv_sec &&
+                      tv.tv_usec > data->tv.tv_usec));
 
       g_main_loop_quit (data->loop);
     }
@@ -764,9 +778,9 @@ timeout2_callback (gpointer user_data)
   gint64 time2, time3;
 
   source = g_main_current_source ();
-  g_assert (source == data->timeout2);
+  g_assert_true (source == data->timeout2);
 
-  g_assert (!g_source_is_destroyed (data->timeout1));
+  g_assert_false (g_source_is_destroyed (data->timeout1));
 
   /* g_source_get_time() does not change between different sources in
    * a single iteration of the mainloop.
@@ -804,8 +818,8 @@ test_source_time (void)
 
   g_main_loop_run (data.loop);
 
-  g_assert (!g_source_is_destroyed (data.timeout1));
-  g_assert (g_source_is_destroyed (data.timeout2));
+  g_assert_false (g_source_is_destroyed (data.timeout1));
+  g_assert_true (g_source_is_destroyed (data.timeout2));
 
   g_source_destroy (data.timeout1);
   g_source_unref (data.timeout1);
@@ -833,9 +847,9 @@ on_source_fired_cb (gpointer user_data)
   current_source = g_main_current_source ();
   current_context = g_source_get_context (current_source);
   source_id = g_source_get_id (current_source);
-  g_assert (g_main_context_find_source_by_id (current_context, source_id) != NULL);
+  g_assert_nonnull (g_main_context_find_source_by_id (current_context, source_id));
   g_source_destroy (current_source);
-  g_assert (g_main_context_find_source_by_id (current_context, source_id) == NULL);
+  g_assert_null (g_main_context_find_source_by_id (current_context, source_id));
 
   if (data->outstanding_ops == 0)
     g_main_loop_quit (data->loop);
@@ -945,7 +959,7 @@ test_ready_time (void)
   /* A source with no ready time set should not fire */
   g_assert_cmpint (g_source_get_ready_time (source), ==, -1);
   while (g_main_context_iteration (NULL, FALSE));
-  g_assert (!ready_time_dispatched);
+  g_assert_false (ready_time_dispatched);
 
   /* The ready time should not have been changed */
   g_assert_cmpint (g_source_get_ready_time (source), ==, -1);
@@ -959,21 +973,21 @@ test_ready_time (void)
    */
   g_source_set_ready_time (source, g_get_monotonic_time () + G_TIME_SPAN_DAY);
   while (g_main_context_iteration (NULL, FALSE));
-  g_assert (!ready_time_dispatched);
+  g_assert_false (ready_time_dispatched);
   /* Make sure it didn't get reset */
   g_assert_cmpint (g_source_get_ready_time (source), !=, -1);
 
   /* Ready time of -1 -> don't fire */
   g_source_set_ready_time (source, -1);
   while (g_main_context_iteration (NULL, FALSE));
-  g_assert (!ready_time_dispatched);
+  g_assert_false (ready_time_dispatched);
   /* Not reset, but should still be -1 from above */
   g_assert_cmpint (g_source_get_ready_time (source), ==, -1);
 
   /* A ready time of the current time should fire immediately */
   g_source_set_ready_time (source, g_get_monotonic_time ());
   while (g_main_context_iteration (NULL, FALSE));
-  g_assert (ready_time_dispatched);
+  g_assert_true (ready_time_dispatched);
   ready_time_dispatched = FALSE;
   /* Should have gotten reset by the handler function */
   g_assert_cmpint (g_source_get_ready_time (source), ==, -1);
@@ -981,14 +995,14 @@ test_ready_time (void)
   /* As well as one in the recent past... */
   g_source_set_ready_time (source, g_get_monotonic_time () - G_TIME_SPAN_SECOND);
   while (g_main_context_iteration (NULL, FALSE));
-  g_assert (ready_time_dispatched);
+  g_assert_true (ready_time_dispatched);
   ready_time_dispatched = FALSE;
   g_assert_cmpint (g_source_get_ready_time (source), ==, -1);
 
   /* Zero is the 'official' way to get a source to fire immediately */
   g_source_set_ready_time (source, 0);
   while (g_main_context_iteration (NULL, FALSE));
-  g_assert (ready_time_dispatched);
+  g_assert_true (ready_time_dispatched);
   ready_time_dispatched = FALSE;
   g_assert_cmpint (g_source_get_ready_time (source), ==, -1);
 
@@ -1126,7 +1140,7 @@ write_bytes (gint         fd,
     return FALSE;
 
   /* Detect if we run before we should */
-  g_assert (*to_write >= 0);
+  g_assert_cmpint (*to_write, >=, 0);
 
   limit = MIN (*to_write, sizeof zeros);
   *to_write -= write (fd, zeros, limit);
@@ -1150,6 +1164,7 @@ read_bytes (gint         fd,
   return TRUE;
 }
 
+#ifdef G_OS_UNIX
 static void
 test_unix_fd (void)
 {
@@ -1162,7 +1177,7 @@ test_unix_fd (void)
   GSource *source_b;
 
   s = pipe (fds);
-  g_assert (s == 0);
+  g_assert_cmpint (s, ==, 0);
 
   to_read = fill_a_pipe (fds[1]);
   /* write at higher priority to keep the pipe full... */
@@ -1191,21 +1206,22 @@ test_unix_fd (void)
       /* Since the sources are at different priority, only one of them
        * should possibly have run.
        */
-      g_assert (to_write == to_write_was || to_read == to_read_was);
+      g_assert_true (to_write == to_write_was || to_read == to_read_was);
     }
 
-  g_assert (to_write == 0);
-  g_assert (to_read == 0);
+  g_assert_cmpint (to_write, ==, 0);
+  g_assert_cmpint (to_read, ==, 0);
 
   /* 'a' is already removed by itself */
-  g_assert (g_source_is_destroyed (source_a));
+  g_assert_true (g_source_is_destroyed (source_a));
   g_source_unref (source_a);
   g_source_remove (b);
-  g_assert (g_source_is_destroyed (source_b));
+  g_assert_true (g_source_is_destroyed (source_b));
   g_source_unref (source_b);
   close (fds[1]);
   close (fds[0]);
 }
+#endif
 
 static void
 assert_main_context_state (gint n_to_poll,
@@ -1225,10 +1241,10 @@ assert_main_context_state (gint n_to_poll,
   context = g_main_context_default ();
 
   acquired = g_main_context_acquire (context);
-  g_assert (acquired);
+  g_assert_true (acquired);
 
   immediate = g_main_context_prepare (context, &max_priority);
-  g_assert (!immediate);
+  g_assert_false (immediate);
   n = g_main_context_query (context, max_priority, &timeout, poll_fds, 10);
   g_assert_cmpint (n, ==, n_to_poll + 1); /* one will be the gwakeup */
 
@@ -1248,7 +1264,7 @@ assert_main_context_state (gint n_to_poll,
           }
 
       if (j == n)
-        g_error ("Unable to find fd %d (index %d) with events 0x%x\n", expected_fd, i, (guint) expected_events);
+        g_error ("Unable to find fd %d (index %d) with events 0x%x", expected_fd, i, (guint) expected_events);
     }
   va_end (ap);
 
@@ -1288,7 +1304,7 @@ test_unix_fd_source (void)
   assert_main_context_state (0);
 
   s = pipe (fds);
-  g_assert (s == 0);
+  g_assert_cmpint (s, ==, 0);
 
   source = g_unix_fd_source_new (fds[1], G_IO_OUT);
   g_source_attach (source, NULL);
@@ -1299,16 +1315,30 @@ test_unix_fd_source (void)
   g_test_expect_message ("GLib", G_LOG_LEVEL_WARNING, "*GUnixFDSource dispatched without callback*");
   while (g_main_context_iteration (NULL, FALSE));
   g_test_assert_expected_messages ();
-  g_assert (g_source_is_destroyed (source));
+  g_assert_true (g_source_is_destroyed (source));
   g_source_unref (source);
 
   out = in = FALSE;
   out_source = g_unix_fd_source_new (fds[1], G_IO_OUT);
-  g_source_set_callback (out_source, (GSourceFunc) flag_bool, &out, NULL);
+  /* -Wcast-function-type complains about casting 'flag_bool' to GSourceFunc.
+   * GCC has no way of knowing that it will be cast back to GUnixFDSourceFunc
+   * before being called. Although GLib itself is not compiled with
+   * -Wcast-function-type, applications that use GLib may well be (since
+   * -Wextra includes it), so we provide a G_SOURCE_FUNC() macro to suppress
+   * the warning. We check that it works here.
+   */
+#if G_GNUC_CHECK_VERSION(8, 0)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic error "-Wcast-function-type"
+#endif
+  g_source_set_callback (out_source, G_SOURCE_FUNC (flag_bool), &out, NULL);
+#if G_GNUC_CHECK_VERSION(8, 0)
+#pragma GCC diagnostic pop
+#endif
   g_source_attach (out_source, NULL);
   assert_main_context_state (1,
                              fds[1], G_IO_OUT, 0);
-  g_assert (!in && !out);
+  g_assert_true (!in && !out);
 
   in_source = g_unix_fd_source_new (fds[0], G_IO_IN);
   g_source_set_callback (in_source, (GSourceFunc) flag_bool, &in, NULL);
@@ -1318,7 +1348,7 @@ test_unix_fd_source (void)
                              fds[0], G_IO_IN, G_IO_IN,
                              fds[1], G_IO_OUT, G_IO_OUT);
   /* out is higher priority so only it should fire */
-  g_assert (!in && out);
+  g_assert_true (!in && out);
 
   /* raise the priority of the in source to higher than out*/
   in = out = FALSE;
@@ -1326,7 +1356,7 @@ test_unix_fd_source (void)
   assert_main_context_state (2,
                              fds[0], G_IO_IN, G_IO_IN,
                              fds[1], G_IO_OUT, G_IO_OUT);
-  g_assert (in && !out);
+  g_assert_true (in && !out);
 
   /* now, let them be equal */
   in = out = FALSE;
@@ -1334,7 +1364,7 @@ test_unix_fd_source (void)
   assert_main_context_state (2,
                              fds[0], G_IO_IN, G_IO_IN,
                              fds[1], G_IO_OUT, G_IO_OUT);
-  g_assert (in && out);
+  g_assert_true (in && out);
 
   g_source_destroy (out_source);
   g_source_unref (out_source);
@@ -1360,8 +1390,8 @@ return_true (GSource *source, GSourceFunc callback, gpointer user_data)
   return TRUE;
 }
 
-#define assert_flagged(s) g_assert (((FlagSource *) (s))->flagged);
-#define assert_not_flagged(s) g_assert (!((FlagSource *) (s))->flagged);
+#define assert_flagged(s) g_assert_true (((FlagSource *) (s))->flagged);
+#define assert_not_flagged(s) g_assert_true (!((FlagSource *) (s))->flagged);
 #define clear_flag(s) ((FlagSource *) (s))->flagged = 0
 
 static void
@@ -1489,7 +1519,7 @@ test_unix_file_poll (void)
   GMainLoop *loop;
 
   fd = open ("/dev/null", O_RDONLY);
-  g_assert (fd >= 0);
+  g_assert_cmpint (fd, >=, 0);
 
   loop = g_main_loop_new (NULL, FALSE);
 
@@ -1513,6 +1543,7 @@ test_unix_file_poll (void)
 
 #endif
 
+#ifdef G_OS_UNIX
 static gboolean
 timeout_cb (gpointer data)
 {
@@ -1520,8 +1551,8 @@ timeout_cb (gpointer data)
   GMainContext *context;
 
   context = g_main_loop_get_context (loop);
-  g_assert (g_main_loop_is_running (loop));
-  g_assert (g_main_context_is_owner (context));
+  g_assert_true (g_main_loop_is_running (loop));
+  g_assert_true (g_main_context_is_owner (context));
 
   g_main_loop_quit (loop);
 
@@ -1564,6 +1595,7 @@ test_mainloop_wait (void)
 
   g_main_context_unref (context);
 }
+#endif
 
 static gboolean
 nfds_in_cb (GIOChannel   *io,
@@ -1705,9 +1737,9 @@ test_nfds (void)
    */
   g_main_context_iteration (ctx, FALSE);
 
-  g_assert (source1_ran);
+  g_assert_true (source1_ran);
 #ifndef G_OS_WIN32
-  g_assert (source3_ran);
+  g_assert_true (source3_ran);
 #endif
 
   g_source_destroy (source1);
@@ -1724,13 +1756,264 @@ test_nfds (void)
   g_main_context_unref (ctx);
 }
 
+static gboolean source_finalize_called = FALSE;
+static guint source_dispose_called = 0;
+static gboolean source_dispose_recycle = FALSE;
+
+static void
+finalize (GSource *source)
+{
+  g_assert_false (source_finalize_called);
+  source_finalize_called = TRUE;
+}
+
+static void
+dispose (GSource *source)
+{
+  /* Dispose must always be called before finalize */
+  g_assert_false (source_finalize_called);
+
+  if (source_dispose_recycle)
+    g_source_ref (source);
+  source_dispose_called++;
+}
+
+static GSourceFuncs source_funcs = {
+  prepare,
+  check,
+  dispatch,
+  finalize
+};
+
+static void
+test_maincontext_source_finalization (void)
+{
+  GSource *source;
+
+  /* Check if GSource destruction without dispose function works and calls the
+   * finalize function as expected */
+  source_finalize_called = FALSE;
+  source_dispose_called = 0;
+  source_dispose_recycle = FALSE;
+  source = g_source_new (&source_funcs, sizeof (GSource));
+  g_source_unref (source);
+  g_assert_cmpint (source_dispose_called, ==, 0);
+  g_assert_true (source_finalize_called);
+
+  /* Check if GSource destruction with dispose function works and calls the
+   * dispose and finalize function as expected */
+  source_finalize_called = FALSE;
+  source_dispose_called = 0;
+  source_dispose_recycle = FALSE;
+  source = g_source_new (&source_funcs, sizeof (GSource));
+  g_source_set_dispose_function (source, dispose);
+  g_source_unref (source);
+  g_assert_cmpint (source_dispose_called, ==, 1);
+  g_assert_true (source_finalize_called);
+
+  /* Check if GSource destruction with dispose function works and recycling
+   * the source from dispose works without calling the finalize function */
+  source_finalize_called = FALSE;
+  source_dispose_called = 0;
+  source_dispose_recycle = TRUE;
+  source = g_source_new (&source_funcs, sizeof (GSource));
+  g_source_set_dispose_function (source, dispose);
+  g_source_unref (source);
+  g_assert_cmpint (source_dispose_called, ==, 1);
+  g_assert_false (source_finalize_called);
+
+  /* Check if the source is properly recycled */
+  g_assert_cmpint (source->ref_count, ==, 1);
+
+  /* And then get rid of it properly */
+  source_dispose_recycle = FALSE;
+  g_source_unref (source);
+  g_assert_cmpint (source_dispose_called, ==, 2);
+  g_assert_true (source_finalize_called);
+}
+
+/* GSource implementation which optionally keeps a strong reference to another
+ * GSource until finalization, when it destroys and unrefs the other source.
+ */
+typedef struct {
+  GSource source;
+
+  GSource *other_source;
+} SourceWithSource;
+
+static void
+finalize_source_with_source (GSource *source)
+{
+  SourceWithSource *s = (SourceWithSource *) source;
+
+  if (s->other_source)
+    {
+      g_source_destroy (s->other_source);
+      g_source_unref (s->other_source);
+      s->other_source = NULL;
+    }
+}
+
+static GSourceFuncs source_with_source_funcs = {
+  NULL,
+  NULL,
+  NULL,
+  finalize_source_with_source
+};
+
+static void
+test_maincontext_source_finalization_from_source (gconstpointer user_data)
+{
+  GMainContext *c = g_main_context_new ();
+  GSource *s1, *s2;
+
+  g_test_summary ("Tests if freeing a GSource as part of another GSource "
+                  "during main context destruction works.");
+  g_test_bug ("https://gitlab.gnome.org/GNOME/glib/merge_requests/1353");
+
+  s1 = g_source_new (&source_with_source_funcs, sizeof (SourceWithSource));
+  s2 = g_source_new (&source_with_source_funcs, sizeof (SourceWithSource));
+  ((SourceWithSource *)s1)->other_source = g_source_ref (s2);
+
+  /* Attach sources in a different order so they end up being destroyed
+   * in a different order by the main context */
+  if (GPOINTER_TO_INT (user_data) < 5)
+    {
+      g_source_attach (s1, c);
+      g_source_attach (s2, c);
+    }
+  else
+    {
+      g_source_attach (s2, c);
+      g_source_attach (s1, c);
+    }
+
+  /* Test a few different permutations here */
+  if (GPOINTER_TO_INT (user_data) % 5 == 0)
+    {
+      /* Get rid of our references so that destroying the context
+       * will unref them immediately */
+      g_source_unref (s1);
+      g_source_unref (s2);
+      g_main_context_unref (c);
+    }
+  else if (GPOINTER_TO_INT (user_data) % 5 == 1)
+    {
+      /* Destroy and free the sources before the context */
+      g_source_destroy (s1);
+      g_source_unref (s1);
+      g_source_destroy (s2);
+      g_source_unref (s2);
+      g_main_context_unref (c);
+    }
+  else if (GPOINTER_TO_INT (user_data) % 5 == 2)
+    {
+      /* Destroy and free the sources before the context */
+      g_source_destroy (s2);
+      g_source_unref (s2);
+      g_source_destroy (s1);
+      g_source_unref (s1);
+      g_main_context_unref (c);
+    }
+  else if (GPOINTER_TO_INT (user_data) % 5 == 3)
+    {
+      /* Destroy and free the context before the sources */
+      g_main_context_unref (c);
+      g_source_unref (s2);
+      g_source_unref (s1);
+    }
+  else if (GPOINTER_TO_INT (user_data) % 5 == 4)
+    {
+      /* Destroy and free the context before the sources */
+      g_main_context_unref (c);
+      g_source_unref (s1);
+      g_source_unref (s2);
+    }
+}
+
+static gboolean
+dispatch_source_with_source (GSource *source, GSourceFunc callback, gpointer user_data)
+{
+  return G_SOURCE_REMOVE;
+}
+
+static GSourceFuncs source_with_source_funcs_dispatch = {
+  NULL,
+  NULL,
+  dispatch_source_with_source,
+  finalize_source_with_source
+};
+
+static void
+test_maincontext_source_finalization_from_dispatch (gconstpointer user_data)
+{
+  GMainContext *c = g_main_context_new ();
+  GSource *s1, *s2;
+
+  g_test_summary ("Tests if freeing a GSource as part of another GSource "
+                  "during main context iteration works.");
+
+  s1 = g_source_new (&source_with_source_funcs_dispatch, sizeof (SourceWithSource));
+  s2 = g_source_new (&source_with_source_funcs_dispatch, sizeof (SourceWithSource));
+  ((SourceWithSource *)s1)->other_source = g_source_ref (s2);
+
+  g_source_attach (s1, c);
+  g_source_attach (s2, c);
+
+  if (GPOINTER_TO_INT (user_data) == 0)
+    {
+      /* This finalizes s1 as part of the iteration, which then destroys and
+       * frees s2 too */
+      g_source_set_ready_time (s1, 0);
+    }
+  else if (GPOINTER_TO_INT (user_data) == 1)
+    {
+      /* This destroys s2 as part of the iteration but does not free it as
+       * it's still referenced by s1 */
+      g_source_set_ready_time (s2, 0);
+    }
+  else if (GPOINTER_TO_INT (user_data) == 2)
+    {
+      /* This destroys both s1 and s2 as part of the iteration */
+      g_source_set_ready_time (s1, 0);
+      g_source_set_ready_time (s2, 0);
+    }
+
+  /* Get rid of our references so only the main context has one now */
+  g_source_unref (s1);
+  g_source_unref (s2);
+
+  /* Iterate as long as there are sources to dispatch */
+  while (g_main_context_iteration (c, FALSE))
+    {
+      /* Do nothing here */
+    }
+
+  g_main_context_unref (c);
+}
+
 int
 main (int argc, char *argv[])
 {
+  gint i;
+
   g_test_init (&argc, &argv, NULL);
   g_test_bug_base ("http://bugzilla.gnome.org/");
 
   g_test_add_func ("/maincontext/basic", test_maincontext_basic);
+  g_test_add_func ("/maincontext/source_finalization", test_maincontext_source_finalization);
+  for (i = 0; i < 10; i++)
+    {
+      gchar *name = g_strdup_printf ("/maincontext/source_finalization_from_source/%d", i);
+      g_test_add_data_func (name, GINT_TO_POINTER (i), test_maincontext_source_finalization_from_source);
+      g_free (name);
+    }
+  for (i = 0; i < 3; i++)
+    {
+      gchar *name = g_strdup_printf ("/maincontext/source_finalization_from_dispatch/%d", i);
+      g_test_add_data_func (name, GINT_TO_POINTER (i), test_maincontext_source_finalization_from_dispatch);
+      g_free (name);
+    }
   g_test_add_func ("/mainloop/basic", test_mainloop_basic);
   g_test_add_func ("/mainloop/timeouts", test_timeouts);
   g_test_add_func ("/mainloop/priorities", test_priorities);

@@ -50,7 +50,9 @@ g_poll_file_monitor_finalize (GObject* object)
   
   poll_monitor = G_POLL_FILE_MONITOR (object);
 
+  g_poll_file_monitor_cancel (G_FILE_MONITOR (poll_monitor));
   g_object_unref (poll_monitor->file);
+  g_clear_object (&poll_monitor->last_info);
 
   G_OBJECT_CLASS (g_poll_file_monitor_parent_class)->finalize (object);
 }
@@ -145,7 +147,8 @@ poll_file_timeout (gpointer data)
 {
   GPollFileMonitor* poll_monitor = data;
 
-  poll_monitor->timeout = FALSE;
+  g_source_unref (poll_monitor->timeout);
+  poll_monitor->timeout = NULL;
 
   g_file_query_info_async (poll_monitor->file, G_FILE_ATTRIBUTE_ETAG_VALUE "," G_FILE_ATTRIBUTE_STANDARD_SIZE,
 			 0, 0, NULL, got_new_info, g_object_ref (poll_monitor));

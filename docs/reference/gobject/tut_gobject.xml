@@ -65,6 +65,8 @@ struct _ViewerFile
   GObject parent_instance;
 
   /* instance members */
+  gchar *filename;
+  guint zoom_level;
 };
 
 /* will create viewer_file_get_type and set viewer_file_parent_class */
@@ -81,11 +83,24 @@ viewer_file_constructed (GObject *obj)
 }
 
 static void
+viewer_file_finalize (GObject *obj)
+{
+  ViewerFile *self = VIEWER_FILE (obj);
+
+  g_free (self->filename);
+
+  /* Always chain up to the parent finalize function to complete object
+   * destruction. */
+  G_OBJECT_CLASS (viewer_file_parent_class)-&gt;finalize (obj);
+}
+
+static void
 viewer_file_class_init (ViewerFileClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class-&gt;constructed = viewer_file_constructed;
+  object_class-&gt;finalize = viewer_file_finalize;
 }
 
 static void
@@ -105,9 +120,9 @@ ViewerFile *file = g_object_new (VIEWER_TYPE_FILE, NULL);
       This will make sure the class structure of this new object is
       correctly initialized. Here, <function>viewer_file_class_init</function>
       is expected to override the object's class methods and setup the
-      class' own methods. In the example above, the constructor method is
-      the only overridden method: it is set to
-      <function>viewer_file_constructor</function>.
+      class' own methods. In the example above, the <literal>constructed</literal>
+      method is the only overridden method: it is set to
+      <function>viewer_file_constructed</function>.
     </para>
 
     <para>
@@ -465,12 +480,12 @@ ViewerFile *file = g_object_new (VIEWER_TYPE_FILE, NULL);
 /* Implementation                               */
 /************************************************/
 
-enum
+typedef enum
 {
   PROP_FILENAME = 1,
   PROP_ZOOM_LEVEL,
   N_PROPERTIES
-};
+} ViewerFileProperty;
 
 static GParamSpec *obj_properties[N_PROPERTIES] = { NULL, };
 
@@ -482,17 +497,17 @@ viewer_file_set_property (GObject      *object,
 {
   ViewerFile *self = VIEWER_FILE (object);
 
-  switch (property_id)
+  switch ((ViewerFileProperty) property_id)
     {
     case PROP_FILENAME:
-      g_free (self-&gt;priv-&gt;filename);
-      self-&gt;priv-&gt;filename = g_value_dup_string (value);
-      g_print ("filename: %s\n", self-&gt;priv-&gt;filename);
+      g_free (self-&gt;filename);
+      self-&gt;filename = g_value_dup_string (value);
+      g_print ("filename: %s\n", self-&gt;filename);
       break;
 
     case PROP_ZOOM_LEVEL:
-      self-&gt;priv-&gt;zoom_level = g_value_get_uint (value);
-      g_print ("zoom level: &percnt;u\n", self-&gt;priv-&gt;zoom_level);
+      self-&gt;zoom_level = g_value_get_uint (value);
+      g_print ("zoom level: &percnt;u\n", self-&gt;zoom_level);
       break;
 
     default:
@@ -510,14 +525,14 @@ viewer_file_get_property (GObject    *object,
 {
   ViewerFile *self = VIEWER_FILE (object);
 
-  switch (property_id)
+  switch ((ViewerFileProperty) property_id)
     {
     case PROP_FILENAME:
-      g_value_set_string (value, self-&gt;priv-&gt;filename);
+      g_value_set_string (value, self-&gt;filename);
       break;
 
     case PROP_ZOOM_LEVEL:
-      g_value_set_uint (value, self-&gt;priv-&gt;zoom_level);
+      g_value_set_uint (value, self-&gt;zoom_level);
       break;
 
     default:
@@ -540,7 +555,7 @@ viewer_file_class_init (ViewerFileClass *klass)
                          "Filename",
                          "Name of the file to load and display from.",
                          NULL  /* default value */,
-                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE);
 
   obj_properties[PROP_ZOOM_LEVEL] =
     g_param_spec_uint ("zoom-level",
@@ -549,7 +564,7 @@ viewer_file_class_init (ViewerFileClass *klass)
                        0  /* minimum value */,
                        10 /* maximum value */,
                        2  /* default value */,
-                       G_PARAM_READWRITE));
+                       G_PARAM_READWRITE);
 
   g_object_class_install_properties (object_class,
                                      N_PROPERTIES,

@@ -68,7 +68,7 @@
  */
 
 G_DEFINE_INTERFACE_WITH_CODE (GNetworkMonitor, g_network_monitor, G_TYPE_OBJECT,
-                              g_type_interface_add_prerequisite (g_define_type_id, G_TYPE_INITABLE);)
+                              g_type_interface_add_prerequisite (g_define_type_id, G_TYPE_INITABLE))
 
 
 enum {
@@ -309,13 +309,9 @@ g_network_monitor_default_init (GNetworkMonitorInterface *iface)
   /**
    * GNetworkMonitor::network-changed:
    * @monitor: a #GNetworkMonitor
-   * @available: the current value of #GNetworkMonitor:network-available
+   * @network_available: the current value of #GNetworkMonitor:network-available
    *
-   * Emitted when the network configuration changes. If @available is
-   * %TRUE, then some hosts may be reachable that were not reachable
-   * before, while others that were reachable before may no longer be
-   * reachable. If @available is %FALSE, then no remote hosts are
-   * reachable.
+   * Emitted when the network configuration changes.
    *
    * Since: 2.32
    */
@@ -325,7 +321,7 @@ g_network_monitor_default_init (GNetworkMonitorInterface *iface)
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (GNetworkMonitorInterface, network_changed),
                   NULL, NULL,
-                  g_cclosure_marshal_VOID__BOOLEAN,
+                  NULL,
                   G_TYPE_NONE, 1,
                   G_TYPE_BOOLEAN);
 

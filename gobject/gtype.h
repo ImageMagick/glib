@@ -2294,6 +2294,8 @@ const gchar *    g_type_name_from_instance      (GTypeInstance	*instance);
 GLIB_AVAILABLE_IN_ALL
 const gchar *    g_type_name_from_class         (GTypeClass	*g_class);
 
+GLIB_AVAILABLE_IN_ALL
+void gobject_init_ctor(void);
 
 /* --- implementation bits --- */
 #ifndef G_DISABLE_CAST_CHECKS

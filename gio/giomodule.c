@@ -1044,7 +1044,7 @@ extern GType g_cocoa_notification_backend_get_type (void);
 #endif
 
 #ifdef G_PLATFORM_WIN32
-extern GType g_win32_notification_backend_get_type (void);
+/* extern GType g_win32_notification_backend_get_type (void); */
 
 #include <windows.h>
 extern GType _g_win32_network_monitor_get_type (void);
@@ -1131,8 +1131,10 @@ _g_io_modules_ensure_extension_points_registered (void)
       ep = g_io_extension_point_register (G_NETWORK_MONITOR_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_NETWORK_MONITOR);
 
+      /*
       ep = g_io_extension_point_register (G_NOTIFICATION_BACKEND_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_NOTIFICATION_BACKEND);
+      */
 
       ep = g_io_extension_point_register (G_MEMORY_MONITOR_EXTENSION_POINT_NAME);
       g_io_extension_point_set_required_type (ep, G_TYPE_MEMORY_MONITOR);
@@ -1244,7 +1246,7 @@ _g_io_modules_ensure_loaded (void)
       g_type_ensure (g_cocoa_notification_backend_get_type ());
 #endif
 #ifdef G_OS_WIN32
-      g_type_ensure (g_win32_notification_backend_get_type ());
+      /* g_type_ensure (g_win32_notification_backend_get_type ()); */
       g_type_ensure (_g_winhttp_vfs_get_type ());
 #endif
       g_type_ensure (_g_local_vfs_get_type ());

@@ -17,9 +17,9 @@
 
 #define DBL_EXPBIT0_WORD 1
 
-#define DLL_EXPORT
+#undef DLL_EXPORT
 
-#define ENABLE_NLS 1
+#undef ENABLE_NLS
 
 #define EXEEXT ".exe"
 
@@ -163,7 +163,7 @@
 
 #undef USE_SYSTEM_PRINTF
 
-#define _GLIB_EXTERN __declspec(dllexport) extern
+#undef _GLIB_EXTERN
 
 #define _GNU_SOURCE 1
 
@@ -273,4 +273,8 @@
 # define _GL_UNUSED
 #endif
 
-
+#pragma comment(lib, "dnsapi.lib")
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "winmm.lib")
+#pragma comment(lib, "ws2_32.lib")

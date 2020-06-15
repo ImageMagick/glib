@@ -29,6 +29,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#if (_MSC_VER < 1600)
+#pragma optimize("",off)
+#endif
+
+
 /**
  * SECTION:gsettingsschema
  * @short_description: Introspecting and controlling the loading

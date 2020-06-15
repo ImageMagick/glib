@@ -271,13 +271,13 @@ glib_init (void)
 
 #if defined (G_OS_WIN32)
 
-BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+/* BOOL WINAPI DllMain (HINSTANCE hinstDLL,
                      DWORD     fdwReason,
-                     LPVOID    lpvReserved);
+                     LPVOID    lpvReserved); */
 
-HMODULE glib_dll;
+HMODULE glib_dll = NULL;
 
-BOOL WINAPI
+/* BOOL WINAPI
 DllMain (HINSTANCE hinstDLL,
          DWORD     fdwReason,
          LPVOID    lpvReserved)
@@ -292,7 +292,7 @@ DllMain (HINSTANCE hinstDLL,
       g_thread_win32_init ();
 #endif
       glib_init ();
-      /* must go after glib_init */
+      must go after glib_init
       g_console_win32_init ();
       break;
 
@@ -311,24 +311,35 @@ DllMain (HINSTANCE hinstDLL,
       break;
 
     default:
-      /* do nothing */
+      do nothing
       ;
     }
 
   return TRUE;
 }
 
-#elif defined (G_HAS_CONSTRUCTORS)
+#elif defined (G_HAS_CONSTRUCTORS) */
 
 #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(glib_init_ctor)
 #endif
 G_DEFINE_CONSTRUCTOR(glib_init_ctor)
+G_DEFINE_DESTRUCTOR(glib_init_dtor)
 
 static void
 glib_init_ctor (void)
 {
+  g_clock_win32_init ();
+  g_thread_win32_init ();
   glib_init ();
+
+  gobject_init_ctor ();
+}
+
+static void
+glib_init_dtor(void)
+{
+  g_thread_win32_thread_detach ();
 }
 
 #else

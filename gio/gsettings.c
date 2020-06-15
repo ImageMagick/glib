@@ -34,6 +34,11 @@
 
 #include "strinfo.c"
 
+#if (_MSC_VER < 1600)
+#pragma optimize("",off)
+#endif
+
+
 /**
  * SECTION:gsettings
  * @short_description: High-level API for application settings

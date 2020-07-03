@@ -4485,10 +4485,10 @@ DllMain (HINSTANCE hinstDLL,
 #ifdef G_DEFINE_CONSTRUCTOR_NEEDS_PRAGMA
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(gobject_init_ctor)
 #endif
-/* G_DEFINE_CONSTRUCTOR(gobject_init_ctor) */
+G_DEFINE_CONSTRUCTOR(gobject_init_ctor)
 
 
-/* static */ void
+static void
 gobject_init_ctor (void)
 {
   gobject_init ();

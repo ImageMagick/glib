@@ -963,7 +963,7 @@
 #endif
 
 #ifndef _GLIB_EXTERN
-#if defined(_LIB)
+#if defined(_LIB) || !defined(_MSC_VER)
 #define _GLIB_EXTERN extern
 #else
 #define _GLIB_EXTERN __declspec (dllexport) extern

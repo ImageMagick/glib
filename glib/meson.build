@@ -316,9 +316,9 @@ else
   platform_deps = []
 endif
 
-if host_system == 'darwin'
-  glib_sources += files('gosxutils.m')
-endif
+#if host_system == 'darwin'
+# glib_sources += files('gosxutils.m')
+#endif
 
 glib_sources += files('gthread-@0@.c'.format(threads_implementation))
 

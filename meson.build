@@ -84,7 +84,7 @@ installed_tests_template = files('template.test.in')
 installed_tests_template_tap = files('template-tap.test.in')
 
 # Don’t build the tests unless we can run them (either natively, in an exe wrapper, or by installing them for later use)
-build_tests = not meson.is_cross_build() or (meson.is_cross_build() and meson.has_exe_wrapper()) or installed_tests_enabled
+build_tests = false
 
 add_project_arguments('-D_GNU_SOURCE', language: 'c')
 
@@ -116,7 +116,7 @@ glib_conf.set_quoted('PACKAGE_STRING', 'glib @0@'.format(meson.project_version()
 glib_conf.set_quoted('PACKAGE_TARNAME', 'glib')
 glib_conf.set_quoted('PACKAGE_URL', '')
 glib_conf.set_quoted('PACKAGE_VERSION', meson.project_version())
-glib_conf.set('ENABLE_NLS', 1)
+glib_conf.set('ENABLE_NLS', 0)
 
 # used by the .rc.in files
 glibconfig_conf.set('LT_CURRENT_MINUS_AGE', soversion)
@@ -669,9 +669,9 @@ if host_system == 'darwin'
   osx_ldflags += ['-Wl,-framework,CoreFoundation']
 
   # Mac OS X Carbon support
-  glib_have_carbon = objcc.compiles('''#include <Carbon/Carbon.h>
-                                       #include <CoreServices/CoreServices.h>''',
-                                    name : 'Mac OS X Carbon support')
+  #glib_have_carbon = objcc.compiles('''#include <Carbon/Carbon.h>
+  #                                     #include <CoreServices/CoreServices.h>''',
+  #                                  name : 'Mac OS X Carbon support')
 
   if glib_have_carbon
     glib_conf.set('HAVE_CARBON', true)
@@ -684,11 +684,11 @@ if host_system == 'darwin'
   endif
 
   # Mac OS X Cocoa support
-  glib_have_cocoa = objcc.compiles('''#include <Cocoa/Cocoa.h>
-                                      #ifdef GNUSTEP_BASE_VERSION
-                                      #error "Detected GNUstep, not Cocoa"
-                                      #endif''',
-                                   name : 'Mac OS X Cocoa support')
+  #glib_have_cocoa = objcc.compiles('''#include <Cocoa/Cocoa.h>
+  #                                    #ifdef GNUSTEP_BASE_VERSION
+  #                                    #error "Detected GNUstep, not Cocoa"
+  #                                    #endif''',
+  #                                 name : 'Mac OS X Cocoa support')
 
   if glib_have_cocoa
     glib_conf.set('HAVE_COCOA', true)
@@ -1920,14 +1920,14 @@ if cc.has_function('ngettext')
   libintl = []
   have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset')
 else
-  libintl = cc.find_library('intl', required : false)
-  if not libintl.found()
+  #libintl = cc.find_library('intl', required : false)
+  #if not libintl.found()
     libintl = subproject('proxy-libintl').get_variable('intl_dep')
     have_bind_textdomain_codeset = true  # proxy-libintl supports it
-  else
-    have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
-                                                   dependencies : libintl)
-  endif
+  #else
+  #  have_bind_textdomain_codeset = cc.has_function('bind_textdomain_codeset',
+  #                                                 dependencies : libintl)
+  #endif
 endif
 
 glib_conf.set('HAVE_BIND_TEXTDOMAIN_CODESET', have_bind_textdomain_codeset)

@@ -269,13 +269,11 @@ glib_init (void)
   g_quark_init ();
 }
 
-#if defined (G_OS_WIN32)
+/*#if defined (G_OS_WIN32)
 
-/* BOOL WINAPI DllMain (HINSTANCE hinstDLL,
+BOOL WINAPI DllMain (HINSTANCE hinstDLL,
                      DWORD     fdwReason,
-                     LPVOID    lpvReserved); */
-
-HMODULE glib_dll = NULL;
+                     LPVOID    lpvReserved);
 
 /* BOOL WINAPI
 DllMain (HINSTANCE hinstDLL,
@@ -324,24 +322,28 @@ DllMain (HINSTANCE hinstDLL,
 #pragma G_DEFINE_CONSTRUCTOR_PRAGMA_ARGS(glib_init_ctor)
 #endif
 G_DEFINE_CONSTRUCTOR(glib_init_ctor)
-G_DEFINE_DESTRUCTOR(glib_init_dtor)
 
 static void
 glib_init_ctor (void)
 {
+#if defined (G_OS_WIN32)
   g_clock_win32_init ();
   g_thread_win32_init ();
+#endif
   glib_init ();
-
-  gobject_init_ctor ();
 }
+
+#if defined (G_OS_WIN32)
+HMODULE glib_dll = NULL;
+G_DEFINE_DESTRUCTOR(glib_init_dtor)
 
 static void
 glib_init_dtor(void)
 {
   g_thread_win32_thread_detach ();
 }
-
-#else
-# error Your platform/compiler is missing constructor support
 #endif
+
+/*#else
+# error Your platform/compiler is missing constructor support
+#endif*/

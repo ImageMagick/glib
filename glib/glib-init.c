@@ -264,6 +264,11 @@ glib_init (void)
 
   glib_inited = TRUE;
 
+#if defined (G_OS_WIN32)
+  g_clock_win32_init ();
+  g_thread_win32_init ();
+#endif
+
   g_messages_prefixed_init ();
   g_debug_init ();
   g_quark_init ();
@@ -326,10 +331,6 @@ G_DEFINE_CONSTRUCTOR(glib_init_ctor)
 static void
 glib_init_ctor (void)
 {
-#if defined (G_OS_WIN32)
-  g_clock_win32_init ();
-  g_thread_win32_init ();
-#endif
   glib_init ();
 }
 

@@ -17,6 +17,8 @@ elif have_dlopen_dlsym
   g_module_impl = 'G_MODULE_IMPL_DL'
 endif
 
+g_module_impl = ''
+
 # additional checks for G_MODULE_IMPL_DL
 if g_module_impl == 'G_MODULE_IMPL_DL'
   # FIXME: check for OSF1/5.0 RTLD_GLOBAL brokenness (is this still relevant?)

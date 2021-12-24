@@ -358,7 +358,7 @@ foreach m : struct_members
 endforeach
 
 # Compiler flags
-if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang' or cc.get_id() == 'emscripten'
   warning_c_args = [
     '-Wduplicated-branches',
     '-Wimplicit-fallthrough',
@@ -553,7 +553,7 @@ if host_system != 'windows' and cc.has_function('posix_memalign', prefix : '#inc
 endif
 
 # Check that posix_spawn() is usable; must use header
-if cc.has_function('posix_spawn', prefix : '#include <spawn.h>')
+if host_system != 'emscripten' and cc.has_function('posix_spawn', prefix : '#include <spawn.h>')
   glib_conf.set('HAVE_POSIX_SPAWN', 1)
 endif
 
@@ -1345,7 +1345,7 @@ g_sizet_compatibility = {
 # We can’t simplify these checks using a foreach loop because dictionary keys
 # have to be string literals.
 # FIXME: https://github.com/mesonbuild/meson/issues/5231
-if cc.get_id() == 'gcc' or cc.get_id() == 'clang'
+if cc.get_id() == 'gcc' or cc.get_id() == 'clang' or cc.get_id() == 'emscripten'
   g_sizet_compatibility += {
     'short': g_sizet_compatibility['short'] and cc.compiles(
         '''#include <stddef.h>
@@ -1701,7 +1701,7 @@ atomicdefine = '''
 # We know that we can always use real ("lock free") atomic operations with MSVC
 if cc.get_id() == 'msvc' or cc.get_id() == 'clang-cl' or cc.links(atomictest, name : 'atomic ops')
   have_atomic_lock_free = true
-  if cc.get_id() == 'gcc' and not cc.compiles(atomicdefine, name : 'atomic ops define')
+  if not cc.compiles(atomicdefine, name : 'atomic ops define')
     # Old gcc release may provide
     # __sync_bool_compare_and_swap but doesn't define
     # __GCC_HAVE_SYNC_COMPARE_AND_SWAP_4
@@ -2179,7 +2179,6 @@ subdir('gobject')
 subdir('gthread')
 subdir('gmodule')
 subdir('gio')
-subdir('fuzzing')
 if build_tests
   subdir('tests')
 endif

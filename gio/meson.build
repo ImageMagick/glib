@@ -39,7 +39,7 @@ endif
 
 network_libs = [ ]
 network_args = [ ]
-if host_system != 'windows'
+if host_system != 'windows' and host_system != 'emscripten'
   # res_query()
   res_query_test = '''#include <resolv.h>
                       int main (int argc, char ** argv) {
@@ -895,99 +895,6 @@ gconstructor_as_data_h = custom_target('gconstructor_as_data.h',
     input : ['data-to-c.py', files('../glib/gconstructor.h')],
     output : ['gconstructor_as_data.h'],
     command : [python, '@INPUT0@', '@INPUT1@', 'gconstructor_code', '@OUTPUT@'])
-
-# Several installed executables
-gio_tool_sources = [
-  'gio-tool.c',
-  'gio-tool.h',
-  'gio-tool-cat.c',
-  'gio-tool-copy.c',
-  'gio-tool-info.c',
-  'gio-tool-list.c',
-  'gio-tool-mime.c',
-  'gio-tool-mkdir.c',
-  'gio-tool-monitor.c',
-  'gio-tool-mount.c',
-  'gio-tool-move.c',
-  'gio-tool-open.c',
-  'gio-tool-rename.c',
-  'gio-tool-remove.c',
-  'gio-tool-save.c',
-  'gio-tool-set.c',
-  'gio-tool-trash.c',
-  'gio-tool-tree.c',
-]
-
-#executable('gio', gio_tool_sources,
-#  install : true,
-#  c_args : gio_c_args,
-#  # intl.lib is not compatible with SAFESEH
-#  link_args : noseh_link_args,
-#  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-
-#executable('gresource', 'gresource-tool.c',
-#  install : true,
-#  # intl.lib is not compatible with SAFESEH
-#  link_args : noseh_link_args,
-#  dependencies : [libelf, libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-
-gio_querymodules = executable('gio-querymodules', 'gio-querymodules.c', 'giomodule-priv.c',
-  install : true,
-  c_args : gio_c_args,
-  # intl.lib is not compatible with SAFESEH
-  link_args : noseh_link_args,
-  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-
-#glib_compile_schemas = executable('glib-compile-schemas',
-#  [gconstructor_as_data_h, 'gvdb/gvdb-builder.c', 'glib-compile-schemas.c'],
-#  install : true,
-#  # intl.lib is not compatible with SAFESEH
-#  link_args : noseh_link_args,
-#  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-
-#glib_compile_resources = executable('glib-compile-resources',
-#  [gconstructor_as_data_h, 'gvdb/gvdb-builder.c', 'glib-compile-resources.c'],
-#  install : true,
-#  c_args : gio_c_args,
-#  # intl.lib is not compatible with SAFESEH
-#  link_args : noseh_link_args,
-#  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-
-# Cannot override those programs in cross compilation case because they are
-# native executables that cannot be run on the build machine.
-# See https://gitlab.gnome.org/GNOME/glib/issues/1859.
-#if not meson.is_cross_build()
-#  meson.override_find_program('glib-compile-schemas', glib_compile_schemas)
-#  meson.override_find_program('glib-compile-resources', glib_compile_resources)
-#endif
-
-#executable('gsettings', 'gsettings-tool.c',
-#  install : true,
-#  c_args : gio_c_args,
-#  # intl.lib is not compatible with SAFESEH
-#  link_args : noseh_link_args,
-#  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-install_data('gschema.dtd',
-  install_dir : join_paths(get_option('datadir'), schemas_subdir))
-
-install_data(['gschema.loc', 'gschema.its'],
-  install_dir : join_paths(get_option('datadir'), 'gettext/its'))
-
-#executable('gdbus', 'gdbus-tool.c',
-#  install : true,
-#  c_args : gio_c_args,
-#  # intl.lib is not compatible with SAFESEH
-#  link_args : noseh_link_args,
-#  dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-
-#if host_system != 'windows' and not glib_have_cocoa
-#  executable('gapplication', 'gapplication-tool.c',
-#    install : true,
-#    c_args : gio_c_args,
-#   # intl.lib is not compatible with SAFESEH
-#    link_args : noseh_link_args,
-#    dependencies : [libgio_dep, libgobject_dep, libgmodule_dep, libglib_dep])
-#endif
 
 if enable_systemtap
   gio_stp = configure_file(input : 'gio.stp.in',

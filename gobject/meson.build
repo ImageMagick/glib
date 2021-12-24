@@ -143,10 +143,6 @@ libgobject_dep = declare_dependency(link_with : libgobject,
   include_directories : [gobjectinc],
   dependencies : [libglib_dep, glib_enumtypes_dep])
 
-executable('gobject-query', 'gobject-query.c',
-  install : true,
-  dependencies : [libglib_dep, libgobject_dep])
-
 install_data('gobject_gdb.py', install_dir : join_paths(glib_pkgdatadir, 'gdb'))
 gdb_conf = configuration_data()
 gdb_conf.set('datadir', glib_datadir)

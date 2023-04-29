@@ -1487,7 +1487,7 @@ g_io_extension_point_implement (const char *extension_point_name,
   extension_point = g_io_extension_point_lookup (extension_point_name);
   if (extension_point == NULL)
     {
-      g_warning ("Tried to implement non-registered extension point %s", extension_point_name);
+      g_debug ("Tried to implement non-registered extension point %s", extension_point_name);
       return NULL;
     }
   

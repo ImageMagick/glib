@@ -35,6 +35,11 @@ gmodule
 gobject
 
 [INCLUDES]
+.
+gio
+glib
+glib\gnulib
+gmodule
 ffi->include
 zlib->.
 

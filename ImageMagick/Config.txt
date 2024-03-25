@@ -29,9 +29,9 @@ gio\win32
 glib
 glib\dirent
 glib\gnulib
-glib\gobject
 glib\libcharset
 glib\pcre
+gobject
 gmodule
 gobject
 

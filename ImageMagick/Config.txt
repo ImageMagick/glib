@@ -31,7 +31,6 @@ glib\dirent
 glib\gnulib
 glib\libcharset
 glib\pcre
-gobject
 gmodule
 gobject
 

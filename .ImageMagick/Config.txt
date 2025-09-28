@@ -1,5 +1,23 @@
 [DYNAMIC_LIBRARY]
 
+[VERSION]
+2.64.3
+
+[RELEASE_DATE]
+2020-05-20
+
+[PRODUCT_NAME]
+glib
+
+[COMPANY_NAME]
+Canonical Limited
+
+[URL]
+https://gitlab.gnome.org/GNOME/glib
+
+[COPYRIGHT]
+Copyright © 2013 Canonical Limited
+
 [LICENSE_FILE]
 COPYING
 
